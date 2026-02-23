@@ -8,10 +8,6 @@ export function getGoogleSheetsClient() {
     throw new Error('Variáveis de ambiente do Google não encontradas.');
   }
 
-  // Tratamento definitivo para o erro de DECODER
-  // 1. Remove aspas extras no início/fim
-  // 2. Transforma a string literal "\n" em quebras de linha reais
-  // 3. Garante que não existam espaços em branco extras
   const formattedKey = privateKey
     .trim()
     .replace(/^['"]|['"]$/g, '')
