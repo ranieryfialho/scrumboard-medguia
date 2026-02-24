@@ -1,7 +1,9 @@
+import { google } from 'googleapis';
 import { NextResponse } from 'next/server';
-import { getGoogleSheetsClient } from '@/lib/google-sheets';
-import { Lead } from '@/types/lead';
 
+// ==========================================
+// FUNÇÃO AUXILIAR: BUSCAR E MAPEAR DADOS
+// ==========================================
 async function fetchSheetData(sheets: any, spreadsheetId: string, range: string) {
   const response = await sheets.spreadsheets.values.get({ spreadsheetId, range });
   const rows = response.data.values;
@@ -21,12 +23,16 @@ async function fetchSheetData(sheets: any, spreadsheetId: string, range: string)
     };
 
     headers.forEach((header: string, colIndex: number) => {
-      leadData[header] = row[colIndex] || '';
+      if (header === 'id') {
+        leadData['meta_id'] = row[colIndex] || '';
+      } else {
+        leadData[header] = row[colIndex] || '';
+      }
     });
 
-    // ==================
-    // MAPEAMENTO EXATO
-    // ==================
+    // ==========================================
+    // MAPEAMENTO EXATO (Ajustado para a base Meta Ads)
+    // ==========================================
     
     // NOME: company_name (Pág 1) ou first name (Pág 2)
     leadData.nome = leadData['company_name'] || leadData['first name'] || 'Sem Nome';
@@ -52,22 +58,109 @@ async function fetchSheetData(sheets: any, spreadsheetId: string, range: string)
   });
 }
 
+// ==========================================
+// ROTA GET: LER A PLANILHA
+// ==========================================
 export async function GET() {
   try {
-    const sheets = getGoogleSheetsClient();
-    const spreadsheetId = process.env.GOOGLE_SHEET_ID as string;
+    const auth = new google.auth.GoogleAuth({
+      credentials: {
+        client_email: process.env.GOOGLE_CLIENT_EMAIL,
+        private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+      },
+      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+    });
 
-    const [leadsPagina1, leadsPagina2] = await Promise.all([
-      fetchSheetData(sheets, spreadsheetId, 'Página1'),
-      fetchSheetData(sheets, spreadsheetId, 'Página2')
-    ]);
+    const sheets = google.sheets({ version: 'v4', auth });
+    const spreadsheetId = process.env.GOOGLE_SHEET_ID;
 
-    const todosOsLeads = [...leadsPagina1, ...leadsPagina2];
+    if (!spreadsheetId) {
+      return NextResponse.json({ error: 'Falta o ID da planilha.' }, { status: 500 });
+    }
 
-    return NextResponse.json(todosOsLeads);
+    const leadsPagina1 = await fetchSheetData(sheets, spreadsheetId, 'Página1');
+    const leadsPagina2 = await fetchSheetData(sheets, spreadsheetId, 'Página2');
 
-  } catch (error: any) {
-    console.error('ERRO NA API SHEETS:', error.message);
-    return NextResponse.json({ error: 'Falha ao buscar leads' }, { status: 500 });
+    const todosLeads = [...leadsPagina1, ...leadsPagina2];
+
+    return NextResponse.json(todosLeads);
+  } catch (error) {
+    console.error("Erro ao acessar o Sheets:", error);
+    return NextResponse.json({ error: 'Erro ao acessar dados.' }, { status: 500 });
+  }
+}
+
+// ==========================================
+// ROTA POST: SALVAR NOVA SITUAÇÃO NA PLANILHA
+// ==========================================
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    const { id, novaSituacao } = body;
+
+    if (!id || !novaSituacao) {
+      return NextResponse.json({ error: 'Faltam dados' }, { status: 400 });
+    }
+
+    const parts = id.split('-lead-');
+    if (parts.length !== 2) throw new Error('ID inválido');
+    
+    const rangeName = parts[0].replace('página', 'Página'); 
+    const rowIndex = parseInt(parts[1], 10);
+    const sheetRow = rowIndex + 2;
+
+    const auth = new google.auth.GoogleAuth({
+      credentials: {
+        client_email: process.env.GOOGLE_CLIENT_EMAIL,
+        private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+      },
+      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+    });
+
+    const sheets = google.sheets({ version: 'v4', auth });
+    const spreadsheetId = process.env.GOOGLE_SHEET_ID;
+
+    const headerResponse = await sheets.spreadsheets.values.get({
+      spreadsheetId,
+      range: `${rangeName}!1:1`,
+    });
+
+    const headers = headerResponse.data.values?.[0] || [];
+    const normalizedHeaders = headers.map((h: any) => 
+      h.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim()
+    );
+    
+    let statusColIndex = normalizedHeaders.indexOf('lead_status');
+    if (statusColIndex === -1) {
+      statusColIndex = normalizedHeaders.indexOf('situacao');
+    }
+
+    if (statusColIndex === -1) {
+       statusColIndex = headers.length; 
+    }
+
+    let colLetter = '';
+    let tempColIndex = statusColIndex;
+    while (tempColIndex >= 0) {
+      colLetter = String.fromCharCode((tempColIndex % 26) + 65) + colLetter;
+      tempColIndex = Math.floor(tempColIndex / 26) - 1;
+    }
+
+    const cellRange = `${rangeName}!${colLetter}${sheetRow}`;
+
+    await sheets.spreadsheets.values.update({
+      spreadsheetId,
+      range: cellRange,
+      valueInputOption: 'USER_ENTERED',
+      requestBody: {
+        values: [[novaSituacao]],
+      },
+    });
+
+    return NextResponse.json({ success: true, range: cellRange, novaSituacao });
+
+  } catch (error) {
+    console.error("Erro ao salvar no Sheets:", error);
+    return NextResponse.json({ error: 'Erro interno ao salvar.' }, { status: 500 });
   }
 }

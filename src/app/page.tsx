@@ -3,13 +3,23 @@
 import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { KanbanBoard } from "@/components/kanban/kanban-board";
-import { RefreshCcw, Search, FilterX, Stethoscope, CalendarDays } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { RefreshCcw, Archive } from "lucide-react";
+import { DndContext } from "@dnd-kit/core";
+import { LeadCard } from "@/components/kanban/lead-card";
+
+import { normalizarEspecialidade } from "@/utils/formatters";
+import { FilterBar } from "@/components/dashboard/filter-bar";
+import { DashboardTab } from "@/components/dashboard/dashboard-tab";
 
 export default function Home() {
   const [leads, setLeads] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  const [date, setDate] = useState<Date | undefined>(new Date());
+  const [calendarMonth, setCalendarMonth] = useState<Date>(new Date());
+  const [abaAtiva, setAbaAtiva] = useState("dashboard");
 
-  // Estados dos Filtros
   const [buscaNome, setBuscaNome] = useState("");
   const [filtroEspecialidade, setFiltroEspecialidade] = useState("");
   const [filtroMes, setFiltroMes] = useState("");
@@ -23,32 +33,53 @@ export default function Home() {
     try {
       const res = await fetch('/api/sheets');
       const data = await res.json();
-      setLeads(data);
+      if (Array.isArray(data)) setLeads(data);
+      else setLeads([]);
     } catch (error) {
       console.error("Erro ao buscar planilha:", error);
+      setLeads([]);
     } finally {
       setLoading(false);
     }
   };
 
+  const atualizarSituacaoLead = async (leadId: string, novaSituacao: string) => {
+    setLeads(prevLeads => prevLeads.map(lead => lead.id === leadId ? { ...lead, situacao: novaSituacao } : lead));
+    try {
+      await fetch('/api/sheets', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: leadId, novaSituacao })
+      });
+    } catch (error) {
+      console.error("Erro de rede ao salvar:", error);
+    }
+  };
+
+  // ====================
+  // PROCESSAMENTO DE DADOS
+  // ====================
+
+  // Agora extraímos as especialidades LIMPAS (usando o normalizer) e removemos os "Outros/Lixos" se preferir
   const especialidadesUnicas = useMemo(() => {
-    const specs = leads.map(l => l.cargo).filter(Boolean);
+    const specs = leads
+      .map(l => normalizarEspecialidade(l.cargo))
+      .filter(Boolean) as string[]; // Filtra os nulos
+    
+    // Remove duplicatas e coloca em ordem alfabética
     return Array.from(new Set(specs)).sort();
   }, [leads]);
-
+  
   const mesesUnicos = useMemo(() => {
     const datas = leads.map(l => l.created_time).filter(Boolean);
     const meses = datas.map(d => {
       try {
-        const date = new Date(d);
-        if (isNaN(date.getTime())) return null;
-        let mesFormatado = date.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
-        return mesFormatado.charAt(0).toUpperCase() + mesFormatado.slice(1);
-      } catch {
-        return null;
-      }
+        const dateObj = new Date(d);
+        if (isNaN(dateObj.getTime())) return null;
+        let m = dateObj.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+        return m.charAt(0).toUpperCase() + m.slice(1);
+      } catch { return null; }
     }).filter(Boolean) as string[];
-    
     return Array.from(new Set(meses));
   }, [leads]);
 
@@ -56,139 +87,135 @@ export default function Home() {
     return leads.filter(lead => {
       const matchNome = lead.nome?.toLowerCase().includes(buscaNome.toLowerCase());
       
-      const matchEspec = filtroEspecialidade ? lead.cargo === filtroEspecialidade : true;
-
+      // Ajuste crucial: O filtro agora compara a especialidade LIMPA do card com a do filtro!
+      const matchEspec = filtroEspecialidade 
+        ? normalizarEspecialidade(lead.cargo) === filtroEspecialidade 
+        : true;
+        
       let matchMes = true;
       if (filtroMes) {
         if (lead.created_time) {
           try {
-            const date = new Date(lead.created_time);
-            if (!isNaN(date.getTime())) {
-              let mesFormatado = date.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
-              mesFormatado = mesFormatado.charAt(0).toUpperCase() + mesFormatado.slice(1);
-              matchMes = mesFormatado === filtroMes;
-            } else {
-              matchMes = false;
-            }
+            const dateObj = new Date(lead.created_time);
+            if (!isNaN(dateObj.getTime())) {
+              let m = dateObj.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+              matchMes = (m.charAt(0).toUpperCase() + m.slice(1)) === filtroMes;
+            } else matchMes = false;
           } catch { matchMes = false; }
-        } else {
-          matchMes = false;
-        }
+        } else matchMes = false;
       }
-
       return matchNome && matchEspec && matchMes;
     });
   }, [leads, buscaNome, filtroEspecialidade, filtroMes]);
 
-  const limparFiltros = () => {
-    setBuscaNome("");
-    setFiltroEspecialidade("");
-    setFiltroMes("");
-  };
+  const kpis = useMemo(() => {
+    const ativos = leadsFiltrados.filter(l => l.situacao !== 'Arquivado');
+    const total = ativos.length;
+    const novos = ativos.filter(l => l.situacao === 'Novos Leads' || l.situacao === 'Sem situação').length;
+    const fechados = ativos.filter(l => l.situacao === 'Fechado').length;
+    const emAndamento = ativos.filter(l => ['Em contato', 'Reunião agendada'].includes(l.situacao)).length;
+    const taxaConversao = total > 0 ? ((fechados / total) * 100).toFixed(1) : "0.0";
+    return { total, novos, fechados, emAndamento, taxaConversao };
+  }, [leadsFiltrados]);
 
-  const temFiltroAtivo = buscaNome !== "" || filtroEspecialidade !== "" || filtroMes !== "";
+  const arquivadosList = leadsFiltrados.filter(l => l.situacao === 'Arquivado');
+
+  const dadosGrafico = useMemo(() => {
+    const contagem: Record<string, number> = {};
+    leadsFiltrados.forEach(lead => {
+      if (lead.situacao === 'Arquivado') return;
+      const normalizado = normalizarEspecialidade(lead.cargo);
+      if (normalizado) contagem[normalizado] = (contagem[normalizado] || 0) + 1;
+    });
+    return Object.keys(contagem)
+      .map(key => ({ name: key, total: contagem[key] }))
+      .sort((a, b) => b.total - a.total)
+      .slice(0, 7);
+  }, [leadsFiltrados]);
+
+  const limparFiltros = () => { setBuscaNome(""); setFiltroEspecialidade(""); setFiltroMes(""); };
 
   return (
     <main className="min-h-screen bg-slate-50 flex flex-col">
       <header className="bg-white border-b border-slate-200 px-8 py-4 sticky top-0 z-20">
         <div className="max-w-[1600px] mx-auto flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-              Scrumboard Medguia
-            </h1>
-            <p className="text-sm text-slate-500 mt-1">
-              Gerenciamento de Leads em Tempo Real
-            </p>
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900">Scrumboard Medguia</h1>
+            <p className="text-sm text-slate-500 mt-1">Gerenciamento de Leads em Tempo Real</p>
           </div>
-          <Button 
-            onClick={buscarLeads} 
-            disabled={loading}
-            variant="outline"
-            className="bg-white hover:bg-slate-50 text-slate-700 border-slate-300"
-          >
+          <Button onClick={buscarLeads} disabled={loading} variant="outline" className="bg-white text-slate-700">
             <RefreshCcw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
             {loading ? 'Sincronizando...' : 'Sincronizar Dados'}
           </Button>
         </div>
       </header>
 
-      <div className="bg-white border-b border-slate-200 px-8 py-3 sticky top-[73px] z-10 shadow-sm">
-        <div className="max-w-[1600px] mx-auto flex flex-wrap items-center gap-4">
-          
-          <div className="relative flex-1 min-w-[200px] max-w-xs">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search className="h-4 w-4 text-slate-400" />
+      {abaAtiva !== "dashboard" && (
+        <FilterBar 
+          buscaNome={buscaNome} setBuscaNome={setBuscaNome}
+          filtroEspecialidade={filtroEspecialidade} setFiltroEspecialidade={setFiltroEspecialidade}
+          filtroMes={filtroMes} setFiltroMes={setFiltroMes}
+          especialidadesUnicas={especialidadesUnicas} mesesUnicos={mesesUnicos}
+          limparFiltros={limparFiltros} temFiltroAtivo={buscaNome !== "" || filtroEspecialidade !== "" || filtroMes !== ""}
+        />
+      )}
+
+      <div className="flex-1 overflow-hidden w-full flex flex-col">
+        <Tabs value={abaAtiva} onValueChange={setAbaAtiva} className="flex-1 flex flex-col h-full">
+          <div className="px-8 pt-6 pb-2">
+            <div className="max-w-[1600px] mx-auto">
+              <TabsList className="grid w-[600px] grid-cols-3">
+                <TabsTrigger value="dashboard">Visão Geral</TabsTrigger>
+                <TabsTrigger value="kanban">Quadro Kanban</TabsTrigger>
+                <TabsTrigger value="arquivados">Arquivados</TabsTrigger>
+              </TabsList>
             </div>
-            <input
-              type="text"
-              placeholder="Buscar pelo nome..."
-              value={buscaNome}
-              onChange={(e) => setBuscaNome(e.target.value)}
-              className="block w-full pl-9 pr-3 py-2 border border-slate-200 rounded-md leading-5 bg-slate-50 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-colors"
+          </div>
+
+          <TabsContent value="dashboard" className="flex-1 overflow-y-auto p-8 pt-4 m-0">
+            <DashboardTab 
+              kpis={kpis} 
+              date={date} setDate={setDate} 
+              calendarMonth={calendarMonth} setCalendarMonth={setCalendarMonth} 
+              dadosGrafico={dadosGrafico}
+              setFiltroEspecialidade={setFiltroEspecialidade} // Passando as props para o atalho funcionar
+              setAbaAtiva={setAbaAtiva} // Passando as props para o atalho funcionar
             />
-          </div>
+          </TabsContent>
 
-          <div className="relative flex-1 min-w-[200px] max-w-xs">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Stethoscope className="h-4 w-4 text-slate-400" />
+          <TabsContent value="kanban" className="flex-1 overflow-hidden p-8 pt-4 m-0 h-full">
+            <div className="max-w-[1600px] mx-auto h-full w-full">
+              {loading && leads.length === 0 ? (
+                <div className="h-full flex items-center justify-center text-slate-500">
+                  <RefreshCcw className="w-8 h-8 animate-spin text-indigo-500 mr-2" /> Carregando...
+                </div>
+              ) : (
+                <KanbanBoard leads={leadsFiltrados} onStatusChange={atualizarSituacaoLead} />
+              )}
             </div>
-            <select
-              value={filtroEspecialidade}
-              onChange={(e) => setFiltroEspecialidade(e.target.value)}
-              className="block w-full pl-9 pr-8 py-2 border border-slate-200 rounded-md leading-5 bg-slate-50 text-slate-700 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm appearance-none transition-colors cursor-pointer"
-            >
-              <option value="">Todas as especialidades</option>
-              {especialidadesUnicas.map(espec => (
-                <option key={espec} value={espec}>{espec}</option>
-              ))}
-            </select>
-          </div>
+          </TabsContent>
 
-          <div className="relative flex-1 min-w-[180px] max-w-xs">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <CalendarDays className="h-4 w-4 text-slate-400" />
+          <TabsContent value="arquivados" className="flex-1 overflow-y-auto p-8 pt-4 m-0 h-full">
+            <div className="max-w-[1600px] mx-auto h-full w-full">
+              <h2 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+                <Archive className="w-5 h-5 text-slate-500" /> Leads Arquivados
+              </h2>
+              {loading && leads.length === 0 ? (
+                <div className="h-32 flex items-center justify-center text-slate-500"><RefreshCcw className="w-6 h-6 animate-spin" /></div>
+              ) : arquivadosList.length === 0 ? (
+                <div className="h-48 border-2 border-dashed border-slate-200 rounded-lg flex items-center justify-center text-slate-400">Nenhum lead arquivado no momento.</div>
+              ) : (
+                <DndContext>
+                  <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                    {arquivadosList.map(lead => (
+                      <LeadCard key={lead.id} lead={lead} disableDrag onStatusChange={atualizarSituacaoLead} />
+                    ))}
+                  </div>
+                </DndContext>
+              )}
             </div>
-            <select
-              value={filtroMes}
-              onChange={(e) => setFiltroMes(e.target.value)}
-              className="block w-full pl-9 pr-8 py-2 border border-slate-200 rounded-md leading-5 bg-slate-50 text-slate-700 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm appearance-none transition-colors cursor-pointer"
-            >
-              <option value="">Todos os meses</option>
-              {mesesUnicos.map(mes => (
-                <option key={mes} value={mes}>{mes}</option>
-              ))}
-            </select>
-          </div>
-
-          {temFiltroAtivo && (
-            <Button 
-              variant="ghost" 
-              onClick={limparFiltros}
-              className="text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-colors h-9 px-3"
-            >
-              <FilterX className="w-4 h-4 mr-2" />
-              Limpar Filtros
-            </Button>
-          )}
-
-          <div className="ml-auto text-sm text-slate-500 font-medium">
-            {leadsFiltrados.length} {leadsFiltrados.length === 1 ? 'lead' : 'leads'}
-          </div>
-
-        </div>
-      </div>
-
-      <div className="flex-1 p-8 overflow-hidden max-w-[1600px] mx-auto w-full">
-        {loading && leads.length === 0 ? (
-          <div className="h-full flex items-center justify-center">
-            <div className="flex flex-col items-center gap-4 text-slate-500">
-              <RefreshCcw className="w-8 h-8 animate-spin text-indigo-500" />
-              <p>Carregando leads da planilha...</p>
-            </div>
-          </div>
-        ) : (
-          <KanbanBoard leads={leadsFiltrados} />
-        )}
+          </TabsContent>
+        </Tabs>
       </div>
     </main>
   );

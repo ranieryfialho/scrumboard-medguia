@@ -14,6 +14,7 @@ import {
 
 interface KanbanBoardProps {
   leads: Lead[];
+  onStatusChange?: (id: string, novaSituacao: string) => void;
 }
 
 const COLUNAS_FIXAS = [
@@ -26,7 +27,7 @@ const COLUNAS_FIXAS = [
   "Desqualificado"
 ];
 
-export function KanbanBoard({ leads }: KanbanBoardProps) {
+export function KanbanBoard({ leads, onStatusChange }: KanbanBoardProps) {
   const [localLeads, setLocalLeads] = useState<Lead[]>(leads);
   const [leadAtivo, setLeadAtivo] = useState<Lead | null>(null);
 
@@ -44,20 +45,39 @@ export function KanbanBoard({ leads }: KanbanBoardProps) {
     if (lead) setLeadAtivo(lead);
   };
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = async (event: DragEndEvent) => {
     setLeadAtivo(null);
     const { active, over } = event;
 
     if (!over) return;
 
-    const leadId = active.id;
+    const leadId = active.id as string;
     const novaSituacao = over.id as string;
+
+    const leadAtual = localLeads.find(l => l.id === leadId);
+    if (!leadAtual || leadAtual.situacao === novaSituacao) return;
 
     setLocalLeads((prevLeads) => 
       prevLeads.map((lead) => 
         lead.id === leadId ? { ...lead, situacao: novaSituacao } : lead
       )
     );
+
+    if (onStatusChange) {
+      onStatusChange(leadId, novaSituacao);
+    } else {
+      try {
+        const resposta = await fetch('/api/sheets', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: leadId, novaSituacao })
+        });
+
+        if (!resposta.ok) console.error("Erro na API ao tentar salvar o card.");
+      } catch (error) {
+        console.error("Erro de rede ao salvar o card:", error);
+      }
+    }
   };
 
   const handleDragCancel = () => setLeadAtivo(null);
@@ -70,7 +90,9 @@ export function KanbanBoard({ leads }: KanbanBoardProps) {
     }
   };
 
-  const leadsPorColuna = localLeads.reduce((acc, lead) => {
+  const leadsAtivos = localLeads.filter(l => l.situacao !== 'Arquivado');
+
+  const leadsPorColuna = leadsAtivos.reduce((acc, lead) => {
     const situacao = COLUNAS_FIXAS.includes(lead.situacao || "") 
       ? lead.situacao 
       : COLUNAS_FIXAS[0]; 
@@ -95,7 +117,14 @@ export function KanbanBoard({ leads }: KanbanBoardProps) {
             return (
               <KanbanColumn key={coluna} titulo={coluna} quantidade={leadsDaColuna.length}>
                 {leadsDaColuna.map((lead) => (
-                  <LeadCard key={lead.id} lead={lead} />
+                  <LeadCard 
+                    key={lead.id} 
+                    lead={lead} 
+                    onStatusChange={(id, status) => {
+                      setLocalLeads(prev => prev.map(l => l.id === id ? { ...l, situacao: status } : l));
+                      if (onStatusChange) onStatusChange(id, status);
+                    }}
+                  />
                 ))}
                 {leadsDaColuna.length === 0 && (
                   <div className="h-24 border-2 border-dashed border-slate-200 rounded-lg flex items-center justify-center text-slate-400 text-sm">
@@ -112,7 +141,7 @@ export function KanbanBoard({ leads }: KanbanBoardProps) {
         </DragOverlay>
       </DndContext>
 
-      {/* MINIMAPA COMPACTO */}
+      {/* MINIMAPA COMPACTO E FUNCIONAL */}
       <div className="fixed bottom-4 right-4 z-50 bg-white/80 backdrop-blur-md border border-slate-200 shadow-lg rounded-lg p-2 hidden md:flex flex-col gap-1 transition-all duration-300 opacity-40 hover:opacity-100">
         <div className="text-[8px] font-bold text-slate-400 uppercase tracking-wider text-center">
           Mapa
