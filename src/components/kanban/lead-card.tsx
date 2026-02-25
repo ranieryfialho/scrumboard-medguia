@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Lead } from "@/types/lead";
 import { useDraggable } from "@dnd-kit/core";
-import { Maximize2, Archive, RotateCcw, CalendarPlus, Clock, Mail, Phone } from "lucide-react";
+import { Maximize2, Archive, RotateCcw, CalendarPlus, Clock, Mail, Phone, FileText } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -12,10 +14,11 @@ import {
 } from "@/components/ui/dialog";
 
 interface LeadCardProps {
-  lead: Lead;
+  lead: Lead & { observacoes?: string };
   isOverlay?: boolean;
   disableDrag?: boolean;
   onStatusChange?: (id: string, status: string) => void;
+  onSaveObs?: (id: string, obs: string) => void;
 }
 
 const formatarData = (dataString?: string) => {
@@ -43,12 +46,23 @@ const formatarTelefone = (tel?: string) => {
   return tel;
 };
 
-export function LeadCard({ lead, isOverlay, disableDrag, onStatusChange }: LeadCardProps) {
+export function LeadCard({ lead, isOverlay, disableDrag, onStatusChange, onSaveObs }: LeadCardProps) {
+  const [obsTexto, setObsTexto] = useState(lead.observacoes || "");
+  const [salvandoObs, setSalvandoObs] = useState(false);
+
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: lead.id,
     data: { lead },
     disabled: disableDrag,
   });
+
+  const handleSalvarObservacao = async () => {
+    if (onSaveObs) {
+      setSalvandoObs(true);
+      await onSaveObs(lead.id, obsTexto);
+      setSalvandoObs(false);
+    }
+  };
 
   if (isDragging && !isOverlay) {
     return (
@@ -77,14 +91,12 @@ export function LeadCard({ lead, isOverlay, disableDrag, onStatusChange }: LeadC
 
   const isNovoLead = lead.situacao === 'Novos Leads';
 
-  // Tema base neutro
   let theme = {
     bg: 'bg-white', border: 'border-slate-200', ring: '',
     dot: 'bg-slate-400', ping: 'bg-slate-400', text: 'text-slate-600',
     footerBorder: 'border-slate-100', badgeBg: 'bg-slate-100'
   };
 
-  // Lógica de Cores Diferenciadas
   if (isNovoLead) {
     let horas = 0;
     if (lead.created_time) {
@@ -130,8 +142,8 @@ export function LeadCard({ lead, isOverlay, disableDrag, onStatusChange }: LeadC
   }
 
   const renderDetalhesDaPlanilha = () => {
-    const chavesOcultas = ['id', 'nome', 'whatsapp', 'cargo', 'tipo', 'situacao', 'email', 'responsavel', 'data_alteracao'];
-    const chaves = Object.keys(lead).filter(k => !chavesOcultas.includes(k) && lead[k] !== '');
+    const chavesOcultas = ['id', 'nome', 'whatsapp', 'cargo', 'tipo', 'situacao', 'email', 'responsavel', 'data_alteracao', 'observacoes'];
+    const chaves = Object.keys(lead).filter(k => !chavesOcultas.includes(k) && lead[k as keyof typeof lead] !== '');
     if (chaves.length === 0) return <p className="text-sm text-slate-500">Nenhum dado extra encontrado.</p>;
     return chaves.map(chave => (
       <div key={chave} className="flex flex-col border-b border-slate-100 pb-2">
@@ -204,6 +216,11 @@ export function LeadCard({ lead, isOverlay, disableDrag, onStatusChange }: LeadC
               </div>
 
               <div className="flex flex-col gap-1.5 pt-3 border-t border-slate-100/60">
+                {lead.observacoes && (
+                  <div className="flex items-center text-[10px] text-amber-600 font-bold mb-1 w-max rounded-md bg-amber-50/50 border border-amber-200/50 px-1.5 py-0.5" title="Este lead possui observações">
+                    <FileText className="w-3 h-3 mr-1" /> Notas salvas
+                  </div>
+                )}
                 <div className="flex items-center text-[10px] text-slate-500" title="Quando o lead entrou no sistema">
                   <CalendarPlus className="w-3 h-3 text-slate-400 mr-1.5 shrink-0" />
                   <span className="font-semibold text-slate-700 mr-1">Entrada:</span>
@@ -216,7 +233,6 @@ export function LeadCard({ lead, isOverlay, disableDrag, onStatusChange }: LeadC
                 </div>
               </div>
 
-              {/* TAG DE STATUS: AGORA GRANDE E COLORIDA EM TODAS AS COLUNAS */}
               <div className="flex items-center justify-center mt-3 pt-4 border-t border-slate-100/60 pb-1">
                 <div className={`flex items-center justify-center w-full gap-2 px-4 py-2 rounded-lg shadow-sm ${theme.badgeBg}`}>
                   {isNovoLead && (
@@ -247,6 +263,32 @@ export function LeadCard({ lead, isOverlay, disableDrag, onStatusChange }: LeadC
         </DialogHeader>
 
         <div className="mt-4 space-y-6">
+          
+          <div>
+            <h4 className="font-semibold text-slate-900 border-b border-slate-200 pb-2 mb-3 flex items-center gap-2">
+              <FileText className="w-4 h-4 text-slate-500" />
+              Observações
+            </h4>
+            <div className="space-y-3">
+              <textarea
+                className="w-full min-h-[100px] p-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 resize-y bg-slate-50 text-slate-700"
+                placeholder="Adicione notas, histórico de ligações ou informações importantes..."
+                value={obsTexto}
+                onChange={(e) => setObsTexto(e.target.value)}
+              />
+              <div className="flex justify-end">
+                <Button 
+                  onClick={handleSalvarObservacao} 
+                  disabled={salvandoObs || obsTexto === (lead.observacoes || "")}
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm"
+                  size="sm"
+                >
+                  {salvandoObs ? 'Salvando...' : 'Salvar Anotação'}
+                </Button>
+              </div>
+            </div>
+          </div>
+
           <div>
             <h4 className="font-semibold text-slate-900 border-b border-slate-200 pb-2 mb-3">Informações de Contato</h4>
             <div className="grid grid-cols-2 gap-4">

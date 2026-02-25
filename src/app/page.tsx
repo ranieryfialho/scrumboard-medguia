@@ -79,6 +79,22 @@ export default function Home() {
     }
   };
 
+  const salvarObservacaoLead = async (leadId: string, observacoes: string) => {
+    setLeads(prevLeads => prevLeads.map(lead => 
+      lead.id === leadId ? { ...lead, observacoes } : lead
+    ));
+
+    try {
+      await fetch('/api/sheets', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: leadId, observacoes })
+      });
+    } catch (error) {
+      console.error("Erro de rede ao salvar observação:", error);
+    }
+  };
+
   const especialidadesUnicas = useMemo(() => {
     const specs = leads.map(l => normalizarEspecialidade(l.cargo)).filter(Boolean) as string[];
     return Array.from(new Set(specs)).sort();
@@ -152,16 +168,12 @@ export default function Home() {
   };
 
   return (
-    // Novo layout base: Flex row para acomodar a Sidebar ao lado do conteúdo principal
     <div className="flex h-screen bg-slate-50 overflow-hidden bg-[#e4e5e7]">
       
-      {/* 1. SIDEBAR LATERAL ESCURA */}
       <Sidebar abaAtiva={abaAtiva} setAbaAtiva={setAbaAtiva} />
 
-      {/* 2. ÁREA DE CONTEÚDO PRINCIPAL */}
       <main className="flex-1 flex flex-col h-screen overflow-hidden">
         
-        {/* Cabeçalho simplificado */}
         <header className="bg-transparent px-8 py-5 flex items-center justify-between shrink-0">
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-slate-800 flex items-center gap-3">
@@ -194,7 +206,6 @@ export default function Home() {
           </div>
         </header>
 
-        {/* Barra de Filtros */}
         {abaAtiva !== "dashboard" && (
           <FilterBar 
             buscaNome={buscaNome} setBuscaNome={setBuscaNome}
@@ -205,7 +216,6 @@ export default function Home() {
           />
         )}
 
-        {/* Áreas de Tabs do Radix (agora sem o TabsList superior) */}
         <div className="flex-1 overflow-hidden relative">
           <Tabs value={abaAtiva} className="h-full flex flex-col">
             <TabsContent value="dashboard" className="flex-1 overflow-y-auto p-8 pt-2 m-0 h-full">
@@ -224,7 +234,11 @@ export default function Home() {
                   <p>Iniciando o sistema...</p>
                 </div>
               ) : (
-                <KanbanBoard leads={leadsFiltrados} onStatusChange={atualizarSituacaoLead} />
+                <KanbanBoard 
+                  leads={leadsFiltrados} 
+                  onStatusChange={atualizarSituacaoLead} 
+                  onSaveObs={salvarObservacaoLead} 
+                />
               )}
             </TabsContent>
 
@@ -237,7 +251,13 @@ export default function Home() {
                 <DndContext>
                   <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                     {arquivadosList.map(lead => (
-                      <LeadCard key={lead.id} lead={lead} disableDrag onStatusChange={atualizarSituacaoLead} />
+                      <LeadCard 
+                        key={lead.id} 
+                        lead={lead} 
+                        disableDrag 
+                        onStatusChange={atualizarSituacaoLead} 
+                        onSaveObs={salvarObservacaoLead}
+                      />
                     ))}
                   </div>
                 </DndContext>

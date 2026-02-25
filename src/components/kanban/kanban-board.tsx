@@ -15,6 +15,7 @@ import {
 interface KanbanBoardProps {
   leads: Lead[];
   onStatusChange?: (id: string, novaSituacao: string) => void;
+  onSaveObs?: (id: string, obs: string) => void;
 }
 
 const COLUNAS_FIXAS = [
@@ -28,7 +29,7 @@ const COLUNAS_FIXAS = [
   "Desqualificado"
 ];
 
-export function KanbanBoard({ leads, onStatusChange }: KanbanBoardProps) {
+export function KanbanBoard({ leads, onStatusChange, onSaveObs }: KanbanBoardProps) {
   const [localLeads, setLocalLeads] = useState<Lead[]>(leads);
   const [leadAtivo, setLeadAtivo] = useState<Lead | null>(null);
 
@@ -100,15 +101,12 @@ export function KanbanBoard({ leads, onStatusChange }: KanbanBoardProps) {
   return (
     <div className="relative w-full flex flex-col h-full">
       
-      {/* ÁREA DE DRAG AND DROP DAS COLUNAS */}
       <DndContext 
         sensors={sensors} 
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
         onDragCancel={handleDragCancel}
       >
-        {/* Usamos flex-1 e min-h-0. Isso faz o quadro esticar até o limite máximo da tela 
-            e empurra a legenda exatamente para o rodapé, sem sobrar aquele espaço em branco! */}
         <div className="flex-1 flex w-full min-h-0 overflow-x-auto gap-6 pb-2 relative z-0 custom-scrollbar">
           {COLUNAS_FIXAS.map((coluna) => {
             const leadsDaColuna = leadsPorColuna[coluna] || [];
@@ -122,6 +120,7 @@ export function KanbanBoard({ leads, onStatusChange }: KanbanBoardProps) {
                       setLocalLeads(prev => prev.map(l => l.id === id ? { ...l, situacao: status } : l));
                       if (onStatusChange) onStatusChange(id, status);
                     }}
+                    onSaveObs={onSaveObs}
                   />
                 ))}
                 {leadsDaColuna.length === 0 && (
@@ -139,7 +138,6 @@ export function KanbanBoard({ leads, onStatusChange }: KanbanBoardProps) {
         </DragOverlay>
       </DndContext>
 
-      {/* LEGENDA DO TERMÔMETRO DE SLA */}
       <div className="flex flex-wrap items-center gap-6 mt-4 px-4 shrink-0 bg-white/60 py-2.5 rounded-lg border border-slate-200/60 w-max shadow-sm">
         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mr-2">
           Termômetro de Novos Leads:
@@ -170,7 +168,6 @@ export function KanbanBoard({ leads, onStatusChange }: KanbanBoardProps) {
         </div>
       </div>
 
-      {/* MINIMAPA INFERIOR DIREITO */}
       <div className="fixed bottom-4 right-4 z-50 bg-white/80 backdrop-blur-md border border-slate-200 shadow-lg rounded-lg p-2 hidden md:flex flex-col gap-1 transition-all duration-300 opacity-40 hover:opacity-100">
         <div className="text-[8px] font-bold text-slate-400 uppercase tracking-wider text-center">Mapa</div>
         <div className="flex gap-1 h-16">
