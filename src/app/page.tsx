@@ -95,6 +95,35 @@ export default function Home() {
     }
   };
 
+  const adicionarLeadManual = async (novoLeadData: any) => {
+    const dataAtual = new Date().toLocaleString('pt-BR');
+    const idTemporario = `sheet1_Página1-lead-${Date.now()}`; 
+
+    const chavesCompletas = {
+      id: idTemporario,
+      nome: novoLeadData.nome,
+      email: novoLeadData.email,
+      cargo: novoLeadData.cargo,
+      whatsapp: novoLeadData.whatsapp || '',
+      situacao: 'Novos Leads',
+      created_time: dataAtual,
+      data_alteracao: dataAtual,
+      origem: 'Manual'
+    };
+
+    setLeads(prev => [chavesCompletas, ...prev]);
+
+    try {
+      await fetch('/api/sheets', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'create', leadData: chavesCompletas })
+      });
+    } catch (error) {
+      console.error("Erro ao criar lead:", error);
+    }
+  };
+
   const especialidadesUnicas = useMemo(() => {
     const specs = leads.map(l => normalizarEspecialidade(l.cargo)).filter(Boolean) as string[];
     return Array.from(new Set(specs)).sort();
@@ -169,9 +198,7 @@ export default function Home() {
 
   return (
     <div className="flex h-screen bg-slate-50 overflow-hidden bg-[#e4e5e7]">
-      
       <Sidebar abaAtiva={abaAtiva} setAbaAtiva={setAbaAtiva} />
-
       <main className="flex-1 flex flex-col h-screen overflow-hidden">
         
         <header className="bg-transparent px-8 py-5 flex items-center justify-between shrink-0">
@@ -180,18 +207,12 @@ export default function Home() {
               {getTituloPagina()}
             </h1>
             <p className="text-sm text-slate-500 mt-1 flex items-center gap-2">
-              <Activity className="w-4 h-4 text-emerald-500" />
-              Sincronizado via Google Sheets
+              <Activity className="w-4 h-4 text-emerald-500" /> Sincronizado via Google Sheets
             </p>
           </div>
           
           <div className="flex flex-col items-end gap-1.5">
-            <Button 
-              onClick={() => buscarLeads(false)} 
-              disabled={loading || isSyncing} 
-              variant="outline" 
-              className="bg-white border-slate-300 text-slate-700 min-w-[180px] shadow-sm hover:bg-slate-50"
-            >
+            <Button onClick={() => buscarLeads(false)} disabled={loading || isSyncing} variant="outline" className="bg-white border-slate-300 text-slate-700 min-w-[180px] shadow-sm hover:bg-slate-50">
               <RefreshCcw className={`w-4 h-4 mr-2 ${loading || isSyncing ? 'animate-spin' : ''}`} />
               {loading ? 'Carregando...' : isSyncing ? 'Sincronizando...' : 'Sincronizar Dados'}
             </Button>
@@ -208,36 +229,29 @@ export default function Home() {
 
         {abaAtiva !== "dashboard" && (
           <FilterBar 
-            buscaNome={buscaNome} setBuscaNome={setBuscaNome}
+            buscaNome={buscaNome} setBuscaNome={setBuscaNome} 
             filtroEspecialidade={filtroEspecialidade} setFiltroEspecialidade={setFiltroEspecialidade}
-            filtroMes={filtroMes} setFiltroMes={setFiltroMes}
+            filtroMes={filtroMes} setFiltroMes={setFiltroMes} 
             especialidadesUnicas={especialidadesUnicas} mesesUnicos={mesesUnicos}
             limparFiltros={limparFiltros} temFiltroAtivo={buscaNome !== "" || filtroEspecialidade !== "" || filtroMes !== ""}
+            onAddLead={adicionarLeadManual}
           />
         )}
 
         <div className="flex-1 overflow-hidden relative">
           <Tabs value={abaAtiva} className="h-full flex flex-col">
             <TabsContent value="dashboard" className="flex-1 overflow-y-auto p-8 pt-2 m-0 h-full">
-              <DashboardTab 
-                kpis={kpis} date={date} setDate={setDate} 
-                calendarMonth={calendarMonth} setCalendarMonth={setCalendarMonth} 
-                dadosGrafico={dadosGrafico} setFiltroEspecialidade={setFiltroEspecialidade} 
-                setAbaAtiva={setAbaAtiva} 
-              />
+              <DashboardTab kpis={kpis} date={date} setDate={setDate} calendarMonth={calendarMonth} setCalendarMonth={setCalendarMonth} dadosGrafico={dadosGrafico} setFiltroEspecialidade={setFiltroEspecialidade} setAbaAtiva={setAbaAtiva} />
             </TabsContent>
 
             <TabsContent value="kanban" className="flex-1 overflow-hidden p-8 pt-2 m-0 h-full">
               {loading && leads.length === 0 ? (
-                <div className="h-full flex items-center justify-center text-slate-500">
-                  <RefreshCcw className="w-8 h-8 animate-spin text-indigo-500 mr-2" /> 
-                  <p>Iniciando o sistema...</p>
-                </div>
+                <div className="h-full flex items-center justify-center text-slate-500"><RefreshCcw className="w-8 h-8 animate-spin text-indigo-500 mr-2" /><p>Iniciando o sistema...</p></div>
               ) : (
                 <KanbanBoard 
                   leads={leadsFiltrados} 
                   onStatusChange={atualizarSituacaoLead} 
-                  onSaveObs={salvarObservacaoLead} 
+                  onSaveObs={salvarObservacaoLead}
                 />
               )}
             </TabsContent>
@@ -251,13 +265,7 @@ export default function Home() {
                 <DndContext>
                   <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                     {arquivadosList.map(lead => (
-                      <LeadCard 
-                        key={lead.id} 
-                        lead={lead} 
-                        disableDrag 
-                        onStatusChange={atualizarSituacaoLead} 
-                        onSaveObs={salvarObservacaoLead}
-                      />
+                      <LeadCard key={lead.id} lead={lead} disableDrag onStatusChange={atualizarSituacaoLead} onSaveObs={salvarObservacaoLead} />
                     ))}
                   </div>
                 </DndContext>

@@ -69,12 +69,11 @@ export function KanbanBoard({ leads, onStatusChange, onSaveObs }: KanbanBoardPro
       onStatusChange(leadId, novaSituacao);
     } else {
       try {
-        const resposta = await fetch('/api/sheets', {
+        await fetch('/api/sheets', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ id: leadId, novaSituacao })
         });
-        if (!resposta.ok) console.error("Erro na API ao tentar salvar o card.");
       } catch (error) {
         console.error("Erro de rede ao salvar o card:", error);
       }
@@ -138,6 +137,7 @@ export function KanbanBoard({ leads, onStatusChange, onSaveObs }: KanbanBoardPro
         </DragOverlay>
       </DndContext>
 
+      {/* LEGENDA DO TERMÔMETRO DE SLA (AGORA SOZINHA) */}
       <div className="flex flex-wrap items-center gap-6 mt-4 px-4 shrink-0 bg-white/60 py-2.5 rounded-lg border border-slate-200/60 w-max shadow-sm">
         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mr-2">
           Termômetro de Novos Leads:
