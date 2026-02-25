@@ -44,7 +44,14 @@ export default function Home() {
   };
 
   const atualizarSituacaoLead = async (leadId: string, novaSituacao: string) => {
-    setLeads(prevLeads => prevLeads.map(lead => lead.id === leadId ? { ...lead, situacao: novaSituacao } : lead));
+    const dataAtual = new Date().toLocaleString('pt-BR');
+
+    setLeads(prevLeads => prevLeads.map(lead => 
+      lead.id === leadId 
+        ? { ...lead, situacao: novaSituacao, data_alteracao: dataAtual } 
+        : lead
+    ));
+
     try {
       await fetch('/api/sheets', {
         method: 'POST',
@@ -55,18 +62,15 @@ export default function Home() {
       console.error("Erro de rede ao salvar:", error);
     }
   };
-
   // ====================
   // PROCESSAMENTO DE DADOS
   // ====================
 
-  // Agora extraímos as especialidades LIMPAS (usando o normalizer) e removemos os "Outros/Lixos" se preferir
   const especialidadesUnicas = useMemo(() => {
     const specs = leads
       .map(l => normalizarEspecialidade(l.cargo))
-      .filter(Boolean) as string[]; // Filtra os nulos
+      .filter(Boolean) as string[];
     
-    // Remove duplicatas e coloca em ordem alfabética
     return Array.from(new Set(specs)).sort();
   }, [leads]);
   
@@ -87,7 +91,6 @@ export default function Home() {
     return leads.filter(lead => {
       const matchNome = lead.nome?.toLowerCase().includes(buscaNome.toLowerCase());
       
-      // Ajuste crucial: O filtro agora compara a especialidade LIMPA do card com a do filtro!
       const matchEspec = filtroEspecialidade 
         ? normalizarEspecialidade(lead.cargo) === filtroEspecialidade 
         : true;
@@ -178,8 +181,8 @@ export default function Home() {
               date={date} setDate={setDate} 
               calendarMonth={calendarMonth} setCalendarMonth={setCalendarMonth} 
               dadosGrafico={dadosGrafico}
-              setFiltroEspecialidade={setFiltroEspecialidade} // Passando as props para o atalho funcionar
-              setAbaAtiva={setAbaAtiva} // Passando as props para o atalho funcionar
+              setFiltroEspecialidade={setFiltroEspecialidade}
+              setAbaAtiva={setAbaAtiva}
             />
           </TabsContent>
 
