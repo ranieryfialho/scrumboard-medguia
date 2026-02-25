@@ -13,9 +13,9 @@ export function Sidebar({ abaAtiva, setAbaAtiva }: SidebarProps) {
     {
       category: "Leads",
       items: [
-        { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-        { id: "kanban", label: "Quadro Kanban", icon: KanbanSquare },
-        { id: "arquivados", label: "Arquivados", icon: Archive },
+        { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, disabled: false },
+        { id: "kanban", label: "Quadro Kanban", icon: KanbanSquare, disabled: false },
+        { id: "arquivados", label: "Arquivados", icon: Archive, disabled: false },
       ]
     },
     {
