@@ -14,7 +14,10 @@ import { DashboardTab } from "@/components/dashboard/dashboard-tab";
 
 export default function Home() {
   const [leads, setLeads] = useState<any[]>([]);
+  
   const [loading, setLoading] = useState(true);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [ultimaAtualizacao, setUltimaAtualizacao] = useState<string>("--:--");
   
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [calendarMonth, setCalendarMonth] = useState<Date>(new Date());
@@ -24,24 +27,52 @@ export default function Home() {
   const [filtroEspecialidade, setFiltroEspecialidade] = useState("");
   const [filtroMes, setFiltroMes] = useState("");
 
-  useEffect(() => {
-    buscarLeads();
-  }, []);
+  // =================
+  // MOTOR DE BUSCA
+  // =================
+  const buscarLeads = async (isBackground = false) => {
+    if (isBackground) setIsSyncing(true);
+    else setLoading(true);
 
-  const buscarLeads = async () => {
-    setLoading(true);
     try {
-      const res = await fetch('/api/sheets');
+      const timestamp = new Date().getTime();
+      const res = await fetch(`/api/sheets?t=${timestamp}`, {
+        cache: 'no-store',
+        headers: {
+          'Pragma': 'no-cache',
+          'Cache-Control': 'no-cache'
+        }
+      });
+      
       const data = await res.json();
-      if (Array.isArray(data)) setLeads(data);
-      else setLeads([]);
+      
+      if (Array.isArray(data)) {
+        setLeads(data);
+        setUltimaAtualizacao(new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }));
+      } else if (!isBackground) {
+        setLeads([]);
+      }
     } catch (error) {
       console.error("Erro ao buscar planilha:", error);
-      setLeads([]);
+      if (!isBackground) setLeads([]);
     } finally {
-      setLoading(false);
+      if (isBackground) setIsSyncing(false);
+      else setLoading(false);
     }
   };
+
+  // =====================
+  // LOOP DE AUTO-UPDATE
+  // =====================
+  useEffect(() => {
+    buscarLeads();
+
+    const intervalo = setInterval(() => {
+      buscarLeads(true); 
+    }, 120000); 
+
+    return () => clearInterval(intervalo);
+  }, []);
 
   const atualizarSituacaoLead = async (leadId: string, novaSituacao: string) => {
     const dataAtual = new Date().toLocaleString('pt-BR');
@@ -62,15 +93,9 @@ export default function Home() {
       console.error("Erro de rede ao salvar:", error);
     }
   };
-  // ====================
-  // PROCESSAMENTO DE DADOS
-  // ====================
 
   const especialidadesUnicas = useMemo(() => {
-    const specs = leads
-      .map(l => normalizarEspecialidade(l.cargo))
-      .filter(Boolean) as string[];
-    
+    const specs = leads.map(l => normalizarEspecialidade(l.cargo)).filter(Boolean) as string[];
     return Array.from(new Set(specs)).sort();
   }, [leads]);
   
@@ -90,11 +115,7 @@ export default function Home() {
   const leadsFiltrados = useMemo(() => {
     return leads.filter(lead => {
       const matchNome = lead.nome?.toLowerCase().includes(buscaNome.toLowerCase());
-      
-      const matchEspec = filtroEspecialidade 
-        ? normalizarEspecialidade(lead.cargo) === filtroEspecialidade 
-        : true;
-        
+      const matchEspec = filtroEspecialidade ? normalizarEspecialidade(lead.cargo) === filtroEspecialidade : true;
       let matchMes = true;
       if (filtroMes) {
         if (lead.created_time) {
@@ -116,7 +137,7 @@ export default function Home() {
     const total = ativos.length;
     const novos = ativos.filter(l => l.situacao === 'Novos Leads' || l.situacao === 'Sem situação').length;
     const fechados = ativos.filter(l => l.situacao === 'Fechado').length;
-    const emAndamento = ativos.filter(l => ['Em contato', 'Reunião agendada'].includes(l.situacao)).length;
+    const emAndamento = ativos.filter(l => ['Em contato', 'Recontato', 'Reunião agendada', 'Aguardando Ativação'].includes(l.situacao)).length;
     const taxaConversao = total > 0 ? ((fechados / total) * 100).toFixed(1) : "0.0";
     return { total, novos, fechados, emAndamento, taxaConversao };
   }, [leadsFiltrados]);
@@ -144,12 +165,31 @@ export default function Home() {
         <div className="max-w-[1600px] mx-auto flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-slate-900">Scrumboard Medguia</h1>
-            <p className="text-sm text-slate-500 mt-1">Gerenciamento de Leads em Tempo Real</p>
+            <p className="text-sm text-slate-500 mt-1">
+              Gerenciamento de Leads em Tempo Real 
+            </p>
           </div>
-          <Button onClick={buscarLeads} disabled={loading} variant="outline" className="bg-white text-slate-700">
-            <RefreshCcw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-            {loading ? 'Sincronizando...' : 'Sincronizar Dados'}
-          </Button>
+          
+          <div className="flex flex-col items-end gap-1.5">
+            <Button 
+              onClick={() => buscarLeads(false)} 
+              disabled={loading || isSyncing} 
+              variant="outline" 
+              className="bg-white text-slate-700 min-w-[180px]"
+            >
+              <RefreshCcw className={`w-4 h-4 mr-2 ${loading || isSyncing ? 'animate-spin' : ''}`} />
+              {loading ? 'Carregando...' : isSyncing ? 'Sincronizando...' : 'Sincronizar Dados'}
+            </Button>
+            
+            <div className="flex items-center gap-1.5 text-[10px] text-slate-400 font-medium pr-1">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+              </span>
+              Última atualização: {ultimaAtualizacao}
+            </div>
+          </div>
+          
         </div>
       </header>
 
@@ -181,8 +221,8 @@ export default function Home() {
               date={date} setDate={setDate} 
               calendarMonth={calendarMonth} setCalendarMonth={setCalendarMonth} 
               dadosGrafico={dadosGrafico}
-              setFiltroEspecialidade={setFiltroEspecialidade}
-              setAbaAtiva={setAbaAtiva}
+              setFiltroEspecialidade={setFiltroEspecialidade} 
+              setAbaAtiva={setAbaAtiva} 
             />
           </TabsContent>
 
@@ -190,7 +230,8 @@ export default function Home() {
             <div className="max-w-[1600px] mx-auto h-full w-full">
               {loading && leads.length === 0 ? (
                 <div className="h-full flex items-center justify-center text-slate-500">
-                  <RefreshCcw className="w-8 h-8 animate-spin text-indigo-500 mr-2" /> Carregando...
+                  <RefreshCcw className="w-8 h-8 animate-spin text-indigo-500 mr-2" /> 
+                  <p>Iniciando o sistema...</p>
                 </div>
               ) : (
                 <KanbanBoard leads={leadsFiltrados} onStatusChange={atualizarSituacaoLead} />

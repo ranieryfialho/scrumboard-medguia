@@ -1,5 +1,6 @@
 import { google } from 'googleapis';
 import { NextResponse } from 'next/server';
+export const dynamic = 'force-dynamic';
 
 // ==========================================
 // FUNÇÃO AUXILIAR: BUSCAR E MAPEAR DADOS
@@ -169,16 +170,13 @@ export async function POST(request: Request) {
     const statusRange = `${rangeName}!${statusColLetter}${sheetRow}`;
     const dateRange = `${rangeName}!${dateColLetter}${sheetRow}`;
 
-    // Data formatada para a planilha
     const dataAtual = new Date().toLocaleString('pt-BR');
 
-    // Prepara as edições: O Valor e a Data
     const dataToUpdate = [
       { range: statusRange, values: [[novaSituacao]] },
       { range: dateRange, values: [[dataAtual]] }
     ];
 
-    // Se as colunas não existirem, ele cria os cabeçalhos automaticamente!
     if (statusColIndex >= headers.length) {
       dataToUpdate.push({ range: `${rangeName}!${statusColLetter}1`, values: [['lead_status']] });
     }
