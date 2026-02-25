@@ -11,7 +11,7 @@ import { LeadCard } from "@/components/kanban/lead-card";
 import { normalizarEspecialidade } from "@/utils/formatters";
 import { FilterBar } from "@/components/dashboard/filter-bar";
 import { DashboardTab } from "@/components/dashboard/dashboard-tab";
-import { Sidebar } from "@/components/layout/sidebar"; // <-- Importamos a nova Sidebar
+import { Sidebar } from "@/components/layout/sidebar";
 
 export default function Home() {
   const [leads, setLeads] = useState<any[]>([]);
@@ -22,7 +22,7 @@ export default function Home() {
   
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [calendarMonth, setCalendarMonth] = useState<Date>(new Date());
-  const [abaAtiva, setAbaAtiva] = useState("kanban"); // Mudei o default para o Kanban
+  const [abaAtiva, setAbaAtiva] = useState("dashboard");
 
   const [buscaNome, setBuscaNome] = useState("");
   const [filtroEspecialidade, setFiltroEspecialidade] = useState("");
@@ -145,7 +145,7 @@ export default function Home() {
   const limparFiltros = () => { setBuscaNome(""); setFiltroEspecialidade(""); setFiltroMes(""); };
 
   const getTituloPagina = () => {
-    if (abaAtiva === 'dashboard') return 'Visão Geral (Dashboard)';
+    if (abaAtiva === 'dashboard') return 'Dashboard';
     if (abaAtiva === 'kanban') return 'Quadro Kanban';
     if (abaAtiva === 'arquivados') return 'Leads Arquivados';
     return '';
