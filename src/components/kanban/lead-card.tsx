@@ -23,13 +23,13 @@ const formatarData = (dataString?: string) => {
   const match = dataString.match(/(\d{2}\/\d{2}\/\d{4}).*?(\d{2}:\d{2})/);
   if (match) return `${match[1]} ${match[2]}`;
   const d = new Date(dataString);
-  if (isNaN(d.getTime())) return dataString; 
-  return d.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }).replace(',', ''); 
+  if (isNaN(d.getTime())) return dataString;
+  return d.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }).replace(',', '');
 };
 
 const formatarTelefone = (tel?: string) => {
   if (!tel) return '';
-  const apenasNumeros = tel.replace(/\D/g, ''); 
+  const apenasNumeros = tel.replace(/\D/g, '');
 
   if (apenasNumeros.length === 11) {
     return `(${apenasNumeros.slice(0, 2)}) ${apenasNumeros.slice(2, 7)}-${apenasNumeros.slice(7)}`;
@@ -40,7 +40,7 @@ const formatarTelefone = (tel?: string) => {
   } else if (apenasNumeros.length === 12 && apenasNumeros.startsWith('55')) {
     return `+55 (${apenasNumeros.slice(2, 4)}) ${apenasNumeros.slice(4, 8)}-${apenasNumeros.slice(8)}`;
   }
-  return tel; 
+  return tel;
 };
 
 export function LeadCard({ lead, isOverlay, disableDrag, onStatusChange }: LeadCardProps) {
@@ -76,7 +76,7 @@ export function LeadCard({ lead, isOverlay, disableDrag, onStatusChange }: LeadC
   extrairContato(lead.whatsapp);
 
   const isNovoLead = lead.situacao === 'Novos Leads';
-  
+
   // Tema base neutro
   let theme = {
     bg: 'bg-white', border: 'border-slate-200', ring: '',
@@ -100,25 +100,31 @@ export function LeadCard({ lead, isOverlay, disableDrag, onStatusChange }: LeadC
       theme = { bg: 'bg-emerald-50/40', border: 'border-emerald-300', ring: 'ring-1 ring-emerald-200/50', dot: 'bg-emerald-500', ping: 'bg-emerald-400', text: 'text-emerald-700', footerBorder: 'border-emerald-100', badgeBg: 'bg-emerald-100' };
     }
   } else {
-    // Cores específicas para cada coluna (Quando já não é mais Novo Lead)
-    switch(lead.situacao) {
+    switch (lead.situacao) {
       case 'Em contato':
         theme.badgeBg = 'bg-blue-100'; theme.text = 'text-blue-700'; theme.border = 'border-blue-200'; theme.bg = 'bg-blue-50/30';
         break;
-      case 'Não atende':
+      case 'Recontato':
         theme.badgeBg = 'bg-orange-100'; theme.text = 'text-orange-700'; theme.border = 'border-orange-200'; theme.bg = 'bg-orange-50/30';
         break;
       case 'Reunião agendada':
         theme.badgeBg = 'bg-purple-100'; theme.text = 'text-purple-700'; theme.border = 'border-purple-200'; theme.bg = 'bg-purple-50/30';
         break;
+      case 'Aguardando Ativação':
+        theme.badgeBg = 'bg-cyan-100'; theme.text = 'text-cyan-700'; theme.border = 'border-cyan-200'; theme.bg = 'bg-cyan-50/30';
+        break;
       case 'Fechado':
         theme.badgeBg = 'bg-emerald-100'; theme.text = 'text-emerald-700'; theme.border = 'border-emerald-200'; theme.bg = 'bg-emerald-50/30';
         break;
       case 'Sem interesse':
+        theme.badgeBg = 'bg-slate-200'; theme.text = 'text-slate-600'; theme.border = 'border-slate-300'; theme.bg = 'bg-slate-50/50';
+        break;
       case 'Desqualificado':
+        theme.badgeBg = 'bg-red-100'; theme.text = 'text-red-700'; theme.border = 'border-red-200'; theme.bg = 'bg-red-50/30';
+        break;
       case 'Arquivado':
       default:
-        theme.badgeBg = 'bg-slate-100'; theme.text = 'text-slate-600';
+        theme.badgeBg = 'bg-slate-100'; theme.text = 'text-slate-500'; theme.border = 'border-slate-200'; theme.bg = 'bg-white';
         break;
     }
   }
@@ -147,21 +153,20 @@ export function LeadCard({ lead, isOverlay, disableDrag, onStatusChange }: LeadC
           className={`touch-none ${isOverlay ? 'cursor-grabbing rotate-2 scale-105 shadow-2xl opacity-90' : ''}`}
         >
           <Card className={`group relative mb-3 transition-all duration-300 text-left overflow-hidden ${cursorClass} ${theme.bg} ${theme.border} ${theme.ring} ${isNovoLead ? 'shadow-md' : 'shadow-sm'}`}>
-            
+
             <div className="absolute top-2 right-2 flex items-center gap-1 z-20">
               <button
                 type="button"
                 title={lead.situacao === 'Arquivado' ? "Restaurar Lead" : "Arquivar Lead"}
                 onClick={(e) => {
-                  e.preventDefault(); e.stopPropagation(); 
+                  e.preventDefault(); e.stopPropagation();
                   onStatusChange?.(lead.id, lead.situacao === 'Arquivado' ? 'Novos Leads' : 'Arquivado');
                 }}
                 onPointerDown={(e) => e.stopPropagation()}
-                className={`p-1.5 rounded-md transition-colors ${
-                  lead.situacao === 'Arquivado' 
-                    ? 'text-indigo-400 hover:text-indigo-600 hover:bg-indigo-50' 
-                    : 'text-slate-400 hover:text-rose-500 hover:bg-rose-50'
-                }`}
+                className={`p-1.5 rounded-md transition-colors ${lead.situacao === 'Arquivado'
+                  ? 'text-indigo-400 hover:text-indigo-600 hover:bg-indigo-50'
+                  : 'text-slate-400 hover:text-rose-500 hover:bg-rose-50'
+                  }`}
               >
                 {lead.situacao === 'Arquivado' ? <RotateCcw className="w-4 h-4" /> : <Archive className="w-4 h-4" />}
               </button>
@@ -180,9 +185,9 @@ export function LeadCard({ lead, isOverlay, disableDrag, onStatusChange }: LeadC
                 {lead.nome}
               </CardTitle>
             </CardHeader>
-            
+
             <CardContent className="p-4 pt-0 space-y-3 relative z-10">
-              
+
               <div className="space-y-1.5">
                 {realPhone && (
                   <div className="flex items-center text-xs text-slate-600 truncate pr-4" title="Telefone/WhatsApp">
@@ -201,12 +206,12 @@ export function LeadCard({ lead, isOverlay, disableDrag, onStatusChange }: LeadC
               <div className="flex flex-col gap-1.5 pt-3 border-t border-slate-100/60">
                 <div className="flex items-center text-[10px] text-slate-500" title="Quando o lead entrou no sistema">
                   <CalendarPlus className="w-3 h-3 text-slate-400 mr-1.5 shrink-0" />
-                  <span className="font-semibold text-slate-700 mr-1">Entrada:</span> 
+                  <span className="font-semibold text-slate-700 mr-1">Entrada:</span>
                   {formatarData(lead.created_time)}
                 </div>
                 <div className="flex items-center text-[10px] text-slate-500" title="Última vez que o card mudou de coluna">
                   <Clock className="w-3 h-3 text-slate-400 mr-1.5 shrink-0" />
-                  <span className="font-semibold text-slate-700 mr-1">Status alterado:</span> 
+                  <span className="font-semibold text-slate-700 mr-1">Status alterado:</span>
                   {formatarData(lead.data_alteracao)}
                 </div>
               </div>
@@ -240,7 +245,7 @@ export function LeadCard({ lead, isOverlay, disableDrag, onStatusChange }: LeadC
             {lead.tipo && <Badge variant="outline">{lead.tipo}</Badge>}
           </div>
         </DialogHeader>
-        
+
         <div className="mt-4 space-y-6">
           <div>
             <h4 className="font-semibold text-slate-900 border-b border-slate-200 pb-2 mb-3">Informações de Contato</h4>

@@ -21,7 +21,8 @@ const COLUNAS_FIXAS = [
   "Novos Leads", 
   "Em contato", 
   "Recontato", 
-  "Reunião agendada", 
+  "Reunião agendada",
+  "Aguardando Ativação", 
   "Fechado",
   "Sem interesse",
   "Desqualificado"
@@ -97,7 +98,7 @@ export function KanbanBoard({ leads, onStatusChange }: KanbanBoardProps) {
   }, {} as Record<string, Lead[]>);
 
   return (
-    <div className="relative w-full h-full flex flex-col">
+    <div className="relative w-full flex flex-col">
       
       {/* LEGENDA DO TERMÔMETRO DE SLA */}
       <div className="flex flex-wrap items-center gap-6 mb-4 px-4 shrink-0 bg-white/60 py-2.5 rounded-lg border border-slate-200/60 w-max shadow-sm">
@@ -137,7 +138,11 @@ export function KanbanBoard({ leads, onStatusChange }: KanbanBoardProps) {
         onDragEnd={handleDragEnd}
         onDragCancel={handleDragCancel}
       >
-        <div className="flex flex-1 w-full overflow-x-auto gap-6 pb-4 relative z-0 custom-scrollbar">
+        {/* A MÁGICA ACONTECE AQUI NA LINHA ABAIXO:
+          h-[calc(100vh-290px)] garante que a altura seja fixa na tela do usuário.
+          min-h-[450px] garante que nunca fique esmagado demais se a janela estiver muito pequena.
+        */}
+        <div className="flex w-full h-[calc(100vh-290px)] min-h-[450px] overflow-x-auto gap-6 pb-2 relative z-0 custom-scrollbar">
           {COLUNAS_FIXAS.map((coluna) => {
             const leadsDaColuna = leadsPorColuna[coluna] || [];
             return (
