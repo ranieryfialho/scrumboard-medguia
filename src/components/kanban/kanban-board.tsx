@@ -72,7 +72,6 @@ export function KanbanBoard({ leads, onStatusChange }: KanbanBoardProps) {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ id: leadId, novaSituacao })
         });
-
         if (!resposta.ok) console.error("Erro na API ao tentar salvar o card.");
       } catch (error) {
         console.error("Erro de rede ao salvar o card:", error);
@@ -85,35 +84,62 @@ export function KanbanBoard({ leads, onStatusChange }: KanbanBoardProps) {
   const scrollToColumn = (tituloDaColuna: string) => {
     const headers = document.querySelectorAll('h3');
     const alvo = Array.from(headers).find(h3 => h3.textContent === tituloDaColuna);
-    if (alvo) {
-      alvo.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-    }
+    if (alvo) alvo.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
   };
 
   const leadsAtivos = localLeads.filter(l => l.situacao !== 'Arquivado');
 
   const leadsPorColuna = leadsAtivos.reduce((acc, lead) => {
-    const situacao = COLUNAS_FIXAS.includes(lead.situacao || "") 
-      ? lead.situacao 
-      : COLUNAS_FIXAS[0]; 
-
+    const situacao = COLUNAS_FIXAS.includes(lead.situacao || "") ? lead.situacao : COLUNAS_FIXAS[0]; 
     if (!acc[situacao]) acc[situacao] = [];
     acc[situacao].push(lead);
     return acc;
   }, {} as Record<string, Lead[]>);
 
   return (
-    <div className="relative w-full h-full">
+    <div className="relative w-full h-full flex flex-col">
+      
+      {/* LEGENDA DO TERMÔMETRO DE SLA */}
+      <div className="flex flex-wrap items-center gap-6 mb-4 px-4 shrink-0 bg-white/60 py-2.5 rounded-lg border border-slate-200/60 w-max shadow-sm">
+        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mr-2">
+          Termômetro de Novos Leads:
+        </span>
+        
+        <div className="flex items-center gap-2">
+          <span className="relative flex h-2.5 w-2.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+          </span>
+          <span className="text-xs font-semibold text-slate-600">Até 24h (Quente)</span>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <span className="relative flex h-2.5 w-2.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
+          </span>
+          <span className="text-xs font-semibold text-slate-600">24h a 48h (Atenção)</span>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <span className="relative flex h-2.5 w-2.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500"></span>
+          </span>
+          <span className="text-xs font-semibold text-slate-600">Mais de 48h (Crítico)</span>
+        </div>
+      </div>
+
+      {/* ÁREA DE DRAG AND DROP DAS COLUNAS */}
       <DndContext 
         sensors={sensors} 
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
         onDragCancel={handleDragCancel}
       >
-        <div className="flex h-[calc(100vh-12rem)] w-full overflow-x-auto gap-6 pb-4 relative z-10 custom-scrollbar">
+        <div className="flex flex-1 w-full overflow-x-auto gap-6 pb-4 relative z-10 custom-scrollbar">
           {COLUNAS_FIXAS.map((coluna) => {
             const leadsDaColuna = leadsPorColuna[coluna] || [];
-            
             return (
               <KanbanColumn key={coluna} titulo={coluna} quantidade={leadsDaColuna.length}>
                 {leadsDaColuna.map((lead) => (
@@ -141,11 +167,8 @@ export function KanbanBoard({ leads, onStatusChange }: KanbanBoardProps) {
         </DragOverlay>
       </DndContext>
 
-      {/* MINIMAPA COMPACTO E FUNCIONAL */}
       <div className="fixed bottom-4 right-4 z-50 bg-white/80 backdrop-blur-md border border-slate-200 shadow-lg rounded-lg p-2 hidden md:flex flex-col gap-1 transition-all duration-300 opacity-40 hover:opacity-100">
-        <div className="text-[8px] font-bold text-slate-400 uppercase tracking-wider text-center">
-          Mapa
-        </div>
+        <div className="text-[8px] font-bold text-slate-400 uppercase tracking-wider text-center">Mapa</div>
         <div className="flex gap-1 h-16">
           {COLUNAS_FIXAS.map((coluna) => {
             const leadsDaColuna = leadsPorColuna[coluna] || [];
@@ -158,10 +181,7 @@ export function KanbanBoard({ leads, onStatusChange }: KanbanBoardProps) {
               >
                 <div className="flex flex-col gap-[1px]">
                   {leadsDaColuna.map((lead) => (
-                    <div 
-                      key={`mini-card-${lead.id}`} 
-                      className={`w-full h-[3px] rounded-sm ${coluna === 'Fechado' ? 'bg-emerald-400' : 'bg-indigo-400/80'}`} 
-                    />
+                    <div key={`mini-card-${lead.id}`} className={`w-full h-[3px] rounded-sm ${coluna === 'Fechado' ? 'bg-emerald-400' : 'bg-indigo-400/80'}`} />
                   ))}
                 </div>
               </div>
@@ -169,7 +189,6 @@ export function KanbanBoard({ leads, onStatusChange }: KanbanBoardProps) {
           })}
         </div>
       </div>
-      
     </div>
   );
 }
