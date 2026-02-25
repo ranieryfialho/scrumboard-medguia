@@ -137,7 +137,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-slate-50 flex flex-col">
-      <header className="bg-white border-b border-slate-200 px-8 py-4 sticky top-0 z-20">
+      <header className="bg-white border-b border-slate-200 px-8 py-4 sticky top-0 z-50">
         <div className="max-w-[1600px] mx-auto flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-slate-900">Scrumboard Medguia</h1>

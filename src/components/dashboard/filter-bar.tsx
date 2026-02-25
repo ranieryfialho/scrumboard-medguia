@@ -22,7 +22,7 @@ export function FilterBar({
   limparFiltros, temFiltroAtivo
 }: FilterBarProps) {
   return (
-    <div className="bg-white border-b border-slate-200 px-8 py-3 sticky top-[73px] z-10 shadow-sm animate-in slide-in-from-top-2">
+    <div className="bg-white border-b border-slate-200 px-8 py-3 sticky top-[73px] z-40 shadow-sm animate-in slide-in-from-top-2">
       <div className="max-w-[1600px] mx-auto flex flex-wrap items-center gap-4">
         <div className="relative flex-1 min-w-[200px] max-w-xs">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">

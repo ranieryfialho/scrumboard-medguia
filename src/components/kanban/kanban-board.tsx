@@ -20,7 +20,7 @@ interface KanbanBoardProps {
 const COLUNAS_FIXAS = [
   "Novos Leads", 
   "Em contato", 
-  "Não atende", 
+  "Recontato", 
   "Reunião agendada", 
   "Fechado",
   "Sem interesse",
@@ -137,7 +137,7 @@ export function KanbanBoard({ leads, onStatusChange }: KanbanBoardProps) {
         onDragEnd={handleDragEnd}
         onDragCancel={handleDragCancel}
       >
-        <div className="flex flex-1 w-full overflow-x-auto gap-6 pb-4 relative z-10 custom-scrollbar">
+        <div className="flex flex-1 w-full overflow-x-auto gap-6 pb-4 relative z-0 custom-scrollbar">
           {COLUNAS_FIXAS.map((coluna) => {
             const leadsDaColuna = leadsPorColuna[coluna] || [];
             return (
