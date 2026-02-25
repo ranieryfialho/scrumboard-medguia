@@ -98,39 +98,8 @@ export function KanbanBoard({ leads, onStatusChange }: KanbanBoardProps) {
   }, {} as Record<string, Lead[]>);
 
   return (
-    <div className="relative w-full flex flex-col">
+    <div className="relative w-full flex flex-col h-full">
       
-      {/* LEGENDA DO TERMÔMETRO DE SLA */}
-      <div className="flex flex-wrap items-center gap-6 mb-4 px-4 shrink-0 bg-white/60 py-2.5 rounded-lg border border-slate-200/60 w-max shadow-sm">
-        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mr-2">
-          Termômetro de Novos Leads:
-        </span>
-        
-        <div className="flex items-center gap-2">
-          <span className="relative flex h-2.5 w-2.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-          </span>
-          <span className="text-xs font-semibold text-slate-600">Até 24h (Quente)</span>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <span className="relative flex h-2.5 w-2.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
-          </span>
-          <span className="text-xs font-semibold text-slate-600">24h a 48h (Atenção)</span>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <span className="relative flex h-2.5 w-2.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500"></span>
-          </span>
-          <span className="text-xs font-semibold text-slate-600">Mais de 48h (Crítico)</span>
-        </div>
-      </div>
-
       {/* ÁREA DE DRAG AND DROP DAS COLUNAS */}
       <DndContext 
         sensors={sensors} 
@@ -138,11 +107,9 @@ export function KanbanBoard({ leads, onStatusChange }: KanbanBoardProps) {
         onDragEnd={handleDragEnd}
         onDragCancel={handleDragCancel}
       >
-        {/* A MÁGICA ACONTECE AQUI NA LINHA ABAIXO:
-          h-[calc(100vh-290px)] garante que a altura seja fixa na tela do usuário.
-          min-h-[450px] garante que nunca fique esmagado demais se a janela estiver muito pequena.
-        */}
-        <div className="flex w-full h-[calc(100vh-290px)] min-h-[450px] overflow-x-auto gap-6 pb-2 relative z-0 custom-scrollbar">
+        {/* Usamos flex-1 e min-h-0. Isso faz o quadro esticar até o limite máximo da tela 
+            e empurra a legenda exatamente para o rodapé, sem sobrar aquele espaço em branco! */}
+        <div className="flex-1 flex w-full min-h-0 overflow-x-auto gap-6 pb-2 relative z-0 custom-scrollbar">
           {COLUNAS_FIXAS.map((coluna) => {
             const leadsDaColuna = leadsPorColuna[coluna] || [];
             return (
@@ -172,6 +139,38 @@ export function KanbanBoard({ leads, onStatusChange }: KanbanBoardProps) {
         </DragOverlay>
       </DndContext>
 
+      {/* LEGENDA DO TERMÔMETRO DE SLA */}
+      <div className="flex flex-wrap items-center gap-6 mt-4 px-4 shrink-0 bg-white/60 py-2.5 rounded-lg border border-slate-200/60 w-max shadow-sm">
+        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mr-2">
+          Termômetro de Novos Leads:
+        </span>
+        
+        <div className="flex items-center gap-2">
+          <span className="relative flex h-2.5 w-2.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+          </span>
+          <span className="text-xs font-semibold text-slate-600">Até 24h (Quente)</span>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <span className="relative flex h-2.5 w-2.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
+          </span>
+          <span className="text-xs font-semibold text-slate-600">24h a 48h (Atenção)</span>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <span className="relative flex h-2.5 w-2.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500"></span>
+          </span>
+          <span className="text-xs font-semibold text-slate-600">Mais de 48h (Crítico)</span>
+        </div>
+      </div>
+
+      {/* MINIMAPA INFERIOR DIREITO */}
       <div className="fixed bottom-4 right-4 z-50 bg-white/80 backdrop-blur-md border border-slate-200 shadow-lg rounded-lg p-2 hidden md:flex flex-col gap-1 transition-all duration-300 opacity-40 hover:opacity-100">
         <div className="text-[8px] font-bold text-slate-400 uppercase tracking-wider text-center">Mapa</div>
         <div className="flex gap-1 h-16">
