@@ -35,6 +35,15 @@ export function KanbanBoard({ leads, onStatusChange, onSaveObs }: KanbanBoardPro
 
   useEffect(() => {
     setLocalLeads(leads);
+
+    // DEBUG — remova após confirmar que os leads estão chegando corretamente
+    const situacoesUnicas = [...new Set(leads.map(l => l.situacao))];
+    console.log(`[KanbanBoard] Total de leads recebidos: ${leads.length}`);
+    console.log(`[KanbanBoard] Situações únicas:`, situacoesUnicas);
+    const semColuna = leads.filter(l => !COLUNAS_FIXAS.includes(l.situacao || ""));
+    if (semColuna.length > 0) {
+      console.warn(`[KanbanBoard] ${semColuna.length} leads com situação fora das colunas:`, semColuna.map(l => l.situacao));
+    }
   }, [leads]);
 
   const sensors = useSensors(
@@ -91,9 +100,13 @@ export function KanbanBoard({ leads, onStatusChange, onSaveObs }: KanbanBoardPro
   const leadsAtivos = localLeads.filter(l => l.situacao !== 'Arquivado');
 
   const leadsPorColuna = leadsAtivos.reduce((acc, lead) => {
-    const situacao = COLUNAS_FIXAS.includes(lead.situacao || "") ? lead.situacao : COLUNAS_FIXAS[0]; 
-    if (!acc[situacao]) acc[situacao] = [];
-    acc[situacao].push(lead);
+    // CORRIGIDO: garante que a situação é sempre uma string válida das colunas fixas
+    const situacaoValida: string = (lead.situacao && COLUNAS_FIXAS.includes(lead.situacao))
+      ? lead.situacao
+      : "Novos Leads";
+
+    if (!acc[situacaoValida]) acc[situacaoValida] = [];
+    acc[situacaoValida].push(lead);
     return acc;
   }, {} as Record<string, Lead[]>);
 
@@ -137,7 +150,7 @@ export function KanbanBoard({ leads, onStatusChange, onSaveObs }: KanbanBoardPro
         </DragOverlay>
       </DndContext>
 
-      {/* LEGENDA DO TERMÔMETRO DE SLA (AGORA SOZINHA) */}
+      {/* LEGENDA DO TERMÔMETRO DE SLA */}
       <div className="flex flex-wrap items-center gap-6 mt-4 px-4 shrink-0 bg-white/60 py-2.5 rounded-lg border border-slate-200/60 w-max shadow-sm">
         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mr-2">
           Termômetro de Novos Leads:
