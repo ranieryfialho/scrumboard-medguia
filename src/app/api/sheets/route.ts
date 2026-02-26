@@ -22,11 +22,11 @@ async function fetchSheetData(sheets: any, spreadsheetId: string, sheetAlias: st
         else if (header) leadData[header] = row[colIndex] || '';
       });
 
-      leadData.nome = leadData['full name'] || leadData['first name'] || leadData['company_name'] || leadData['nome'] || 'Sem Nome';
-      leadData.cargo = leadData['qual_a_sua_especialidade_medica?'] || leadData['qual_a_sua_especialidade?'] || leadData['full_name'] || leadData['cargo'] || '';
-      leadData.whatsapp = leadData['telefone'] || leadData['qual_seu_numero_de_whatsapp?'] || leadData['phone_number'] || leadData['whatsapp'] || '';
-      leadData.email = leadData['email'] || '';
+      leadData.nome = leadData['full_name'] || leadData['full name'] || leadData['first name'] || leadData['nome'] || 'Sem Nome';
+      leadData.cargo = leadData['company_name'] || leadData['company name'] || leadData['qual_a_sua_especialidade_medica?'] || leadData['qual_a_sua_especialidade?'] || leadData['cargo'] || '';
+      leadData.whatsapp = leadData['phone_number'] || leadData['telefone'] || leadData['qual_seu_numero_de_whatsapp?'] || leadData['whatsapp'] || '';
       
+      leadData.email = leadData['email'] || '';
       leadData.created_time = leadData['created_time'] || leadData['created time'] || leadData['data de criacao'] || '';
       leadData.data_alteracao = leadData['data_alteracao'] || leadData['data de alteracao'] || '';
       
@@ -116,9 +116,9 @@ export async function POST(request: Request) {
 
     const sheets = google.sheets({ version: 'v4', auth });
 
-    // ==========================================
+    // =============================
     // CRIAÇÃO DE NOVO LEAD MANUAL
-    // ==========================================
+    // =============================
     if (action === 'create') {
       const spreadsheetId = process.env.GOOGLE_SHEET_ID_1; 
       if (!spreadsheetId) return NextResponse.json({ error: 'ID da Planilha 1 não configurado' }, { status: 500 });
@@ -148,16 +148,16 @@ export async function POST(request: Request) {
         }
       };
 
-      setCol(['nome', 'full_name', 'full name'], leadData?.nome || '');
+      setCol(['full_name', 'full name', 'first name', 'nome'], leadData?.nome || '');
       setCol(['email'], leadData?.email || '');
-      setCol(['cargo', 'qual_a_sua_especialidade_medica?', 'qual_a_sua_especialidade?'], leadData?.cargo || '');
-      setCol(['whatsapp', 'telefone', 'qual_seu_numero_de_whatsapp?'], leadData?.whatsapp || '');
+      setCol(['company_name', 'qual_a_sua_especialidade_medica?', 'cargo'], leadData?.cargo || '');
+      setCol(['phone_number', 'telefone', 'whatsapp'], leadData?.whatsapp || '');
+      
       setCol(['created_time', 'created time', 'data de criacao'], leadData?.created_time || '');
       setCol(['data_alteracao'], leadData?.data_alteracao || '');
-      setCol(['situacao', 'lead_status'], leadData?.situacao || 'Novos Leads');
+      setCol(['lead_status', 'situacao'], leadData?.situacao || 'Novos Leads');
       setCol(['origem'], leadData?.origem || 'Manual');
 
-      // Atualiza o cabeçalho se criamos novas colunas (ex: origem)
       if (headers.length > originalHeaderLength) {
         await sheets.spreadsheets.values.update({
           spreadsheetId, 
@@ -178,9 +178,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true });
     }
 
-    // ==========================================
-    // ATUALIZAÇÃO (STATUS OU OBSERVAÇÃO)
-    // ==========================================
+    // =======================
+    // STATUS OU OBSERVAÇÃO
+    // =======================
     if (!id) return NextResponse.json({ error: 'Faltam dados de ID para atualização' }, { status: 400 });
 
     const parts = id.split('-lead-');
