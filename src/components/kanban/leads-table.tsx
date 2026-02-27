@@ -25,7 +25,20 @@ const COLUNAS_DISPONIVEIS = [
   { id: "data_alteracao", label: "Última Alteração" },
 ];
 
+const COLUNAS_PADRAO = ["nome", "cargo", "whatsapp", "email", "situacao", "origem", "created_time"];
+
+// ── Chaves do localStorage ────────────────────────────────────────────────────
+const LS_COLUNAS   = "medguia_tabela_colunas";
+const LS_FILTROS   = "medguia_tabela_filtros";
+const LS_SORT      = "medguia_tabela_sort";
+
 type SortDir = "asc" | "desc" | null;
+
+// ColFilter serializado para JSON (Set → Array)
+interface ColFilterRaw {
+  selectedValues: string[];
+  invertMode: boolean;
+}
 
 interface ColFilter {
   search: string;
@@ -33,46 +46,85 @@ interface ColFilter {
   invertMode: boolean;
 }
 
-// ── Máscara de telefone ────────────────────────────────────────────────────────
+// ── Utilitários de localStorage ───────────────────────────────────────────────
+function lsGet<T>(key: string, fallback: T): T {
+  if (typeof window === "undefined") return fallback;
+  try {
+    const raw = window.localStorage.getItem(key);
+    if (!raw) return fallback;
+    return JSON.parse(raw) as T;
+  } catch {
+    return fallback;
+  }
+}
+
+function lsSet(key: string, value: unknown) {
+  try { localStorage.setItem(key, JSON.stringify(value)); } catch {}
+}
+
+// ── Leitores tipados ──────────────────────────────────────────────────────────
+function lerColunas(): string[] {
+  const saved = lsGet<string[]>(LS_COLUNAS, COLUNAS_PADRAO);
+  if (
+    Array.isArray(saved) &&
+    saved.length > 0 &&
+    saved.every(v => typeof v === "string" && COLUNAS_DISPONIVEIS.some(c => c.id === v))
+  ) return saved;
+  return COLUNAS_PADRAO;
+}
+
+function lerFiltros(): Record<string, ColFilter> {
+  const raw = lsGet<Record<string, ColFilterRaw>>(LS_FILTROS, {});
+  const result: Record<string, ColFilter> = {};
+  for (const [colId, f] of Object.entries(raw)) {
+    if (Array.isArray(f.selectedValues)) {
+      result[colId] = {
+        search: "",
+        selectedValues: new Set<string>(f.selectedValues),
+        invertMode: !!f.invertMode,
+      };
+    }
+  }
+  return result;
+}
+
+function lerSort(): { col: string | null; dir: SortDir } {
+  return lsGet<{ col: string | null; dir: SortDir }>(LS_SORT, { col: null, dir: null });
+}
+
+// Serializa colFilters para JSON (Set → Array, omite vazios)
+function serializarFiltros(filters: Record<string, ColFilter>): Record<string, ColFilterRaw> {
+  const result: Record<string, ColFilterRaw> = {};
+  for (const [colId, f] of Object.entries(filters)) {
+    if (f.selectedValues.size > 0) {
+      result[colId] = {
+        selectedValues: Array.from(f.selectedValues),
+        invertMode: f.invertMode,
+      };
+    }
+  }
+  return result;
+}
+
+// ── Helpers de display ────────────────────────────────────────────────────────
 function formatarTelefone(raw: string): string {
   if (!raw) return "";
-  // Remove prefixo "p:" que às vezes vem da API
   const limpo = raw.replace(/^p:?\s*/i, "").trim();
-  // Mantém apenas dígitos
   const nums = limpo.replace(/\D/g, "");
-
-  if (nums.length === 0) return limpo; // não é número, devolve original
-
-  // Com DDI 55 (Brasil)
+  if (nums.length === 0) return limpo;
   if (nums.startsWith("55") && nums.length >= 12) {
     const ddd  = nums.slice(2, 4);
     const rest = nums.slice(4);
     if (rest.length === 9) return `+55 (${ddd}) ${rest.slice(0, 5)}-${rest.slice(5)}`;
     if (rest.length === 8) return `+55 (${ddd}) ${rest.slice(0, 4)}-${rest.slice(4)}`;
   }
-
-  // Sem DDI — celular com 9 dígitos + DDD (11 dígitos)
-  if (nums.length === 11) {
-    return `(${nums.slice(0, 2)}) ${nums.slice(2, 7)}-${nums.slice(7)}`;
-  }
-  // Fixo com DDD (10 dígitos)
-  if (nums.length === 10) {
-    return `(${nums.slice(0, 2)}) ${nums.slice(2, 6)}-${nums.slice(6)}`;
-  }
-  // Celular sem DDD (9 dígitos)
-  if (nums.length === 9) {
-    return `${nums.slice(0, 5)}-${nums.slice(5)}`;
-  }
-  // Fixo sem DDD (8 dígitos)
-  if (nums.length === 8) {
-    return `${nums.slice(0, 4)}-${nums.slice(4)}`;
-  }
-
-  // Qualquer outro caso: devolve original sem o prefixo p:
+  if (nums.length === 11) return `(${nums.slice(0, 2)}) ${nums.slice(2, 7)}-${nums.slice(7)}`;
+  if (nums.length === 10) return `(${nums.slice(0, 2)}) ${nums.slice(2, 6)}-${nums.slice(6)}`;
+  if (nums.length === 9)  return `${nums.slice(0, 5)}-${nums.slice(5)}`;
+  if (nums.length === 8)  return `${nums.slice(0, 4)}-${nums.slice(4)}`;
   return limpo;
 }
 
-// ── Resolve e-mail / telefone (campos podem estar trocados na planilha) ────────
 function resolverContatos(lead: Lead) {
   let realEmail = "";
   let realPhone = "";
@@ -108,28 +160,67 @@ function displayValue(colId: string, val: string): string {
 
 // ── Componente principal ───────────────────────────────────────────────────────
 export function LeadsTable({ leads, onStatusChange }: LeadsTableProps) {
-  const [colunasVisiveis, setColunasVisiveis] = useState<string[]>([
-    "nome", "cargo", "whatsapp", "email", "situacao", "origem", "created_time",
-  ]);
 
-  const toggleColuna = (id: string) =>
-    setColunasVisiveis(prev =>
-      prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id]
-    );
+  // ── Estado com inicialização do localStorage ──────────────────────────────
+  const [colunasVisiveis, setColunasVisiveis] = useState<string[]>(() => lerColunas());
+  const [colFilters, setColFilters]           = useState<Record<string, ColFilter>>(() => lerFiltros());
+  const [sortCol, setSortCol]                 = useState<string | null>(() => lerSort().col);
+  const [sortDir, setSortDir]                 = useState<SortDir>(() => lerSort().dir);
 
-  const [sortCol, setSortCol] = useState<string | null>(null);
-  const [sortDir, setSortDir] = useState<SortDir>(null);
-
-  const handleSort = (colId: string) => {
-    if (sortCol !== colId) { setSortCol(colId); setSortDir("asc"); }
-    else if (sortDir === "asc") setSortDir("desc");
-    else { setSortCol(null); setSortDir(null); }
-  };
-
-  const [colFilters, setColFilters] = useState<Record<string, ColFilter>>({});
   const [openFilterCol, setOpenFilterCol] = useState<string | null>(null);
   const filterRef = useRef<HTMLDivElement>(null);
 
+  // ── Persistência automática ───────────────────────────────────────────────
+  // Colunas
+  const toggleColuna = (id: string) => {
+    setColunasVisiveis(prev => {
+      const next = prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id];
+      lsSet(LS_COLUNAS, next);
+      return next;
+    });
+  };
+
+  const restaurarColunasPadrao = () => {
+    setColunasVisiveis(COLUNAS_PADRAO);
+    lsSet(LS_COLUNAS, COLUNAS_PADRAO);
+  };
+
+  // Ordenação
+  const handleSort = (colId: string) => {
+    let newCol: string | null = colId;
+    let newDir: SortDir = "asc";
+    if (sortCol === colId && sortDir === "asc")  { newDir = "desc"; }
+    if (sortCol === colId && sortDir === "desc") { newCol = null; newDir = null; }
+    setSortCol(newCol);
+    setSortDir(newDir);
+    lsSet(LS_SORT, { col: newCol, dir: newDir });
+  };
+
+  // Filtros — helper interno que persiste após cada mudança
+  const atualizarFiltro = (colId: string, patch: Partial<ColFilter>) => {
+    setColFilters(prev => {
+      const cur = prev[colId] ?? { search: "", selectedValues: new Set<string>(), invertMode: false };
+      const next = { ...prev, [colId]: { ...cur, ...patch } };
+      lsSet(LS_FILTROS, serializarFiltros(next));
+      return next;
+    });
+  };
+
+  const limparFiltroColuna = (colId: string) => {
+    setColFilters(prev => {
+      const next = { ...prev };
+      delete next[colId];
+      lsSet(LS_FILTROS, serializarFiltros(next));
+      return next;
+    });
+  };
+
+  const limparTodosFiltros = () => {
+    setColFilters({});
+    lsSet(LS_FILTROS, {});
+  };
+
+  // Fecha dropdown ao clicar fora
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (filterRef.current && !filterRef.current.contains(e.target as Node))
@@ -139,19 +230,9 @@ export function LeadsTable({ leads, onStatusChange }: LeadsTableProps) {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
+  // ── Derivados ─────────────────────────────────────────────────────────────
   const getFilter = (colId: string): ColFilter =>
     colFilters[colId] ?? { search: "", selectedValues: new Set<string>(), invertMode: false };
-
-  const setFilter = (colId: string, patch: Partial<ColFilter>) =>
-    setColFilters(prev => {
-      const cur = prev[colId] ?? { search: "", selectedValues: new Set<string>(), invertMode: false };
-      return { ...prev, [colId]: { ...cur, ...patch } };
-    });
-
-  const clearFilter = (colId: string) =>
-    setColFilters(prev => { const next = { ...prev }; delete next[colId]; return next; });
-
-  const clearAllFilters = () => setColFilters({});
 
   const hasActiveFilter = (colId: string) => {
     const f = colFilters[colId];
@@ -194,6 +275,7 @@ export function LeadsTable({ leads, onStatusChange }: LeadsTableProps) {
 
   const colunasAtivas = COLUNAS_DISPONIVEIS.filter(c => colunasVisiveis.includes(c.id));
 
+  // ── Render ─────────────────────────────────────────────────────���──────────
   return (
     <div className="flex flex-col h-full bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
 
@@ -207,9 +289,10 @@ export function LeadsTable({ leads, onStatusChange }: LeadsTableProps) {
               {leadsProcessados.length !== leads.length && ` de ${leads.length}`} leads)
             </span>
           </h2>
+
           {totalActiveFilters > 0 && (
             <button
-              onClick={clearAllFilters}
+              onClick={limparTodosFiltros}
               className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-indigo-50 text-indigo-600 border border-indigo-200 hover:bg-indigo-100 transition-colors"
             >
               <X className="w-3 h-3" />
@@ -223,6 +306,9 @@ export function LeadsTable({ leads, onStatusChange }: LeadsTableProps) {
             <Button variant="outline" size="sm" className="h-8 flex items-center gap-2 bg-white hover:bg-slate-50 shrink-0">
               <Settings2 className="w-4 h-4 text-slate-500" />
               Colunas
+              <span className="ml-1 text-[11px] font-bold text-indigo-500">
+                {colunasVisiveis.length}/{COLUNAS_DISPONIVEIS.length}
+              </span>
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
@@ -239,6 +325,14 @@ export function LeadsTable({ leads, onStatusChange }: LeadsTableProps) {
                   <span className="text-sm text-slate-700">{col.label}</span>
                 </label>
               ))}
+            </div>
+            <div className="border-t border-slate-100 pt-3 flex justify-end">
+              <button
+                onClick={restaurarColunasPadrao}
+                className="text-xs text-slate-500 hover:text-indigo-600 font-medium transition-colors"
+              >
+                Restaurar padrão
+              </button>
             </div>
           </DialogContent>
         </Dialog>
@@ -268,21 +362,29 @@ export function LeadsTable({ leads, onStatusChange }: LeadsTableProps) {
                         </span>
                       </button>
                       <button
-                        onClick={e => { e.stopPropagation(); setOpenFilterCol(openFilterCol === col.id ? null : col.id); }}
-                        className={`px-2 py-3 transition-colors rounded-r ${isActive ? "text-indigo-600 bg-indigo-50 hover:bg-indigo-100" : "text-slate-400 hover:text-slate-600 hover:bg-slate-100 opacity-0 group-hover:opacity-100"}`}
+                        onClick={e => {
+                          e.stopPropagation();
+                          setOpenFilterCol(openFilterCol === col.id ? null : col.id);
+                        }}
+                        className={`px-2 py-3 transition-colors rounded-r ${
+                          isActive
+                            ? "text-indigo-600 bg-indigo-50 hover:bg-indigo-100"
+                            : "text-slate-400 hover:text-slate-600 hover:bg-slate-100 opacity-0 group-hover:opacity-100"
+                        }`}
                         title="Filtrar coluna"
                       >
                         <Filter className="w-3.5 h-3.5" />
                       </button>
                     </div>
+
                     {openFilterCol === col.id && (
                       <ColumnFilterDropdown
                         colId={col.id}
                         colLabel={col.label}
                         allValues={uniqueValues[col.id] ?? []}
                         filter={f}
-                        onFilterChange={patch => setFilter(col.id, patch)}
-                        onClear={() => clearFilter(col.id)}
+                        onFilterChange={patch => atualizarFiltro(col.id, patch)}
+                        onClear={() => limparFiltroColuna(col.id)}
                         onClose={() => setOpenFilterCol(null)}
                       />
                     )}
@@ -291,6 +393,7 @@ export function LeadsTable({ leads, onStatusChange }: LeadsTableProps) {
               })}
             </tr>
           </thead>
+
           <tbody>
             {leadsProcessados.length === 0 ? (
               <tr>
@@ -355,7 +458,6 @@ const ORIGEM_COLORS: Record<string, string> = {
   "Manual - LP":        "bg-violet-50  text-violet-700 border-violet-200",
   "Manual - Indicação": "bg-emerald-50 text-emerald-700 border-emerald-200",
   "Manual - Outro":     "bg-slate-100  text-slate-600  border-slate-200",
-  "Planilha Antiga":    "bg-amber-50   text-amber-700  border-amber-200",
   "BM Dr. Felipe":      "bg-sky-50     text-sky-700    border-sky-200",
   "BM MedGuia":         "bg-indigo-50  text-indigo-700 border-indigo-200",
 };
@@ -371,13 +473,13 @@ function OrigemBadge({ valor }: { valor: string }) {
 
 // ── Dropdown de filtro por coluna ──────────────────────────────────────────────
 interface DropdownProps {
-  colId:    string;
-  colLabel: string;
+  colId:          string;
+  colLabel:       string;
   allValues:      string[];
   filter:         ColFilter;
   onFilterChange: (patch: Partial<ColFilter>) => void;
-  onClear:  () => void;
-  onClose:  () => void;
+  onClear:        () => void;
+  onClose:        () => void;
 }
 
 function ColumnFilterDropdown({ colLabel, allValues, filter, onFilterChange, onClear, onClose }: DropdownProps) {
@@ -388,7 +490,7 @@ function ColumnFilterDropdown({ colLabel, allValues, filter, onFilterChange, onC
     [allValues, localSearch]
   );
 
-  const allVisibleSelected = visibleValues.every(v => filter.selectedValues.has(v));
+  const allVisibleSelected = visibleValues.length > 0 && visibleValues.every(v => filter.selectedValues.has(v));
   const someSelected = filter.selectedValues.size > 0;
 
   const toggleValue = (val: string) => {
@@ -405,20 +507,38 @@ function ColumnFilterDropdown({ colLabel, allValues, filter, onFilterChange, onC
   };
 
   return (
-    <div className="absolute z-50 mt-1 w-72 bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden" onClick={e => e.stopPropagation()}>
+    <div
+      className="absolute z-50 mt-1 w-72 bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden"
+      onClick={e => e.stopPropagation()}
+    >
+      {/* Header */}
       <div className="px-3 py-2.5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
-        <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">Filtrar: {colLabel}</span>
-        <button onClick={onClose} className="text-slate-400 hover:text-slate-600"><X className="w-4 h-4" /></button>
+        <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">
+          Filtrar: {colLabel}
+        </span>
+        <button onClick={onClose} className="text-slate-400 hover:text-slate-600">
+          <X className="w-4 h-4" />
+        </button>
       </div>
+
+      {/* Modo mostrar / ocultar */}
       <div className="px-3 py-2 border-b border-slate-100 flex items-center gap-2">
         <span className="text-xs text-slate-500 font-medium">Modo:</span>
-        <button onClick={() => onFilterChange({ invertMode: false })} className={`px-2.5 py-1 rounded text-xs font-semibold transition-colors ${!filter.invertMode ? "bg-indigo-600 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
+        <button
+          onClick={() => onFilterChange({ invertMode: false })}
+          className={`px-2.5 py-1 rounded text-xs font-semibold transition-colors ${!filter.invertMode ? "bg-indigo-600 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}
+        >
           Mostrar selecionados
         </button>
-        <button onClick={() => onFilterChange({ invertMode: true })} className={`px-2.5 py-1 rounded text-xs font-semibold transition-colors ${filter.invertMode ? "bg-red-500 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
+        <button
+          onClick={() => onFilterChange({ invertMode: true })}
+          className={`px-2.5 py-1 rounded text-xs font-semibold transition-colors ${filter.invertMode ? "bg-red-500 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}
+        >
           Ocultar selecionados
         </button>
       </div>
+
+      {/* Busca */}
       <div className="px-3 py-2 border-b border-slate-100">
         <div className="relative">
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
@@ -432,13 +552,20 @@ function ColumnFilterDropdown({ colLabel, allValues, filter, onFilterChange, onC
           />
         </div>
       </div>
+
+      {/* Selecionar todos */}
       <div className="px-3 py-1.5 border-b border-slate-100">
-        <button onClick={toggleAllVisible} className="flex items-center gap-2 text-xs text-indigo-600 font-semibold hover:text-indigo-800 transition-colors">
+        <button
+          onClick={toggleAllVisible}
+          className="flex items-center gap-2 text-xs text-indigo-600 font-semibold hover:text-indigo-800 transition-colors"
+        >
           {allVisibleSelected ? <CheckSquare className="w-3.5 h-3.5" /> : <Square className="w-3.5 h-3.5" />}
           {allVisibleSelected ? "Desmarcar todos" : "Selecionar todos"}
           {visibleValues.length !== allValues.length && ` (${visibleValues.length} visíveis)`}
         </button>
       </div>
+
+      {/* Lista de valores */}
       <div className="max-h-52 overflow-y-auto">
         {visibleValues.length === 0 ? (
           <p className="text-center text-xs text-slate-400 py-4">Nenhum valor encontrado</p>
@@ -456,15 +583,27 @@ function ColumnFilterDropdown({ colLabel, allValues, filter, onFilterChange, onC
           ))
         )}
       </div>
+
+      {/* Footer */}
       <div className="px-3 py-2 border-t border-slate-100 flex items-center justify-between bg-slate-50">
         <span className="text-[11px] text-slate-400">
-          {filter.selectedValues.size > 0 ? `${filter.selectedValues.size} selecionado${filter.selectedValues.size > 1 ? "s" : ""}` : "Nenhum selecionado"}
+          {filter.selectedValues.size > 0
+            ? `${filter.selectedValues.size} selecionado${filter.selectedValues.size > 1 ? "s" : ""}`
+            : "Nenhum selecionado"}
         </span>
         <div className="flex gap-2">
           {someSelected && (
-            <button onClick={onClear} className="text-xs text-slate-500 hover:text-red-500 font-medium transition-colors">Limpar</button>
+            <button
+              onClick={onClear}
+              className="text-xs text-slate-500 hover:text-red-500 font-medium transition-colors"
+            >
+              Limpar
+            </button>
           )}
-          <button onClick={onClose} className="text-xs px-3 py-1 bg-indigo-600 text-white rounded-md font-semibold hover:bg-indigo-700 transition-colors">
+          <button
+            onClick={onClose}
+            className="text-xs px-3 py-1 bg-indigo-600 text-white rounded-md font-semibold hover:bg-indigo-700 transition-colors"
+          >
             Aplicar
           </button>
         </div>

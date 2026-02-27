@@ -28,11 +28,12 @@ const STATUS_MAP: Record<string, string> = {
   'archived':            'Arquivado',
 };
 
-// Mapeamento de ID da planilha → nome de origem
-const SHEET_ORIGEM_MAP: Record<string, string> = {
-  '1MytlFLZlCxNuDPCIVuEz32_Zoy-SZLTUuzX0dGbOJ10': 'Planilha Antiga',
-  '1BoCjaRY_x1TntyPuEG9SFPAe3HAnlxZJ0heibtmWYLE': 'BM Dr. Felipe',
-  '11W-cBDvXyfJXdZDlQD58eKwXPzbEBzvPzJYJeVySxHQ': 'BM MedGuia',
+// ── Mapeamento sheetAlias/rangeName → origem exibida ──────────────────────────
+const SHEET_KEY_ORIGEM_MAP: Record<string, string> = {
+  'sheet1/Página1': 'BM MedGuia',
+  'sheet1/Página2': 'BM Dr. Felipe',
+  'sheet2/Página1': 'BM Dr. Felipe',
+  'sheet3/Página1': 'BM MedGuia',
 };
 
 function normalizarStatus(rawStatus: string | undefined): string {
@@ -43,6 +44,38 @@ function normalizarStatus(rawStatus: string | undefined): string {
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "");
   return STATUS_MAP[key] ?? 'Novos Leads';
+}
+
+// ── Detecta o tipo de origem manual a partir da observação ────────────────────
+//
+// Regras (verificadas em ordem, sem acento, sem maiúsculas):
+//   LP / landing page / landingpage   → 'Manual - LP'
+//   indicação / indicacao / indicado  → 'Manual - Indicação'
+//   Se já tem sufixo (ex: 'Manual - LP') mantém como está.
+//   Caso contrário mantém 'Manual'.
+//
+function enriquecerOrigemManual(origemAtual: string, observacoes: string): string {
+  // Se já foi escolhido um subtipo no formulário (ex: 'Manual - LP'), respeita.
+  if (origemAtual !== 'Manual') return origemAtual;
+
+  if (!observacoes) return 'Manual';
+
+  const obs = observacoes
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, ""); // remove acentos para comparação
+
+  // Landing Page
+  if (/\blp\b/.test(obs) || /landing\s*page/.test(obs)) {
+    return 'Manual - LP';
+  }
+
+  // Indicação
+  if (/indica[çc][aã]o/.test(obs) || /\bindicado\b/.test(obs) || /\bindicada\b/.test(obs)) {
+    return 'Manual - Indicação';
+  }
+
+  return 'Manual';
 }
 
 async function fetchSheetData(
@@ -63,8 +96,8 @@ async function fetchSheetData(
         : ''
     );
 
-    // Origem baseada no ID da planilha (sobrescreve qualquer valor da coluna)
-    const origemDaPlanilha = SHEET_ORIGEM_MAP[spreadsheetId] || '';
+    const sheetKey = `${sheetAlias}/${rangeName}`;
+    const origemDaPlanilha = SHEET_KEY_ORIGEM_MAP[sheetKey] || '';
 
     return rows.slice(1).map((row: any[], index: number) => {
       const leadData: any = { id: `${sheetAlias}_${rangeName}-lead-${index}` };
@@ -75,46 +108,23 @@ async function fetchSheetData(
         else if (header) leadData[header] = valor;
       });
 
-      // ══════════════════════════════════════════════════════════════
-      // MAPEAMENTO EXPLÍCITO POR PLANILHA (baseado nos headers reais)
-      //
-      // sheet1/Página1:
-      //   full_name    → ESPECIALIDADE (campo trocado na origem pelo Meta Ads)
-      //   company_name → NOME
-      //
-      // sheet1/Página2 e sheet2/Página1:
-      //   first name               → NOME
-      //   qual_a_sua_especialidade? → ESPECIALIDADE
-      //
-      // sheet3/Página1:
-      //   full name                        → NOME
-      //   qual_a_sua_especialidade_medica?  → ESPECIALIDADE
-      //
-      // leads manuais (origem = 'Manual', campos: nome, cargo):
-      //   nome  → NOME
-      //   cargo → ESPECIALIDADE
-      // ══════════════════════════════════════════════════════════════
-
-      const sheetKey = `${sheetAlias}/${rangeName}`;
+      // ══════════════════════════════════════════════════════════════════════
+      // MAPEAMENTO EXPLÍCITO POR PLANILHA/ABA
+      // ══════════════════════════════════════════════════════════════════════
 
       if (sheetKey === 'sheet1/Página1') {
-        // ⚠️ Nesta planilha os campos estão TROCADOS na origem:
-        // full_name contém a especialidade, company_name contém o nome
         leadData.nome  = leadData['company_name'] || leadData['cargo'] || leadData['nome'] || 'Sem Nome';
         leadData.cargo = leadData['full_name']    || leadData['cargo'] || '';
 
       } else if (sheetKey === 'sheet1/Página2' || sheetKey === 'sheet2/Página1') {
-        // first name = nome | qual_a_sua_especialidade? = especialidade
         leadData.nome  = leadData['first name']                || leadData['first_name'] || 'Sem Nome';
         leadData.cargo = leadData['qual_a_sua_especialidade?'] || leadData['qual_a_sua_especialidade'] || '';
 
       } else if (sheetKey === 'sheet3/Página1') {
-        // full name = nome | qual_a_sua_especialidade_medica? = especialidade
         leadData.nome  = leadData['full name']                        || leadData['full_name'] || 'Sem Nome';
         leadData.cargo = leadData['qual_a_sua_especialidade_medica?'] || leadData['qual_a_sua_especialidade_medica'] || '';
 
       } else {
-        // Fallback genérico para planilhas futuras
         leadData.nome =
           leadData['full_name']    ||
           leadData['full name']    ||
@@ -161,15 +171,25 @@ async function fetchSheetData(
         leadData['data de alteracao'] ||
         '';
 
-      // OBSERVAÇÕES
+      // OBSERVAÇÕES — precisa ser resolvido ANTES da origem
       leadData.observacoes = leadData['observacoes'] || leadData['observacao'] || '';
 
-      // ORIGEM — usa o mapeamento por ID de planilha;
-      // preserva 'Manual' para leads adicionados manualmente pelo painel
+      // ── ORIGEM ───────��────────────────────────────────────────────────────
+      // Prioridade:
+      //   1. Lead de planilha (não manual) → usa SHEET_KEY_ORIGEM_MAP
+      //   2. Lead manual com subtipo já definido no form → mantém (ex: 'Manual - LP')
+      //   3. Lead manual sem subtipo → tenta detectar pelo campo observacoes
+      // ─────────────────────────────────────────────────────────────────────
       const origemExistente = leadData['origem'] || '';
-      leadData.origem = origemExistente === 'Manual'
-        ? 'Manual'
-        : (origemDaPlanilha || origemExistente || '');
+
+      if (origemExistente.startsWith('Manual')) {
+        // Lead adicionado manualmente pelo painel:
+        // enriquece com base na observação caso seja apenas 'Manual' genérico
+        leadData.origem = enriquecerOrigemManual(origemExistente, leadData.observacoes);
+      } else {
+        // Lead vindo de planilha: usa o mapa de planilha
+        leadData.origem = origemDaPlanilha || origemExistente || '';
+      }
 
       // CRM
       const crmRaw =
@@ -421,6 +441,29 @@ export async function POST(request: Request) {
         range: `${rangeName}!${getColLetter(obsIdx)}${sheetRow}`,
         values: [[observacoes]],
       });
+
+      // ── Atualiza a origem na planilha também quando a observação mudar ────
+      // Isso garante que se o usuário editar a observação de um lead 'Manual',
+      // a coluna origem da planilha também reflete o novo subtipo detectado.
+      const origemAtualIdx = normalizedHeaders.indexOf('origem');
+      if (origemAtualIdx !== -1) {
+        // Lê a origem atual desta linha para saber se é um lead manual
+        const rowResponse = await sheets.spreadsheets.values.get({
+          spreadsheetId,
+          range: `${rangeName}!${getColLetter(origemAtualIdx)}${sheetRow}`,
+        });
+        const origemNaPlanilha: string = rowResponse.data.values?.[0]?.[0] || '';
+
+        if (origemNaPlanilha.startsWith('Manual')) {
+          const novaOrigem = enriquecerOrigemManual(origemNaPlanilha, observacoes);
+          if (novaOrigem !== origemNaPlanilha) {
+            dataToUpdate.push({
+              range: `${rangeName}!${getColLetter(origemAtualIdx)}${sheetRow}`,
+              values: [[novaOrigem]],
+            });
+          }
+        }
+      }
     }
 
     if (dataToUpdate.length > 0) {
