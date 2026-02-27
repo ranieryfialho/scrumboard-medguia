@@ -28,6 +28,13 @@ const STATUS_MAP: Record<string, string> = {
   'archived':            'Arquivado',
 };
 
+// Mapeamento de ID da planilha → nome de origem
+const SHEET_ORIGEM_MAP: Record<string, string> = {
+  '1MytlFLZlCxNuDPCIVuEz32_Zoy-SZLTUuzX0dGbOJ10': 'Planilha Antiga',
+  '1BoCjaRY_x1TntyPuEG9SFPAe3HAnlxZJ0heibtmWYLE': 'BM Dr. Felipe',
+  '11W-cBDvXyfJXdZDlQD58eKwXPzbEBzvPzJYJeVySxHQ': 'BM MedGuia',
+};
+
 function normalizarStatus(rawStatus: string | undefined): string {
   if (!rawStatus || rawStatus.trim() === '') return 'Novos Leads';
   const key = rawStatus
@@ -35,7 +42,7 @@ function normalizarStatus(rawStatus: string | undefined): string {
     .trim()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "");
-  return STATUS_MAP[key] ?? 'Novos Leads'; // ← qualquer valor desconhecido vira Novos Leads
+  return STATUS_MAP[key] ?? 'Novos Leads';
 }
 
 async function fetchSheetData(
@@ -56,45 +63,85 @@ async function fetchSheetData(
         : ''
     );
 
+    // Origem baseada no ID da planilha (sobrescreve qualquer valor da coluna)
+    const origemDaPlanilha = SHEET_ORIGEM_MAP[spreadsheetId] || '';
+
     return rows.slice(1).map((row: any[], index: number) => {
       const leadData: any = { id: `${sheetAlias}_${rangeName}-lead-${index}` };
 
       headers.forEach((header: string, colIndex: number) => {
-        // A API do Sheets não retorna células vazias no final da linha,
-        // por isso usamos ?? '' para garantir que colunas ausentes virem string vazia
         const valor = row[colIndex] ?? '';
         if (header === 'id') leadData['meta_id'] = valor;
         else if (header) leadData[header] = valor;
       });
 
-      // NOME
-      leadData.nome =
-        leadData['full_name']  ||
-        leadData['full name']  ||
-        leadData['first_name'] ||
-        leadData['first name'] ||  // ← header real da planilha BM Dr. Felipe Brasil
-        leadData['nome']       ||
-        'Sem Nome';
+      // ══════════════════════════════════════════════════════════════
+      // MAPEAMENTO EXPLÍCITO POR PLANILHA (baseado nos headers reais)
+      //
+      // sheet1/Página1:
+      //   full_name    → ESPECIALIDADE (campo trocado na origem pelo Meta Ads)
+      //   company_name → NOME
+      //
+      // sheet1/Página2 e sheet2/Página1:
+      //   first name               → NOME
+      //   qual_a_sua_especialidade? → ESPECIALIDADE
+      //
+      // sheet3/Página1:
+      //   full name                        → NOME
+      //   qual_a_sua_especialidade_medica?  → ESPECIALIDADE
+      //
+      // leads manuais (origem = 'Manual', campos: nome, cargo):
+      //   nome  → NOME
+      //   cargo → ESPECIALIDADE
+      // ══════════════════════════════════════════════════════════════
 
-      // ESPECIALIDADE
-      leadData.cargo =
-        leadData['company_name']                     ||
-        leadData['company name']                     ||
-        leadData['qual_a_sua_especialidade_medica?'] ||
-        leadData['qual_a_sua_especialidade_medica']  ||
-        leadData['qual_a_sua_especialidade?']        ||
-        leadData['qual_a_sua_especialidade']         ||
-        leadData['cargo']                            ||
-        '';
+      const sheetKey = `${sheetAlias}/${rangeName}`;
+
+      if (sheetKey === 'sheet1/Página1') {
+        // ⚠️ Nesta planilha os campos estão TROCADOS na origem:
+        // full_name contém a especialidade, company_name contém o nome
+        leadData.nome  = leadData['company_name'] || leadData['cargo'] || leadData['nome'] || 'Sem Nome';
+        leadData.cargo = leadData['full_name']    || leadData['cargo'] || '';
+
+      } else if (sheetKey === 'sheet1/Página2' || sheetKey === 'sheet2/Página1') {
+        // first name = nome | qual_a_sua_especialidade? = especialidade
+        leadData.nome  = leadData['first name']                || leadData['first_name'] || 'Sem Nome';
+        leadData.cargo = leadData['qual_a_sua_especialidade?'] || leadData['qual_a_sua_especialidade'] || '';
+
+      } else if (sheetKey === 'sheet3/Página1') {
+        // full name = nome | qual_a_sua_especialidade_medica? = especialidade
+        leadData.nome  = leadData['full name']                        || leadData['full_name'] || 'Sem Nome';
+        leadData.cargo = leadData['qual_a_sua_especialidade_medica?'] || leadData['qual_a_sua_especialidade_medica'] || '';
+
+      } else {
+        // Fallback genérico para planilhas futuras
+        leadData.nome =
+          leadData['full_name']    ||
+          leadData['full name']    ||
+          leadData['first_name']   ||
+          leadData['first name']   ||
+          leadData['company_name'] ||
+          leadData['nome']         ||
+          'Sem Nome';
+
+        leadData.cargo =
+          leadData['qual_a_sua_especialidade_medica?'] ||
+          leadData['qual_a_sua_especialidade_medica']  ||
+          leadData['qual_a_sua_especialidade?']        ||
+          leadData['qual_a_sua_especialidade']         ||
+          leadData['company_name']                     ||
+          leadData['cargo']                            ||
+          '';
+      }
 
       // WHATSAPP
       leadData.whatsapp =
-        leadData['phone_number']                     ||
-        leadData['telefone']                         ||
-        leadData['qual_seu_numero_de_whatsapp?']     ||
-        leadData['qual_seu_numero_de_whatsapp']      ||
-        leadData['qual_seu_numero']                  ||
-        leadData['whatsapp']                         ||
+        leadData['phone_number']                 ||
+        leadData['telefone']                     ||
+        leadData['qual_seu_numero_de_whatsapp?'] ||
+        leadData['qual_seu_numero_de_whatsapp']  ||
+        leadData['qual_seu_numero']              ||
+        leadData['whatsapp']                     ||
         '';
 
       // EMAIL
@@ -117,8 +164,12 @@ async function fetchSheetData(
       // OBSERVAÇÕES
       leadData.observacoes = leadData['observacoes'] || leadData['observacao'] || '';
 
-      // ORIGEM
-      leadData.origem = leadData['origem'] || '';
+      // ORIGEM — usa o mapeamento por ID de planilha;
+      // preserva 'Manual' para leads adicionados manualmente pelo painel
+      const origemExistente = leadData['origem'] || '';
+      leadData.origem = origemExistente === 'Manual'
+        ? 'Manual'
+        : (origemDaPlanilha || origemExistente || '');
 
       // CRM
       const crmRaw =
@@ -128,9 +179,7 @@ async function fetchSheetData(
         leadData.tipo = `CRM: ${crmRaw}`;
       }
 
-      // STATUS — normaliza CREATED, '', undefined, etc. → "Novos Leads"
-      // A coluna lead_status é a última coluna e pode estar AUSENTE no array
-      // quando a célula está vazia, por isso o fallback para '' é essencial
+      // STATUS
       const rawStatus = leadData['lead_status'] || leadData['situacao'] || '';
       leadData.situacao = normalizarStatus(rawStatus);
 

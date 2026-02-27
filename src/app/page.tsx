@@ -3,8 +3,9 @@
 import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { KanbanBoard } from "@/components/kanban/kanban-board";
+import { LeadsTable } from "@/components/kanban/leads-table";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
-import { RefreshCcw, Activity } from "lucide-react";
+import { RefreshCcw, Activity, LayoutGrid, Table as TableIcon } from "lucide-react";
 import { DndContext } from "@dnd-kit/core";
 import { LeadCard } from "@/components/kanban/lead-card";
 
@@ -13,15 +14,11 @@ import { FilterBar } from "@/components/dashboard/filter-bar";
 import { DashboardTab } from "@/components/dashboard/dashboard-tab";
 import { Sidebar } from "@/components/layout/sidebar";
 
-// Utilitário para converter qualquer formato de data para um objeto Date válido
 function parseDateSegura(d: string): Date | null {
   if (!d) return null;
   try {
-    // Formato ISO com offset: "2026-01-22T17:18:41-03:00" → new Date() já lida corretamente
-    // Formato BR: "26/02/2026, 14:43:46" ou "26/02/2026" → JS lê como MM/DD sem conversão
     const matchBR = d.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
     if (matchBR) {
-      // Converte DD/MM/YYYY → YYYY-MM-DD para evitar interpretação americana
       const iso = `${matchBR[3]}-${matchBR[2]}-${matchBR[1]}`;
       const dt = new Date(iso);
       return isNaN(dt.getTime()) ? null : dt;
@@ -42,6 +39,7 @@ export default function Home() {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [calendarMonth, setCalendarMonth] = useState<Date>(new Date());
   const [abaAtiva, setAbaAtiva] = useState("dashboard");
+  const [viewMode, setViewMode] = useState<"kanban" | "tabela">("kanban");
 
   const [buscaNome, setBuscaNome] = useState("");
   const [filtroEspecialidade, setFiltroEspecialidade] = useState("");
@@ -57,9 +55,7 @@ export default function Home() {
         cache: 'no-store',
         headers: { 'Pragma': 'no-cache', 'Cache-Control': 'no-cache' }
       });
-
       const data = await res.json();
-
       if (Array.isArray(data)) {
         setLeads(data);
         setUltimaAtualizacao(new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }));
@@ -86,7 +82,6 @@ export default function Home() {
     setLeads(prevLeads => prevLeads.map(lead =>
       lead.id === leadId ? { ...lead, situacao: novaSituacao, data_alteracao: dataAtual } : lead
     ));
-
     try {
       await fetch('/api/sheets', {
         method: 'POST',
@@ -102,7 +97,6 @@ export default function Home() {
     setLeads(prevLeads => prevLeads.map(lead =>
       lead.id === leadId ? { ...lead, observacoes } : lead
     ));
-
     try {
       await fetch('/api/sheets', {
         method: 'POST',
@@ -127,7 +121,8 @@ export default function Home() {
       situacao: 'Novos Leads',
       created_time: dataAtual,
       data_alteracao: dataAtual,
-      origem: 'Manual'
+      // Usa a origem selecionada no formulário (ex: 'Manual - LP', 'Manual - Indicação')
+      origem: novoLeadData.origem || 'Manual',
     };
 
     setLeads(prev => [chavesCompletas, ...prev]);
@@ -156,13 +151,11 @@ export default function Home() {
       try {
         const dateObj = parseDateSegura(d);
         if (!dateObj) return null;
-        // Filtra datas futuras — não faz sentido mostrar meses que ainda não chegaram
         if (dateObj > hoje) return null;
         const m = dateObj.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
         return m.charAt(0).toUpperCase() + m.slice(1);
       } catch { return null; }
     }).filter(Boolean) as string[];
-    // Ordena do mais recente para o mais antigo
     return Array.from(new Set(meses)).sort((a, b) => {
       const da = parseDateSegura('01 ' + a);
       const db = parseDateSegura('01 ' + b);
@@ -177,7 +170,6 @@ export default function Home() {
       const matchEspec = filtroEspecialidade
         ? normalizarEspecialidade(lead.cargo) === filtroEspecialidade
         : true;
-
       let matchMes = true;
       if (filtroMes) {
         if (lead.created_time) {
@@ -186,15 +178,10 @@ export default function Home() {
             if (dateObj) {
               const m = dateObj.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
               matchMes = (m.charAt(0).toUpperCase() + m.slice(1)) === filtroMes;
-            } else {
-              matchMes = false;
-            }
+            } else { matchMes = false; }
           } catch { matchMes = false; }
-        } else {
-          matchMes = false;
-        }
+        } else { matchMes = false; }
       }
-
       return matchNome && matchEspec && matchMes;
     });
   }, [leads, buscaNome, filtroEspecialidade, filtroMes]);
@@ -234,7 +221,7 @@ export default function Home() {
 
   const getTituloPagina = () => {
     if (abaAtiva === 'dashboard') return 'Dashboard';
-    if (abaAtiva === 'kanban') return 'Quadro Kanban';
+    if (abaAtiva === 'kanban') return 'Gestão de Leads';
     if (abaAtiva === 'arquivados') return 'Leads Arquivados';
     return '';
   };
@@ -264,7 +251,6 @@ export default function Home() {
               <RefreshCcw className={`w-4 h-4 mr-2 ${loading || isSyncing ? 'animate-spin' : ''}`} />
               {loading ? 'Carregando...' : isSyncing ? 'Sincronizando...' : 'Sincronizar Dados'}
             </Button>
-
             <div className="flex items-center gap-1.5 text-[10px] text-slate-500 font-medium pr-1">
               <span className="relative flex h-1.5 w-1.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -281,13 +267,15 @@ export default function Home() {
             filtroEspecialidade={filtroEspecialidade} setFiltroEspecialidade={setFiltroEspecialidade}
             filtroMes={filtroMes} setFiltroMes={setFiltroMes}
             especialidadesUnicas={especialidadesUnicas} mesesUnicos={mesesUnicos}
-            limparFiltros={limparFiltros} temFiltroAtivo={buscaNome !== "" || filtroEspecialidade !== "" || filtroMes !== ""}
+            limparFiltros={limparFiltros}
+            temFiltroAtivo={buscaNome !== "" || filtroEspecialidade !== "" || filtroMes !== ""}
             onAddLead={adicionarLeadManual}
           />
         )}
 
         <div className="flex-1 overflow-hidden relative">
           <Tabs value={abaAtiva} className="h-full flex flex-col">
+
             <TabsContent value="dashboard" className="flex-1 overflow-y-auto p-8 pt-2 m-0 h-full">
               <DashboardTab
                 kpis={kpis}
@@ -299,19 +287,46 @@ export default function Home() {
               />
             </TabsContent>
 
-            <TabsContent value="kanban" className="flex-1 overflow-hidden p-8 pt-2 m-0 h-full">
-              {loading && leads.length === 0 ? (
-                <div className="h-full flex items-center justify-center text-slate-500">
-                  <RefreshCcw className="w-8 h-8 animate-spin text-indigo-500 mr-2" />
-                  <p>Iniciando o sistema...</p>
+            <TabsContent value="kanban" className="flex-1 flex flex-col overflow-hidden p-8 pt-2 m-0 h-full">
+              {/* Toggle Kanban / Tabela */}
+              <div className="flex justify-end items-center mb-4 shrink-0">
+                <div className="flex items-center bg-slate-200/60 p-1 rounded-lg shadow-inner">
+                  <button
+                    onClick={() => setViewMode("kanban")}
+                    className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-semibold transition-all duration-200 ${viewMode === "kanban" ? "bg-white text-indigo-600 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+                  >
+                    <LayoutGrid className="w-4 h-4" />
+                    Quadro
+                  </button>
+                  <button
+                    onClick={() => setViewMode("tabela")}
+                    className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-semibold transition-all duration-200 ${viewMode === "tabela" ? "bg-white text-indigo-600 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+                  >
+                    <TableIcon className="w-4 h-4" />
+                    Lista
+                  </button>
                 </div>
-              ) : (
-                <KanbanBoard
-                  leads={leadsFiltrados}
-                  onStatusChange={atualizarSituacaoLead}
-                  onSaveObs={salvarObservacaoLead}
-                />
-              )}
+              </div>
+
+              <div className="flex-1 min-h-0">
+                {loading && leads.length === 0 ? (
+                  <div className="h-full flex items-center justify-center text-slate-500">
+                    <RefreshCcw className="w-8 h-8 animate-spin text-indigo-500 mr-2" />
+                    <p>Iniciando o sistema...</p>
+                  </div>
+                ) : viewMode === "kanban" ? (
+                  <KanbanBoard
+                    leads={leadsFiltrados}
+                    onStatusChange={atualizarSituacaoLead}
+                    onSaveObs={salvarObservacaoLead}
+                  />
+                ) : (
+                  <LeadsTable
+                    leads={leadsFiltrados}
+                    onStatusChange={atualizarSituacaoLead}
+                  />
+                )}
+              </div>
             </TabsContent>
 
             <TabsContent value="arquivados" className="flex-1 overflow-y-auto p-8 pt-2 m-0 h-full">
@@ -339,6 +354,7 @@ export default function Home() {
                 </DndContext>
               )}
             </TabsContent>
+
           </Tabs>
         </div>
 
