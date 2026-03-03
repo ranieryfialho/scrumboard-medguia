@@ -6,8 +6,9 @@ import { generateReportMetrics } from "@/utils/report-metrics";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Activity, Users, Percent, Target } from "lucide-react";
+import { Activity, Users, Percent, Target, Download } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 const MESES = [
   { valor: 1, nome: "Janeiro" }, { valor: 2, nome: "Fevereiro" }, { valor: 3, nome: "Março" },
@@ -21,7 +22,7 @@ const ANOS = [2024, 2025, 2026, 2027];
 export default function RelatoriosPage() {
   const [loading, setLoading] = useState(true);
   const [leadsRaw, setLeadsRaw] = useState<Lead[]>([]);
-  
+
   const [mesSelecionado, setMesSelecionado] = useState<number>(2);
   const [anoSelecionado, setAnoSelecionado] = useState<number>(2026);
 
@@ -53,10 +54,64 @@ export default function RelatoriosPage() {
   // Lógica segura para descobrir o melhor canal SEM usar .sort() in-place no HTML:
   let melhorCanalNome = '-';
   if (metrics && metrics.porFonte && metrics.porFonte.length > 0) {
-    const copiaSegura = [...metrics.porFonte]; // Copia o array congelado pelo React
+    const copiaSegura = [...metrics.porFonte];
     copiaSegura.sort((a, b) => Number(b.taxa) - Number(a.taxa));
     melhorCanalNome = copiaSegura[0].nome;
   }
+
+  // --- EXPORTAÇÃO PARA GAMMA APP ---
+  // Usa exatamente os mesmos dados que estão renderizados na tela (metrics já filtrado por mês/ano)
+  const handleExportGamma = () => {
+    const nomeMes = MESES.find(m => m.valor === mesSelecionado)?.nome ?? String(mesSelecionado);
+
+    let md = `# Resultados de Tráfego Pago — ${nomeMes} ${anoSelecionado}\n\n`;
+    md += `> Relatório gerado automaticamente pelo MedGuia Scrumboard\n\n`;
+
+    // Visão Geral
+    md += `## Visão Geral\n\n`;
+    md += `| Métrica | Valor |\n`;
+    md += `|---|---|\n`;
+    md += `| Total de Leads | ${metrics.geral.totalLeads} |\n`;
+    md += `| Conversões (Ativos/Fechados) | ${metrics.geral.conversoes} |\n`;
+    md += `| Taxa Geral de Conversão | ${metrics.geral.taxaConversaoGeral}% |\n`;
+    md += `| Melhor Canal | ${melhorCanalNome} |\n\n`;
+
+    // Desempenho por Fonte
+    md += `## Comparativo: Volume vs Conversão por Fonte\n\n`;
+    md += `| Fonte | Leads Gerados | Conversões | Taxa de Conversão |\n`;
+    md += `|---|---|---|---|\n`;
+    metrics.porFonte.forEach(f => {
+      md += `| ${f.nome} | ${f.leads} | ${f.conversoes} | ${f.taxa}% |\n`;
+    });
+    md += `\n`;
+
+    // Distribuição por Dia da Semana
+    md += `## Distribuição por Dia da Semana\n\n`;
+    md += `| Dia da Semana | Leads |\n`;
+    md += `|---|---|\n`;
+    metrics.porDia.forEach(d => {
+      md += `| ${d.nome} | ${d.leads} |\n`;
+    });
+    md += `\n`;
+
+    // Desempenho Detalhado por Anúncio
+    md += `## Desempenho Detalhado por Anúncio\n\n`;
+    md += `| Fonte (Campanha) | Nome do Anúncio | Leads Gerados | Conversões | Taxa de Conversão |\n`;
+    md += `|---|---|---|---|---|\n`;
+    metrics.porAnuncio.forEach(a => {
+      md += `| ${a.fonte} | ${a.nome} | ${a.leads} | ${a.conversoes} | ${a.taxa}% |\n`;
+    });
+    md += `\n`;
+
+    // Download do arquivo .md
+    const blob = new Blob([md], { type: "text/markdown;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `relatorio-medguia-${nomeMes.toLowerCase()}-${anoSelecionado}.md`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="p-8 space-y-8 max-w-7xl mx-auto">
@@ -70,8 +125,8 @@ export default function RelatoriosPage() {
         </div>
 
         <div className="flex items-center gap-2">
-          <Select 
-            value={mesSelecionado.toString()} 
+          <Select
+            value={mesSelecionado.toString()}
             onValueChange={(v) => setMesSelecionado(Number(v))}
           >
             <SelectTrigger className="w-[140px]">
@@ -86,8 +141,8 @@ export default function RelatoriosPage() {
             </SelectContent>
           </Select>
 
-          <Select 
-            value={anoSelecionado.toString()} 
+          <Select
+            value={anoSelecionado.toString()}
             onValueChange={(v) => setAnoSelecionado(Number(v))}
           >
             <SelectTrigger className="w-[100px]">
@@ -101,6 +156,18 @@ export default function RelatoriosPage() {
               ))}
             </SelectContent>
           </Select>
+
+          {/* BOTÃO EXPORTAR PARA GAMMA — só aparece quando há dados na tela */}
+          {metrics.geral.totalLeads > 0 && (
+            <Button
+              onClick={handleExportGamma}
+              variant="outline"
+              className="flex items-center gap-2 border-slate-300 hover:bg-slate-50"
+            >
+              <Download className="w-4 h-4" />
+              Exportar Dados
+            </Button>
+          )}
         </div>
       </div>
 
@@ -124,7 +191,7 @@ export default function RelatoriosPage() {
                 <p className="text-xs text-muted-foreground">Leads qualificados gerados</p>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
                 <CardTitle className="text-sm font-medium">Conversões (Ativos/Fechados)</CardTitle>
@@ -153,7 +220,6 @@ export default function RelatoriosPage() {
                 <Activity className="w-4 h-4 text-primary" />
               </CardHeader>
               <CardContent>
-                {/* JSX Limpo e Seguro */}
                 <div className="text-xl font-bold text-primary truncate" title={melhorCanalNome}>
                   {melhorCanalNome}
                 </div>
@@ -188,7 +254,7 @@ export default function RelatoriosPage() {
                 <CardTitle>Distribuição por Dia da Semana</CardTitle>
               </CardHeader>
               <CardContent className="h-[350px]">
-                 <ResponsiveContainer width="100%" height="100%">
+                <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={metrics.porDia} margin={{ top: 20, right: 30, left: -20, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
                     <XAxis dataKey="nome" tick={{fontSize: 12}} />
