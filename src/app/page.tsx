@@ -13,6 +13,7 @@ import { normalizarEspecialidade } from "@/utils/formatters";
 import { FilterBar } from "@/components/dashboard/filter-bar";
 import { DashboardTab } from "@/components/dashboard/dashboard-tab";
 import { Sidebar } from "@/components/layout/sidebar";
+import RelatoriosPage from "@/app/relatorios/page";
 
 function parseDateSegura(d: string): Date | null {
   if (!d) return null;
@@ -223,6 +224,7 @@ export default function Home() {
     if (abaAtiva === 'dashboard') return 'Dashboard';
     if (abaAtiva === 'kanban') return 'Gestão de Leads';
     if (abaAtiva === 'arquivados') return 'Leads Arquivados';
+    if (abaAtiva === 'relatorios') return 'Relatórios Analíticos';
     return '';
   };
 
@@ -261,7 +263,7 @@ export default function Home() {
           </div>
         </header>
 
-        {abaAtiva !== "dashboard" && (
+        {abaAtiva !== "dashboard" && abaAtiva !== "relatorios" && (
           <FilterBar
             buscaNome={buscaNome} setBuscaNome={setBuscaNome}
             filtroEspecialidade={filtroEspecialidade} setFiltroEspecialidade={setFiltroEspecialidade}
@@ -353,6 +355,10 @@ export default function Home() {
                   </div>
                 </DndContext>
               )}
+            </TabsContent>
+
+            <TabsContent value="relatorios" className="flex-1 overflow-y-auto m-0 h-full">
+              <RelatoriosPage />
             </TabsContent>
 
           </Tabs>

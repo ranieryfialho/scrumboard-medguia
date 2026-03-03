@@ -19,10 +19,10 @@ export function Sidebar({ abaAtiva, setAbaAtiva }: SidebarProps) {
       ]
     },
     {
-      category: "Suporte",
+      category: "Análises",
       items: [
+        { id: "relatorios", label: "Relatórios", icon: FileText, disabled: false },
         { id: "chats", label: "Mensagens", icon: MessageSquare, disabled: true },
-        { id: "relatorios", label: "Relatórios", icon: FileText, disabled: true },
       ]
     }
   ];

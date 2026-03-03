@@ -157,6 +157,14 @@ async function fetchSheetData(
       // EMAIL
       leadData.email = leadData['email'] || '';
 
+      // ANÚNCIO / CAMPANHA (NOVA FEATURE PARA RELATÓRIOS)
+      leadData.anuncio = 
+        leadData['ad_name'] || 
+        leadData['nome_do_anuncio'] || 
+        leadData['campaign_name'] || 
+        leadData['utm_campaign'] || 
+        'Desconhecido';
+
       // CREATED_TIME
       leadData.created_time =
         leadData['created_time']    ||
@@ -174,7 +182,7 @@ async function fetchSheetData(
       // OBSERVAÇÕES — precisa ser resolvido ANTES da origem
       leadData.observacoes = leadData['observacoes'] || leadData['observacao'] || '';
 
-      // ── ORIGEM ───────��────────────────────────────────────────────────────
+      // ── ORIGEM ───────────────────────────────────────────────────────────
       // Prioridade:
       //   1. Lead de planilha (não manual) → usa SHEET_KEY_ORIGEM_MAP
       //   2. Lead manual com subtipo já definido no form → mantém (ex: 'Manual - LP')
@@ -331,6 +339,7 @@ export async function POST(request: Request) {
       setCol(['data_alteracao'], leadData?.data_alteracao || '');
       setCol(['lead_status', 'situacao'], leadData?.situacao || 'Novos Leads');
       setCol(['origem'], leadData?.origem || 'Manual');
+      setCol(['ad_name', 'anuncio', 'nome_do_anuncio'], leadData?.anuncio || '');
 
       if (headers.length > originalHeaderLength) {
         await sheets.spreadsheets.values.update({
