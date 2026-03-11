@@ -1,5 +1,9 @@
+"use client";
+
 import { useState } from "react";
-import { LayoutDashboard, KanbanSquare, Archive, Settings, LogOut, ChevronLeft, ChevronRight, MessageSquare, FileText } from "lucide-react";
+import { LayoutDashboard, KanbanSquare, Archive, LogOut, ChevronLeft, ChevronRight, MessageSquare, FileText, Mail, Users } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 
 interface SidebarProps {
   abaAtiva: string;
@@ -8,6 +12,14 @@ interface SidebarProps {
 
 export function Sidebar({ abaAtiva, setAbaAtiva }: SidebarProps) {
   const [isExpanded, setIsExpanded] = useState(true);
+  const router = useRouter();
+  const supabase = createClient();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push("/login");
+    router.refresh();
+  };
 
   const menuItems = [
     {
@@ -24,6 +36,18 @@ export function Sidebar({ abaAtiva, setAbaAtiva }: SidebarProps) {
         { id: "relatorios", label: "Relatórios", icon: FileText, disabled: false },
         { id: "chats", label: "Mensagens", icon: MessageSquare, disabled: true },
       ]
+    },
+    {
+      category: "Comunicação",
+      items: [
+        { id: "campanhas", label: "Mala Direta", icon: Mail, disabled: false },
+      ]
+    },
+    {
+      category: "Administração",
+      items: [
+        { id: "usuarios", label: "Equipe e Acessos", icon: Users, disabled: false },
+      ]
     }
   ];
 
@@ -33,39 +57,37 @@ export function Sidebar({ abaAtiva, setAbaAtiva }: SidebarProps) {
         isExpanded ? "w-[260px]" : "w-[80px]"
       }`}
     >
-      <button
-        onClick={() => setIsExpanded(!isExpanded)}
-        className="absolute -right-3 top-8 bg-indigo-200 text-indigo-900 w-6 h-6 rounded-full flex items-center justify-center shadow-md hover:bg-indigo-300 transition-colors z-50"
-      >
-        {isExpanded ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-      </button>
-
-      {/* LOGO */}
-      <div className="p-8 pb-6 flex items-center">
-        <div className="w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center shrink-0">
-          <span className="text-white font-bold text-lg">M</span>
-        </div>
+      <div className="flex items-center justify-between p-6">
         {isExpanded && (
-          <span className="ml-3 text-white font-bold text-xl tracking-wide animate-in fade-in">
-            MedGuia
+          <span className="text-xl font-bold text-white tracking-wider">
+            MedGuia Hub
           </span>
         )}
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="p-2 rounded-lg hover:bg-zinc-800 transition-colors absolute -right-4 top-6 bg-[#111111] border border-zinc-800 group"
+        >
+          {isExpanded ? (
+            <ChevronLeft className="w-4 h-4 text-zinc-400 group-hover:text-white transition-colors" />
+          ) : (
+            <ChevronRight className="w-4 h-4 text-zinc-400 group-hover:text-white transition-colors" />
+          )}
+        </button>
       </div>
 
-      {/* MENU DE NAVEGAÇÃO */}
-      <div className="flex-1 overflow-y-auto py-4 custom-scrollbar">
-        {menuItems.map((group, index) => (
-          <div key={index} className="mb-6">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent">
+        {menuItems.map((group, groupIndex) => (
+          <div key={groupIndex} className="mb-6">
             {isExpanded && (
-              <h3 className="px-8 text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-3">
+              <h3 className="px-6 mb-2 text-xs font-semibold uppercase tracking-wider text-zinc-600">
                 {group.category}
               </h3>
             )}
-            <ul className="space-y-1 px-4">
+            <ul className="space-y-1 px-3">
               {group.items.map((item) => {
-                const isActive = abaAtiva === item.id;
                 const Icon = item.icon;
-
+                const isActive = abaAtiva === item.id;
+                
                 return (
                   <li key={item.id}>
                     <button
@@ -87,7 +109,6 @@ export function Sidebar({ abaAtiva, setAbaAtiva }: SidebarProps) {
                         </span>
                       )}
                       
-                      {/* Bordinha lateral para o item ativo */}
                       {isActive && isExpanded && (
                         <div className="absolute left-0 w-1 h-8 bg-indigo-500 rounded-r-full" />
                       )}
@@ -98,6 +119,21 @@ export function Sidebar({ abaAtiva, setAbaAtiva }: SidebarProps) {
             </ul>
           </div>
         ))}
+      </div>
+
+      <div className="p-4 mt-auto border-t border-zinc-800/50">
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center px-4 py-3 rounded-xl transition-all duration-200 hover:bg-red-500/10 hover:text-red-400 text-zinc-500 group"
+          title={!isExpanded ? "Sair do Sistema" : ""}
+        >
+          <LogOut className="w-5 h-5 shrink-0 transition-colors group-hover:text-red-400" />
+          {isExpanded && (
+            <span className="ml-3 text-sm font-medium">
+              Sair do Sistema
+            </span>
+          )}
+        </button>
       </div>
     </aside>
   );

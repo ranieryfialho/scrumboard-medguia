@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { KanbanBoard } from "@/components/kanban/kanban-board";
 import { LeadsTable } from "@/components/kanban/leads-table";
@@ -9,230 +8,74 @@ import { RefreshCcw, Activity, LayoutGrid, Table as TableIcon } from "lucide-rea
 import { DndContext } from "@dnd-kit/core";
 import { LeadCard } from "@/components/kanban/lead-card";
 
-import { normalizarEspecialidade } from "@/utils/formatters";
 import { FilterBar } from "@/components/dashboard/filter-bar";
 import { DashboardTab } from "@/components/dashboard/dashboard-tab";
 import { Sidebar } from "@/components/layout/sidebar";
 import RelatoriosPage from "@/app/relatorios/page";
+import { CampanhasTab } from "@/components/campanhas/campanhas-tab";
 
-function parseDateSegura(d: string): Date | null {
-  if (!d) return null;
-  try {
-    const matchBR = d.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
-    if (matchBR) {
-      const iso = `${matchBR[3]}-${matchBR[2]}-${matchBR[1]}`;
-      const dt = new Date(iso);
-      return isNaN(dt.getTime()) ? null : dt;
-    }
-    const dt = new Date(d);
-    return isNaN(dt.getTime()) ? null : dt;
-  } catch {
-    return null;
-  }
-}
+// NOVO: Importando a aba de usuários
+import { UsuariosTab } from "@/components/usuarios-tab";
+
+import { useLeads } from "@/hooks/use-leads";
 
 export default function Home() {
-  const [leads, setLeads] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [isSyncing, setIsSyncing] = useState(false);
-  const [ultimaAtualizacao, setUltimaAtualizacao] = useState<string>("--:--");
-
-  const [date, setDate] = useState<Date | undefined>(new Date());
-  const [calendarMonth, setCalendarMonth] = useState<Date>(new Date());
-  const [abaAtiva, setAbaAtiva] = useState("dashboard");
-  const [viewMode, setViewMode] = useState<"kanban" | "tabela">("kanban");
-
-  const [buscaNome, setBuscaNome] = useState("");
-  const [filtroEspecialidade, setFiltroEspecialidade] = useState("");
-  const [filtroMes, setFiltroMes] = useState("");
-
-  const buscarLeads = async (isBackground = false) => {
-    if (isBackground) setIsSyncing(true);
-    else setLoading(true);
-
-    try {
-      const timestamp = new Date().getTime();
-      const res = await fetch(`/api/sheets?t=${timestamp}`, {
-        cache: 'no-store',
-        headers: { 'Pragma': 'no-cache', 'Cache-Control': 'no-cache' }
-      });
-      const data = await res.json();
-      if (Array.isArray(data)) {
-        setLeads(data);
-        setUltimaAtualizacao(new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }));
-      } else if (!isBackground) {
-        setLeads([]);
-      }
-    } catch (error) {
-      console.error("Erro ao buscar planilha:", error);
-      if (!isBackground) setLeads([]);
-    } finally {
-      if (isBackground) setIsSyncing(false);
-      else setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    buscarLeads();
-    const intervalo = setInterval(() => buscarLeads(true), 120000);
-    return () => clearInterval(intervalo);
-  }, []);
-
-  const atualizarSituacaoLead = async (leadId: string, novaSituacao: string) => {
-    const dataAtual = new Date().toLocaleString('pt-BR');
-    setLeads(prevLeads => prevLeads.map(lead =>
-      lead.id === leadId ? { ...lead, situacao: novaSituacao, data_alteracao: dataAtual } : lead
-    ));
-    try {
-      await fetch('/api/sheets', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: leadId, novaSituacao })
-      });
-    } catch (error) {
-      console.error("Erro de rede ao salvar:", error);
-    }
-  };
-
-  const salvarObservacaoLead = async (leadId: string, observacoes: string) => {
-    setLeads(prevLeads => prevLeads.map(lead =>
-      lead.id === leadId ? { ...lead, observacoes } : lead
-    ));
-    try {
-      await fetch('/api/sheets', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: leadId, observacoes })
-      });
-    } catch (error) {
-      console.error("Erro de rede ao salvar observação:", error);
-    }
-  };
-
-  const adicionarLeadManual = async (novoLeadData: any) => {
-    const dataAtual = new Date().toLocaleString('pt-BR');
-    const idTemporario = `sheet1_Página1-lead-${Date.now()}`;
-
-    const chavesCompletas = {
-      id: idTemporario,
-      nome: novoLeadData.nome,
-      email: novoLeadData.email,
-      cargo: novoLeadData.cargo,
-      whatsapp: novoLeadData.whatsapp || '',
-      situacao: 'Novos Leads',
-      created_time: dataAtual,
-      data_alteracao: dataAtual,
-      // Usa a origem selecionada no formulário (ex: 'Manual - LP', 'Manual - Indicação')
-      origem: novoLeadData.origem || 'Manual',
-    };
-
-    setLeads(prev => [chavesCompletas, ...prev]);
-
-    try {
-      await fetch('/api/sheets', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'create', leadData: chavesCompletas })
-      });
-    } catch (error) {
-      console.error("Erro ao criar lead:", error);
-    }
-  };
-
-  const especialidadesUnicas = useMemo(() => {
-    const specs = leads.map(l => normalizarEspecialidade(l.cargo)).filter(Boolean) as string[];
-    return Array.from(new Set(specs)).sort();
-  }, [leads]);
-
-  const hoje = useMemo(() => new Date(), []);
-
-  const mesesUnicos = useMemo(() => {
-    const datas = leads.map(l => l.created_time).filter(Boolean);
-    const meses = datas.map(d => {
-      try {
-        const dateObj = parseDateSegura(d);
-        if (!dateObj) return null;
-        if (dateObj > hoje) return null;
-        const m = dateObj.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
-        return m.charAt(0).toUpperCase() + m.slice(1);
-      } catch { return null; }
-    }).filter(Boolean) as string[];
-    return Array.from(new Set(meses)).sort((a, b) => {
-      const da = parseDateSegura('01 ' + a);
-      const db = parseDateSegura('01 ' + b);
-      if (!da || !db) return 0;
-      return db.getTime() - da.getTime();
-    });
-  }, [leads, hoje]);
-
-  const leadsFiltrados = useMemo(() => {
-    return leads.filter(lead => {
-      const matchNome = lead.nome?.toLowerCase().includes(buscaNome.toLowerCase());
-      const matchEspec = filtroEspecialidade
-        ? normalizarEspecialidade(lead.cargo) === filtroEspecialidade
-        : true;
-      let matchMes = true;
-      if (filtroMes) {
-        if (lead.created_time) {
-          try {
-            const dateObj = parseDateSegura(lead.created_time);
-            if (dateObj) {
-              const m = dateObj.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
-              matchMes = (m.charAt(0).toUpperCase() + m.slice(1)) === filtroMes;
-            } else { matchMes = false; }
-          } catch { matchMes = false; }
-        } else { matchMes = false; }
-      }
-      return matchNome && matchEspec && matchMes;
-    });
-  }, [leads, buscaNome, filtroEspecialidade, filtroMes]);
-
-  const kpis = useMemo(() => {
-    const ativos = leadsFiltrados.filter(l => l.situacao !== 'Arquivado');
-    const total = ativos.length;
-    const novos = ativos.filter(l => l.situacao === 'Novos Leads' || l.situacao === 'Sem situação').length;
-    const fechados = ativos.filter(l => l.situacao === 'Fechado').length;
-    const emAndamento = ativos.filter(l =>
-      ['Em contato', 'Recontato', 'Reunião agendada', 'Aguardando Ativação'].includes(l.situacao)
-    ).length;
-    const taxaConversao = total > 0 ? ((fechados / total) * 100).toFixed(1) : "0.0";
-    return { total, novos, fechados, emAndamento, taxaConversao };
-  }, [leadsFiltrados]);
-
-  const arquivadosList = leadsFiltrados.filter(l => l.situacao === 'Arquivado');
-
-  const dadosGrafico = useMemo(() => {
-    const contagem: Record<string, number> = {};
-    leadsFiltrados.forEach(lead => {
-      if (lead.situacao === 'Arquivado') return;
-      const normalizado = normalizarEspecialidade(lead.cargo);
-      if (normalizado) contagem[normalizado] = (contagem[normalizado] || 0) + 1;
-    });
-    return Object.keys(contagem)
-      .map(key => ({ name: key, total: contagem[key] }))
-      .sort((a, b) => b.total - a.total)
-      .slice(0, 7);
-  }, [leadsFiltrados]);
-
-  const limparFiltros = () => {
-    setBuscaNome("");
-    setFiltroEspecialidade("");
-    setFiltroMes("");
-  };
+  const {
+    leads, 
+    leadsFiltrados, 
+    arquivadosList, 
+    campanhas, 
+    kpis, 
+    dadosGrafico, 
+    especialidadesUnicas, 
+    mesesUnicos,
+    loading, 
+    isSyncing, 
+    ultimaAtualizacao, 
+    date, 
+    setDate, 
+    calendarMonth, 
+    setCalendarMonth,
+    abaAtiva, 
+    setAbaAtiva, 
+    viewMode, 
+    setViewMode, 
+    buscaNome, 
+    setBuscaNome,
+    filtroEspecialidade, 
+    setFiltroEspecialidade, 
+    filtroMes, 
+    setFiltroMes,
+    buscarLeads, 
+    buscarCampanhas, 
+    excluirCampanha, 
+    atualizarSituacaoLead, 
+    salvarObservacaoLead, 
+    adicionarLeadManual, 
+    limparFiltros
+  } = useLeads();
 
   const getTituloPagina = () => {
-    if (abaAtiva === 'dashboard') return 'Dashboard';
-    if (abaAtiva === 'kanban') return 'Gestão de Leads';
-    if (abaAtiva === 'arquivados') return 'Leads Arquivados';
-    if (abaAtiva === 'relatorios') return 'Relatórios Analíticos';
-    return '';
+    const titulos: Record<string, string> = {
+      dashboard: 'Dashboard',
+      kanban: 'Gestão de Leads',
+      arquivados: 'Leads Arquivados',
+      relatorios: 'Relatórios Analíticos',
+      campanhas: 'Mala Direta',
+      usuarios: 'Gestão de Equipe e Acessos' // NOVO: Título para a aba de usuários
+    };
+    return titulos[abaAtiva] || '';
   };
 
-  return (
-    <div className="flex h-screen bg-slate-50 overflow-hidden bg-[#e4e5e7]">
-      <Sidebar abaAtiva={abaAtiva} setAbaAtiva={setAbaAtiva} />
-      <main className="flex-1 flex flex-col h-screen overflow-hidden">
+  // Variável centralizada para a animação suave de transição de telas
+  const animacaoPadrao = "animate-in fade-in slide-in-from-bottom-4 duration-500 ease-out";
 
+  return (
+    <div className="flex h-screen bg-[#e4e5e7] overflow-hidden">
+      <Sidebar abaAtiva={abaAtiva} setAbaAtiva={setAbaAtiva} />
+      
+      <main className="flex-1 flex flex-col h-screen overflow-hidden">
+        {/* Header Fixo */}
         <header className="bg-transparent px-8 py-5 flex items-center justify-between shrink-0">
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-slate-800 flex items-center gap-3">
@@ -248,7 +91,7 @@ export default function Home() {
               onClick={() => buscarLeads(false)}
               disabled={loading || isSyncing}
               variant="outline"
-              className="bg-white border-slate-300 text-slate-700 min-w-[180px] shadow-sm hover:bg-slate-50"
+              className="bg-white border-slate-300 text-slate-700 min-w-[180px] shadow-sm hover:bg-slate-50 transition-all"
             >
               <RefreshCcw className={`w-4 h-4 mr-2 ${loading || isSyncing ? 'animate-spin' : ''}`} />
               {loading ? 'Carregando...' : isSyncing ? 'Sincronizando...' : 'Sincronizar Dados'}
@@ -263,7 +106,8 @@ export default function Home() {
           </div>
         </header>
 
-        {abaAtiva !== "dashboard" && abaAtiva !== "relatorios" && (
+        {/* Filtro Dinâmico */}
+        {(abaAtiva === "kanban" || abaAtiva === "arquivados") && (
           <FilterBar
             buscaNome={buscaNome} setBuscaNome={setBuscaNome}
             filtroEspecialidade={filtroEspecialidade} setFiltroEspecialidade={setFiltroEspecialidade}
@@ -275,10 +119,11 @@ export default function Home() {
           />
         )}
 
+        {/* Área de Conteúdo Dinâmica (Tabs com Animação) */}
         <div className="flex-1 overflow-hidden relative">
           <Tabs value={abaAtiva} className="h-full flex flex-col">
 
-            <TabsContent value="dashboard" className="flex-1 overflow-y-auto p-8 pt-2 m-0 h-full">
+            <TabsContent value="dashboard" className={`flex-1 overflow-y-auto p-8 pt-2 m-0 h-full ${animacaoPadrao}`}>
               <DashboardTab
                 kpis={kpis}
                 date={date} setDate={setDate}
@@ -289,8 +134,7 @@ export default function Home() {
               />
             </TabsContent>
 
-            <TabsContent value="kanban" className="flex-1 flex flex-col overflow-hidden p-8 pt-2 m-0 h-full">
-              {/* Toggle Kanban / Tabela */}
+            <TabsContent value="kanban" className={`flex-1 flex flex-col overflow-hidden p-8 pt-2 m-0 h-full ${animacaoPadrao}`}>
               <div className="flex justify-end items-center mb-4 shrink-0">
                 <div className="flex items-center bg-slate-200/60 p-1 rounded-lg shadow-inner">
                   <button
@@ -331,7 +175,7 @@ export default function Home() {
               </div>
             </TabsContent>
 
-            <TabsContent value="arquivados" className="flex-1 overflow-y-auto p-8 pt-2 m-0 h-full">
+            <TabsContent value="arquivados" className={`flex-1 overflow-y-auto p-8 pt-2 m-0 h-full ${animacaoPadrao}`}>
               {loading && leads.length === 0 ? (
                 <div className="h-32 flex items-center justify-center text-slate-500">
                   <RefreshCcw className="w-6 h-6 animate-spin" />
@@ -357,8 +201,22 @@ export default function Home() {
               )}
             </TabsContent>
 
-            <TabsContent value="relatorios" className="flex-1 overflow-y-auto m-0 h-full">
+            <TabsContent value="relatorios" className={`flex-1 overflow-y-auto m-0 h-full ${animacaoPadrao}`}>
               <RelatoriosPage />
+            </TabsContent>
+
+            <TabsContent value="campanhas" className={`flex-1 overflow-y-auto m-0 h-full bg-slate-50 ${animacaoPadrao}`}>
+              <CampanhasTab 
+                leads={leads} 
+                campanhas={campanhas} 
+                onRefresh={buscarCampanhas} 
+                onDelete={excluirCampanha} 
+              />
+            </TabsContent>
+
+            {/* NOVO: Aba de Gestão de Usuários */}
+            <TabsContent value="usuarios" className={`flex-1 overflow-y-auto m-0 h-full bg-slate-50 ${animacaoPadrao}`}>
+              <UsuariosTab />
             </TabsContent>
 
           </Tabs>

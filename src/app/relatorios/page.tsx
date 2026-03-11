@@ -51,7 +51,6 @@ export default function RelatoriosPage() {
     return <div className="flex justify-center items-center h-[80vh]">Carregando Relatório de Tráfego...</div>;
   }
 
-  // Lógica segura para descobrir o melhor canal SEM usar .sort() in-place no HTML:
   let melhorCanalNome = '-';
   if (metrics && metrics.porFonte && metrics.porFonte.length > 0) {
     const copiaSegura = [...metrics.porFonte];
@@ -59,15 +58,12 @@ export default function RelatoriosPage() {
     melhorCanalNome = copiaSegura[0].nome;
   }
 
-  // --- EXPORTAÇÃO PARA GAMMA APP ---
-  // Usa exatamente os mesmos dados que estão renderizados na tela (metrics já filtrado por mês/ano)
   const handleExportGamma = () => {
     const nomeMes = MESES.find(m => m.valor === mesSelecionado)?.nome ?? String(mesSelecionado);
 
     let md = `# Resultados de Tráfego Pago — ${nomeMes} ${anoSelecionado}\n\n`;
     md += `> Relatório gerado automaticamente pelo MedGuia Scrumboard\n\n`;
 
-    // Visão Geral
     md += `## Visão Geral\n\n`;
     md += `| Métrica | Valor |\n`;
     md += `|---|---|\n`;
@@ -76,7 +72,6 @@ export default function RelatoriosPage() {
     md += `| Taxa Geral de Conversão | ${metrics.geral.taxaConversaoGeral}% |\n`;
     md += `| Melhor Canal | ${melhorCanalNome} |\n\n`;
 
-    // Desempenho por Fonte
     md += `## Comparativo: Volume vs Conversão por Fonte\n\n`;
     md += `| Fonte | Leads Gerados | Conversões | Taxa de Conversão |\n`;
     md += `|---|---|---|---|\n`;
@@ -85,7 +80,6 @@ export default function RelatoriosPage() {
     });
     md += `\n`;
 
-    // Distribuição por Dia da Semana
     md += `## Distribuição por Dia da Semana\n\n`;
     md += `| Dia da Semana | Leads |\n`;
     md += `|---|---|\n`;
@@ -94,7 +88,6 @@ export default function RelatoriosPage() {
     });
     md += `\n`;
 
-    // Desempenho Detalhado por Anúncio
     md += `## Desempenho Detalhado por Anúncio\n\n`;
     md += `| Fonte (Campanha) | Nome do Anúncio | Leads Gerados | Conversões | Taxa de Conversão |\n`;
     md += `|---|---|---|---|---|\n`;
@@ -103,7 +96,6 @@ export default function RelatoriosPage() {
     });
     md += `\n`;
 
-    // Download do arquivo .md
     const blob = new Blob([md], { type: "text/markdown;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -115,7 +107,6 @@ export default function RelatoriosPage() {
 
   return (
     <div className="p-8 space-y-8 max-w-7xl mx-auto">
-      {/* CABEÇALHO E FILTROS */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Resultados de Tráfego Pago</h1>
@@ -129,7 +120,8 @@ export default function RelatoriosPage() {
             value={mesSelecionado.toString()}
             onValueChange={(v) => setMesSelecionado(Number(v))}
           >
-            <SelectTrigger className="w-[140px]">
+            {/* CORREÇÃO DO CONTRASTE DOS BOTÕES AQUI */}
+            <SelectTrigger className="w-[140px] bg-white border-slate-200 shadow-sm text-slate-800 focus:ring-2 focus:ring-indigo-500">
               <SelectValue placeholder="Mês" />
             </SelectTrigger>
             <SelectContent>
@@ -145,7 +137,8 @@ export default function RelatoriosPage() {
             value={anoSelecionado.toString()}
             onValueChange={(v) => setAnoSelecionado(Number(v))}
           >
-            <SelectTrigger className="w-[100px]">
+            {/* CORREÇÃO DO CONTRASTE DOS BOTÕES AQUI */}
+            <SelectTrigger className="w-[100px] bg-white border-slate-200 shadow-sm text-slate-800 focus:ring-2 focus:ring-indigo-500">
               <SelectValue placeholder="Ano" />
             </SelectTrigger>
             <SelectContent>
@@ -157,12 +150,11 @@ export default function RelatoriosPage() {
             </SelectContent>
           </Select>
 
-          {/* BOTÃO EXPORTAR PARA GAMMA — só aparece quando há dados na tela */}
           {metrics.geral.totalLeads > 0 && (
             <Button
               onClick={handleExportGamma}
               variant="outline"
-              className="flex items-center gap-2 border-slate-300 hover:bg-slate-50"
+              className="flex items-center gap-2 border-slate-300 bg-white hover:bg-slate-50 text-slate-800 shadow-sm"
             >
               <Download className="w-4 h-4" />
               Exportar Dados
@@ -171,6 +163,7 @@ export default function RelatoriosPage() {
         </div>
       </div>
 
+      {/* O resto do código (Cards, Gráficos e Tabela) continua igualzinho aqui para baixo... */}
       {metrics.geral.totalLeads === 0 ? (
         <Card className="flex flex-col items-center justify-center p-12 text-center text-muted-foreground">
           <Target className="w-12 h-12 mb-4 opacity-20" />
@@ -179,7 +172,6 @@ export default function RelatoriosPage() {
         </Card>
       ) : (
         <>
-          {/* CARDS DE VISÃO GERAL */}
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
@@ -228,7 +220,6 @@ export default function RelatoriosPage() {
             </Card>
           </div>
 
-          {/* GRÁFICOS */}
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
             <Card className="col-span-4">
               <CardHeader>
@@ -267,7 +258,6 @@ export default function RelatoriosPage() {
             </Card>
           </div>
 
-          {/* TABELAS DE ANÚNCIOS */}
           <Card>
             <CardHeader>
               <CardTitle>Desempenho Detalhado por Anúncio</CardTitle>
