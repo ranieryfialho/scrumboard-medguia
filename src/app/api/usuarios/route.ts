@@ -1,20 +1,21 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-// Usamos o Admin Client (com a chave secreta) para poder listar e criar usuários ignorando as regras normais de segurança
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+// 1. A MÁGICA DO CACHE: Força o Next.js a buscar dados novos sempre e não travar no Erro 500
+export const dynamic = 'force-dynamic';
 
-// FUNÇÃO PARA LISTAR OS USUÁRIOS NA TABELA
 export async function GET() {
   try {
+    // 2. Cria o cliente DENTRO da função para garantir a leitura correta das chaves na Vercel
+    const supabaseAdmin = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+
     const { data, error } = await supabaseAdmin.auth.admin.listUsers();
     
     if (error) throw error;
 
-    // Formata os dados para o frontend ler mais fácil
     const usuarios = data.users.map(user => ({
       id: user.id,
       email: user.email,
@@ -29,17 +30,22 @@ export async function GET() {
   }
 }
 
-// FUNÇÃO PARA CONVIDAR UM NOVO USUÁRIO POR E-MAIL
 export async function POST(req: Request) {
   try {
+    const supabaseAdmin = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+
     const { email, nome, perfil } = await req.json();
 
-    // Usamos a função nativa de CONVITE do Supabase
     const { data, error } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
       data: {
         nome,
-        perfil, // O Supabase salva isso automaticamente no user_metadata
-      }
+        perfil,
+      },
+      // 3. O PULO DO GATO: Força o link do e-mail a abrir na tela exata de criar a senha
+      redirectTo: 'https://scrumboard-medguia.vercel.app/nova-senha'
     });
 
     if (error) throw error;
