@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Lock, Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -16,30 +16,34 @@ export default function NovaSenhaPage() {
   const [erro, setErro] = useState("");
   const [sucesso, setSucesso] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
   const supabase = createClient();
 
   useEffect(() => {
-    // O token de convite chega como hash na URL (#access_token=...&type=invite)
-    // O Supabase SSR detecta isso automaticamente via onAuthStateChange
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (event === "SIGNED_IN" || event === "USER_UPDATED") {
-          // Sessão estabelecida pelo link mágico — pode prosseguir
-          setVerificando(false);
-        } else if (!session) {
-          // Aguarda um pouco para o Supabase processar o hash da URL
-          setTimeout(async () => {
-            const { data } = await supabase.auth.getSession();
-            if (!data.session) {
-              setErro("Sessão inválida ou link expirado. Solicite um novo convite ao administrador.");
-            }
-            setVerificando(false);
-          }, 1500);
-        }
-      }
-    );
+    const verificarToken = async () => {
+      const token_hash = searchParams.get("token_hash");
+      const type = searchParams.get("type");
 
-    return () => subscription.unsubscribe();
+      if (!token_hash || !type) {
+        setErro("Link inválido. Parâmetros ausentes. Solicite um novo convite.");
+        setVerificando(false);
+        return;
+      }
+
+      // Verifica o token OTP — isso cria a sessão automaticamente
+      const { error } = await supabase.auth.verifyOtp({
+        token_hash,
+        type: type as any,
+      });
+
+      if (error) {
+        setErro("Link expirado ou inválido. Solicite um novo convite ao administrador.");
+      }
+
+      setVerificando(false);
+    };
+
+    verificarToken();
   }, []);
 
   const handleUpdatePassword = async (e: React.FormEvent) => {
@@ -109,7 +113,8 @@ export default function NovaSenhaPage() {
                 <div className="relative">
                   <Lock className="w-5 h-5 text-slate-400 absolute left-3 top-2.5" />
                   <Input
-                    id="senha" type="password"
+                    id="senha"
+                    type="password"
                     placeholder="Mínimo 6 caracteres"
                     className="pl-10"
                     value={senha}
@@ -124,7 +129,8 @@ export default function NovaSenhaPage() {
                 <div className="relative">
                   <Lock className="w-5 h-5 text-slate-400 absolute left-3 top-2.5" />
                   <Input
-                    id="confirmarSenha" type="password"
+                    id="confirmarSenha"
+                    type="password"
                     placeholder="Repita a senha"
                     className="pl-10"
                     value={confirmarSenha}
