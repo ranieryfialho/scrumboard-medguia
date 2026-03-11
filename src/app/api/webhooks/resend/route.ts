@@ -20,14 +20,14 @@ export async function POST(req: Request) {
 
     if (type === 'email.opened') {
       // Atualiza para ABERTO, mas SÓ SE o status atual for ENVIADO (para não rebaixar um CLICADO acidentalmente)
-      await supabase.table('envios_campanha')
+      await supabase.from('envios_campanha')
         .update({ status: 'ABERTO' })
         .eq('id', envioId)
         .eq('status', 'ENVIADO');
         
     } else if (type === 'email.clicked') {
       // Se clicou, é o nível máximo, atualiza sem restrições
-      await supabase.table('envios_campanha')
+      await supabase.from('envios_campanha')
         .update({ status: 'CLICADO' })
         .eq('id', envioId);
     }
