@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Lock, Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export default function NovaSenhaPage() {
+function NovaSenhaForm() {
   const [senha, setSenha] = useState("");
   const [confirmarSenha, setConfirmarSenha] = useState("");
   const [loading, setLoading] = useState(false);
@@ -30,7 +30,6 @@ export default function NovaSenhaPage() {
         return;
       }
 
-      // Verifica o token OTP — isso cria a sessão automaticamente
       const { error } = await supabase.auth.verifyOtp({
         token_hash,
         type: type as any,
@@ -152,5 +151,20 @@ export default function NovaSenhaPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function NovaSenhaPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-[#e4e5e7] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4 text-slate-500">
+          <Loader2 className="w-8 h-8 animate-spin" />
+          <p className="text-sm font-medium">Carregando...</p>
+        </div>
+      </div>
+    }>
+      <NovaSenhaForm />
+    </Suspense>
   );
 }
