@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { ArrowLeft, Users, MailOpen, MousePointerClick, Send, AlertCircle, Clock, Calendar, Eye, CheckCircle2, XCircle, Play, Loader2, RefreshCw } from "lucide-react";
+import { ArrowLeft, Users, MailOpen, MousePointerClick, Send, AlertCircle, Clock, Calendar, Eye, CheckCircle2, XCircle, Play, Loader2, RefreshCw, RefreshCcw } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -20,6 +20,7 @@ export function CampanhaDetalhes({ campanha, onBack, onRefresh }: CampanhaDetalh
   const [isStarting, setIsStarting] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [isRefreshingLocal, setIsRefreshingLocal] = useState(false); 
+  const [isResending, setIsResending] = useState(false); // Novo estado para o botão de reenvio
   
   const supabase = createClient();
 
@@ -83,6 +84,28 @@ export function CampanhaDetalhes({ campanha, onBack, onRefresh }: CampanhaDetalh
     }
   };
 
+  // NOVA FUNÇÃO: Reenviar Falhas
+  const reenviarFalhas = async () => {
+    setIsResending(true);
+    try {
+      const { error } = await supabase
+        .from('envios_campanha')
+        .update({ status: 'PENDENTE' })
+        .eq('campanha_id', campanha.id)
+        .eq('status', 'ERRO');
+
+      if (error) throw error;
+
+      alert("As falhas foram devolvidas para a fila! O motor começará a processá-las em breve.");
+      fetchDestinatarios('manual'); // Atualiza a tela para mostrar os pendentes novamente
+    } catch (error) {
+      console.error("Erro ao reenviar falhas:", error);
+      alert("Erro ao tentar reenviar as falhas. Verifique sua conexão.");
+    } finally {
+      setIsResending(false);
+    }
+  };
+
   const total = destinatarios.length;
   const pendentes = destinatarios.filter(d => ['PENDENTE', 'RASCUNHO'].includes(d.status)).length;
   const enviados = destinatarios.filter(d => ['ENVIADO', 'ABERTO', 'CLICADO'].includes(d.status)).length;
@@ -126,17 +149,30 @@ export function CampanhaDetalhes({ campanha, onBack, onRefresh }: CampanhaDetalh
             <ArrowLeft className="w-4 h-4" />
           </Button>
           <div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 flex-wrap">
               <h2 className="text-3xl font-bold tracking-tight text-slate-800">{campanha.nome}</h2>
               
               <Button variant="secondary" size="sm" onClick={() => setShowPreview(true)} className="bg-slate-100 hover:bg-slate-200 text-slate-700 h-8 mt-1">
                 <Eye className="w-4 h-4 mr-2" /> Ver E-mail
               </Button>
               
-              {/* O Botão de Atualizar continua funcionando para quando a pessoa quiser forçar */}
               <Button variant="outline" size="sm" onClick={() => fetchDestinatarios('manual')} disabled={isRefreshingLocal} className="h-8 mt-1 bg-white hover:bg-slate-50 shadow-sm border-slate-200 text-slate-600">
                 <RefreshCw className={`w-3.5 h-3.5 mr-2 ${isRefreshingLocal ? 'animate-spin' : ''}`} /> Atualizar
               </Button>
+
+              {/* BOTÃO DE REENVIAR FALHAS (Só aparece se houver erros) */}
+              {erros > 0 && (
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={reenviarFalhas} 
+                  disabled={isResending} 
+                  className="h-8 mt-1 bg-white hover:bg-red-50 border-red-200 text-red-600 shadow-sm transition-colors"
+                >
+                  <RefreshCcw className={`w-3.5 h-3.5 mr-2 ${isResending ? 'animate-spin' : ''}`} /> 
+                  Reenviar Falhas ({erros})
+                </Button>
+              )}
 
             </div>
             <div className="flex items-center gap-3 text-sm text-slate-500 mt-2 font-medium">
@@ -147,7 +183,8 @@ export function CampanhaDetalhes({ campanha, onBack, onRefresh }: CampanhaDetalh
           </div>
         </div>
 
-        {campanha.status === 'RASCUNHO' && (
+        {/* Esse botão pode conviver com o restante se a pessoa quiser dar play nos pendentes iniciais */}
+        {(campanha.status === 'RASCUNHO' || (campanha.status === 'PROCESSANDO' && pendentes > 0 && isStarting)) && (
           <Button onClick={handlePlay} disabled={isStarting} className="bg-emerald-500 hover:bg-emerald-600 text-white shadow-md px-6 py-6 text-base font-bold transition-all shrink-0">
             {isStarting ? <Loader2 className="w-5 h-5 mr-2 animate-spin"/> : <Play className="w-5 h-5 mr-2 fill-current" />}
             Iniciar Disparos
@@ -198,7 +235,7 @@ export function CampanhaDetalhes({ campanha, onBack, onRefresh }: CampanhaDetalh
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-blue-700">{enviados}</div>
-            <p className="text-xs text-slate-500 mt-1">{erros} falhas/erros</p>
+            <p className={`text-xs mt-1 ${erros > 0 ? 'text-red-500 font-medium' : 'text-slate-500'}`}>{erros} falhas/erros</p>
           </CardContent>
         </Card>
         <Card className="shadow-sm border-slate-200">
