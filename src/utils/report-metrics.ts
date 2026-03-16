@@ -33,8 +33,8 @@ function resolverNomeAnuncio(lead: Lead): string {
 
 export function generateReportMetrics(leads: Lead[], month: number, year: number) {
   
-  // Helper robusto para extrair o mês e ano contornando bugs de fuso horário (timezone)
-  function getMonthYear(dataStr?: string): { month: number; year: number } | null {
+  // Helper robusto: agora aceita string, null ou undefined sem o TypeScript reclamar
+  function getMonthYear(dataStr?: string | null): { month: number; year: number } | null {
     if (!dataStr) return null;
     const str = dataStr.trim();
     
@@ -45,7 +45,7 @@ export function generateReportMetrics(leads: Lead[], month: number, year: number
       return { month: parseInt(matchBR[2], 10), year: parseInt(matchBR[3], 10) };
     }
     
-    // Formato ISO: AAAA-MM-DD (Evita cair no dia anterior por causa de GMT-3)
+    // Formato ISO: AAAA-MM-DD
     let safeStr = str;
     if (str.includes('-') && !str.includes('T')) {
       safeStr = `${str}T12:00:00`;
@@ -63,13 +63,18 @@ export function generateReportMetrics(leads: Lead[], month: number, year: number
   const leadsDoMes = leads.filter(lead => {
     if (lead.situacao === 'Arquivado') return false;
 
-    const dateCriacao = getMonthYear(lead.created_time);
-    const ehCriadoNoMes = dateCriacao && dateCriacao.month === month && dateCriacao.year === year;
+    const dateCriacao = getMonthYear(lead.created_time || '');
+    // CORREÇÃO: Força ser estritamente boolean com !== null
+    const ehCriadoNoMes = dateCriacao !== null && dateCriacao.month === month && dateCriacao.year === year;
 
     let ehFechadoNoMes = false;
     if (STATUS_CONVERSAO.includes(lead.situacao)) {
-      const dateFechamento = getMonthYear(lead.data_fechamento || lead.created_time);
-      ehFechadoNoMes = dateFechamento && dateFechamento.month === month && dateFechamento.year === year;
+      const leadEstendido = lead as Record<string, any>;
+      const dataFechamento = leadEstendido.data_fechamento || lead.created_time || '';
+      
+      const dateFechamento = getMonthYear(dataFechamento);
+      // CORREÇÃO PRINCIPAL: Impede que retorne null para a variável boolean
+      ehFechadoNoMes = dateFechamento !== null && dateFechamento.month === month && dateFechamento.year === year;
     }
 
     return ehCriadoNoMes || ehFechadoNoMes;
@@ -80,18 +85,24 @@ export function generateReportMetrics(leads: Lead[], month: number, year: number
   // 2. Separar as Conversões exatas do mês
   const leadsConvertidosNoMes = leadsDoMes.filter(lead => {
     if (!STATUS_CONVERSAO.includes(lead.situacao)) return false;
-    const dateFechamento = getMonthYear(lead.data_fechamento || lead.created_time);
-    return dateFechamento && dateFechamento.month === month && dateFechamento.year === year;
+    
+    const leadEstendido = lead as Record<string, any>;
+    const dataFechamento = leadEstendido.data_fechamento || lead.created_time || '';
+    
+    const dateFechamento = getMonthYear(dataFechamento);
+    // CORREÇÃO: Força ser estritamente boolean com !== null
+    return dateFechamento !== null && dateFechamento.month === month && dateFechamento.year === year;
   });
 
   const conversoes = leadsConvertidosNoMes.length;
 
-  // 3. NOVA MÉTRICA: Recuperação de Safra (Criados em meses anteriores, fechados neste mês)
+  // 3. NOVA MÉTRICA: Recuperação de Base (Criados em meses anteriores, fechados neste mês)
   const conversoesAnteriores = leadsConvertidosNoMes.filter(lead => {
-    const dateCriacao = getMonthYear(lead.created_time);
+    const dateCriacao = getMonthYear(lead.created_time || '');
     if (!dateCriacao) return false;
     
-    return dateCriacao.year < year || (dateCriacao.year === year && dateCriacao.month < month);
+    // CORREÇÃO: Força ser estritamente boolean com !== null
+    return dateCriacao !== null && (dateCriacao.year < year || (dateCriacao.year === year && dateCriacao.month < month));
   }).length;
 
   const taxaConversaoGeral = totalLeads > 0 ? ((conversoes / totalLeads) * 100).toFixed(2) : '0.00';
@@ -168,6 +179,6 @@ export function generateReportMetrics(leads: Lead[], month: number, year: number
     porFonte, 
     porAnuncio, 
     porDia,
-    listaLeads: leadsDoMes
+    listaLeads: leadsDoMes 
   };
 }
