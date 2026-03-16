@@ -173,6 +173,12 @@ async function fetchSheetData(
         leadData['data_de_criacao'] ||
         '';
 
+      // NOVA COLUNA: DATA DE FECHAMENTO
+      leadData.data_fechamento =
+        leadData['data_fechamento']    ||
+        leadData['data de fechamento'] ||
+        '';
+
       // DATA DE ALTERAÇÃO
       leadData.data_alteracao =
         leadData['data_alteracao']    ||
@@ -337,6 +343,7 @@ export async function POST(request: Request) {
       setCol(['phone_number', 'telefone', 'qual_seu_numero_de_whatsapp', 'qual_seu_numero_de_whatsapp?', 'whatsapp'], leadData?.whatsapp || '');
       setCol(['created_time', 'created time', 'data de criacao'], leadData?.created_time || '');
       setCol(['data_alteracao'], leadData?.data_alteracao || '');
+      setCol(['data_fechamento', 'data de fechamento'], leadData?.data_fechamento || '');
       setCol(['lead_status', 'situacao'], leadData?.situacao || 'Novos Leads');
       setCol(['origem'], leadData?.origem || 'Manual');
       setCol(['ad_name', 'anuncio', 'nome_do_anuncio'], leadData?.anuncio || '');
@@ -425,14 +432,35 @@ export async function POST(request: Request) {
         });
       }
 
+      const dataAtualStr = new Date().toLocaleString('pt-BR');
+
       dataToUpdate.push({
         range: `${rangeName}!${getColLetter(statusIdx)}${sheetRow}`,
         values: [[novaSituacao]],
       });
       dataToUpdate.push({
         range: `${rangeName}!${getColLetter(dateIdx)}${sheetRow}`,
-        values: [[new Date().toLocaleString('pt-BR')]],
+        values: [[dataAtualStr]],
       });
+
+      // ── LOGICA DA DATA DE FECHAMENTO DEDICADA ────────────────────────────
+      const STATUS_CONVERSAO = ['Fechado', 'Aguardando Ativação'];
+      if (STATUS_CONVERSAO.includes(novaSituacao)) {
+        let fechamentoIdx = normalizedHeaders.indexOf('data_fechamento');
+        if (fechamentoIdx === -1) fechamentoIdx = normalizedHeaders.indexOf('data de fechamento');
+        if (fechamentoIdx === -1) {
+          fechamentoIdx = nextAvailableCol++;
+          dataToUpdate.push({
+            range: `${rangeName}!${getColLetter(fechamentoIdx)}1`,
+            values: [['data_fechamento']],
+          });
+        }
+        dataToUpdate.push({
+          range: `${rangeName}!${getColLetter(fechamentoIdx)}${sheetRow}`,
+          values: [[dataAtualStr]],
+        });
+      }
+      // ─────────────────────────────────────────────────────────────────────
     }
 
     if (observacoes !== undefined) {

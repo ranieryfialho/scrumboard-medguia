@@ -6,7 +6,7 @@ import { generateReportMetrics } from "@/utils/report-metrics";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Activity, Users, Percent, Target, Download } from "lucide-react";
+import { Activity, Users, Percent, Target, Download, History } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 
@@ -23,8 +23,8 @@ export default function RelatoriosPage() {
   const [loading, setLoading] = useState(true);
   const [leadsRaw, setLeadsRaw] = useState<Lead[]>([]);
 
-  const [mesSelecionado, setMesSelecionado] = useState<number>(2);
-  const [anoSelecionado, setAnoSelecionado] = useState<number>(2026);
+  const [mesSelecionado, setMesSelecionado] = useState<number>(() => new Date().getMonth() + 1);
+  const [anoSelecionado, setAnoSelecionado] = useState<number>(() => new Date().getFullYear());
 
   useEffect(() => {
     async function fetchLeads() {
@@ -69,6 +69,7 @@ export default function RelatoriosPage() {
     md += `|---|---|\n`;
     md += `| Total de Leads | ${metrics.geral.totalLeads} |\n`;
     md += `| Conversões (Ativos/Fechados) | ${metrics.geral.conversoes} |\n`;
+    md += `| Recuperação de Base (Leads de meses anteriores) | ${metrics.geral.conversoesAnteriores} |\n`;
     md += `| Taxa Geral de Conversão | ${metrics.geral.taxaConversaoGeral}% |\n`;
     md += `| Melhor Canal | ${melhorCanalNome} |\n\n`;
 
@@ -96,6 +97,49 @@ export default function RelatoriosPage() {
     });
     md += `\n`;
 
+    md += `## Detalhamento Nominal de Leads do Período\n\n`;
+    md += `| Nome do Lead | Situação no Funil | Data de Entrada | Origem / Fonte |\n`;
+    md += `|---|---|---|---|\n`;
+    
+    // Gerando as strings da lista de leads para injetar na tabela E no prompt
+    let leadsParaPrompt = "";
+    metrics.listaLeads.forEach(lead => {
+      const nome = lead.nome || 'Desconhecido';
+      const situacao = lead.situacao || '-';
+      const dataCriacao = lead.created_time || '-';
+      const origem = lead.origem || '-';
+      
+      md += `| ${nome} | ${situacao} | ${dataCriacao} | ${origem} |\n`;
+      leadsParaPrompt += `> - Nome: ${nome} | Status: ${situacao} | Entrada: ${dataCriacao} | Origem: ${origem}\n`;
+    });
+    md += `\n`;
+    
+    // --- ADIÇÃO DO PROMPT PARA IA DE SLIDES ---
+    md += `\n---\n\n`;
+    md += `## 🤖 Prompt para IA de Apresentação\n`;
+    md += `Copie todo o bloco abaixo (incluindo as aspas) e cole no Gamma.app, Tome.app ou ChatGPT:\n\n`;
+    
+    md += `> "Atue como um Analista de Marketing de Performance Sênior. Quero que você crie o roteiro e o conteúdo de uma apresentação executiva de resultados em formato de slides referente a ${nomeMes} de ${anoSelecionado}.\n>\n`;
+    md += `> DADOS GERAIS DO MÊS:\n`;
+    md += `> - Total de Leads: ${metrics.geral.totalLeads}\n`;
+    md += `> - Conversões (Ativos/Fechados): ${metrics.geral.conversoes}\n`;
+    md += `> - Recuperação de Base (Leads fechados de safras anteriores): ${metrics.geral.conversoesAnteriores}\n`;
+    md += `> - Taxa Geral de Conversão: ${metrics.geral.taxaConversaoGeral}%\n`;
+    md += `> - Melhor Canal: ${melhorCanalNome}\n>\n`;
+    
+    md += `> LISTA NOMINAL DOS LEADS DESTE MÊS:\n`;
+    md += leadsParaPrompt;
+    md += `>\n`;
+    
+    md += `> A apresentação deve ser altamente persuasiva, focada em dados e ter a seguinte estrutura (6 slides):\n>\n`;
+    md += `> **Slide 1: Capa** (Título forte sobre os resultados de ${nomeMes} de ${anoSelecionado}).\n`;
+    md += `> **Slide 2: Destaques do Mês** (Faça um resumo comemorando o total gerado, as conversões e enfatize fortemente a 'Recuperação de Base', explicando o valor comercial de trabalhar o recontato de leads antigos).\n`;
+    md += `> **Slide 3: O Canal Campeão** (Foque no canal '${melhorCanalNome}' e explique por que ele foi o vencedor).\n`;
+    md += `> **Slide 4: Raio-X dos Anúncios** (Destaque o comportamento de entrada por dias da semana e os melhores horários, se dedutíveis).\n`;
+    md += `> **Slide 5: Casos de Sucesso Reais** (Analise a LISTA NOMINAL fornecida acima, escolha 2 ou 3 leads que estejam com status 'Fechado' ou 'Aguardando Ativação' e cite o nome deles e a origem como exemplos reais de sucesso do nosso funil neste mês. Se não houver fechados, cite novos leads promissores).\n`;
+    md += `> **Slide 6: Insights e Próximos Passos** (Gere 3 recomendações lógicas e estratégicas sobre onde devemos alocar o esforço comercial no próximo mês baseado exclusivamente nestes dados).\n>\n`;
+    md += `> Regras de tom de voz: Seja direto, corporativo, visualmente limpo e comemore as vitórias."\n`;
+
     const blob = new Blob([md], { type: "text/markdown;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -120,7 +164,6 @@ export default function RelatoriosPage() {
             value={mesSelecionado.toString()}
             onValueChange={(v) => setMesSelecionado(Number(v))}
           >
-            {/* CORREÇÃO DO CONTRASTE DOS BOTÕES AQUI */}
             <SelectTrigger className="w-[140px] bg-white border-slate-200 shadow-sm text-slate-800 focus:ring-2 focus:ring-indigo-500">
               <SelectValue placeholder="Mês" />
             </SelectTrigger>
@@ -137,7 +180,6 @@ export default function RelatoriosPage() {
             value={anoSelecionado.toString()}
             onValueChange={(v) => setAnoSelecionado(Number(v))}
           >
-            {/* CORREÇÃO DO CONTRASTE DOS BOTÕES AQUI */}
             <SelectTrigger className="w-[100px] bg-white border-slate-200 shadow-sm text-slate-800 focus:ring-2 focus:ring-indigo-500">
               <SelectValue placeholder="Ano" />
             </SelectTrigger>
@@ -163,7 +205,6 @@ export default function RelatoriosPage() {
         </div>
       </div>
 
-      {/* O resto do código (Cards, Gráficos e Tabela) continua igualzinho aqui para baixo... */}
       {metrics.geral.totalLeads === 0 ? (
         <Card className="flex flex-col items-center justify-center p-12 text-center text-muted-foreground">
           <Target className="w-12 h-12 mb-4 opacity-20" />
@@ -172,7 +213,7 @@ export default function RelatoriosPage() {
         </Card>
       ) : (
         <>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
                 <CardTitle className="text-sm font-medium">Total de Leads</CardTitle>
@@ -180,13 +221,13 @@ export default function RelatoriosPage() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{metrics.geral.totalLeads}</div>
-                <p className="text-xs text-muted-foreground">Leads qualificados gerados</p>
+                <p className="text-xs text-muted-foreground">Leads qualificados no mês</p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                <CardTitle className="text-sm font-medium">Conversões (Ativos/Fechados)</CardTitle>
+                <CardTitle className="text-sm font-medium">Conversões (Ativos)</CardTitle>
                 <Target className="w-4 h-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -197,12 +238,23 @@ export default function RelatoriosPage() {
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                <CardTitle className="text-sm font-medium">Taxa Geral de Conversão</CardTitle>
+                <CardTitle className="text-sm font-medium text-emerald-600">Recuperação de Base</CardTitle>
+                <History className="w-4 h-4 text-emerald-600" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-emerald-600">{metrics.geral.conversoesAnteriores}</div>
+                <p className="text-xs text-muted-foreground">Leads de meses anteriores</p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                <CardTitle className="text-sm font-medium">Taxa de Conversão</CardTitle>
                 <Percent className="w-4 h-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{metrics.geral.taxaConversaoGeral}%</div>
-                <p className="text-xs text-muted-foreground">Média de todos os canais</p>
+                <p className="text-xs text-muted-foreground">Média geral do período</p>
               </CardContent>
             </Card>
 

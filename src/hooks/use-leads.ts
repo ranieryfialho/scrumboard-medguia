@@ -102,9 +102,20 @@ export function useLeads() {
   // Funções de Mutação
   const atualizarSituacaoLead = async (leadId: string, novaSituacao: string) => {
     const dataAtual = new Date().toLocaleString('pt-BR');
-    setLeads(prevLeads => prevLeads.map(lead =>
-      lead.id === leadId ? { ...lead, situacao: novaSituacao, data_alteracao: dataAtual } : lead
-    ));
+    const isFechado = ['Fechado', 'Aguardando Ativação'].includes(novaSituacao);
+
+    setLeads(prevLeads => prevLeads.map(lead => {
+      if (lead.id === leadId) {
+        const updatedLead = { ...lead, situacao: novaSituacao, data_alteracao: dataAtual };
+        // Injeta a data de fechamento no front-end para agilizar a UI
+        if (isFechado) {
+          updatedLead.data_fechamento = dataAtual;
+        }
+        return updatedLead;
+      }
+      return lead;
+    }));
+
     await fetch('/api/sheets', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -154,14 +165,32 @@ export function useLeads() {
   const hoje = useMemo(() => new Date(), []);
 
   const mesesUnicos = useMemo(() => {
-    const datas = leads.map(l => l.created_time).filter(Boolean);
-    const meses = datas.map(d => {
-      const dateObj = parseDateSegura(d);
-      if (!dateObj || dateObj > hoje) return null;
-      const m = dateObj.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
-      return m.charAt(0).toUpperCase() + m.slice(1);
-    }).filter(Boolean) as string[];
-    return Array.from(new Set(meses)).sort((a, b) => {
+    const setMeses = new Set<string>();
+
+    leads.forEach(l => {
+      // 1. Verifica Mês de Criação
+      if (l.created_time) {
+        const dateObj = parseDateSegura(l.created_time);
+        if (dateObj && dateObj <= hoje) {
+          const m = dateObj.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+          setMeses.add(m.charAt(0).toUpperCase() + m.slice(1));
+        }
+      }
+      
+      // 2. Verifica Mês de Fechamento (Fallback restrito apenas à criação)
+      if (['Fechado', 'Aguardando Ativação'].includes(l.situacao)) {
+        const dataParaUsar = l.data_fechamento || l.created_time;
+        if (dataParaUsar) {
+          const dateObj = parseDateSegura(dataParaUsar);
+          if (dateObj && dateObj <= hoje) {
+            const m = dateObj.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+            setMeses.add(m.charAt(0).toUpperCase() + m.slice(1));
+          }
+        }
+      }
+    });
+
+    return Array.from(setMeses).sort((a, b) => {
       const da = parseDateSegura('01 ' + a);
       const db = parseDateSegura('01 ' + b);
       return (db?.getTime() || 0) - (da?.getTime() || 0);
@@ -172,14 +201,38 @@ export function useLeads() {
     return leads.filter(lead => {
       const matchNome = lead.nome?.toLowerCase().includes(buscaNome.toLowerCase());
       const matchEspec = filtroEspecialidade ? normalizarEspecialidade(lead.cargo) === filtroEspecialidade : true;
+      
       let matchMes = true;
-      if (filtroMes && lead.created_time) {
-        const dateObj = parseDateSegura(lead.created_time);
-        if (dateObj) {
-          const m = dateObj.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
-          matchMes = (m.charAt(0).toUpperCase() + m.slice(1)) === filtroMes;
-        } else matchMes = false;
+      
+      if (filtroMes) {
+        let mCriacao = null;
+        let mFechamento = null;
+
+        // Pega o mês que o lead entrou
+        if (lead.created_time) {
+          const dateObj = parseDateSegura(lead.created_time);
+          if (dateObj) {
+            const m = dateObj.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+            mCriacao = m.charAt(0).toUpperCase() + m.slice(1);
+          }
+        }
+
+        // Pega o mês em que ele foi dado como "Fechado" (Fallback restrito apenas à criação)
+        if (['Fechado', 'Aguardando Ativação'].includes(lead.situacao)) {
+          const dataParaUsar = lead.data_fechamento || lead.created_time;
+          if (dataParaUsar) {
+            const dateObj = parseDateSegura(dataParaUsar);
+            if (dateObj) {
+              const m = dateObj.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+              mFechamento = m.charAt(0).toUpperCase() + m.slice(1);
+            }
+          }
+        }
+
+        // O card aparece na tela se foi CRIADO neste mês OU se foi FECHADO neste mês
+        matchMes = (mCriacao === filtroMes) || (mFechamento === filtroMes);
       }
+      
       return matchNome && matchEspec && matchMes;
     });
   }, [leads, buscaNome, filtroEspecialidade, filtroMes]);
