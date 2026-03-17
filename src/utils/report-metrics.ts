@@ -32,49 +32,52 @@ function resolverNomeAnuncio(lead: Lead): string {
 }
 
 export function generateReportMetrics(leads: Lead[], month: number, year: number) {
-  
-  // Helper robusto: agora aceita string, null ou undefined sem o TypeScript reclamar
+
   function getMonthYear(dataStr?: string | null): { month: number; year: number } | null {
     if (!dataStr) return null;
     const str = dataStr.trim();
-    
+
     // Formato BR: DD/MM/AAAA
     const regexBR = /^(\d{1,2})\/(\d{1,2})\/(\d{4})/;
     const matchBR = str.match(regexBR);
     if (matchBR) {
       return { month: parseInt(matchBR[2], 10), year: parseInt(matchBR[3], 10) };
     }
-    
+
     // Formato ISO: AAAA-MM-DD
     let safeStr = str;
     if (str.includes('-') && !str.includes('T')) {
       safeStr = `${str}T12:00:00`;
     }
-    
+
     const dataObj = new Date(safeStr);
     if (!isNaN(dataObj.getTime())) {
       return { month: dataObj.getMonth() + 1, year: dataObj.getFullYear() };
     }
-    
+
     return null;
   }
 
-  // 1. O UNIVERSO DO MÊS (Paridade com o Kanban)
+  // 1. O UNIVERSO DO MÊS — idêntico ao Kanban:
+  //    criado no mês OU fechado/ativado no mês (via data_fechamento).
+  //    Desqualificados entram APENAS se foram criados no mês,
+  //    mantendo paridade exata com o filtro de mês do Kanban.
   const leadsDoMes = leads.filter(lead => {
     if (lead.situacao === 'Arquivado') return false;
 
     const dateCriacao = getMonthYear(lead.created_time || '');
-    // CORREÇÃO: Força ser estritamente boolean com !== null
-    const ehCriadoNoMes = dateCriacao !== null && dateCriacao.month === month && dateCriacao.year === year;
+    const ehCriadoNoMes = dateCriacao !== null
+      && dateCriacao.month === month
+      && dateCriacao.year === year;
 
     let ehFechadoNoMes = false;
     if (STATUS_CONVERSAO.includes(lead.situacao)) {
       const leadEstendido = lead as Record<string, any>;
       const dataFechamento = leadEstendido.data_fechamento || lead.created_time || '';
-      
       const dateFechamento = getMonthYear(dataFechamento);
-      // CORREÇÃO PRINCIPAL: Impede que retorne null para a variável boolean
-      ehFechadoNoMes = dateFechamento !== null && dateFechamento.month === month && dateFechamento.year === year;
+      ehFechadoNoMes = dateFechamento !== null
+        && dateFechamento.month === month
+        && dateFechamento.year === year;
     }
 
     return ehCriadoNoMes || ehFechadoNoMes;
@@ -82,38 +85,68 @@ export function generateReportMetrics(leads: Lead[], month: number, year: number
 
   const totalLeads = leadsDoMes.length;
 
-  // 2. Separar as Conversões exatas do mês
+  // 2. Conversões exatas do mês
   const leadsConvertidosNoMes = leadsDoMes.filter(lead => {
     if (!STATUS_CONVERSAO.includes(lead.situacao)) return false;
-    
     const leadEstendido = lead as Record<string, any>;
     const dataFechamento = leadEstendido.data_fechamento || lead.created_time || '';
-    
     const dateFechamento = getMonthYear(dataFechamento);
-    // CORREÇÃO: Força ser estritamente boolean com !== null
-    return dateFechamento !== null && dateFechamento.month === month && dateFechamento.year === year;
+    return dateFechamento !== null
+      && dateFechamento.month === month
+      && dateFechamento.year === year;
   });
 
   const conversoes = leadsConvertidosNoMes.length;
 
-  // 3. NOVA MÉTRICA: Recuperação de Base (Criados em meses anteriores, fechados neste mês)
+  // 3. Recuperação de Base (criados em meses anteriores, fechados neste mês)
   const conversoesAnteriores = leadsConvertidosNoMes.filter(lead => {
     const dateCriacao = getMonthYear(lead.created_time || '');
-    if (!dateCriacao) return false;
-    
-    // CORREÇÃO: Força ser estritamente boolean com !== null
-    return dateCriacao !== null && (dateCriacao.year < year || (dateCriacao.year === year && dateCriacao.month < month));
+    return dateCriacao !== null
+      && (dateCriacao.year < year || (dateCriacao.year === year && dateCriacao.month < month));
   }).length;
 
-  const taxaConversaoGeral = totalLeads > 0 ? ((conversoes / totalLeads) * 100).toFixed(2) : '0.00';
+  // 4. Desqualificados — apenas dentro do leadsDoMes (criados no mês),
+  //    garantindo paridade com o Kanban
+  const leadsDesqualificadosNoMes = leadsDoMes.filter(
+    lead => lead.situacao === 'Desqualificado'
+  );
+  const desqualificados = leadsDesqualificadosNoMes.length;
 
-  // 4. Agrupamento por Fonte
-  const porFonteMap: Record<string, { nome: string; leads: number; conversoes: number }> = {};
-  
+  const taxaDesqualificacao = totalLeads > 0
+    ? ((desqualificados / totalLeads) * 100).toFixed(1)
+    : '0.0';
+
+  // Desqualificados agrupados por origem
+  const desqPorOrigemMap: Record<string, number> = {};
+  leadsDesqualificadosNoMes.forEach(lead => {
+    const origem = lead.origem || 'Desconhecida';
+    desqPorOrigemMap[origem] = (desqPorOrigemMap[origem] || 0) + 1;
+  });
+  const desqPorOrigem = Object.entries(desqPorOrigemMap)
+    .map(([origem, total]) => ({ origem, total }))
+    .sort((a, b) => b.total - a.total);
+
+  const taxaConversaoGeral = totalLeads > 0
+    ? ((conversoes / totalLeads) * 100).toFixed(2)
+    : '0.00';
+
+  // 5. Agrupamento por Fonte
+  const porFonteMap: Record<string, {
+    nome: string;
+    leads: number;
+    conversoes: number;
+    desqualificados: number;
+  }> = {};
+
   leadsDoMes.forEach(lead => {
     const fonte = lead.origem || 'Outros / Desconhecida';
-    if (!porFonteMap[fonte]) porFonteMap[fonte] = { nome: fonte, leads: 0, conversoes: 0 };
+    if (!porFonteMap[fonte]) {
+      porFonteMap[fonte] = { nome: fonte, leads: 0, conversoes: 0, desqualificados: 0 };
+    }
     porFonteMap[fonte].leads += 1;
+    if (lead.situacao === 'Desqualificado') {
+      porFonteMap[fonte].desqualificados += 1;
+    }
   });
 
   leadsConvertidosNoMes.forEach(lead => {
@@ -126,14 +159,21 @@ export function generateReportMetrics(leads: Lead[], month: number, year: number
     taxa: f.leads > 0 ? ((f.conversoes / f.leads) * 100).toFixed(2) : '0.00',
   })).sort((a, b) => b.leads - a.leads);
 
-  // 5. Agrupamento por Anúncio
-  const porAnuncioMap: Record<string, { nome: string; fonte: string; leads: number; conversoes: number }> = {};
+  // 6. Agrupamento por Anúncio
+  const porAnuncioMap: Record<string, {
+    nome: string;
+    fonte: string;
+    leads: number;
+    conversoes: number;
+  }> = {};
 
   leadsDoMes.forEach(lead => {
     const anuncio = resolverNomeAnuncio(lead);
     const fonte = lead.origem || 'Desconhecida';
     const chave = `${anuncio}-${fonte}`;
-    if (!porAnuncioMap[chave]) porAnuncioMap[chave] = { nome: anuncio, fonte, leads: 0, conversoes: 0 };
+    if (!porAnuncioMap[chave]) {
+      porAnuncioMap[chave] = { nome: anuncio, fonte, leads: 0, conversoes: 0 };
+    }
     porAnuncioMap[chave].leads += 1;
   });
 
@@ -149,7 +189,7 @@ export function generateReportMetrics(leads: Lead[], month: number, year: number
     taxa: a.leads > 0 ? ((a.conversoes / a.leads) * 100).toFixed(2) : '0.00',
   })).sort((a, b) => b.leads - a.leads);
 
-  // 6. Padrões Temporais 
+  // 7. Padrões Temporais
   const diasSemana = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
   const porDiaMap = leadsDoMes.reduce((acc, lead) => {
     if (lead.created_time) {
@@ -174,11 +214,20 @@ export function generateReportMetrics(leads: Lead[], month: number, year: number
 
   const porDia = diasSemana.map(dia => ({ nome: dia, leads: porDiaMap[dia] || 0 }));
 
-  return { 
-    geral: { totalLeads, conversoes, conversoesAnteriores, taxaConversaoGeral }, 
-    porFonte, 
-    porAnuncio, 
+  return {
+    geral: {
+      totalLeads,
+      conversoes,
+      conversoesAnteriores,
+      taxaConversaoGeral,
+      desqualificados,
+      taxaDesqualificacao,
+      desqPorOrigem,
+    },
+    porFonte,
+    porAnuncio,
     porDia,
-    listaLeads: leadsDoMes 
+    listaLeads: leadsDoMes,
+    listaDesqualificados: leadsDesqualificadosNoMes,
   };
 }
