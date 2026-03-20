@@ -16,18 +16,16 @@ interface CampanhaDetalhesProps {
 
 export function CampanhaDetalhes({ campanha, onBack, onRefresh }: CampanhaDetalhesProps) {
   const [destinatarios, setDestinatarios] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true); // Começa true para o loading da 1ª vez
+  const [loading, setLoading] = useState(true);
   const [isStarting, setIsStarting] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [isRefreshingLocal, setIsRefreshingLocal] = useState(false); 
-  const [isResending, setIsResending] = useState(false); // Novo estado para o botão de reenvio
+  const [isResending, setIsResending] = useState(false); 
   
   const supabase = createClient();
 
-  // A MÁGICA DOS 3 MODOS ESTÁ AQUI
   const fetchDestinatarios = useCallback(async (tipoBusca: 'inicial' | 'silenciosa' | 'manual' = 'inicial') => {
     if (tipoBusca === 'manual') setIsRefreshingLocal(true);
-    // Nota: Nunca damos setLoading(true) de novo para não piscar a tabela!
     
     try {
       const { data, error } = await supabase
@@ -38,12 +36,32 @@ export function CampanhaDetalhes({ campanha, onBack, onRefresh }: CampanhaDetalh
 
       if (error) throw error;
       setDestinatarios(data || []);
+
+      // =========================================================
+      // AUTO-HEALING: VERIFICAÇÃO AUTOMÁTICA DE TÉRMINO
+      // Se a campanha consta como PROCESSANDO mas a fila de envios acabou,
+      // alteramos o status dela para FINALIZADA.
+      // =========================================================
+      if (campanha.status === 'PROCESSANDO' && data && data.length > 0) {
+        const aindaTemFila = data.some((d: any) => d.status === 'PENDENTE' || d.status === 'RASCUNHO');
+        
+        if (!aindaTemFila) {
+          // 1. Atualiza no Supabase
+          await supabase.from('campanhas').update({ status: 'FINALIZADA' }).eq('id', campanha.id);
+          // 2. Atualiza localmente para refletir os badges na mesma hora
+          campanha.status = 'FINALIZADA';
+          // 3. Pede para a tabela da tela anterior atualizar os dados
+          onRefresh();
+        }
+      }
+
     } catch (error) {
       console.error("Erro ao buscar destinatários:", error);
     } finally {
-      setLoading(false); // Desliga o loading grande (se for a busca inicial)
-      setIsRefreshingLocal(false); // Desliga a rodinha do botão (se for manual)
+      setLoading(false);
+      setIsRefreshingLocal(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [campanha.id, supabase]);
 
   // Busca inicial (Ao abrir a tela)
@@ -51,7 +69,7 @@ export function CampanhaDetalhes({ campanha, onBack, onRefresh }: CampanhaDetalh
     fetchDestinatarios('inicial');
   }, [fetchDestinatarios]);
 
-  // Busca silenciosa (A cada 5 segundos)
+  // Busca silenciosa (A cada 5 segundos enquanto estiver processando)
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (campanha.status === 'PROCESSANDO') {
@@ -73,7 +91,7 @@ export function CampanhaDetalhes({ campanha, onBack, onRefresh }: CampanhaDetalh
       
       campanha.status = 'PROCESSANDO';
       onRefresh(); 
-      fetchDestinatarios('silenciosa'); // Atualiza a tela discretamente
+      fetchDestinatarios('silenciosa'); 
       
       alert("Sucesso! Os envios foram liberados para a fila. O seu motor em Python já pode assumir.");
     } catch (e) {
@@ -84,7 +102,6 @@ export function CampanhaDetalhes({ campanha, onBack, onRefresh }: CampanhaDetalh
     }
   };
 
-  // NOVA FUNÇÃO: Reenviar Falhas
   const reenviarFalhas = async () => {
     setIsResending(true);
     try {
@@ -96,8 +113,15 @@ export function CampanhaDetalhes({ campanha, onBack, onRefresh }: CampanhaDetalh
 
       if (error) throw error;
 
+      // Se a campanha estava finalizada, voltamos ela para PROCESSANDO
+      if (campanha.status !== 'PROCESSANDO') {
+        await supabase.from('campanhas').update({ status: 'PROCESSANDO' }).eq('id', campanha.id);
+        campanha.status = 'PROCESSANDO';
+        onRefresh();
+      }
+
       alert("As falhas foram devolvidas para a fila! O motor começará a processá-las em breve.");
-      fetchDestinatarios('manual'); // Atualiza a tela para mostrar os pendentes novamente
+      fetchDestinatarios('manual'); 
     } catch (error) {
       console.error("Erro ao reenviar falhas:", error);
       alert("Erro ao tentar reenviar as falhas. Verifique sua conexão.");
@@ -160,7 +184,6 @@ export function CampanhaDetalhes({ campanha, onBack, onRefresh }: CampanhaDetalh
                 <RefreshCw className={`w-3.5 h-3.5 mr-2 ${isRefreshingLocal ? 'animate-spin' : ''}`} /> Atualizar
               </Button>
 
-              {/* BOTÃO DE REENVIAR FALHAS (Só aparece se houver erros) */}
               {erros > 0 && (
                 <Button 
                   variant="outline" 
@@ -173,7 +196,6 @@ export function CampanhaDetalhes({ campanha, onBack, onRefresh }: CampanhaDetalh
                   Reenviar Falhas ({erros})
                 </Button>
               )}
-
             </div>
             <div className="flex items-center gap-3 text-sm text-slate-500 mt-2 font-medium">
               <span className="flex items-center gap-1.5"><Calendar className="w-4 h-4" /> {new Date(campanha.criado_em).toLocaleDateString('pt-BR')}</span>
@@ -183,7 +205,6 @@ export function CampanhaDetalhes({ campanha, onBack, onRefresh }: CampanhaDetalh
           </div>
         </div>
 
-        {/* Esse botão pode conviver com o restante se a pessoa quiser dar play nos pendentes iniciais */}
         {(campanha.status === 'RASCUNHO' || (campanha.status === 'PROCESSANDO' && pendentes > 0 && isStarting)) && (
           <Button onClick={handlePlay} disabled={isStarting} className="bg-emerald-500 hover:bg-emerald-600 text-white shadow-md px-6 py-6 text-base font-bold transition-all shrink-0">
             {isStarting ? <Loader2 className="w-5 h-5 mr-2 animate-spin"/> : <Play className="w-5 h-5 mr-2 fill-current" />}
