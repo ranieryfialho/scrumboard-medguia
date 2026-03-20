@@ -11,10 +11,11 @@ import { LeadCard } from "@/components/kanban/lead-card";
 import { FilterBar } from "@/components/dashboard/filter-bar";
 import { DashboardTab } from "@/components/dashboard/dashboard-tab";
 import { Sidebar } from "@/components/layout/sidebar";
-import RelatoriosPage from "@/app/relatorios/page";
-import { CampanhasTab } from "@/components/campanhas/campanhas-tab";
 
-// NOVO: Importando a aba de usuários
+import RelatoriosPage from "@/app/relatorios/page";
+import RelatoriosComerciaisPage from "@/app/relatorios-comerciais/page";
+
+import { CampanhasTab } from "@/components/campanhas/campanhas-tab";
 import { UsuariosTab } from "@/components/usuarios-tab";
 
 import { useLeads } from "@/hooks/use-leads";
@@ -60,14 +61,14 @@ export default function Home() {
       dashboard: 'Dashboard',
       kanban: 'Gestão de Leads',
       arquivados: 'Leads Arquivados',
-      relatorios: 'Relatórios Analíticos',
+      relatorios: 'Marketing & Tráfego',
+      'relatorios-comerciais': 'Comercial & Vendas',
       campanhas: 'Mala Direta',
-      usuarios: 'Gestão de Equipe e Acessos' // NOVO: Título para a aba de usuários
+      usuarios: 'Gestão de Equipe e Acessos'
     };
     return titulos[abaAtiva] || '';
   };
 
-  // Variável centralizada para a animação suave de transição de telas
   const animacaoPadrao = "animate-in fade-in slide-in-from-bottom-4 duration-500 ease-out";
 
   return (
@@ -75,7 +76,6 @@ export default function Home() {
       <Sidebar abaAtiva={abaAtiva} setAbaAtiva={setAbaAtiva} />
       
       <main className="flex-1 flex flex-col h-screen overflow-hidden">
-        {/* Header Fixo */}
         <header className="bg-transparent px-8 py-5 flex items-center justify-between shrink-0">
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-slate-800 flex items-center gap-3">
@@ -106,7 +106,6 @@ export default function Home() {
           </div>
         </header>
 
-        {/* Filtro Dinâmico */}
         {(abaAtiva === "kanban" || abaAtiva === "arquivados") && (
           <FilterBar
             buscaNome={buscaNome} setBuscaNome={setBuscaNome}
@@ -119,7 +118,6 @@ export default function Home() {
           />
         )}
 
-        {/* Área de Conteúdo Dinâmica (Tabs com Animação) */}
         <div className="flex-1 overflow-hidden relative">
           <Tabs value={abaAtiva} className="h-full flex flex-col">
 
@@ -141,15 +139,13 @@ export default function Home() {
                     onClick={() => setViewMode("kanban")}
                     className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-semibold transition-all duration-200 ${viewMode === "kanban" ? "bg-white text-indigo-600 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
                   >
-                    <LayoutGrid className="w-4 h-4" />
-                    Quadro
+                    <LayoutGrid className="w-4 h-4" /> Quadro
                   </button>
                   <button
                     onClick={() => setViewMode("tabela")}
                     className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-semibold transition-all duration-200 ${viewMode === "tabela" ? "bg-white text-indigo-600 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
                   >
-                    <TableIcon className="w-4 h-4" />
-                    Lista
+                    <TableIcon className="w-4 h-4" /> Lista
                   </button>
                 </div>
               </div>
@@ -170,6 +166,7 @@ export default function Home() {
                   <LeadsTable
                     leads={leadsFiltrados}
                     onStatusChange={atualizarSituacaoLead}
+                    onSaveObs={salvarObservacaoLead}
                   />
                 )}
               </div>
@@ -205,6 +202,10 @@ export default function Home() {
               <RelatoriosPage />
             </TabsContent>
 
+            <TabsContent value="relatorios-comerciais" className={`flex-1 overflow-y-auto m-0 h-full ${animacaoPadrao}`}>
+              <RelatoriosComerciaisPage />
+            </TabsContent>
+
             <TabsContent value="campanhas" className={`flex-1 overflow-y-auto m-0 h-full bg-slate-50 ${animacaoPadrao}`}>
               <CampanhasTab 
                 leads={leads} 
@@ -214,7 +215,6 @@ export default function Home() {
               />
             </TabsContent>
 
-            {/* NOVO: Aba de Gestão de Usuários */}
             <TabsContent value="usuarios" className={`flex-1 overflow-y-auto m-0 h-full bg-slate-50 ${animacaoPadrao}`}>
               <UsuariosTab />
             </TabsContent>

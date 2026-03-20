@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { LayoutDashboard, KanbanSquare, Archive, LogOut, ChevronLeft, ChevronRight, MessageSquare, FileText, Mail, Users } from "lucide-react";
+import { useState, useEffect } from "react";
+import { LayoutDashboard, KanbanSquare, Archive, LogOut, ChevronLeft, ChevronRight, MessageSquare, FileText, Mail, Users, Trophy, Target } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
@@ -12,8 +12,38 @@ interface SidebarProps {
 
 export function Sidebar({ abaAtiva, setAbaAtiva }: SidebarProps) {
   const [isExpanded, setIsExpanded] = useState(true);
+  const [modulosPermitidos, setModulosPermitidos] = useState<string[]>([]);
   const router = useRouter();
   const supabase = createClient();
+
+  useEffect(() => {
+    async function carregarPermissoes() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const metadataModulos = user.user_metadata?.modulos;
+      const perfilAntigo = user.user_metadata?.perfil;
+      const isAtivo = user.user_metadata?.ativo !== false;
+
+      if (!isAtivo) {
+        setModulosPermitidos([]);
+        return;
+      }
+
+      if (metadataModulos && Array.isArray(metadataModulos)) {
+        setModulosPermitidos(metadataModulos);
+      } else {
+        if (perfilAntigo === 'MASTER' || perfilAntigo === 'ADMIN') {
+          setModulosPermitidos(['dashboard', 'kanban', 'arquivados', 'relatorios', 'relatorios-comerciais', 'campanhas', 'usuarios']);
+        } else if (perfilAntigo === 'GERENTE') {
+          setModulosPermitidos(['dashboard', 'kanban', 'arquivados', 'relatorios', 'relatorios-comerciais']);
+        } else {
+          setModulosPermitidos(['dashboard', 'kanban']); 
+        }
+      }
+    }
+    carregarPermissoes();
+  }, []);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -21,35 +51,42 @@ export function Sidebar({ abaAtiva, setAbaAtiva }: SidebarProps) {
     router.refresh();
   };
 
-  const menuItems = [
+  const menuConfig = [
     {
       category: "Leads",
       items: [
-        { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, disabled: false },
-        { id: "kanban", label: "Quadro Kanban", icon: KanbanSquare, disabled: false },
-        { id: "arquivados", label: "Arquivados", icon: Archive, disabled: false },
+        { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+        { id: "kanban", label: "Quadro Kanban", icon: KanbanSquare },
+        { id: "arquivados", label: "Arquivados", icon: Archive },
       ]
     },
     {
       category: "Análises",
       items: [
-        { id: "relatorios", label: "Relatórios", icon: FileText, disabled: false },
-        { id: "chats", label: "Mensagens", icon: MessageSquare, disabled: true },
+        { id: "relatorios", label: "Marketing e Tráfego", icon: Target },
+        { id: "relatorios-comerciais", label: "Comercial e Vendas", icon: Trophy },
       ]
     },
     {
       category: "Comunicação",
       items: [
-        { id: "campanhas", label: "Mala Direta", icon: Mail, disabled: false },
+        { id: "campanhas", label: "Mala Direta", icon: Mail },
       ]
     },
     {
       category: "Administração",
       items: [
-        { id: "usuarios", label: "Equipe e Acessos", icon: Users, disabled: false },
+        { id: "usuarios", label: "Equipe e Acessos", icon: Users },
       ]
     }
   ];
+
+  const menusFiltrados = menuConfig.map(group => {
+    return {
+      ...group,
+      items: group.items.filter(item => modulosPermitidos.includes(item.id))
+    };
+  }).filter(group => group.items.length > 0);
 
   return (
     <aside 
@@ -76,49 +113,52 @@ export function Sidebar({ abaAtiva, setAbaAtiva }: SidebarProps) {
       </div>
 
       <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent">
-        {menuItems.map((group, groupIndex) => (
-          <div key={groupIndex} className="mb-6">
-            {isExpanded && (
-              <h3 className="px-6 mb-2 text-xs font-semibold uppercase tracking-wider text-zinc-600">
-                {group.category}
-              </h3>
-            )}
-            <ul className="space-y-1 px-3">
-              {group.items.map((item) => {
-                const Icon = item.icon;
-                const isActive = abaAtiva === item.id;
-                
-                return (
-                  <li key={item.id}>
-                    <button
-                      onClick={() => !item.disabled && setAbaAtiva(item.id)}
-                      disabled={item.disabled}
-                      className={`w-full flex items-center px-4 py-3 rounded-xl transition-all duration-200 group ${
-                        isActive 
-                          ? "bg-indigo-500/10 text-indigo-400" 
-                          : item.disabled 
-                            ? "opacity-40 cursor-not-allowed" 
+        {menusFiltrados.length === 0 ? (
+           <div className="px-6 py-8 text-center">
+             <p className="text-xs text-red-400/80 uppercase tracking-widest font-bold">Acesso Bloqueado</p>
+           </div>
+        ) : (
+          menusFiltrados.map((group, groupIndex) => (
+            <div key={groupIndex} className="mb-6">
+              {isExpanded && (
+                <h3 className="px-6 mb-2 text-xs font-semibold uppercase tracking-wider text-zinc-600">
+                  {group.category}
+                </h3>
+              )}
+              <ul className="space-y-1 px-3">
+                {group.items.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = abaAtiva === item.id;
+                  
+                  return (
+                    <li key={item.id}>
+                      <button
+                        onClick={() => setAbaAtiva(item.id)}
+                        className={`w-full flex items-center px-4 py-3 rounded-xl transition-all duration-200 group ${
+                          isActive 
+                            ? "bg-indigo-500/10 text-indigo-400" 
                             : "hover:bg-white/5 hover:text-white"
-                      }`}
-                      title={!isExpanded ? item.label : ""}
-                    >
-                      <Icon className={`w-5 h-5 shrink-0 transition-colors ${isActive ? "text-indigo-400" : "text-zinc-500 group-hover:text-zinc-300"}`} />
-                      {isExpanded && (
-                        <span className={`ml-3 text-sm font-medium ${isActive ? "text-indigo-400" : ""}`}>
-                          {item.label}
-                        </span>
-                      )}
-                      
-                      {isActive && isExpanded && (
-                        <div className="absolute left-0 w-1 h-8 bg-indigo-500 rounded-r-full" />
-                      )}
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        ))}
+                        }`}
+                        title={!isExpanded ? item.label : ""}
+                      >
+                        <Icon className={`w-5 h-5 shrink-0 transition-colors ${isActive ? "text-indigo-400" : "text-zinc-500 group-hover:text-zinc-300"}`} />
+                        {isExpanded && (
+                          <span className={`ml-3 text-sm font-medium ${isActive ? "text-indigo-400" : ""}`}>
+                            {item.label}
+                          </span>
+                        )}
+                        
+                        {isActive && isExpanded && (
+                          <div className="absolute left-0 w-1 h-8 bg-indigo-500 rounded-r-full" />
+                        )}
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ))
+        )}
       </div>
 
       <div className="p-4 mt-auto border-t border-zinc-800/50">

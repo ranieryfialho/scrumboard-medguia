@@ -4,31 +4,30 @@ import { NextResponse } from 'next/server';
 export const dynamic = 'force-dynamic';
 
 const STATUS_MAP: Record<string, string> = {
-  'created':             'Novos Leads',
-  'new':                 'Novos Leads',
-  'novo':                'Novos Leads',
-  'novos leads':         'Novos Leads',
-  '':                    'Novos Leads',
-  'sem situacao':        'Novos Leads',
-  'em contato':          'Em contato',
-  'contacted':           'Em contato',
-  'recontato':           'Recontato',
-  'reuniao agendada':    'Reunião agendada',
-  'meeting scheduled':   'Reunião agendada',
+  'created': 'Novos Leads',
+  'new': 'Novos Leads',
+  'novo': 'Novos Leads',
+  'novos leads': 'Novos Leads',
+  '': 'Novos Leads',
+  'sem situacao': 'Novos Leads',
+  'em contato': 'Em contato',
+  'contacted': 'Em contato',
+  'recontato': 'Recontato',
+  'reuniao agendada': 'Reunião agendada',
+  'meeting scheduled': 'Reunião agendada',
   'aguardando ativacao': 'Aguardando Ativação',
-  'pending activation':  'Aguardando Ativação',
-  'fechado':             'Fechado',
-  'closed':              'Fechado',
-  'won':                 'Fechado',
-  'sem interesse':       'Sem interesse',
-  'not interested':      'Sem interesse',
-  'desqualificado':      'Desqualificado',
-  'disqualified':        'Desqualificado',
-  'arquivado':           'Arquivado',
-  'archived':            'Arquivado',
+  'pending activation': 'Aguardando Ativação',
+  'fechado': 'Fechado',
+  'closed': 'Fechado',
+  'won': 'Fechado',
+  'sem interesse': 'Sem interesse',
+  'not interested': 'Sem interesse',
+  'desqualificado': 'Desqualificado',
+  'disqualified': 'Desqualificado',
+  'arquivado': 'Arquivado',
+  'archived': 'Arquivado',
 };
 
-// ── Mapeamento sheetAlias/rangeName → origem exibida ──────────────────────────
 const SHEET_KEY_ORIGEM_MAP: Record<string, string> = {
   'sheet1/Página1': 'BM MedGuia',
   'sheet1/Página2': 'BM Dr. Felipe',
@@ -46,34 +45,17 @@ function normalizarStatus(rawStatus: string | undefined): string {
   return STATUS_MAP[key] ?? 'Novos Leads';
 }
 
-// ── Detecta o tipo de origem manual a partir da observação ────────────────────
-//
-// Regras (verificadas em ordem, sem acento, sem maiúsculas):
-//   LP / landing page / landingpage   → 'Manual - LP'
-//   indicação / indicacao / indicado  → 'Manual - Indicação'
-//   Se já tem sufixo (ex: 'Manual - LP') mantém como está.
-//   Caso contrário mantém 'Manual'.
-//
 function enriquecerOrigemManual(origemAtual: string, observacoes: string): string {
-  // Se já foi escolhido um subtipo no formulário (ex: 'Manual - LP'), respeita.
   if (origemAtual !== 'Manual') return origemAtual;
-
   if (!observacoes) return 'Manual';
 
   const obs = observacoes
     .toLowerCase()
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, ""); // remove acentos para comparação
+    .replace(/[\u0300-\u036f]/g, "");
 
-  // Landing Page
-  if (/\blp\b/.test(obs) || /landing\s*page/.test(obs)) {
-    return 'Manual - LP';
-  }
-
-  // Indicação
-  if (/indica[çc][aã]o/.test(obs) || /\bindicado\b/.test(obs) || /\bindicada\b/.test(obs)) {
-    return 'Manual - Indicação';
-  }
+  if (/\blp\b/.test(obs) || /landing\s*page/.test(obs)) return 'Manual - LP';
+  if (/indica[çc][aã]o/.test(obs) || /\bindicado\b/.test(obs) || /\bindicada\b/.test(obs)) return 'Manual - Indicação';
 
   return 'Manual';
 }
@@ -108,104 +90,83 @@ async function fetchSheetData(
         else if (header) leadData[header] = valor;
       });
 
-      // ══════════════════════════════════════════════════════════════════════
-      // MAPEAMENTO EXPLÍCITO POR PLANILHA/ABA
-      // ══════════════════════════════════════════════════════════════════════
-
       if (sheetKey === 'sheet1/Página1') {
-        leadData.nome  = leadData['company_name'] || leadData['cargo'] || leadData['nome'] || 'Sem Nome';
-        leadData.cargo = leadData['full_name']    || leadData['cargo'] || '';
+        leadData.nome = leadData['company_name'] || leadData['cargo'] || leadData['nome'] || 'Sem Nome';
+        leadData.cargo = leadData['full_name'] || leadData['cargo'] || '';
 
       } else if (sheetKey === 'sheet1/Página2' || sheetKey === 'sheet2/Página1') {
-        leadData.nome  = leadData['first name']                || leadData['first_name'] || 'Sem Nome';
+        leadData.nome = leadData['first name'] || leadData['first_name'] || 'Sem Nome';
         leadData.cargo = leadData['qual_a_sua_especialidade?'] || leadData['qual_a_sua_especialidade'] || '';
 
       } else if (sheetKey === 'sheet3/Página1') {
-        leadData.nome  = leadData['full name']                        || leadData['full_name'] || 'Sem Nome';
+        leadData.nome = leadData['full name'] || leadData['full_name'] || 'Sem Nome';
         leadData.cargo = leadData['qual_a_sua_especialidade_medica?'] || leadData['qual_a_sua_especialidade_medica'] || '';
 
       } else {
         leadData.nome =
-          leadData['full_name']    ||
-          leadData['full name']    ||
-          leadData['first_name']   ||
-          leadData['first name']   ||
+          leadData['full_name'] ||
+          leadData['full name'] ||
+          leadData['first_name'] ||
+          leadData['first name'] ||
           leadData['company_name'] ||
-          leadData['nome']         ||
+          leadData['nome'] ||
           'Sem Nome';
 
         leadData.cargo =
           leadData['qual_a_sua_especialidade_medica?'] ||
-          leadData['qual_a_sua_especialidade_medica']  ||
-          leadData['qual_a_sua_especialidade?']        ||
-          leadData['qual_a_sua_especialidade']         ||
-          leadData['company_name']                     ||
-          leadData['cargo']                            ||
+          leadData['qual_a_sua_especialidade_medica'] ||
+          leadData['qual_a_sua_especialidade?'] ||
+          leadData['qual_a_sua_especialidade'] ||
+          leadData['company_name'] ||
+          leadData['cargo'] ||
           '';
       }
 
-      // WHATSAPP
       leadData.whatsapp =
-        leadData['phone_number']                 ||
-        leadData['telefone']                     ||
+        leadData['phone_number'] ||
+        leadData['telefone'] ||
         leadData['qual_seu_numero_de_whatsapp?'] ||
-        leadData['qual_seu_numero_de_whatsapp']  ||
-        leadData['qual_seu_numero']              ||
-        leadData['whatsapp']                     ||
+        leadData['qual_seu_numero_de_whatsapp'] ||
+        leadData['qual_seu_numero'] ||
+        leadData['whatsapp'] ||
         '';
 
-      // EMAIL
       leadData.email = leadData['email'] || '';
 
-      // ANÚNCIO / CAMPANHA (NOVA FEATURE PARA RELATÓRIOS)
-      leadData.anuncio = 
-        leadData['ad_name'] || 
-        leadData['nome_do_anuncio'] || 
-        leadData['campaign_name'] || 
-        leadData['utm_campaign'] || 
+      leadData.anuncio =
+        leadData['ad_name'] ||
+        leadData['nome_do_anuncio'] ||
+        leadData['campaign_name'] ||
+        leadData['utm_campaign'] ||
         'Desconhecido';
 
-      // CREATED_TIME
       leadData.created_time =
-        leadData['created_time']    ||
-        leadData['created time']    ||
+        leadData['created_time'] ||
+        leadData['created time'] ||
         leadData['data de criacao'] ||
         leadData['data_de_criacao'] ||
         '';
 
-      // NOVA COLUNA: DATA DE FECHAMENTO
       leadData.data_fechamento =
-        leadData['data_fechamento']    ||
+        leadData['data_fechamento'] ||
         leadData['data de fechamento'] ||
         '';
 
-      // DATA DE ALTERAÇÃO
       leadData.data_alteracao =
-        leadData['data_alteracao']    ||
+        leadData['data_alteracao'] ||
         leadData['data de alteracao'] ||
         '';
 
-      // OBSERVAÇÕES — precisa ser resolvido ANTES da origem
       leadData.observacoes = leadData['observacoes'] || leadData['observacao'] || '';
 
-      // ── ORIGEM ───────────────────────────────────────────────────────────
-      // Prioridade:
-      //   1. Lead de planilha (não manual) → usa SHEET_KEY_ORIGEM_MAP
-      //   2. Lead manual com subtipo já definido no form → mantém (ex: 'Manual - LP')
-      //   3. Lead manual sem subtipo → tenta detectar pelo campo observacoes
-      // ─────────────────────────────────────────────────────────────────────
       const origemExistente = leadData['origem'] || '';
 
       if (origemExistente.startsWith('Manual')) {
-        // Lead adicionado manualmente pelo painel:
-        // enriquece com base na observação caso seja apenas 'Manual' genérico
         leadData.origem = enriquecerOrigemManual(origemExistente, leadData.observacoes);
       } else {
-        // Lead vindo de planilha: usa o mapa de planilha
         leadData.origem = origemDaPlanilha || origemExistente || '';
       }
 
-      // CRM
       const crmRaw =
         leadData['qual_o_numero_do_seu_crm?'] ||
         leadData['qual_o_numero_do_seu_crm'];
@@ -213,7 +174,6 @@ async function fetchSheetData(
         leadData.tipo = `CRM: ${crmRaw}`;
       }
 
-      // STATUS
       const rawStatus = leadData['lead_status'] || leadData['situacao'] || '';
       leadData.situacao = normalizarStatus(rawStatus);
 
@@ -285,7 +245,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { action, leadData, id, novaSituacao, observacoes } = body;
+    const { action, leadData, id, novaSituacao, observacoes, dadosFechamento } = body;
 
     const auth = new google.auth.GoogleAuth({
       credentials: {
@@ -297,9 +257,6 @@ export async function POST(request: Request) {
 
     const sheets = google.sheets({ version: 'v4', auth });
 
-    // =============================
-    // CRIAÇÃO DE NOVO LEAD MANUAL
-    // =============================
     if (action === 'create') {
       const spreadsheetId = process.env.GOOGLE_SHEET_ID_1;
       if (!spreadsheetId)
@@ -368,9 +325,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true });
     }
 
-    // =======================
-    // STATUS OU OBSERVAÇÃO
-    // =======================
     if (!id) return NextResponse.json({ error: 'Faltam dados de ID para atualização' }, { status: 400 });
 
     const parts = id.split('-lead-');
@@ -443,7 +397,6 @@ export async function POST(request: Request) {
         values: [[dataAtualStr]],
       });
 
-      // ── LOGICA DA DATA DE FECHAMENTO DEDICADA ────────────────────────────
       const STATUS_CONVERSAO = ['Fechado', 'Aguardando Ativação'];
       if (STATUS_CONVERSAO.includes(novaSituacao)) {
         let fechamentoIdx = normalizedHeaders.indexOf('data_fechamento');
@@ -460,7 +413,6 @@ export async function POST(request: Request) {
           values: [[dataAtualStr]],
         });
       }
-      // ─────────────────────────────────────────────────────────────────────
     }
 
     if (observacoes !== undefined) {
@@ -479,12 +431,8 @@ export async function POST(request: Request) {
         values: [[observacoes]],
       });
 
-      // ── Atualiza a origem na planilha também quando a observação mudar ────
-      // Isso garante que se o usuário editar a observação de um lead 'Manual',
-      // a coluna origem da planilha também reflete o novo subtipo detectado.
       const origemAtualIdx = normalizedHeaders.indexOf('origem');
       if (origemAtualIdx !== -1) {
-        // Lê a origem atual desta linha para saber se é um lead manual
         const rowResponse = await sheets.spreadsheets.values.get({
           spreadsheetId,
           range: `${rangeName}!${getColLetter(origemAtualIdx)}${sheetRow}`,
@@ -500,6 +448,30 @@ export async function POST(request: Request) {
             });
           }
         }
+      }
+    }
+
+    // ===========================================
+    // DADOS ESTRUTURADOS DO FECHAMENTO COMERCIAL
+    // ===========================================
+    if (dadosFechamento) {
+      for (const [key, value] of Object.entries(dadosFechamento)) {
+        if (!value) continue;
+
+        let colIdx = normalizedHeaders.indexOf(key);
+        if (colIdx === -1) {
+          colIdx = nextAvailableCol++;
+          dataToUpdate.push({
+            range: `${rangeName}!${getColLetter(colIdx)}1`,
+            values: [[key]],
+          });
+          normalizedHeaders.push(key);
+        }
+
+        dataToUpdate.push({
+          range: `${rangeName}!${getColLetter(colIdx)}${sheetRow}`,
+          values: [[String(value)]],
+        });
       }
     }
 

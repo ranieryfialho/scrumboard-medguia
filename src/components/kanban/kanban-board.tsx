@@ -12,6 +12,9 @@ import {
   DragOverlay
 } from "@dnd-kit/core";
 
+import { AgendamentoModal } from "./agendamento-modal";
+import { FechamentoModal, FormFechamentoData } from "./fechamento-modal";
+
 interface KanbanBoardProps {
   leads: Lead[];
   onStatusChange?: (id: string, novaSituacao: string) => void;
@@ -33,17 +36,12 @@ export function KanbanBoard({ leads, onStatusChange, onSaveObs }: KanbanBoardPro
   const [localLeads, setLocalLeads] = useState<Lead[]>(leads);
   const [leadAtivo, setLeadAtivo] = useState<Lead | null>(null);
 
+  const [leadPendente, setLeadPendente] = useState<{ id: string, situacao: string } | null>(null);
+  const [modalAgendamentoOpen, setModalAgendamentoOpen] = useState(false);
+  const [modalFechamentoOpen, setModalFechamentoOpen] = useState(false);
+
   useEffect(() => {
     setLocalLeads(leads);
-
-    // DEBUG — remova após confirmar que os leads estão chegando corretamente
-    const situacoesUnicas = [...new Set(leads.map(l => l.situacao))];
-    console.log(`[KanbanBoard] Total de leads recebidos: ${leads.length}`);
-    console.log(`[KanbanBoard] Situações únicas:`, situacoesUnicas);
-    const semColuna = leads.filter(l => !COLUNAS_FIXAS.includes(l.situacao || ""));
-    if (semColuna.length > 0) {
-      console.warn(`[KanbanBoard] ${semColuna.length} leads com situação fora das colunas:`, semColuna.map(l => l.situacao));
-    }
   }, [leads]);
 
   const sensors = useSensors(
@@ -54,6 +52,26 @@ export function KanbanBoard({ leads, onStatusChange, onSaveObs }: KanbanBoardPro
     const { active } = event;
     const lead = localLeads.find(l => l.id === active.id);
     if (lead) setLeadAtivo(lead);
+  };
+
+  const efetivarMudancaStatus = async (id: string, novaSituacao: string) => {
+    setLocalLeads((prevLeads) => 
+      prevLeads.map((lead) => lead.id === id ? { ...lead, situacao: novaSituacao } : lead)
+    );
+
+    if (onStatusChange) {
+      onStatusChange(id, novaSituacao);
+    } else {
+      try {
+        await fetch('/api/sheets', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, novaSituacao })
+        });
+      } catch (error) {
+        console.error("Erro de rede ao salvar o card:", error);
+      }
+    }
   };
 
   const handleDragEnd = async (event: DragEndEvent) => {
@@ -68,25 +86,19 @@ export function KanbanBoard({ leads, onStatusChange, onSaveObs }: KanbanBoardPro
     const leadAtual = localLeads.find(l => l.id === leadId);
     if (!leadAtual || leadAtual.situacao === novaSituacao) return;
 
-    setLocalLeads((prevLeads) => 
-      prevLeads.map((lead) => 
-        lead.id === leadId ? { ...lead, situacao: novaSituacao } : lead
-      )
-    );
-
-    if (onStatusChange) {
-      onStatusChange(leadId, novaSituacao);
-    } else {
-      try {
-        await fetch('/api/sheets', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: leadId, novaSituacao })
-        });
-      } catch (error) {
-        console.error("Erro de rede ao salvar o card:", error);
-      }
+    if (novaSituacao === "Reunião agendada") {
+      setLeadPendente({ id: leadId, situacao: novaSituacao });
+      setModalAgendamentoOpen(true);
+      return; 
     }
+
+    if (novaSituacao === "Fechado") {
+      setLeadPendente({ id: leadId, situacao: novaSituacao });
+      setModalFechamentoOpen(true);
+      return; 
+    }
+
+    await efetivarMudancaStatus(leadId, novaSituacao);
   };
 
   const handleDragCancel = () => setLeadAtivo(null);
@@ -97,10 +109,85 @@ export function KanbanBoard({ leads, onStatusChange, onSaveObs }: KanbanBoardPro
     if (alvo) alvo.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
   };
 
+  const handleConfirmarAgendamento = async (dataReuniao: string, horaReuniao: string) => {
+    if (!leadPendente) return;
+    const leadObj = localLeads.find(l => l.id === leadPendente.id);
+    
+    const novoEvento = {
+      id: Math.random().toString(36).substring(2, 15),
+      date: dataReuniao,
+      title: `Reunião: ${leadObj?.nome || 'Lead'}`,
+      time: horaReuniao,
+      type: 'reuniao'
+    };
+
+    await fetch('/api/agenda', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'create', evento: novoEvento })
+    });
+    
+    await efetivarMudancaStatus(leadPendente.id, leadPendente.situacao);
+    setModalAgendamentoOpen(false);
+    setLeadPendente(null);
+  };
+
+  const handleConfirmarFechamento = async (formFechamento: FormFechamentoData) => {
+    if (!leadPendente) return;
+    const leadObj = localLeads.find(l => l.id === leadPendente.id);
+
+    const relatorioFechamento = `
+🏆 **LEAD FECHADO**
+- **Plataforma Anterior:** ${formFechamento.plataformaAnterior || 'N/A'}
+- **O que mais interessou:** ${formFechamento.oQueMaisInteressou || 'N/A'}
+- **Faltava na concorrente:** ${formFechamento.oQueDeixouADesejar || 'N/A'}
+- **Canal de Aquisição:** ${formFechamento.porOndeConheceu || 'N/A'}
+- **Plano Escolhido:** ${formFechamento.planoEscolhido || 'N/A'}
+- **Notas:** ${formFechamento.observacoesGerais || 'N/A'}
+
+--- Notas Anteriores ---
+${leadObj?.observacoes || ''}
+    `.trim();
+
+    const dadosFechamento = {
+      plataforma_anterior: formFechamento.plataformaAnterior,
+      o_que_mais_interessou: formFechamento.oQueMaisInteressou,
+      o_que_deixou_a_desejar: formFechamento.oQueDeixouADesejar,
+      por_onde_conheceu: formFechamento.porOndeConheceu,
+      plano_escolhido: formFechamento.planoEscolhido,
+    };
+
+    try {
+      await fetch('/api/sheets', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          id: leadPendente.id, 
+          novaSituacao: leadPendente.situacao,
+          observacoes: relatorioFechamento,
+          dadosFechamento: dadosFechamento
+        })
+      });
+      
+      setLocalLeads(prev => prev.map(l => l.id === leadPendente.id ? { 
+        ...l, 
+        situacao: leadPendente.situacao,
+        observacoes: relatorioFechamento,
+        ...dadosFechamento 
+      } : l));
+
+      if (onStatusChange) onStatusChange(leadPendente.id, leadPendente.situacao);
+      
+      setModalFechamentoOpen(false);
+      setLeadPendente(null);
+    } catch (error) {
+      console.error("Erro ao salvar fechamento:", error);
+    }
+  };
+
   const leadsAtivos = localLeads.filter(l => l.situacao !== 'Arquivado');
 
   const leadsPorColuna = leadsAtivos.reduce((acc, lead) => {
-    // CORRIGIDO: garante que a situação é sempre uma string válida das colunas fixas
     const situacaoValida: string = (lead.situacao && COLUNAS_FIXAS.includes(lead.situacao))
       ? lead.situacao
       : "Novos Leads";
@@ -112,7 +199,6 @@ export function KanbanBoard({ leads, onStatusChange, onSaveObs }: KanbanBoardPro
 
   return (
     <div className="relative w-full flex flex-col h-full">
-      
       <DndContext 
         sensors={sensors} 
         onDragStart={handleDragStart}
@@ -150,12 +236,10 @@ export function KanbanBoard({ leads, onStatusChange, onSaveObs }: KanbanBoardPro
         </DragOverlay>
       </DndContext>
 
-      {/* LEGENDA DO TERMÔMETRO DE SLA */}
       <div className="flex flex-wrap items-center gap-6 mt-4 px-4 shrink-0 bg-white/60 py-2.5 rounded-lg border border-slate-200/60 w-max shadow-sm">
         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mr-2">
           Termômetro de Novos Leads:
         </span>
-        
         <div className="flex items-center gap-2">
           <span className="relative flex h-2.5 w-2.5">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -163,7 +247,6 @@ export function KanbanBoard({ leads, onStatusChange, onSaveObs }: KanbanBoardPro
           </span>
           <span className="text-xs font-semibold text-slate-600">Até 24h (Quente)</span>
         </div>
-
         <div className="flex items-center gap-2">
           <span className="relative flex h-2.5 w-2.5">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
@@ -171,7 +254,6 @@ export function KanbanBoard({ leads, onStatusChange, onSaveObs }: KanbanBoardPro
           </span>
           <span className="text-xs font-semibold text-slate-600">24h a 48h (Atenção)</span>
         </div>
-
         <div className="flex items-center gap-2">
           <span className="relative flex h-2.5 w-2.5">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
@@ -181,7 +263,7 @@ export function KanbanBoard({ leads, onStatusChange, onSaveObs }: KanbanBoardPro
         </div>
       </div>
 
-      <div className="fixed bottom-4 right-4 z-50 bg-white/80 backdrop-blur-md border border-slate-200 shadow-lg rounded-lg p-2 hidden md:flex flex-col gap-1 transition-all duration-300 opacity-40 hover:opacity-100">
+      <div className="fixed bottom-4 right-4 z-40 bg-white/80 backdrop-blur-md border border-slate-200 shadow-lg rounded-lg p-2 hidden md:flex flex-col gap-1 transition-all duration-300 opacity-40 hover:opacity-100">
         <div className="text-[8px] font-bold text-slate-400 uppercase tracking-wider text-center">Mapa</div>
         <div className="flex gap-1 h-16">
           {COLUNAS_FIXAS.map((coluna) => {
@@ -203,6 +285,18 @@ export function KanbanBoard({ leads, onStatusChange, onSaveObs }: KanbanBoardPro
           })}
         </div>
       </div>
+
+      <AgendamentoModal 
+        isOpen={modalAgendamentoOpen} 
+        onClose={() => { setModalAgendamentoOpen(false); setLeadPendente(null); }}
+        onConfirm={handleConfirmarAgendamento}
+      />
+
+      <FechamentoModal 
+        isOpen={modalFechamentoOpen}
+        onClose={() => { setModalFechamentoOpen(false); setLeadPendente(null); }}
+        onConfirm={handleConfirmarFechamento}
+      />
     </div>
   );
 }
