@@ -64,7 +64,7 @@ export function NovaCampanhaModal({ leads = [], onSuccess, campanhaExistente }: 
 
       const dadosFormatados = json.map(row => ({
         nome: row.nome || row.Nome || row.NOME || "Cliente",
-        email: row.email || row.Email || row.EMAIL || row.e_mail || null
+        email: row.email || row.Email || row.EMAIL || row['e-mail'] || row['E-mail'] || row.e_mail || null
       })).filter(item => item.email);
 
       setDadosExcel(dadosFormatados);
