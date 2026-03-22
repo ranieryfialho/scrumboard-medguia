@@ -1,5 +1,6 @@
 import { google } from 'googleapis';
 import { NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
 
 export const dynamic = 'force-dynamic';
 
@@ -214,7 +215,39 @@ export async function GET() {
       fetchSheetData(sheets, id3, 'sheet3', 'Página1'),
     ]);
 
-    const todosLeads = [...leadsBM1_Pag1, ...leadsBM1_Pag2, ...leadsBM2, ...leadsBM3];
+    // =============================================
+    // BUSCA OS LEADS DO BANCO DE DADOS DA LP - AULA
+    // =============================================
+    let leadsDaLP: any[] = [];
+    const supabaseLpUrl = process.env.SUPABASE_LP_URL;
+    const supabaseLpKey = process.env.SUPABASE_LP_ANON_KEY;
+
+    if (supabaseLpUrl && supabaseLpKey) {
+      const supabaseLp = createClient(supabaseLpUrl, supabaseLpKey);
+      const { data: supabaseLeads, error } = await supabaseLp.from('leads').select('*');
+      
+      if (!error && supabaseLeads) {
+        leadsDaLP = supabaseLeads.map(lead => ({
+          id: `lp-${lead.id}`, 
+          nome: lead.name || 'Sem Nome',
+          email: lead.email || '',
+          whatsapp: lead.whatsapp || '',
+          cargo: lead.especialidade || '',
+          tipo: lead.crm ? `CRM: ${lead.crm}` : '',
+          origem: 'LP - Aula', 
+          situacao: normalizarStatus(lead.status) || 'Novos Leads',
+          created_time: lead.created_at || new Date().toISOString(),
+          data_alteracao: lead.data_alteracao || '',
+          data_fechamento: lead.data_fechamento || '',
+          observacoes: lead.observacoes || '',
+          anuncio: lead.anuncio || 'Desconhecido'
+        }));
+      } else if (error) {
+        console.error("Erro ao buscar leads da LP:", error);
+      }
+    }
+
+    const todosLeads = [...leadsBM1_Pag1, ...leadsBM1_Pag2, ...leadsBM2, ...leadsBM3, ...leadsDaLP];
     const leadsUnicos: any[] = [];
     const telefonesVistos = new Set<string>();
     const emailsVistos = new Set<string>();
@@ -247,6 +280,53 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { action, leadData, id, novaSituacao, observacoes, dadosFechamento } = body;
 
+    // =================================================
+    // INTERCEPTA ATUALIZAÇÕES PARA O BANCO DA LP - AULA
+    // =================================================
+    if (id && id.startsWith('lp-')) {
+      const supabaseLpUrl = process.env.SUPABASE_LP_URL;
+      const supabaseLpKey = process.env.SUPABASE_LP_ANON_KEY;
+      
+      if (!supabaseLpUrl || !supabaseLpKey) {
+        return NextResponse.json({ error: 'Credenciais da LP não configuradas' }, { status: 500 });
+      }
+
+      const supabaseLp = createClient(supabaseLpUrl, supabaseLpKey);
+      const realId = id.replace('lp-', '');
+      const dataAtualISO = new Date().toISOString(); 
+
+      const updateData: any = {};
+      
+      if (novaSituacao !== undefined) {
+        updateData.status = novaSituacao;
+        updateData.data_alteracao = dataAtualISO; 
+        
+        if (['Fechado', 'Aguardando Ativação'].includes(novaSituacao)) {
+           updateData.data_fechamento = dataAtualISO;
+        }
+      } 
+      
+      if (observacoes !== undefined) {
+        updateData.observacoes = observacoes;
+      }
+
+      if (dadosFechamento) {
+        updateData.dados_fechamento = dadosFechamento; 
+      }
+
+      const { error } = await supabaseLp.from('leads').update(updateData).eq('id', realId);
+      
+      if (error) {
+        console.error("Erro ao atualizar lead na LP:", error);
+        return NextResponse.json({ error: 'Erro ao atualizar banco da LP' }, { status: 500 });
+      }
+
+      return NextResponse.json({ success: true });
+    }
+
+    // ==========================================
+    // FLUXO ORIGINAL PARA O GOOGLE SHEETS
+    // ==========================================
     const auth = new google.auth.GoogleAuth({
       credentials: {
         client_email: process.env.GOOGLE_CLIENT_EMAIL,
@@ -451,9 +531,6 @@ export async function POST(request: Request) {
       }
     }
 
-    // ===========================================
-    // DADOS ESTRUTURADOS DO FECHAMENTO COMERCIAL
-    // ===========================================
     if (dadosFechamento) {
       for (const [key, value] of Object.entries(dadosFechamento)) {
         if (!value) continue;
@@ -485,7 +562,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: true });
 
   } catch (error) {
-    console.error("Erro ao salvar no Sheets:", error);
+    console.error("Erro ao salvar no Sheets/Supabase:", error);
     return NextResponse.json({ error: 'Erro interno ao salvar.' }, { status: 500 });
   }
 }
