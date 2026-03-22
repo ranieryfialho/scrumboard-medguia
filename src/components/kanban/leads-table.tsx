@@ -119,7 +119,7 @@ function resolverContatos(lead: Lead) {
     if (!v) return;
     const limpo = v.replace(/^p:?\s*/i, "").trim();
     if (limpo.includes("@")) realEmail = limpo;
-    else if (/\d{8}/.test(limpo)) realPhone = limpo;
+    else if (/\d{8}/.test(limpo.replace(/\D/g, ""))) realPhone = limpo;
   };
   extrair(lead.email);
   extrair(lead.whatsapp);
