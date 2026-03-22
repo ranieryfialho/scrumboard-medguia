@@ -191,9 +191,22 @@ export function useLeads() {
     });
 
     return Array.from(setMeses).sort((a, b) => {
-      const da = parseDateSegura('01 ' + a);
-      const db = parseDateSegura('01 ' + b);
-      return (db?.getTime() || 0) - (da?.getTime() || 0);
+      const mesesMap: { [key: string]: number } = {
+        'Janeiro': 0, 'Fevereiro': 1, 'Março': 2, 'Abril': 3, 'Maio': 4, 'Junho': 5,
+        'Julho': 6, 'Agosto': 7, 'Setembro': 8, 'Outubro': 9, 'Novembro': 10, 'Dezembro': 11
+      };
+      
+      const parseMesAno = (str: string) => {
+        const partes = str.split(' de ');
+        if (partes.length === 2) {
+          const mes = partes[0];
+          const ano = parseInt(partes[1], 10);
+          return new Date(ano, mesesMap[mes] || 0, 1).getTime();
+        }
+        return 0;
+      };
+
+      return parseMesAno(b) - parseMesAno(a);
     });
   }, [leads, hoje]);
 
