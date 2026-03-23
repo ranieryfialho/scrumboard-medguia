@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from "@/components/ui/button";
 import {
   Settings2, ChevronUp, ChevronDown, ChevronsUpDown,
-  Filter, X, Search, CheckSquare, Square,
+  Filter, X, Search, CheckSquare, Square, Calendar as CalendarIcon,
 } from "lucide-react";
 import { LeadDetailModal } from "./lead-detail-modal";
 
@@ -133,13 +133,29 @@ function getCellValue(lead: Lead, colId: string): string {
   return val !== undefined && val !== null && val !== "" ? String(val) : "";
 }
 
+function formatarData(isoString: string): string {
+  if (!isoString) return "";
+  const date = new Date(isoString);
+  if (isNaN(date.getTime())) return isoString;
+  
+  const pad = (n: number) => n.toString().padStart(2, '0');
+  const dia = pad(date.getDate());
+  const mes = pad(date.getMonth() + 1);
+  const ano = date.getFullYear();
+  const hor = pad(date.getHours());
+  const min = pad(date.getMinutes());
+  
+  return `${dia}/${mes}/${ano} ${hor}:${min}`;
+}
+
 function displayValue(colId: string, val: string): string {
   if (!val) return "-";
+  if (val === "(vazio)") return val;
   if (colId === "whatsapp") return formatarTelefone(val) || "-";
+  if (colId === "created_time" || colId === "data_alteracao") return formatarData(val);
   return val;
 }
 
-// ── Componente principal ───────────────────────────────────────────────────────
 export function LeadsTable({ leads, onStatusChange, onSaveObs }: LeadsTableProps) {
   const [colunasVisiveis, setColunasVisiveis] = useState<string[]>(() => lerColunas());
   const [colFilters, setColFilters]           = useState<Record<string, ColFilter>>(() => lerFiltros());
@@ -147,10 +163,13 @@ export function LeadsTable({ leads, onStatusChange, onSaveObs }: LeadsTableProps
   const [sortDir, setSortDir]                 = useState<SortDir>(() => lerSort().dir);
   const [openFilterCol, setOpenFilterCol]     = useState<string | null>(null);
 
-  // ── Modal de detalhe ─��─────────────────────────────────────────────────────
   const [leadSelecionado, setLeadSelecionado] = useState<Lead | null>(null);
 
   const filterRef = useRef<HTMLDivElement>(null);
+  const [openDateFilter, setOpenDateFilter]   = useState(false);
+  const [dataInicio, setDataInicio]           = useState<string>("");
+  const [dataFim, setDataFim]                 = useState<string>("");
+  const dateFilterRef                         = useRef<HTMLDivElement>(null);
 
   const toggleColuna = (id: string) => {
     setColunasVisiveis(prev => {
@@ -196,6 +215,8 @@ export function LeadsTable({ leads, onStatusChange, onSaveObs }: LeadsTableProps
     const handler = (e: MouseEvent) => {
       if (filterRef.current && !filterRef.current.contains(e.target as Node))
         setOpenFilterCol(null);
+      if (dateFilterRef.current && !dateFilterRef.current.contains(e.target as Node))
+        setOpenDateFilter(false);
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
@@ -221,6 +242,31 @@ export function LeadsTable({ leads, onStatusChange, onSaveObs }: LeadsTableProps
 
   const leadsProcessados = useMemo(() => {
     let result = [...leads];
+
+    if (dataInicio || dataFim) {
+      result = result.filter(lead => {
+        if (!lead.created_time) return false;
+        
+        let leadDate = "";
+        const matchBR = lead.created_time.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
+        if (matchBR) {
+          leadDate = `${matchBR[3]}-${matchBR[2]}-${matchBR[1]}`;
+        } else {
+          const dt = new Date(lead.created_time);
+          if (!isNaN(dt.getTime())) {
+            const pad = (n: number) => n.toString().padStart(2, '0');
+            leadDate = `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}`;
+          } else {
+            return false;
+          }
+        }
+        
+        if (dataInicio && leadDate < dataInicio) return false;
+        if (dataFim && leadDate > dataFim) return false;
+        return true;
+      });
+    }
+
     for (const [colId, f] of Object.entries(colFilters)) {
       if (f.selectedValues.size === 0) continue;
       result = result.filter(lead => {
@@ -237,7 +283,7 @@ export function LeadsTable({ leads, onStatusChange, onSaveObs }: LeadsTableProps
       });
     }
     return result;
-  }, [leads, colFilters, sortCol, sortDir]);
+  }, [leads, colFilters, sortCol, sortDir, dataInicio, dataFim]);
 
   const colunasAtivas = COLUNAS_DISPONIVEIS.filter(c => colunasVisiveis.includes(c.id));
 
@@ -255,27 +301,82 @@ export function LeadsTable({ leads, onStatusChange, onSaveObs }: LeadsTableProps
                 {leadsProcessados.length !== leads.length && ` de ${leads.length}`} leads)
               </span>
             </h2>
-            {totalActiveFilters > 0 && (
+            {(totalActiveFilters > 0 || dataInicio || dataFim) && (
               <button
-                onClick={limparTodosFiltros}
+                onClick={() => { limparTodosFiltros(); setDataInicio(""); setDataFim(""); }}
                 className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-indigo-50 text-indigo-600 border border-indigo-200 hover:bg-indigo-100 transition-colors"
               >
                 <X className="w-3 h-3" />
-                Limpar {totalActiveFilters} filtro{totalActiveFilters > 1 ? "s" : ""}
+                Limpar filtros
               </button>
             )}
           </div>
 
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="outline" size="sm" className="h-8 flex items-center gap-2 bg-white hover:bg-slate-50 shrink-0">
-                <Settings2 className="w-4 h-4 text-slate-500" />
-                Colunas
-                <span className="ml-1 text-[11px] font-bold text-indigo-500">
-                  {colunasVisiveis.length}/{COLUNAS_DISPONIVEIS.length}
-                </span>
+          <div className="flex items-center gap-2">
+            <div className="relative" ref={dateFilterRef}>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className={`h-8 flex items-center gap-2 shrink-0 ${dataInicio || dataFim ? 'bg-indigo-50 text-indigo-600 border-indigo-200' : 'bg-white hover:bg-slate-50 text-slate-600'}`}
+                onClick={() => setOpenDateFilter(!openDateFilter)}
+              >
+                <CalendarIcon className="w-4 h-4" />
+                <span className="hidden sm:inline">Período</span>
+                {(dataInicio || dataFim) && (
+                  <span className="ml-1 text-[11px] font-bold text-indigo-500">
+                    Ativo
+                  </span>
+                )}
               </Button>
-            </DialogTrigger>
+
+              {openDateFilter && (
+                <div className="absolute top-full right-0 mt-2 z-50 w-64 bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden" onClick={e => e.stopPropagation()}>
+                  <div className="px-3 py-2.5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+                    <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">Filtrar por Data</span>
+                    <button onClick={() => setOpenDateFilter(false)} className="text-slate-400 hover:text-slate-600"><X className="w-4 h-4" /></button>
+                  </div>
+                  <div className="p-3 space-y-3">
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1 font-medium">Data Inicial</label>
+                      <input 
+                        type="date" 
+                        value={dataInicio}
+                        onChange={e => setDataInicio(e.target.value)}
+                        className="w-full px-2.5 py-1.5 text-xs text-slate-700 border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-slate-50"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1 font-medium">Data Final</label>
+                      <input 
+                        type="date" 
+                        value={dataFim}
+                        onChange={e => setDataFim(e.target.value)}
+                        className="w-full px-2.5 py-1.5 text-xs text-slate-700 border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-slate-50"
+                      />
+                    </div>
+                  </div>
+                  <div className="px-3 py-2 border-t border-slate-100 flex items-center justify-between bg-slate-50">
+                    {(dataInicio || dataFim) ? (
+                      <button onClick={() => { setDataInicio(""); setDataFim(""); }} className="text-xs text-slate-500 hover:text-red-500 font-medium transition-colors">Limpar</button>
+                    ) : (
+                      <span className="text-[11px] text-slate-400">Sem filtro</span>
+                    )}
+                    <button onClick={() => setOpenDateFilter(false)} className="text-xs px-3 py-1 bg-indigo-600 text-white rounded-md font-semibold hover:bg-indigo-700 transition-colors ml-auto">Aplicar</button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm" className="h-8 flex items-center gap-2 bg-white hover:bg-slate-50 shrink-0">
+                  <Settings2 className="w-4 h-4 text-slate-500" />
+                  Colunas
+                  <span className="ml-1 text-[11px] font-bold text-indigo-500">
+                    {colunasVisiveis.length}/{COLUNAS_DISPONIVEIS.length}
+                  </span>
+                </Button>
+              </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader><DialogTitle>Configurar Colunas</DialogTitle></DialogHeader>
               <div className="py-4 grid grid-cols-2 gap-3">
@@ -298,6 +399,7 @@ export function LeadsTable({ leads, onStatusChange, onSaveObs }: LeadsTableProps
               </div>
             </DialogContent>
           </Dialog>
+          </div>
         </div>
 
         {/* Tabela */}
@@ -385,7 +487,6 @@ export function LeadsTable({ leads, onStatusChange, onSaveObs }: LeadsTableProps
         </div>
       </div>
 
-      {/* Modal de detalhe — compartilhado com o LeadCard */}
       {leadSelecionado && (
         <LeadDetailModal
           lead={leadSelecionado}
@@ -399,7 +500,6 @@ export function LeadsTable({ leads, onStatusChange, onSaveObs }: LeadsTableProps
   );
 }
 
-// ── Badges ────────────────────────────────────────────────────────────────────
 const SITUACAO_COLORS: Record<string, string> = {
   "Novos Leads":         "bg-blue-50   text-blue-700   border-blue-200",
   "Em contato":          "bg-yellow-50 text-yellow-700 border-yellow-200",
@@ -439,19 +539,18 @@ function OrigemBadge({ valor }: { valor: string }) {
   ) : <span className="text-slate-400">-</span>;
 }
 
-// ── Dropdown de filtro ────────────────────────────────────────────────────────
 interface DropdownProps {
   colId: string; colLabel: string; allValues: string[];
   filter: ColFilter; onFilterChange: (p: Partial<ColFilter>) => void;
   onClear: () => void; onClose: () => void;
 }
 
-function ColumnFilterDropdown({ colLabel, allValues, filter, onFilterChange, onClear, onClose }: DropdownProps) {
+function ColumnFilterDropdown({ colId, colLabel, allValues, filter, onFilterChange, onClear, onClose }: DropdownProps) {
   const [localSearch, setLocalSearch] = useState(filter.search);
 
   const visibleValues = useMemo(
-    () => allValues.filter(v => v.toLowerCase().includes(localSearch.toLowerCase())),
-    [allValues, localSearch]
+    () => allValues.filter(v => displayValue(colId, v).toLowerCase().includes(localSearch.toLowerCase())),
+    [allValues, localSearch, colId]
   );
 
   const allVisibleSelected = visibleValues.length > 0 && visibleValues.every(v => filter.selectedValues.has(v));
@@ -502,7 +601,7 @@ function ColumnFilterDropdown({ colLabel, allValues, filter, onFilterChange, onC
               <label key={val} className="flex items-center gap-2.5 px-3 py-1.5 hover:bg-slate-50 cursor-pointer transition-colors">
                 <input type="checkbox" checked={filter.selectedValues.has(val)} onChange={() => toggleValue(val)}
                   className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 w-3.5 h-3.5 cursor-pointer" />
-                <span className="text-xs text-slate-700 truncate">{val}</span>
+                <span className="text-xs text-slate-700 truncate">{displayValue(colId, val)}</span>
               </label>
             ))}
       </div>

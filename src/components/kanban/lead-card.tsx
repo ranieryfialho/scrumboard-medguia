@@ -39,6 +39,15 @@ const formatarTelefone = (tel?: string) => {
   return tel;
 };
 
+const ORIGEM_COLORS: Record<string, string> = {
+  "Manual":             "bg-slate-100  text-slate-600  border-slate-200",
+  "Manual - LP":        "bg-violet-50  text-violet-700 border-violet-200",
+  "Manual - Indicação": "bg-emerald-50 text-emerald-700 border-emerald-200",
+  "Manual - Outro":     "bg-slate-100  text-slate-600  border-slate-200",
+  "BM Dr. Felipe":      "bg-sky-50     text-sky-700    border-sky-200",
+  "BM MedGuia":         "bg-indigo-50  text-indigo-700 border-indigo-200",
+};
+
 export function LeadCard({ lead, isOverlay, disableDrag, onStatusChange, onSaveObs }: LeadCardProps) {
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -144,11 +153,18 @@ export function LeadCard({ lead, isOverlay, disableDrag, onStatusChange, onSaveO
           </div>
 
           <CardHeader className="p-4 pb-2 space-y-1 relative z-10 pr-14">
-            {lead.cargo && (
-              <div className="text-[10px] font-bold text-indigo-600 uppercase tracking-wider leading-tight line-clamp-1">
-                {lead.cargo}
-              </div>
-            )}
+            <div className="flex flex-wrap items-center gap-2">
+              {lead.cargo && (
+                <div className="text-[10px] font-bold text-indigo-600 uppercase tracking-wider leading-tight line-clamp-1">
+                  {lead.cargo}
+                </div>
+              )}
+              {lead.origem && (
+                <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-medium border uppercase tracking-wider ${ORIGEM_COLORS[lead.origem] || "bg-slate-100 text-slate-600 border-slate-200"}`}>
+                  {lead.origem}
+                </span>
+              )}
+            </div>
             <CardTitle className="text-sm font-bold text-slate-800 leading-snug line-clamp-2">
               {lead.nome}
             </CardTitle>

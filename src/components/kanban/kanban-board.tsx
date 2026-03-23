@@ -12,9 +12,6 @@ import {
   DragOverlay
 } from "@dnd-kit/core";
 
-import { AgendamentoModal } from "./agendamento-modal";
-import { FechamentoModal, FormFechamentoData } from "./fechamento-modal";
-
 interface KanbanBoardProps {
   leads: Lead[];
   onStatusChange?: (id: string, novaSituacao: string) => void;
@@ -35,10 +32,6 @@ const COLUNAS_FIXAS = [
 export function KanbanBoard({ leads, onStatusChange, onSaveObs }: KanbanBoardProps) {
   const [localLeads, setLocalLeads] = useState<Lead[]>(leads);
   const [leadAtivo, setLeadAtivo] = useState<Lead | null>(null);
-
-  const [leadPendente, setLeadPendente] = useState<{ id: string, situacao: string } | null>(null);
-  const [modalAgendamentoOpen, setModalAgendamentoOpen] = useState(false);
-  const [modalFechamentoOpen, setModalFechamentoOpen] = useState(false);
 
   useEffect(() => {
     setLocalLeads(leads);
@@ -86,19 +79,11 @@ export function KanbanBoard({ leads, onStatusChange, onSaveObs }: KanbanBoardPro
     const leadAtual = localLeads.find(l => l.id === leadId);
     if (!leadAtual || leadAtual.situacao === novaSituacao) return;
 
-    if (novaSituacao === "Reunião agendada") {
-      setLeadPendente({ id: leadId, situacao: novaSituacao });
-      setModalAgendamentoOpen(true);
-      return; 
+    if (onStatusChange) {
+      onStatusChange(leadId, novaSituacao);
+    } else {
+      await efetivarMudancaStatus(leadId, novaSituacao);
     }
-
-    if (novaSituacao === "Fechado") {
-      setLeadPendente({ id: leadId, situacao: novaSituacao });
-      setModalFechamentoOpen(true);
-      return; 
-    }
-
-    await efetivarMudancaStatus(leadId, novaSituacao);
   };
 
   const handleDragCancel = () => setLeadAtivo(null);
@@ -107,82 +92,6 @@ export function KanbanBoard({ leads, onStatusChange, onSaveObs }: KanbanBoardPro
     const headers = document.querySelectorAll('h3');
     const alvo = Array.from(headers).find(h3 => h3.textContent === tituloDaColuna);
     if (alvo) alvo.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-  };
-
-  const handleConfirmarAgendamento = async (dataReuniao: string, horaReuniao: string) => {
-    if (!leadPendente) return;
-    const leadObj = localLeads.find(l => l.id === leadPendente.id);
-    
-    const novoEvento = {
-      id: Math.random().toString(36).substring(2, 15),
-      date: dataReuniao,
-      title: `Reunião: ${leadObj?.nome || 'Lead'}`,
-      time: horaReuniao,
-      type: 'reuniao'
-    };
-
-    await fetch('/api/agenda', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'create', evento: novoEvento })
-    });
-    
-    await efetivarMudancaStatus(leadPendente.id, leadPendente.situacao);
-    setModalAgendamentoOpen(false);
-    setLeadPendente(null);
-  };
-
-  const handleConfirmarFechamento = async (formFechamento: FormFechamentoData) => {
-    if (!leadPendente) return;
-    const leadObj = localLeads.find(l => l.id === leadPendente.id);
-
-    const relatorioFechamento = `
-🏆 **LEAD FECHADO**
-- **Plataforma Anterior:** ${formFechamento.plataformaAnterior || 'N/A'}
-- **O que mais interessou:** ${formFechamento.oQueMaisInteressou || 'N/A'}
-- **Faltava na concorrente:** ${formFechamento.oQueDeixouADesejar || 'N/A'}
-- **Canal de Aquisição:** ${formFechamento.porOndeConheceu || 'N/A'}
-- **Plano Escolhido:** ${formFechamento.planoEscolhido || 'N/A'}
-- **Notas:** ${formFechamento.observacoesGerais || 'N/A'}
-
---- Notas Anteriores ---
-${leadObj?.observacoes || ''}
-    `.trim();
-
-    const dadosFechamento = {
-      plataforma_anterior: formFechamento.plataformaAnterior,
-      o_que_mais_interessou: formFechamento.oQueMaisInteressou,
-      o_que_deixou_a_desejar: formFechamento.oQueDeixouADesejar,
-      por_onde_conheceu: formFechamento.porOndeConheceu,
-      plano_escolhido: formFechamento.planoEscolhido,
-    };
-
-    try {
-      await fetch('/api/sheets', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          id: leadPendente.id, 
-          novaSituacao: leadPendente.situacao,
-          observacoes: relatorioFechamento,
-          dadosFechamento: dadosFechamento
-        })
-      });
-      
-      setLocalLeads(prev => prev.map(l => l.id === leadPendente.id ? { 
-        ...l, 
-        situacao: leadPendente.situacao,
-        observacoes: relatorioFechamento,
-        ...dadosFechamento 
-      } : l));
-
-      if (onStatusChange) onStatusChange(leadPendente.id, leadPendente.situacao);
-      
-      setModalFechamentoOpen(false);
-      setLeadPendente(null);
-    } catch (error) {
-      console.error("Erro ao salvar fechamento:", error);
-    }
   };
 
   const leadsAtivos = localLeads.filter(l => l.situacao !== 'Arquivado');
@@ -215,8 +124,11 @@ ${leadObj?.observacoes || ''}
                     key={lead.id} 
                     lead={lead} 
                     onStatusChange={(id, status) => {
-                      setLocalLeads(prev => prev.map(l => l.id === id ? { ...l, situacao: status } : l));
-                      if (onStatusChange) onStatusChange(id, status);
+                      if (onStatusChange) {
+                        onStatusChange(id, status);
+                      } else {
+                        efetivarMudancaStatus(id, status);
+                      }
                     }}
                     onSaveObs={onSaveObs}
                   />
@@ -285,18 +197,6 @@ ${leadObj?.observacoes || ''}
           })}
         </div>
       </div>
-
-      <AgendamentoModal 
-        isOpen={modalAgendamentoOpen} 
-        onClose={() => { setModalAgendamentoOpen(false); setLeadPendente(null); }}
-        onConfirm={handleConfirmarAgendamento}
-      />
-
-      <FechamentoModal 
-        isOpen={modalFechamentoOpen}
-        onClose={() => { setModalFechamentoOpen(false); setLeadPendente(null); }}
-        onConfirm={handleConfirmarFechamento}
-      />
     </div>
   );
 }

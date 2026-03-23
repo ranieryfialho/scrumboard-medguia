@@ -12,6 +12,10 @@ import { FilterBar } from "@/components/dashboard/filter-bar";
 import { DashboardTab } from "@/components/dashboard/dashboard-tab";
 import { Sidebar } from "@/components/layout/sidebar";
 
+import { AgendamentoModal } from "@/components/kanban/agendamento-modal";
+import { FechamentoModal, FormFechamentoData } from "@/components/kanban/fechamento-modal";
+import { useState } from "react";
+
 import RelatoriosPage from "@/app/relatorios/page";
 import RelatoriosComerciaisPage from "@/app/relatorios-comerciais/page";
 
@@ -55,6 +59,98 @@ export default function Home() {
     adicionarLeadManual, 
     limparFiltros
   } = useLeads();
+
+  const [leadPendente, setLeadPendente] = useState<{ id: string, situacao: string } | null>(null);
+  const [modalAgendamentoOpen, setModalAgendamentoOpen] = useState(false);
+  const [modalFechamentoOpen, setModalFechamentoOpen] = useState(false);
+
+  const processarMudancaStatus = async (leadId: string, novaSituacao: string) => {
+    const leadAtual = leads.find(l => l.id === leadId);
+    if (!leadAtual || leadAtual.situacao === novaSituacao) return;
+
+    if (novaSituacao === "Reunião agendada") {
+      setLeadPendente({ id: leadId, situacao: novaSituacao });
+      setModalAgendamentoOpen(true);
+      return; 
+    }
+
+    if (novaSituacao === "Fechado") {
+      setLeadPendente({ id: leadId, situacao: novaSituacao });
+      setModalFechamentoOpen(true);
+      return; 
+    }
+
+    await atualizarSituacaoLead(leadId, novaSituacao);
+  };
+
+  const handleConfirmarAgendamento = async (dataReuniao: string, horaReuniao: string) => {
+    if (!leadPendente) return;
+    const leadObj = leads.find(l => l.id === leadPendente.id);
+    
+    const novoEvento = {
+      id: Math.random().toString(36).substring(2, 15),
+      date: dataReuniao,
+      title: `Reunião: ${leadObj?.nome || 'Lead'}`,
+      time: horaReuniao,
+      type: 'reuniao'
+    };
+
+    await fetch('/api/agenda', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'create', evento: novoEvento })
+    });
+    
+    await atualizarSituacaoLead(leadPendente.id, leadPendente.situacao);
+    setModalAgendamentoOpen(false);
+    setLeadPendente(null);
+  };
+
+  const handleConfirmarFechamento = async (formFechamento: FormFechamentoData) => {
+    if (!leadPendente) return;
+    const leadObj = leads.find(l => l.id === leadPendente.id);
+
+    const relatorioFechamento = `
+🏆 **LEAD FECHADO**
+- **Plataforma Anterior:** ${formFechamento.plataformaAnterior || 'N/A'}
+- **O que mais interessou:** ${formFechamento.oQueMaisInteressou || 'N/A'}
+- **Faltava na concorrente:** ${formFechamento.oQueDeixouADesejar || 'N/A'}
+- **Canal de Aquisição:** ${formFechamento.porOndeConheceu || 'N/A'}
+- **Plano Escolhido:** ${formFechamento.planoEscolhido || 'N/A'}
+- **Notas:** ${formFechamento.observacoesGerais || 'N/A'}
+
+--- Notas Anteriores ---
+${leadObj?.observacoes || ''}
+    `.trim();
+
+    const dadosFechamento = {
+      plataforma_anterior: formFechamento.plataformaAnterior,
+      o_que_mais_interessou: formFechamento.oQueMaisInteressou,
+      o_que_deixou_a_desejar: formFechamento.oQueDeixouADesejar,
+      por_onde_conheceu: formFechamento.porOndeConheceu,
+      plano_escolhido: formFechamento.planoEscolhido,
+    };
+
+    try {
+      await fetch('/api/sheets', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          id: leadPendente.id, 
+          novaSituacao: leadPendente.situacao,
+          observacoes: relatorioFechamento,
+          dadosFechamento: dadosFechamento
+        })
+      });
+      
+      await buscarLeads(true);
+      
+      setModalFechamentoOpen(false);
+      setLeadPendente(null);
+    } catch (error) {
+      console.error("Erro ao salvar fechamento:", error);
+    }
+  };
 
   const getTituloPagina = () => {
     const titulos: Record<string, string> = {
@@ -159,13 +255,13 @@ export default function Home() {
                 ) : viewMode === "kanban" ? (
                   <KanbanBoard
                     leads={leadsFiltrados}
-                    onStatusChange={atualizarSituacaoLead}
+                    onStatusChange={processarMudancaStatus}
                     onSaveObs={salvarObservacaoLead}
                   />
                 ) : (
                   <LeadsTable
                     leads={leadsFiltrados}
-                    onStatusChange={atualizarSituacaoLead}
+                    onStatusChange={processarMudancaStatus}
                     onSaveObs={salvarObservacaoLead}
                   />
                 )}
@@ -189,7 +285,7 @@ export default function Home() {
                         key={lead.id}
                         lead={lead}
                         disableDrag
-                        onStatusChange={atualizarSituacaoLead}
+                        onStatusChange={processarMudancaStatus}
                         onSaveObs={salvarObservacaoLead}
                       />
                     ))}
@@ -223,6 +319,18 @@ export default function Home() {
         </div>
 
       </main>
+
+      <AgendamentoModal 
+        isOpen={modalAgendamentoOpen} 
+        onClose={() => { setModalAgendamentoOpen(false); setLeadPendente(null); }}
+        onConfirm={handleConfirmarAgendamento}
+      />
+
+      <FechamentoModal 
+        isOpen={modalFechamentoOpen}
+        onClose={() => { setModalFechamentoOpen(false); setLeadPendente(null); }}
+        onConfirm={handleConfirmarFechamento}
+      />
     </div>
   );
 }
