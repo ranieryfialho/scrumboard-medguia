@@ -1,4 +1,4 @@
-# 🏥 MedGuia Hub - Scrumboard & CRM de Leads Médicos
+# 🏥 MedGuia Hub - Scrumboard & CRM de Leads Médicos.
 
 ![Next.js](https://img.shields.io/badge/Next.js-15+-black?style=for-the-badge&logo=next.js)
 ![React](https://img.shields.io/badge/React-19-blue?style=for-the-badge&logo=react)
