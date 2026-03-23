@@ -30,6 +30,7 @@ const COLUNAS_FIXAS = [
 ];
 
 export function KanbanBoard({ leads, onStatusChange, onSaveObs }: KanbanBoardProps) {
+  // Estado local para suportar atualizações otimistas suaves no drag and drop
   const [localLeads, setLocalLeads] = useState<Lead[]>(leads);
   const [leadAtivo, setLeadAtivo] = useState<Lead | null>(null);
 
