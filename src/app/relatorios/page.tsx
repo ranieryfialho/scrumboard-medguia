@@ -19,7 +19,6 @@ const MESES = [
 
 const ANOS = [2024, 2025, 2026, 2027];
 
-// Formata qualquer string de data para DD/MM/AAAA HH:MM
 function formatarDataLegivel(dataString?: string): string {
   if (!dataString) return "—";
 
@@ -43,7 +42,6 @@ function formatarDataLegivel(dataString?: string): string {
   return dataString;
 }
 
-// Resolve nome legível do anúncio (mesma lógica do report-metrics)
 function resolverNomeAnuncio(lead: Lead): string {
   const anuncio = (lead.anuncio || '').trim();
   const anuncioValido = anuncio !== '' && anuncio.toLowerCase() !== 'desconhecido';
@@ -74,6 +72,10 @@ export default function RelatoriosPage() {
 
   const [mesSelecionado, setMesSelecionado] = useState<number>(() => new Date().getMonth() + 1);
   const [anoSelecionado, setAnoSelecionado] = useState<number>(() => new Date().getFullYear());
+  const [dataInicio, setDataInicio] = useState<string>("");
+  const [dataFim, setDataFim] = useState<string>("");
+
+  const tipoFiltro = (dataInicio || dataFim) ? "periodo" : "mes";
 
   useEffect(() => {
     async function fetchLeads() {
@@ -93,8 +95,15 @@ export default function RelatoriosPage() {
   }, []);
 
   const metrics = useMemo(() => {
-    return generateReportMetrics(leadsRaw, mesSelecionado, anoSelecionado);
-  }, [leadsRaw, mesSelecionado, anoSelecionado]);
+    return generateReportMetrics(
+      leadsRaw, 
+      tipoFiltro, 
+      mesSelecionado, 
+      anoSelecionado, 
+      dataInicio, 
+      dataFim
+    );
+  }, [leadsRaw, tipoFiltro, mesSelecionado, anoSelecionado, dataInicio, dataFim]);
 
   if (loading) {
     return <div className="flex justify-center items-center h-[80vh]">Carregando Relatório de Tráfego...</div>;
@@ -107,10 +116,21 @@ export default function RelatoriosPage() {
     melhorCanalNome = copiaSegura[0].nome;
   }
 
-  const handleExportGamma = () => {
-    const nomeMes = MESES.find(m => m.valor === mesSelecionado)?.nome ?? String(mesSelecionado);
+  const getNomePeriodo = () => {
+    if (tipoFiltro === 'mes') {
+      const nomeMes = MESES.find(m => m.valor === mesSelecionado)?.nome ?? String(mesSelecionado);
+      return `${nomeMes} de ${anoSelecionado}`;
+    }
+    
+    const inicioStr = dataInicio ? new Date(dataInicio + "T12:00:00").toLocaleDateString('pt-BR') : 'Início';
+    const fimStr = dataFim ? new Date(dataFim + "T12:00:00").toLocaleDateString('pt-BR') : 'Hoje';
+    return `Período: ${inicioStr} até ${fimStr}`;
+  };
 
-    let md = `# Resultados de Tráfego Pago — ${nomeMes} ${anoSelecionado}\n\n`;
+  const handleExportGamma = () => {
+    const nomePeriodo = getNomePeriodo();
+
+    let md = `# Resultados de Tráfego Pago — ${nomePeriodo}\n\n`;
     md += `> Relatório gerado automaticamente pelo MedGuia Scrumboard\n\n`;
 
     md += `## Visão Geral\n\n`;
@@ -118,7 +138,7 @@ export default function RelatoriosPage() {
     md += `|---|---|\n`;
     md += `| Total de Leads | ${metrics.geral.totalLeads} |\n`;
     md += `| Conversões (Ativos/Fechados) | ${metrics.geral.conversoes} |\n`;
-    md += `| Recuperação de Base (Leads de meses anteriores) | ${metrics.geral.conversoesAnteriores} |\n`;
+    md += `| Recuperação de Base (Leads anteriores) | ${metrics.geral.conversoesAnteriores} |\n`;
     md += `| Taxa Geral de Conversão | ${metrics.geral.taxaConversaoGeral}% |\n`;
     md += `| **Leads Desqualificados** | **${metrics.geral.desqualificados}** |\n`;
     md += `| Taxa de Desqualificação | ${metrics.geral.taxaDesqualificacao}% |\n`;
@@ -158,7 +178,6 @@ export default function RelatoriosPage() {
     });
     md += `\n`;
 
-    // Seção de desqualificados com anúncio incluído
     if (metrics.listaDesqualificados.length > 0) {
       md += `## Leads Desqualificados no Período\n\n`;
       md += `| Nome do Lead | Especialidade | Origem | Anúncio | Data de Entrada |\n`;
@@ -189,8 +208,8 @@ export default function RelatoriosPage() {
     md += `## 🤖 Prompt para IA de Apresentação\n`;
     md += `Copie todo o bloco abaixo (incluindo as aspas) e cole no Gamma.app, Tome.app ou ChatGPT:\n\n`;
 
-    md += `> "Atue como um Analista de Marketing de Performance Sênior. Quero que você crie o roteiro e o conteúdo de uma apresentação executiva de resultados em formato de slides referente a ${nomeMes} de ${anoSelecionado}.\n>\n`;
-    md += `> DADOS GERAIS DO MÊS:\n`;
+    md += `> "Atue como um Analista de Marketing de Performance Sênior. Quero que você crie o roteiro e o conteúdo de uma apresentação executiva de resultados em formato de slides referente a ${nomePeriodo}.\n>\n`;
+    md += `> DADOS GERAIS DO PERÍODO:\n`;
     md += `> - Total de Leads: ${metrics.geral.totalLeads}\n`;
     md += `> - Conversões (Ativos/Fechados): ${metrics.geral.conversoes}\n`;
     md += `> - Recuperação de Base (Leads fechados de safras anteriores): ${metrics.geral.conversoesAnteriores}\n`;
@@ -202,32 +221,37 @@ export default function RelatoriosPage() {
     }
 
     md += `> - Melhor Canal: ${melhorCanalNome}\n>\n`;
-    md += `> LISTA NOMINAL DOS LEADS DESTE MÊS:\n`;
+    md += `> LISTA NOMINAL DOS LEADS DESTE PERÍODO:\n`;
     md += leadsParaPrompt;
     md += `>\n`;
 
     md += `> A apresentação deve ser altamente persuasiva, focada em dados e ter a seguinte estrutura (7 slides):\n>\n`;
-    md += `> **Slide 1: Capa** (Título forte sobre os resultados de ${nomeMes} de ${anoSelecionado}).\n`;
-    md += `> **Slide 2: Destaques do Mês** (Faça um resumo comemorando o total gerado, as conversões e enfatize fortemente a 'Recuperação de Base', explicando o valor comercial de trabalhar o recontato de leads antigos).\n`;
+    md += `> **Slide 1: Capa** (Título forte sobre os resultados de ${nomePeriodo}).\n`;
+    md += `> **Slide 2: Destaques do Período** (Faça um resumo comemorando o total gerado, as conversões e enfatize fortemente a 'Recuperação de Base', explicando o valor comercial de trabalhar o recontato de leads antigos).\n`;
     md += `> **Slide 3: O Canal Campeão** (Foque no canal '${melhorCanalNome}' e explique por que ele foi o vencedor).\n`;
     md += `> **Slide 4: Raio-X dos Anúncios** (Destaque o comportamento de entrada por dias da semana e os melhores horários, se dedutíveis).\n`;
     md += `> **Slide 5: Análise de Qualidade dos Leads** (Analise os ${metrics.geral.desqualificados} leads desqualificados (${metrics.geral.taxaDesqualificacao}% do total). Identifique quais anúncios ou origens geraram mais desqualificados e explique o que isso pode indicar sobre a segmentação. Se a taxa for alta (>15%), alerte sobre necessidade de revisão de criativos/público. Se for baixa (<5%), comemore como sinal de boa qualidade).\n`;
     md += `> **Slide 6: Casos de Sucesso Reais** (Analise a LISTA NOMINAL fornecida acima, escolha 2 ou 3 leads com status 'Fechado' ou 'Aguardando Ativação' e cite o nome e origem como exemplos de sucesso. Se não houver fechados, cite novos leads promissores).\n`;
-    md += `> **Slide 7: Insights e Próximos Passos** (Gere 3 recomendações estratégicas sobre onde devemos alocar o esforço comercial no próximo mês, levando em conta tanto as conversões quanto os desqualificados e seus respectivos anúncios de origem).\n>\n`;
+    md += `> **Slide 7: Insights e Próximos Passos** (Gere 3 recomendações estratégicas sobre onde devemos alocar o esforço comercial no próximo ciclo, levando em conta tanto as conversões quanto os desqualificados e seus respectivos anúncios de origem).\n>\n`;
     md += `> Regras de tom de voz: Seja direto, corporativo, visualmente limpo e comemore as vitórias."\n`;
 
     const blob = new Blob([md], { type: "text/markdown;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `relatorio-medguia-${nomeMes.toLowerCase()}-${anoSelecionado}.md`;
+    
+    const docName = tipoFiltro === 'mes' 
+      ? `${MESES.find(m => m.valor === mesSelecionado)?.nome.toLowerCase()}-${anoSelecionado}`
+      : `${dataInicio}-ate-${dataFim}`;
+
+    link.download = `relatorio-medguia-${docName}.md`;
     link.click();
     URL.revokeObjectURL(url);
   };
 
   return (
     <div className="p-8 space-y-8 max-w-7xl mx-auto">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col xl:flex-row xl:items-start justify-between gap-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Resultados de Tráfego Pago</h1>
           <p className="text-muted-foreground mt-2">
@@ -235,57 +259,104 @@ export default function RelatoriosPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Select
-            value={mesSelecionado.toString()}
-            onValueChange={(v) => setMesSelecionado(Number(v))}
-          >
-            <SelectTrigger className="w-[140px] bg-white border-slate-200 shadow-sm text-slate-800 focus:ring-2 focus:ring-indigo-500">
-              <SelectValue placeholder="Mês" />
-            </SelectTrigger>
-            <SelectContent>
-              {MESES.map(mes => (
-                <SelectItem key={mes.valor} value={mes.valor.toString()}>
-                  {mes.nome}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <Select
-            value={anoSelecionado.toString()}
-            onValueChange={(v) => setAnoSelecionado(Number(v))}
-          >
-            <SelectTrigger className="w-[100px] bg-white border-slate-200 shadow-sm text-slate-800 focus:ring-2 focus:ring-indigo-500">
-              <SelectValue placeholder="Ano" />
-            </SelectTrigger>
-            <SelectContent>
-              {ANOS.map(ano => (
-                <SelectItem key={ano} value={ano.toString()}>
-                  {ano}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          {metrics.geral.totalLeads > 0 && (
-            <Button
-              onClick={handleExportGamma}
-              variant="outline"
-              className="flex items-center gap-2 border-slate-300 bg-white hover:bg-slate-50 text-slate-800 shadow-sm"
+        {/* --- BLOCO DE FILTROS ALINHADO --- */}
+        <div className="flex flex-col gap-3 w-full xl:w-[480px] shrink-0">
+          
+          {/* Linha 1: Mês, Ano e Exportar */}
+          <div className="flex gap-2 w-full">
+            <Select
+              value={mesSelecionado.toString()}
+              onValueChange={(v) => { 
+                setDataInicio(""); 
+                setDataFim(""); 
+                setMesSelecionado(Number(v)); 
+              }}
             >
-              <Download className="w-4 h-4" />
-              Exportar Dados
-            </Button>
-          )}
+              <SelectTrigger className="flex-1 h-10 bg-white border-slate-200 shadow-sm text-slate-800 focus:ring-2 focus:ring-indigo-500">
+                <SelectValue placeholder="Mês" />
+              </SelectTrigger>
+              <SelectContent>
+                {MESES.map(mes => (
+                  <SelectItem key={mes.valor} value={mes.valor.toString()}>
+                    {mes.nome}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select
+              value={anoSelecionado.toString()}
+              onValueChange={(v) => { 
+                setDataInicio(""); 
+                setDataFim(""); 
+                setAnoSelecionado(Number(v)); 
+              }}
+            >
+              <SelectTrigger className="w-[100px] shrink-0 h-10 bg-white border-slate-200 shadow-sm text-slate-800 focus:ring-2 focus:ring-indigo-500">
+                <SelectValue placeholder="Ano" />
+              </SelectTrigger>
+              <SelectContent>
+                {ANOS.map(ano => (
+                  <SelectItem key={ano} value={ano.toString()}>
+                    {ano}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {metrics?.geral?.totalLeads > 0 && (
+              <Button
+                onClick={handleExportGamma}
+                variant="outline"
+                className="shrink-0 h-10 flex items-center gap-2 border-slate-300 bg-white hover:bg-slate-50 text-slate-800 shadow-sm"
+              >
+                <Download className="w-4 h-4" />
+                Exportar Dados
+              </Button>
+            )}
+          </div>
+
+          {/* Linha 2: Range de Datas (De / Até) */}
+          <div className="grid grid-cols-2 gap-2 w-full">
+            <div className="flex flex-col space-y-1">
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">De</label>
+              <input
+                type="date"
+                value={dataInicio}
+                onChange={(e) => setDataInicio(e.target.value)}
+                className="w-full h-10 px-3 text-sm text-slate-700 bg-white border border-slate-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-shadow"
+              />
+            </div>
+            
+            <div className="flex flex-col space-y-1">
+              <div className="flex items-center justify-between pr-1">
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Até</label>
+                {(dataInicio || dataFim) && (
+                  <button 
+                    onClick={() => { setDataInicio(""); setDataFim(""); }}
+                    className="text-[10px] font-bold text-red-500 hover:text-red-600 uppercase tracking-wider transition-colors"
+                  >
+                    Limpar
+                  </button>
+                )}
+              </div>
+              <input
+                type="date"
+                value={dataFim}
+                onChange={(e) => setDataFim(e.target.value)}
+                className="w-full h-10 px-3 text-sm text-slate-700 bg-white border border-slate-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-shadow"
+              />
+            </div>
+          </div>
+
         </div>
       </div>
 
-      {metrics.geral.totalLeads === 0 ? (
+      {(!metrics || metrics.geral.totalLeads === 0) ? (
         <Card className="flex flex-col items-center justify-center p-12 text-center text-muted-foreground">
           <Target className="w-12 h-12 mb-4 opacity-20" />
           <p className="text-lg font-medium">Nenhum lead encontrado neste período.</p>
-          <p className="text-sm">Tente selecionar um mês ou ano diferente nos filtros acima.</p>
+          <p className="text-sm">Tente selecionar datas diferentes nos filtros acima.</p>
         </Card>
       ) : (
         <>
@@ -298,7 +369,7 @@ export default function RelatoriosPage() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{metrics.geral.totalLeads}</div>
-                <p className="text-xs text-muted-foreground">Leads qualificados no mês</p>
+                <p className="text-xs text-muted-foreground">Leads gerados no período</p>
               </CardContent>
             </Card>
 
@@ -320,7 +391,7 @@ export default function RelatoriosPage() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-emerald-600">{metrics.geral.conversoesAnteriores}</div>
-                <p className="text-xs text-muted-foreground">Leads de meses anteriores</p>
+                <p className="text-xs text-muted-foreground">Leads de períodos anteriores</p>
               </CardContent>
             </Card>
 
@@ -331,7 +402,7 @@ export default function RelatoriosPage() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{metrics.geral.taxaConversaoGeral}%</div>
-                <p className="text-xs text-muted-foreground">Média geral do período</p>
+                <p className="text-xs text-muted-foreground">Média geral do período selecionado</p>
               </CardContent>
             </Card>
 
@@ -351,7 +422,7 @@ export default function RelatoriosPage() {
                 </p>
                 {metrics.geral.desqPorOrigem.length > 1 && (
                   <div className="mt-2 space-y-0.5">
-                    {metrics.geral.desqPorOrigem.slice(0, 3).map(d => (
+                    {metrics.geral.desqPorOrigem.slice(0, 3).map((d: any) => (
                       <div key={d.origem} className="flex justify-between text-[11px] text-slate-500">
                         <span className="truncate max-w-[120px]">{d.origem}</span>
                         <span className="font-semibold text-red-600">{d.total}</span>
@@ -376,6 +447,7 @@ export default function RelatoriosPage() {
             </Card>
           </div>
 
+          {/* Gráficos e Tabelas */}
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
             <Card className="col-span-4">
               <CardHeader>
@@ -431,7 +503,7 @@ export default function RelatoriosPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {metrics.porAnuncio.map((anuncio, idx) => (
+                  {metrics.porAnuncio.map((anuncio: any, idx: number) => (
                     <TableRow key={idx}>
                       <TableCell className="font-medium">{anuncio.fonte}</TableCell>
                       <TableCell>{anuncio.nome}</TableCell>
@@ -452,7 +524,6 @@ export default function RelatoriosPage() {
             </CardContent>
           </Card>
 
-          {/* Tabela nominal de desqualificados com coluna Anúncio */}
           {metrics.listaDesqualificados.length > 0 && (
             <Card className="border-red-100 overflow-hidden">
               <CardHeader className="border-b border-red-100 bg-red-50/50 pb-4">
@@ -481,16 +552,13 @@ export default function RelatoriosPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-red-50">
-                      {metrics.listaDesqualificados.map((lead, idx) => {
+                      {metrics.listaDesqualificados.map((lead: any, idx: number) => {
                         const anuncio = resolverNomeAnuncio(lead);
                         return (
                           <tr key={idx} className="hover:bg-red-50/20 transition-colors">
-                            {/* Nome */}
                             <td className="px-5 py-3 font-semibold text-slate-800 whitespace-nowrap">
                               {lead.nome || '—'}
                             </td>
-
-                            {/* Especialidade */}
                             <td className="px-5 py-3 max-w-0">
                               <span
                                 className="block truncate text-slate-500 text-xs"
@@ -499,15 +567,11 @@ export default function RelatoriosPage() {
                                 {lead.cargo || '—'}
                               </span>
                             </td>
-
-                            {/* Origem */}
                             <td className="px-5 py-3 whitespace-nowrap">
                               <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 text-slate-600 border border-slate-200">
                                 {lead.origem || '—'}
                               </span>
                             </td>
-
-                            {/* Anúncio */}
                             <td className="px-5 py-3 max-w-0">
                               <span
                                 className="block truncate text-xs font-medium text-indigo-600"
@@ -516,13 +580,9 @@ export default function RelatoriosPage() {
                                 {anuncio}
                               </span>
                             </td>
-
-                            {/* Data */}
                             <td className="px-5 py-3 text-slate-500 text-xs whitespace-nowrap">
                               {formatarDataLegivel(lead.created_time)}
                             </td>
-
-                            {/* Observações */}
                             <td className="px-5 py-3 max-w-0">
                               <span
                                 className="block truncate text-slate-400 text-xs"

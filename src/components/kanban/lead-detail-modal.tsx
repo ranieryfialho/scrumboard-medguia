@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Lead } from "@/types/lead";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -103,6 +103,11 @@ export function LeadDetailModal({
   const [salvandoObs, setSalvandoObs] = useState(false);
   const [situacaoLocal, setSituacaoLocal] = useState(lead.situacao);
 
+  // Sincroniza o status visual sempre que o card for atualizado no servidor
+  useEffect(() => {
+    setSituacaoLocal(lead.situacao);
+  }, [lead.situacao, open]);
+
   const { realEmail, realPhone } = resolverContatos(lead);
 
   const handleSalvarObs = async () => {
@@ -113,16 +118,18 @@ export function LeadDetailModal({
   };
 
   const handleSituacao = (nova: string) => {
-    setSituacaoLocal(nova);
+    if (nova !== "Reunião agendada" && nova !== "Fechado") {
+      setSituacaoLocal(nova);
+    }
     onStatusChange?.(lead.id, nova);
   };
 
-  // Dados extras da origem (oculta campos já exibidos)
   const CHAVES_OCULTAS = [
     "id", "nome", "whatsapp", "cargo", "tipo", "situacao",
     "email", "responsavel", "data_alteracao", "observacoes", "origem",
     "created_time",
   ];
+  
   const chavesExtras = Object.keys(lead).filter(
     (k) => !CHAVES_OCULTAS.includes(k) && lead[k as keyof typeof lead] !== ""
   );
@@ -135,7 +142,6 @@ export function LeadDetailModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto custom-scrollbar p-0">
 
-        {/* ── Cabeçalho colorido ─────────────────────────────────────────── */}
         <div className="bg-gradient-to-br from-indigo-600 to-indigo-700 px-6 pt-6 pb-5 rounded-t-xl">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-white leading-tight">
@@ -161,8 +167,6 @@ export function LeadDetailModal({
         </div>
 
         <div className="px-6 py-5 space-y-6">
-
-          {/* ── Contatos ──────────────────────────────────────────────────── */}
           <div className="grid grid-cols-2 gap-3">
             <div className="bg-slate-50 rounded-lg border border-slate-100 p-3 space-y-1">
               <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
@@ -199,7 +203,6 @@ export function LeadDetailModal({
             </div>
           </div>
 
-          {/* ── Datas ─────────────────────────────────────────────────────── */}
           <div className="grid grid-cols-2 gap-3">
             <div className="flex items-start gap-2 text-xs text-slate-500">
               <CalendarPlus className="w-3.5 h-3.5 text-slate-400 mt-0.5 shrink-0" />
@@ -217,7 +220,6 @@ export function LeadDetailModal({
             </div>
           </div>
 
-          {/* ── Alterar situação ──────────────────────────────────────────── */}
           {onStatusChange && (
             <div>
               <h4 className="font-semibold text-slate-900 border-b border-slate-200 pb-2 mb-3 text-sm">
@@ -245,7 +247,6 @@ export function LeadDetailModal({
             </div>
           )}
 
-          {/* ── Observações ───────────────────────────────────────────────── */}
           <div>
             <h4 className="font-semibold text-slate-900 border-b border-slate-200 pb-2 mb-3 text-sm flex items-center gap-2">
               <FileText className="w-4 h-4 text-slate-500" /> Observações
@@ -270,7 +271,6 @@ export function LeadDetailModal({
             </div>
           </div>
 
-          {/* ── Dados extras da origem ────────────────────────────────────── */}
           <div>
             <h4 className="font-semibold text-slate-900 border-b border-slate-200 pb-2 mb-3 text-sm">
               Dados da Origem

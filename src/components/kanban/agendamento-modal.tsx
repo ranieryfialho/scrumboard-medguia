@@ -63,7 +63,7 @@ export function AgendamentoModal({ isOpen, onClose, onConfirm }: AgendamentoModa
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={handleClose} disabled={isSaving}>Cancelar</Button>
-          <Button className="bg-indigo-600 text-white" onClick={handleConfirm} disabled={!dataReuniao || !horaReuniao || isSaving}>
+          <Button className="bg-indigo-600 hover:bg-indigo-700 text-white" onClick={handleConfirm} disabled={!dataReuniao || !horaReuniao || isSaving}>
             {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
             Confirmar e Mover Card
           </Button>

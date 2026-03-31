@@ -1,9 +1,7 @@
 import { Lead } from '@/types/lead';
 
-// Status que definem que o lead "converteu" (Login/Ativação)
 const STATUS_CONVERSAO = ['Fechado', 'Aguardando Ativação'];
 
-// Resolve o nome do anúncio a exibir na tabela
 function resolverNomeAnuncio(lead: Lead): string {
   const anuncio = (lead.anuncio || '').trim();
   const anuncioValido = anuncio !== '' && anuncio.toLowerCase() !== 'desconhecido';
@@ -31,20 +29,24 @@ function resolverNomeAnuncio(lead: Lead): string {
   return 'Sem Anúncio Mapeado';
 }
 
-export function generateReportMetrics(leads: Lead[], month: number, year: number) {
+export function generateReportMetrics(
+  leads: Lead[], 
+  tipoFiltro: "mes" | "periodo", 
+  month: number, 
+  year: number, 
+  dataInicio: string, 
+  dataFim: string
+) {
 
   function getMonthYear(dataStr?: string | null): { month: number; year: number } | null {
     if (!dataStr) return null;
     const str = dataStr.trim();
 
-    // Formato BR: DD/MM/AAAA
-    const regexBR = /^(\d{1,2})\/(\d{1,2})\/(\d{4})/;
-    const matchBR = str.match(regexBR);
+    const matchBR = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
     if (matchBR) {
       return { month: parseInt(matchBR[2], 10), year: parseInt(matchBR[3], 10) };
     }
 
-    // Formato ISO: AAAA-MM-DD
     let safeStr = str;
     if (str.includes('-') && !str.includes('T')) {
       safeStr = `${str}T12:00:00`;
@@ -58,67 +60,104 @@ export function generateReportMetrics(leads: Lead[], month: number, year: number
     return null;
   }
 
-  // 1. O UNIVERSO DO MÊS — idêntico ao Kanban:
-  //    criado no mês OU fechado/ativado no mês (via data_fechamento).
-  //    Desqualificados entram APENAS se foram criados no mês,
-  //    mantendo paridade exata com o filtro de mês do Kanban.
-  const leadsDoMes = leads.filter(lead => {
-    if (lead.situacao === 'Arquivado') return false;
+  function getComparableDate(dataStr?: string | null): string | null {
+    if (!dataStr) return null;
+    const str = dataStr.trim();
 
-    const dateCriacao = getMonthYear(lead.created_time || '');
-    const ehCriadoNoMes = dateCriacao !== null
-      && dateCriacao.month === month
-      && dateCriacao.year === year;
-
-    let ehFechadoNoMes = false;
-    if (STATUS_CONVERSAO.includes(lead.situacao)) {
-      const leadEstendido = lead as Record<string, any>;
-      const dataFechamento = leadEstendido.data_fechamento || lead.created_time || '';
-      const dateFechamento = getMonthYear(dataFechamento);
-      ehFechadoNoMes = dateFechamento !== null
-        && dateFechamento.month === month
-        && dateFechamento.year === year;
+    const matchBR = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+    if (matchBR) {
+      const d = matchBR[1].padStart(2, '0');
+      const m = matchBR[2].padStart(2, '0');
+      const y = matchBR[3];
+      return `${y}-${m}-${d}`;
     }
 
-    return ehCriadoNoMes || ehFechadoNoMes;
+    let safeStr = str;
+    if (str.includes('-') && !str.includes('T')) {
+      safeStr = `${str}T12:00:00`;
+    }
+
+    const dataObj = new Date(safeStr);
+    if (!isNaN(dataObj.getTime())) {
+      const d = String(dataObj.getDate()).padStart(2, '0');
+      const m = String(dataObj.getMonth() + 1).padStart(2, '0');
+      const y = dataObj.getFullYear();
+      return `${y}-${m}-${d}`;
+    }
+
+    return null;
+  }
+
+  const leadsFiltrados = leads.filter(lead => {
+    if (lead.situacao === 'Arquivado') return false;
+
+    let ehCriadoNoPeriodo = false;
+    let ehFechadoNoPeriodo = false;
+
+    const dateCriacaoObj = getMonthYear(lead.created_time || '');
+    const dateCriacaoStr = getComparableDate(lead.created_time || '');
+
+    const leadEstendido = lead as Record<string, any>;
+    const dataFechamento = leadEstendido.data_fechamento || lead.created_time || '';
+    const dateFechamentoObj = getMonthYear(dataFechamento);
+    const dateFechamentoStr = getComparableDate(dataFechamento);
+
+    if (tipoFiltro === "mes") {
+      ehCriadoNoPeriodo = dateCriacaoObj !== null && dateCriacaoObj.month === month && dateCriacaoObj.year === year;
+      if (STATUS_CONVERSAO.includes(lead.situacao)) {
+        ehFechadoNoPeriodo = dateFechamentoObj !== null && dateFechamentoObj.month === month && dateFechamentoObj.year === year;
+      }
+    } else {
+      if (dateCriacaoStr) {
+        ehCriadoNoPeriodo = (!dataInicio || dateCriacaoStr >= dataInicio) && (!dataFim || dateCriacaoStr <= dataFim);
+      }
+      if (STATUS_CONVERSAO.includes(lead.situacao) && dateFechamentoStr) {
+        ehFechadoNoPeriodo = (!dataInicio || dateFechamentoStr >= dataInicio) && (!dataFim || dateFechamentoStr <= dataFim);
+      }
+    }
+
+    return ehCriadoNoPeriodo || ehFechadoNoPeriodo;
   });
 
-  const totalLeads = leadsDoMes.length;
+  const totalLeads = leadsFiltrados.length;
 
-  // 2. Conversões exatas do mês
-  const leadsConvertidosNoMes = leadsDoMes.filter(lead => {
+  const leadsConvertidos = leadsFiltrados.filter(lead => {
     if (!STATUS_CONVERSAO.includes(lead.situacao)) return false;
     const leadEstendido = lead as Record<string, any>;
     const dataFechamento = leadEstendido.data_fechamento || lead.created_time || '';
-    const dateFechamento = getMonthYear(dataFechamento);
-    return dateFechamento !== null
-      && dateFechamento.month === month
-      && dateFechamento.year === year;
+    
+    if (tipoFiltro === "mes") {
+      const dateFechamentoObj = getMonthYear(dataFechamento);
+      return dateFechamentoObj !== null && dateFechamentoObj.month === month && dateFechamentoObj.year === year;
+    } else {
+      const dateFechamentoStr = getComparableDate(dataFechamento);
+      return dateFechamentoStr !== null && (!dataInicio || dateFechamentoStr >= dataInicio) && (!dataFim || dateFechamentoStr <= dataFim);
+    }
   });
 
-  const conversoes = leadsConvertidosNoMes.length;
+  const conversoes = leadsConvertidos.length;
 
-  // 3. Recuperação de Base (criados em meses anteriores, fechados neste mês)
-  const conversoesAnteriores = leadsConvertidosNoMes.filter(lead => {
-    const dateCriacao = getMonthYear(lead.created_time || '');
-    return dateCriacao !== null
-      && (dateCriacao.year < year || (dateCriacao.year === year && dateCriacao.month < month));
+  const conversoesAnteriores = leadsConvertidos.filter(lead => {
+    if (tipoFiltro === "mes") {
+      const dateCriacao = getMonthYear(lead.created_time || '');
+      return dateCriacao !== null && (dateCriacao.year < year || (dateCriacao.year === year && dateCriacao.month < month));
+    } else {
+      const dateCriacaoStr = getComparableDate(lead.created_time || '');
+      return dateCriacaoStr !== null && dataInicio && dateCriacaoStr < dataInicio;
+    }
   }).length;
 
-  // 4. Desqualificados — apenas dentro do leadsDoMes (criados no mês),
-  //    garantindo paridade com o Kanban
-  const leadsDesqualificadosNoMes = leadsDoMes.filter(
+  const leadsDesqualificados = leadsFiltrados.filter(
     lead => lead.situacao === 'Desqualificado'
   );
-  const desqualificados = leadsDesqualificadosNoMes.length;
+  const desqualificados = leadsDesqualificados.length;
 
   const taxaDesqualificacao = totalLeads > 0
     ? ((desqualificados / totalLeads) * 100).toFixed(1)
     : '0.0';
 
-  // Desqualificados agrupados por origem
   const desqPorOrigemMap: Record<string, number> = {};
-  leadsDesqualificadosNoMes.forEach(lead => {
+  leadsDesqualificados.forEach(lead => {
     const origem = lead.origem || 'Desconhecida';
     desqPorOrigemMap[origem] = (desqPorOrigemMap[origem] || 0) + 1;
   });
@@ -130,7 +169,6 @@ export function generateReportMetrics(leads: Lead[], month: number, year: number
     ? ((conversoes / totalLeads) * 100).toFixed(2)
     : '0.00';
 
-  // 5. Agrupamento por Fonte
   const porFonteMap: Record<string, {
     nome: string;
     leads: number;
@@ -138,7 +176,7 @@ export function generateReportMetrics(leads: Lead[], month: number, year: number
     desqualificados: number;
   }> = {};
 
-  leadsDoMes.forEach(lead => {
+  leadsFiltrados.forEach(lead => {
     const fonte = lead.origem || 'Outros / Desconhecida';
     if (!porFonteMap[fonte]) {
       porFonteMap[fonte] = { nome: fonte, leads: 0, conversoes: 0, desqualificados: 0 };
@@ -149,7 +187,7 @@ export function generateReportMetrics(leads: Lead[], month: number, year: number
     }
   });
 
-  leadsConvertidosNoMes.forEach(lead => {
+  leadsConvertidos.forEach(lead => {
     const fonte = lead.origem || 'Outros / Desconhecida';
     porFonteMap[fonte].conversoes += 1;
   });
@@ -159,7 +197,6 @@ export function generateReportMetrics(leads: Lead[], month: number, year: number
     taxa: f.leads > 0 ? ((f.conversoes / f.leads) * 100).toFixed(2) : '0.00',
   })).sort((a, b) => b.leads - a.leads);
 
-  // 6. Agrupamento por Anúncio
   const porAnuncioMap: Record<string, {
     nome: string;
     fonte: string;
@@ -167,7 +204,7 @@ export function generateReportMetrics(leads: Lead[], month: number, year: number
     conversoes: number;
   }> = {};
 
-  leadsDoMes.forEach(lead => {
+  leadsFiltrados.forEach(lead => {
     const anuncio = resolverNomeAnuncio(lead);
     const fonte = lead.origem || 'Desconhecida';
     const chave = `${anuncio}-${fonte}`;
@@ -177,7 +214,7 @@ export function generateReportMetrics(leads: Lead[], month: number, year: number
     porAnuncioMap[chave].leads += 1;
   });
 
-  leadsConvertidosNoMes.forEach(lead => {
+  leadsConvertidos.forEach(lead => {
     const anuncio = resolverNomeAnuncio(lead);
     const fonte = lead.origem || 'Desconhecida';
     const chave = `${anuncio}-${fonte}`;
@@ -189,9 +226,8 @@ export function generateReportMetrics(leads: Lead[], month: number, year: number
     taxa: a.leads > 0 ? ((a.conversoes / a.leads) * 100).toFixed(2) : '0.00',
   })).sort((a, b) => b.leads - a.leads);
 
-  // 7. Padrões Temporais
   const diasSemana = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
-  const porDiaMap = leadsDoMes.reduce((acc, lead) => {
+  const porDiaMap = leadsFiltrados.reduce((acc, lead) => {
     if (lead.created_time) {
       let dataStr = lead.created_time;
       if (dataStr.includes('/')) {
@@ -227,7 +263,7 @@ export function generateReportMetrics(leads: Lead[], month: number, year: number
     porFonte,
     porAnuncio,
     porDia,
-    listaLeads: leadsDoMes,
-    listaDesqualificados: leadsDesqualificadosNoMes,
+    listaLeads: leadsFiltrados,
+    listaDesqualificados: leadsDesqualificados,
   };
 }

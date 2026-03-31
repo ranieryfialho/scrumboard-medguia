@@ -20,7 +20,6 @@ const ANOS = [2024, 2025, 2026, 2027];
 const COLORS = ['#4f46e5', '#10b981', '#f59e0b', '#f43f5e', '#06b6d4', '#8b5cf6', '#64748b'];
 const ITENS_POR_PAGINA = 10;
 
-// Função auxiliar para extrair a inicial do nome
 const getInicial = (nome?: string) => {
   if (!nome) return "U";
   return nome.charAt(0).toUpperCase();
@@ -29,16 +28,19 @@ const getInicial = (nome?: string) => {
 export default function RelatoriosComerciaisPage() {
   const [loading, setLoading] = useState(true);
   const [leadsRaw, setLeadsRaw] = useState<Lead[]>([]);
+  
   const [mesSelecionado, setMesSelecionado] = useState<number>(() => new Date().getMonth() + 1);
   const [anoSelecionado, setAnoSelecionado] = useState<number>(() => new Date().getFullYear());
+  const [dataInicio, setDataInicio] = useState<string>("");
+  const [dataFim, setDataFim] = useState<string>("");
+
+  const tipoFiltro = (dataInicio || dataFim) ? "periodo" : "mes";
   
-  // Estado para a paginação
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Reseta a paginação para 1 sempre que mudar o mês ou o ano
   useEffect(() => {
     setCurrentPage(1);
-  }, [mesSelecionado, anoSelecionado]);
+  }, [mesSelecionado, anoSelecionado, dataInicio, dataFim]);
 
   useEffect(() => {
     async function fetchLeads() {
@@ -58,31 +60,59 @@ export default function RelatoriosComerciaisPage() {
   }, []);
 
   const dadosComerciais = useMemo(() => {
+    function getMonthYear(dataStr?: string | null) {
+      if (!dataStr) return null;
+      const str = dataStr.trim();
+      const matchBR = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+      if (matchBR) return { month: parseInt(matchBR[2], 10), year: parseInt(matchBR[3], 10) };
+      let safeStr = str;
+      if (str.includes('-') && !str.includes('T')) safeStr = `${str}T12:00:00`;
+      const dataObj = new Date(safeStr);
+      if (!isNaN(dataObj.getTime())) return { month: dataObj.getMonth() + 1, year: dataObj.getFullYear() };
+      return null;
+    }
+
+    function getComparableDate(dataStr?: string | null) {
+      if (!dataStr) return null;
+      const str = dataStr.trim();
+      const matchBR = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+      if (matchBR) {
+        const d = matchBR[1].padStart(2, '0');
+        const m = matchBR[2].padStart(2, '0');
+        const y = matchBR[3];
+        return `${y}-${m}-${d}`;
+      }
+      let safeStr = str;
+      if (str.includes('-') && !str.includes('T')) safeStr = `${str}T12:00:00`;
+      const dataObj = new Date(safeStr);
+      if (!isNaN(dataObj.getTime())) {
+        const d = String(dataObj.getDate()).padStart(2, '0');
+        const m = String(dataObj.getMonth() + 1).padStart(2, '0');
+        const y = dataObj.getFullYear();
+        return `${y}-${m}-${d}`;
+      }
+      return null;
+    }
+
     const fechados = leadsRaw.filter(l => {
       if (!['Fechado', 'Aguardando Ativação'].includes(l.situacao)) return false;
       
-      const dataF = l.data_fechamento || l.created_time;
+      const dataF = (l as any).data_fechamento || l.created_time;
       if (!dataF) return false;
       
-      let mes, ano;
-      const matchBR = dataF.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
-      if (matchBR) {
-        mes = parseInt(matchBR[2], 10);
-        ano = parseInt(matchBR[3], 10);
+      if (tipoFiltro === "mes") {
+        const dateObj = getMonthYear(dataF);
+        return dateObj !== null && dateObj.month === mesSelecionado && dateObj.year === anoSelecionado;
       } else {
-        const dObj = new Date(dataF.includes('-') && !dataF.includes('T') ? `${dataF}T12:00:00` : dataF);
-        if(!isNaN(dObj.getTime())) {
-          mes = dObj.getMonth() + 1;
-          ano = dObj.getFullYear();
-        }
+        const dateStr = getComparableDate(dataF);
+        return dateStr !== null && (!dataInicio || dateStr >= dataInicio) && (!dataFim || dateStr <= dataFim);
       }
-      return mes === mesSelecionado && ano === anoSelecionado;
     });
 
     const agrupar = (campo: string) => {
       const counts: Record<string, number> = {};
       fechados.forEach(l => {
-        const val = l[campo] ? String(l[campo]).trim() : 'Não Informado';
+        const val = (l as any)[campo] ? String((l as any)[campo]).trim() : 'Não Informado';
         counts[val] = (counts[val] || 0) + 1;
       });
       return Object.entries(counts)
@@ -97,7 +127,7 @@ export default function RelatoriosComerciaisPage() {
       planosEscolhidos: agrupar('plano_escolhido'),
       canaisAquisição: agrupar('por_onde_conheceu')
     };
-  }, [leadsRaw, mesSelecionado, anoSelecionado]);
+  }, [leadsRaw, tipoFiltro, mesSelecionado, anoSelecionado, dataInicio, dataFim]);
 
   // Cálculos da Paginação
   const totalPages = Math.ceil(dadosComerciais.totalVendas / ITENS_POR_PAGINA);
@@ -112,7 +142,7 @@ export default function RelatoriosComerciaisPage() {
 
   return (
     <div className="p-8 space-y-8 max-w-7xl mx-auto">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col xl:flex-row xl:items-start justify-between gap-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Comercial & Vendas</h1>
           <p className="text-muted-foreground mt-2">
@@ -120,23 +150,85 @@ export default function RelatoriosComerciaisPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Select value={mesSelecionado.toString()} onValueChange={(v) => setMesSelecionado(Number(v))}>
-            <SelectTrigger className="w-[140px] bg-white border-slate-200 shadow-sm text-slate-800 focus:ring-2 focus:ring-indigo-500">
-              <SelectValue placeholder="Mês" />
-            </SelectTrigger>
-            <SelectContent>
-              {MESES.map(mes => <SelectItem key={mes.valor} value={mes.valor.toString()}>{mes.nome}</SelectItem>)}
-            </SelectContent>
-          </Select>
-          <Select value={anoSelecionado.toString()} onValueChange={(v) => setAnoSelecionado(Number(v))}>
-            <SelectTrigger className="w-[100px] bg-white border-slate-200 shadow-sm text-slate-800 focus:ring-2 focus:ring-indigo-500">
-              <SelectValue placeholder="Ano" />
-            </SelectTrigger>
-            <SelectContent>
-              {ANOS.map(ano => <SelectItem key={ano} value={ano.toString()}>{ano}</SelectItem>)}
-            </SelectContent>
-          </Select>
+        {/* --- BLOCO DE FILTROS ALINHADO --- */}
+        <div className="flex flex-col gap-3 w-full xl:w-[320px] shrink-0">
+          
+          {/* Linha 1: Mês e Ano */}
+          <div className="flex gap-2 w-full">
+            <Select
+              value={mesSelecionado.toString()}
+              onValueChange={(v) => { 
+                setDataInicio(""); 
+                setDataFim(""); 
+                setMesSelecionado(Number(v)); 
+              }}
+            >
+              <SelectTrigger className="flex-1 h-10 bg-white border-slate-200 shadow-sm text-slate-800 focus:ring-2 focus:ring-indigo-500">
+                <SelectValue placeholder="Mês" />
+              </SelectTrigger>
+              <SelectContent>
+                {MESES.map(mes => (
+                  <SelectItem key={mes.valor} value={mes.valor.toString()}>
+                    {mes.nome}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select
+              value={anoSelecionado.toString()}
+              onValueChange={(v) => { 
+                setDataInicio(""); 
+                setDataFim(""); 
+                setAnoSelecionado(Number(v)); 
+              }}
+            >
+              <SelectTrigger className="w-[100px] shrink-0 h-10 bg-white border-slate-200 shadow-sm text-slate-800 focus:ring-2 focus:ring-indigo-500">
+                <SelectValue placeholder="Ano" />
+              </SelectTrigger>
+              <SelectContent>
+                {ANOS.map(ano => (
+                  <SelectItem key={ano} value={ano.toString()}>
+                    {ano}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Linha 2: Range de Datas (De / Até) */}
+          <div className="grid grid-cols-2 gap-2 w-full">
+            <div className="flex flex-col space-y-1">
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">De</label>
+              <input
+                type="date"
+                value={dataInicio}
+                onChange={(e) => setDataInicio(e.target.value)}
+                className="w-full h-10 px-3 text-sm text-slate-700 bg-white border border-slate-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-shadow"
+              />
+            </div>
+            
+            <div className="flex flex-col space-y-1">
+              <div className="flex items-center justify-between pr-1">
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Até</label>
+                {(dataInicio || dataFim) && (
+                  <button 
+                    onClick={() => { setDataInicio(""); setDataFim(""); }}
+                    className="text-[10px] font-bold text-red-500 hover:text-red-600 uppercase tracking-wider transition-colors"
+                  >
+                    Limpar
+                  </button>
+                )}
+              </div>
+              <input
+                type="date"
+                value={dataFim}
+                onChange={(e) => setDataFim(e.target.value)}
+                className="w-full h-10 px-3 text-sm text-slate-700 bg-white border border-slate-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-shadow"
+              />
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -151,7 +243,7 @@ export default function RelatoriosComerciaisPage() {
           <div className="grid gap-4 md:grid-cols-3">
             <Card className="bg-emerald-50/50 border-emerald-100 shadow-sm">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-emerald-800 text-sm">Vendas no Mês</CardTitle>
+                <CardTitle className="text-emerald-800 text-sm">Vendas no Período</CardTitle>
                 <Trophy className="w-5 h-5 text-emerald-500" />
               </CardHeader>
               <CardContent>
@@ -260,9 +352,9 @@ export default function RelatoriosComerciaisPage() {
                         </TableCell>
 
                         <TableCell className="py-4">
-                          {lead.o_que_mais_interessou ? (
-                            <p className="text-sm text-slate-700 line-clamp-2 leading-relaxed" title={lead.o_que_mais_interessou}>
-                              {lead.o_que_mais_interessou}
+                          {(lead as any).o_que_mais_interessou ? (
+                            <p className="text-sm text-slate-700 line-clamp-2 leading-relaxed" title={(lead as any).o_que_mais_interessou}>
+                              {(lead as any).o_que_mais_interessou}
                             </p>
                           ) : (
                             <span className="inline-flex items-center text-[11px] font-medium text-slate-400 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-200 border-dashed">
@@ -272,9 +364,9 @@ export default function RelatoriosComerciaisPage() {
                         </TableCell>
 
                         <TableCell className="py-4">
-                          {lead.o_que_deixou_a_desejar ? (
-                            <p className="text-sm text-slate-700 line-clamp-2 leading-relaxed" title={lead.o_que_deixou_a_desejar}>
-                              {lead.o_que_deixou_a_desejar}
+                          {(lead as any).o_que_deixou_a_desejar ? (
+                            <p className="text-sm text-slate-700 line-clamp-2 leading-relaxed" title={(lead as any).o_que_deixou_a_desejar}>
+                              {(lead as any).o_que_deixou_a_desejar}
                             </p>
                           ) : (
                             <span className="inline-flex items-center text-[11px] font-medium text-slate-400 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-200 border-dashed">
@@ -284,9 +376,9 @@ export default function RelatoriosComerciaisPage() {
                         </TableCell>
 
                         <TableCell className="py-4 px-4">
-                          {lead.plano_escolhido && lead.plano_escolhido !== 'Não Informado' ? (
+                          {(lead as any).plano_escolhido && (lead as any).plano_escolhido !== 'Não Informado' ? (
                             <span className="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-700 border border-emerald-200">
-                              {lead.plano_escolhido}
+                              {(lead as any).plano_escolhido}
                             </span>
                           ) : (
                             <span className="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-semibold uppercase tracking-wider bg-slate-100 text-slate-500 border border-slate-200">
