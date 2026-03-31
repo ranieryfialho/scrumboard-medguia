@@ -137,15 +137,16 @@ export function generateReportMetrics(
 
   const conversoes = leadsConvertidos.length;
 
-  const conversoesAnteriores = leadsConvertidos.filter(lead => {
+  const listaRecuperacao = leadsConvertidos.filter(lead => {
     if (tipoFiltro === "mes") {
       const dateCriacao = getMonthYear(lead.created_time || '');
       return dateCriacao !== null && (dateCriacao.year < year || (dateCriacao.year === year && dateCriacao.month < month));
     } else {
       const dateCriacaoStr = getComparableDate(lead.created_time || '');
-      return dateCriacaoStr !== null && dataInicio && dateCriacaoStr < dataInicio;
+      return dateCriacaoStr !== null && dataInicio ? dateCriacaoStr < dataInicio : false;
     }
-  }).length;
+  });
+  const conversoesAnteriores = listaRecuperacao.length;
 
   const leadsDesqualificados = leadsFiltrados.filter(
     lead => lead.situacao === 'Desqualificado'
@@ -264,6 +265,8 @@ export function generateReportMetrics(
     porAnuncio,
     porDia,
     listaLeads: leadsFiltrados,
+    listaConversoes: leadsConvertidos,
+    listaRecuperacao,
     listaDesqualificados: leadsDesqualificados,
   };
 }

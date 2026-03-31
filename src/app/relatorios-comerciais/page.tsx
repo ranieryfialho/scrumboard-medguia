@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { Lead } from "@/types/lead";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { Trophy, Stethoscope, Handshake, ChevronLeft, ChevronRight } from "lucide-react";
+import { Trophy, Stethoscope, Handshake, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, ChevronsUpDown } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 
@@ -25,6 +25,11 @@ const getInicial = (nome?: string) => {
   return nome.charAt(0).toUpperCase();
 };
 
+function SortIcon({ column, sortColumn, sortDirection }: { column: string; sortColumn: string | null; sortDirection: 'asc' | 'desc' }) {
+  if (sortColumn !== column) return <ChevronsUpDown className="w-3 h-3 opacity-40" />;
+  return sortDirection === 'asc' ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />;
+}
+
 export default function RelatoriosComerciaisPage() {
   const [loading, setLoading] = useState(true);
   const [leadsRaw, setLeadsRaw] = useState<Lead[]>([]);
@@ -35,8 +40,28 @@ export default function RelatoriosComerciaisPage() {
   const [dataFim, setDataFim] = useState<string>("");
 
   const tipoFiltro = (dataInicio || dataFim) ? "periodo" : "mes";
-  
+
+  const [sortColumn, setSortColumn] = useState<string | null>(null);
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  const [filtroKpi, setFiltroKpi] = useState<'todos' | 'concorrente' | 'plano'>('todos');
+  const tabelaRef = useRef<HTMLDivElement>(null);
+
   const [currentPage, setCurrentPage] = useState(1);
+
+  function handleSort(column: string) {
+    if (sortColumn === column) {
+      setSortDirection(d => d === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortColumn(column);
+      setSortDirection('asc');
+    }
+  }
+
+  function selecionarFiltroKpi(filtro: typeof filtroKpi) {
+    setFiltroKpi(filtro);
+    setCurrentPage(1);
+    setTimeout(() => tabelaRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+  }
 
   useEffect(() => {
     setCurrentPage(1);
@@ -129,12 +154,42 @@ export default function RelatoriosComerciaisPage() {
     };
   }, [leadsRaw, tipoFiltro, mesSelecionado, anoSelecionado, dataInicio, dataFim]);
 
+  const filteredLeads = useMemo(() => {
+    switch (filtroKpi) {
+      case 'concorrente':
+        return dadosComerciais.fechadosLista.filter(
+          (l: any) => l.plataforma_anterior === dadosComerciais.plataformasAnteriores[0]?.name
+        );
+      case 'plano':
+        return dadosComerciais.fechadosLista.filter(
+          (l: any) => l.plano_escolhido === dadosComerciais.planosEscolhidos[0]?.name
+        );
+      default:
+        return dadosComerciais.fechadosLista;
+    }
+  }, [filtroKpi, dadosComerciais]);
+
+  const sortedLeads = useMemo(() => {
+    if (!sortColumn) return filteredLeads;
+    return [...filteredLeads].sort((a: any, b: any) => {
+      let valA = '';
+      let valB = '';
+      if (sortColumn === 'nome')                    { valA = (a.nome || '').toLowerCase();                    valB = (b.nome || '').toLowerCase(); }
+      else if (sortColumn === 'o_que_mais_interessou') { valA = (a.o_que_mais_interessou || '').toLowerCase();  valB = (b.o_que_mais_interessou || '').toLowerCase(); }
+      else if (sortColumn === 'o_que_deixou_a_desejar') { valA = (a.o_que_deixou_a_desejar || '').toLowerCase(); valB = (b.o_que_deixou_a_desejar || '').toLowerCase(); }
+      else if (sortColumn === 'plano_escolhido')    { valA = (a.plano_escolhido || '').toLowerCase();         valB = (b.plano_escolhido || '').toLowerCase(); }
+      if (valA < valB) return sortDirection === 'asc' ? -1 : 1;
+      if (valA > valB) return sortDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }, [filteredLeads, sortColumn, sortDirection]);
+
   // Cálculos da Paginação
-  const totalPages = Math.ceil(dadosComerciais.totalVendas / ITENS_POR_PAGINA);
+  const totalPages = Math.ceil(sortedLeads.length / ITENS_POR_PAGINA);
   const leadsPaginados = useMemo(() => {
     const startIndex = (currentPage - 1) * ITENS_POR_PAGINA;
-    return dadosComerciais.fechadosLista.slice(startIndex, startIndex + ITENS_POR_PAGINA);
-  }, [dadosComerciais.fechadosLista, currentPage]);
+    return sortedLeads.slice(startIndex, startIndex + ITENS_POR_PAGINA);
+  }, [sortedLeads, currentPage]);
 
   if (loading) {
     return <div className="flex justify-center items-center h-[80vh]">Processando Inteligência de Vendas...</div>;
@@ -241,7 +296,10 @@ export default function RelatoriosComerciaisPage() {
       ) : (
         <>
           <div className="grid gap-4 md:grid-cols-3">
-            <Card className="bg-emerald-50/50 border-emerald-100 shadow-sm">
+            <Card
+              onClick={() => selecionarFiltroKpi('todos')}
+              className={`cursor-pointer transition-all hover:shadow-md bg-emerald-50/50 border-emerald-100 shadow-sm ${filtroKpi === 'todos' ? 'ring-2 ring-emerald-400' : ''}`}
+            >
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-emerald-800 text-sm">Vendas no Período</CardTitle>
                 <Trophy className="w-5 h-5 text-emerald-500" />
@@ -251,7 +309,10 @@ export default function RelatoriosComerciaisPage() {
                 <p className="text-xs text-emerald-600/70 font-medium mt-1">Clientes ativados na plataforma</p>
               </CardContent>
             </Card>
-            <Card className="shadow-sm">
+            <Card
+              onClick={() => selecionarFiltroKpi('concorrente')}
+              className={`cursor-pointer transition-all hover:shadow-md shadow-sm ${filtroKpi === 'concorrente' ? 'ring-2 ring-indigo-400' : ''}`}
+            >
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-slate-600 text-sm">Top Concorrente Vencido</CardTitle>
                 <Handshake className="w-5 h-5 text-indigo-400" />
@@ -263,7 +324,10 @@ export default function RelatoriosComerciaisPage() {
                 <p className="text-xs text-slate-500 mt-1">De onde eles mais vieram</p>
               </CardContent>
             </Card>
-            <Card className="shadow-sm">
+            <Card
+              onClick={() => selecionarFiltroKpi('plano')}
+              className={`cursor-pointer transition-all hover:shadow-md shadow-sm ${filtroKpi === 'plano' ? 'ring-2 ring-sky-400' : ''}`}
+            >
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-slate-600 text-sm">Plano Mais Vendido</CardTitle>
                 <Stethoscope className="w-5 h-5 text-sky-400" />
@@ -317,20 +381,56 @@ export default function RelatoriosComerciaisPage() {
             </Card>
           </div>
 
-          <Card className="shadow-sm border-slate-200 overflow-hidden flex flex-col">
+          <Card ref={tabelaRef} className="shadow-sm border-slate-200 overflow-hidden flex flex-col">
             <CardHeader className="bg-slate-50 border-b border-slate-100 shrink-0">
-              <CardTitle>Histórico de Negociações (Atas de Reunião)</CardTitle>
-              <CardDescription>O que motivou o fechamento destes {dadosComerciais.totalVendas} leads.</CardDescription>
+              <div className="flex items-center justify-between gap-2">
+                <div>
+                  <CardTitle>
+                    {filtroKpi === 'todos' && `Histórico de Negociações (${sortedLeads.length})`}
+                    {filtroKpi === 'concorrente' && `Vindos de: ${dadosComerciais.plataformasAnteriores[0]?.name} (${sortedLeads.length})`}
+                    {filtroKpi === 'plano' && `Plano: ${dadosComerciais.planosEscolhidos[0]?.name} (${sortedLeads.length})`}
+                  </CardTitle>
+                  <CardDescription className="mt-1">
+                    {filtroKpi === 'todos' && `O que motivou o fechamento destes ${sortedLeads.length} leads.`}
+                    {filtroKpi === 'concorrente' && `Clientes que migraram do concorrente mais vencido no período.`}
+                    {filtroKpi === 'plano' && `Clientes que escolheram o plano mais vendido no período.`}
+                  </CardDescription>
+                </div>
+                {filtroKpi !== 'todos' && (
+                  <button
+                    onClick={() => selecionarFiltroKpi('todos')}
+                    className="text-xs text-slate-500 hover:text-slate-800 border border-slate-200 rounded px-2 py-1 transition-colors shrink-0"
+                  >
+                    Ver todos
+                  </button>
+                )}
+              </div>
             </CardHeader>
             <CardContent className="p-0 flex-1">
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader className="bg-white">
                     <TableRow>
-                      <TableHead className="w-[300px] font-semibold text-slate-600 py-4">Cliente / Especialidade</TableHead>
-                      <TableHead className="font-semibold text-slate-600">O que MAIS atraiu?</TableHead>
-                      <TableHead className="font-semibold text-slate-600">Dor na concorrência</TableHead>
-                      <TableHead className="w-[150px] font-semibold text-slate-600">Plano Adquirido</TableHead>
+                      <TableHead className="w-[300px] font-semibold text-slate-600 py-4">
+                        <button onClick={() => handleSort('nome')} className="flex items-center gap-1 hover:text-slate-900 transition-colors">
+                          Cliente / Especialidade <SortIcon column="nome" sortColumn={sortColumn} sortDirection={sortDirection} />
+                        </button>
+                      </TableHead>
+                      <TableHead className="font-semibold text-slate-600">
+                        <button onClick={() => handleSort('o_que_mais_interessou')} className="flex items-center gap-1 hover:text-slate-900 transition-colors">
+                          O que MAIS atraiu? <SortIcon column="o_que_mais_interessou" sortColumn={sortColumn} sortDirection={sortDirection} />
+                        </button>
+                      </TableHead>
+                      <TableHead className="font-semibold text-slate-600">
+                        <button onClick={() => handleSort('o_que_deixou_a_desejar')} className="flex items-center gap-1 hover:text-slate-900 transition-colors">
+                          Dor na concorrência <SortIcon column="o_que_deixou_a_desejar" sortColumn={sortColumn} sortDirection={sortDirection} />
+                        </button>
+                      </TableHead>
+                      <TableHead className="w-[150px] font-semibold text-slate-600">
+                        <button onClick={() => handleSort('plano_escolhido')} className="flex items-center gap-1 hover:text-slate-900 transition-colors">
+                          Plano Adquirido <SortIcon column="plano_escolhido" sortColumn={sortColumn} sortDirection={sortDirection} />
+                        </button>
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody className="divide-y divide-slate-100">
@@ -397,7 +497,7 @@ export default function RelatoriosComerciaisPage() {
               {totalPages > 1 && (
                 <div className="flex items-center justify-between px-6 py-4 border-t border-slate-100 bg-white">
                   <div className="text-sm text-slate-500">
-                    Mostrando <span className="font-medium">{(currentPage - 1) * ITENS_POR_PAGINA + 1}</span> a <span className="font-medium">{Math.min(currentPage * ITENS_POR_PAGINA, dadosComerciais.totalVendas)}</span> de <span className="font-medium">{dadosComerciais.totalVendas}</span> fechamentos
+                    Mostrando <span className="font-medium">{(currentPage - 1) * ITENS_POR_PAGINA + 1}</span> a <span className="font-medium">{Math.min(currentPage * ITENS_POR_PAGINA, sortedLeads.length)}</span> de <span className="font-medium">{sortedLeads.length}</span> fechamentos
                   </div>
                   <div className="flex items-center gap-2">
                     <Button

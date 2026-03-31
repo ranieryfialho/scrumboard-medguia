@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { Lead } from "@/types/lead";
 import { generateReportMetrics } from "@/utils/report-metrics";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Activity, Users, Percent, Target, Download, History, UserX } from "lucide-react";
+import { Activity, Users, Percent, Target, Download, History, UserX, CalendarRange, ListTree, ChevronUp, ChevronDown, ChevronsUpDown } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 
@@ -66,16 +66,43 @@ function resolverNomeAnuncio(lead: Lead): string {
   return 'Sem Anúncio Mapeado';
 }
 
+function SortIcon({ column, sortColumn, sortDirection }: { column: string; sortColumn: string | null; sortDirection: 'asc' | 'desc' }) {
+  if (sortColumn !== column) return <ChevronsUpDown className="w-3 h-3 opacity-40" />;
+  return sortDirection === 'asc' ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />;
+}
+
 export default function RelatoriosPage() {
   const [loading, setLoading] = useState(true);
   const [leadsRaw, setLeadsRaw] = useState<Lead[]>([]);
 
+  // Estados de Filtro
   const [mesSelecionado, setMesSelecionado] = useState<number>(() => new Date().getMonth() + 1);
   const [anoSelecionado, setAnoSelecionado] = useState<number>(() => new Date().getFullYear());
   const [dataInicio, setDataInicio] = useState<string>("");
   const [dataFim, setDataFim] = useState<string>("");
 
+  // A lógica define o tipo de filtro automaticamente
   const tipoFiltro = (dataInicio || dataFim) ? "periodo" : "mes";
+
+  // Estados de Ordenação e Filtro KPI da tabela de leads
+  const [sortColumn, setSortColumn] = useState<string | null>(null);
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  const [filtroKpi, setFiltroKpi] = useState<'todos' | 'conversoes' | 'recuperacao' | 'desqualificados' | 'melhorCanal'>('todos');
+  const tabelaRef = useRef<HTMLDivElement>(null);
+
+  function selecionarFiltroKpi(filtro: typeof filtroKpi) {
+    setFiltroKpi(filtro);
+    setTimeout(() => tabelaRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+  }
+
+  function handleSort(column: string) {
+    if (sortColumn === column) {
+      setSortDirection(d => d === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortColumn(column);
+      setSortDirection('asc');
+    }
+  }
 
   useEffect(() => {
     async function fetchLeads() {
@@ -105,15 +132,71 @@ export default function RelatoriosPage() {
     );
   }, [leadsRaw, tipoFiltro, mesSelecionado, anoSelecionado, dataInicio, dataFim]);
 
+  const melhorCanalNome = useMemo(() => {
+    if (metrics.porFonte.length > 0) {
+      return [...metrics.porFonte].sort((a, b) => Number(b.taxa) - Number(a.taxa))[0].nome;
+    }
+    return '-';
+  }, [metrics.porFonte]);
+
+  const filteredLeads = useMemo(() => {
+    switch (filtroKpi) {
+      case 'conversoes':   return metrics.listaConversoes;
+      case 'recuperacao':  return metrics.listaRecuperacao;
+      case 'desqualificados': return metrics.listaDesqualificados;
+      case 'melhorCanal':  return metrics.listaLeads.filter((l: any) => l.origem === melhorCanalNome);
+      default:             return metrics.listaLeads;
+    }
+  }, [filtroKpi, metrics, melhorCanalNome]);
+
+  const sortedLeads = useMemo(() => {
+    if (!sortColumn) return filteredLeads;
+
+    return [...filteredLeads].sort((a, b) => {
+      let valA: string | number = '';
+      let valB: string | number = '';
+
+      if (sortColumn === 'nome') {
+        valA = (a.nome || '').toLowerCase();
+        valB = (b.nome || '').toLowerCase();
+      } else if (sortColumn === 'situacao') {
+        const ordem = ['Fechado', 'Aguardando Ativação', 'Reunião agendada', 'Em contato', 'Recontato', 'Novos Leads', 'Desqualificado'];
+        valA = ordem.indexOf(a.situacao || '') === -1 ? 99 : ordem.indexOf(a.situacao || '');
+        valB = ordem.indexOf(b.situacao || '') === -1 ? 99 : ordem.indexOf(b.situacao || '');
+      } else if (sortColumn === 'cargo') {
+        valA = (a.cargo || '').toLowerCase();
+        valB = (b.cargo || '').toLowerCase();
+      } else if (sortColumn === 'origem') {
+        valA = (a.origem || '').toLowerCase();
+        valB = (b.origem || '').toLowerCase();
+      } else if (sortColumn === 'anuncio') {
+        valA = resolverNomeAnuncio(a).toLowerCase();
+        valB = resolverNomeAnuncio(b).toLowerCase();
+      } else if (sortColumn === 'created_time') {
+        const parseDate = (d?: string) => {
+          if (!d) return 0;
+          const matchBR = d.match(/^(\d{2})\/(\d{2})\/(\d{4})\s*(\d{2}:\d{2})?/);
+          if (matchBR) {
+            return new Date(`${matchBR[3]}-${matchBR[2]}-${matchBR[1]}T${matchBR[4] || '00:00'}`).getTime();
+          }
+          return new Date(d).getTime() || 0;
+        };
+        valA = parseDate(a.created_time);
+        valB = parseDate(b.created_time);
+      } else if (sortColumn === 'observacoes') {
+        valA = (a.observacoes || '').toLowerCase();
+        valB = (b.observacoes || '').toLowerCase();
+      }
+
+      if (valA < valB) return sortDirection === 'asc' ? -1 : 1;
+      if (valA > valB) return sortDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }, [filteredLeads, sortColumn, sortDirection]);
+
+
   if (loading) {
     return <div className="flex justify-center items-center h-[80vh]">Carregando Relatório de Tráfego...</div>;
-  }
-
-  let melhorCanalNome = '-';
-  if (metrics && metrics.porFonte && metrics.porFonte.length > 0) {
-    const copiaSegura = [...metrics.porFonte];
-    copiaSegura.sort((a, b) => Number(b.taxa) - Number(a.taxa));
-    melhorCanalNome = copiaSegura[0].nome;
   }
 
   const getNomePeriodo = () => {
@@ -177,17 +260,6 @@ export default function RelatoriosPage() {
       md += `| ${a.fonte} | ${a.nome} | ${a.leads} | ${a.conversoes} | ${a.taxa}% |\n`;
     });
     md += `\n`;
-
-    if (metrics.listaDesqualificados.length > 0) {
-      md += `## Leads Desqualificados no Período\n\n`;
-      md += `| Nome do Lead | Especialidade | Origem | Anúncio | Data de Entrada |\n`;
-      md += `|---|---|---|---|---|\n`;
-      metrics.listaDesqualificados.forEach(lead => {
-        const anuncio = resolverNomeAnuncio(lead);
-        md += `| ${lead.nome || 'Desconhecido'} | ${lead.cargo || '-'} | ${lead.origem || '-'} | ${anuncio} | ${formatarDataLegivel(lead.created_time)} |\n`;
-      });
-      md += `\n`;
-    }
 
     md += `## Detalhamento Nominal de Leads do Período\n\n`;
     md += `| Nome do Lead | Situação no Funil | Data de Entrada | Origem / Fonte |\n`;
@@ -262,7 +334,6 @@ export default function RelatoriosPage() {
         {/* --- BLOCO DE FILTROS ALINHADO --- */}
         <div className="flex flex-col gap-3 w-full xl:w-[480px] shrink-0">
           
-          {/* Linha 1: Mês, Ano e Exportar */}
           <div className="flex gap-2 w-full">
             <Select
               value={mesSelecionado.toString()}
@@ -316,7 +387,6 @@ export default function RelatoriosPage() {
             )}
           </div>
 
-          {/* Linha 2: Range de Datas (De / Até) */}
           <div className="grid grid-cols-2 gap-2 w-full">
             <div className="flex flex-col space-y-1">
               <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">De</label>
@@ -362,7 +432,10 @@ export default function RelatoriosPage() {
         <>
           {/* KPIs */}
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <Card>
+            <Card
+              onClick={() => selecionarFiltroKpi('todos')}
+              className={`cursor-pointer transition-all hover:shadow-md ${filtroKpi === 'todos' ? 'ring-2 ring-slate-400' : ''}`}
+            >
               <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
                 <CardTitle className="text-sm font-medium">Total de Leads</CardTitle>
                 <Users className="w-4 h-4 text-muted-foreground" />
@@ -373,7 +446,10 @@ export default function RelatoriosPage() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card
+              onClick={() => selecionarFiltroKpi('conversoes')}
+              className={`cursor-pointer transition-all hover:shadow-md ${filtroKpi === 'conversoes' ? 'ring-2 ring-indigo-400' : ''}`}
+            >
               <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
                 <CardTitle className="text-sm font-medium">Conversões (Ativos)</CardTitle>
                 <Target className="w-4 h-4 text-muted-foreground" />
@@ -384,7 +460,10 @@ export default function RelatoriosPage() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card
+              onClick={() => selecionarFiltroKpi('recuperacao')}
+              className={`cursor-pointer transition-all hover:shadow-md ${filtroKpi === 'recuperacao' ? 'ring-2 ring-emerald-400' : ''}`}
+            >
               <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
                 <CardTitle className="text-sm font-medium text-emerald-600">Recuperação de Base</CardTitle>
                 <History className="w-4 h-4 text-emerald-600" />
@@ -395,7 +474,7 @@ export default function RelatoriosPage() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="cursor-default">
               <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
                 <CardTitle className="text-sm font-medium">Taxa de Conversão</CardTitle>
                 <Percent className="w-4 h-4 text-muted-foreground" />
@@ -406,7 +485,10 @@ export default function RelatoriosPage() {
               </CardContent>
             </Card>
 
-            <Card className={metrics.geral.desqualificados > 0 ? "border-red-200 bg-red-50/40" : ""}>
+            <Card
+              onClick={() => selecionarFiltroKpi('desqualificados')}
+              className={`cursor-pointer transition-all hover:shadow-md ${metrics.geral.desqualificados > 0 ? "border-red-200 bg-red-50/40" : ""} ${filtroKpi === 'desqualificados' ? 'ring-2 ring-red-400' : ''}`}
+            >
               <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
                 <CardTitle className={`text-sm font-medium ${metrics.geral.desqualificados > 0 ? "text-red-700" : ""}`}>
                   Desqualificados
@@ -433,7 +515,10 @@ export default function RelatoriosPage() {
               </CardContent>
             </Card>
 
-            <Card className="bg-primary/5 border-primary/20">
+            <Card
+              onClick={() => selecionarFiltroKpi('melhorCanal')}
+              className={`cursor-pointer transition-all hover:shadow-md bg-primary/5 border-primary/20 ${filtroKpi === 'melhorCanal' ? 'ring-2 ring-primary' : ''}`}
+            >
               <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
                 <CardTitle className="text-sm font-medium text-primary">Melhor Canal</CardTitle>
                 <Activity className="w-4 h-4 text-primary" />
@@ -524,46 +609,107 @@ export default function RelatoriosPage() {
             </CardContent>
           </Card>
 
-          {metrics.listaDesqualificados.length > 0 && (
-            <Card className="border-red-100 overflow-hidden">
-              <CardHeader className="border-b border-red-100 bg-red-50/50 pb-4">
-                <div className="flex items-center gap-2">
-                  <UserX className="w-5 h-5 text-red-500 shrink-0" />
-                  <CardTitle className="text-base text-red-800">
-                    Leads Desqualificados no Período ({metrics.listaDesqualificados.length})
-                  </CardTitle>
+          {/* NOVA TABELA: Detalhamento de TODOS os Leads do Período */}
+          {metrics.listaLeads.length > 0 && (
+            <Card ref={tabelaRef} className="border-slate-200 overflow-hidden">
+              <CardHeader className="border-b border-slate-100 bg-slate-50/50 pb-4">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <ListTree className="w-5 h-5 text-indigo-500 shrink-0" />
+                    <CardTitle className="text-base text-slate-800">
+                      {filtroKpi === 'todos' && `Detalhamento de Leads no Período (${sortedLeads.length})`}
+                      {filtroKpi === 'conversoes' && `Conversões (Ativos) (${sortedLeads.length})`}
+                      {filtroKpi === 'recuperacao' && `Recuperação de Base (${sortedLeads.length})`}
+                      {filtroKpi === 'desqualificados' && `Leads Desqualificados (${sortedLeads.length})`}
+                      {filtroKpi === 'melhorCanal' && `Melhor Canal: ${melhorCanalNome} (${sortedLeads.length})`}
+                    </CardTitle>
+                  </div>
+                  {filtroKpi !== 'todos' && (
+                    <button
+                      onClick={() => selecionarFiltroKpi('todos')}
+                      className="text-xs text-slate-500 hover:text-slate-800 border border-slate-200 rounded px-2 py-1 transition-colors"
+                    >
+                      Ver todos
+                    </button>
+                  )}
                 </div>
-                <p className="text-xs text-red-500/80 mt-1 leading-relaxed">
-                  Leads que não avançaram no funil. Revise a segmentação das campanhas e anúncios com maior incidência.
+                <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                  {filtroKpi === 'todos' && 'Lista nominal de todos os leads gerados ou convertidos neste período, com seus respectivos status e origens.'}
+                  {filtroKpi === 'conversoes' && 'Leads com status Fechado ou Aguardando Ativação cujo fechamento ocorreu no período.'}
+                  {filtroKpi === 'recuperacao' && 'Leads convertidos neste período que foram gerados em períodos anteriores.'}
+                  {filtroKpi === 'desqualificados' && 'Leads marcados como Desqualificado no período selecionado.'}
+                  {filtroKpi === 'melhorCanal' && `Leads originados pelo canal com maior taxa de conversão: ${melhorCanalNome}.`}
                 </p>
               </CardHeader>
 
               <CardContent className="p-0">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="bg-red-50/40 border-b border-red-100 text-left">
-                        <th className="px-5 py-3 font-semibold text-slate-600 w-[16%]">Nome</th>
-                        <th className="px-5 py-3 font-semibold text-slate-600 w-[20%]">Especialidade / Resposta</th>
-                        <th className="px-5 py-3 font-semibold text-slate-600 w-[13%]">Origem</th>
-                        <th className="px-5 py-3 font-semibold text-slate-600 w-[22%]">Anúncio</th>
-                        <th className="px-5 py-3 font-semibold text-slate-600 w-[15%]">Data de Entrada</th>
-                        <th className="px-5 py-3 font-semibold text-slate-600 w-[14%]">Observações</th>
+                <div className="overflow-x-auto max-h-[500px] custom-scrollbar">
+                  <table className="w-full text-sm relative">
+                    <thead className="sticky top-0 bg-slate-50 z-10 shadow-sm">
+                      <tr className="border-b border-slate-200 text-left">
+                        <th className="px-5 py-3 font-semibold text-slate-600 w-[15%]">
+                          <button onClick={() => handleSort('nome')} className="flex items-center gap-1 hover:text-slate-900 transition-colors">
+                            Nome <SortIcon column="nome" sortColumn={sortColumn} sortDirection={sortDirection} />
+                          </button>
+                        </th>
+                        <th className="px-5 py-3 font-semibold text-slate-600 w-[12%]">
+                          <button onClick={() => handleSort('situacao')} className="flex items-center gap-1 hover:text-slate-900 transition-colors">
+                            Status <SortIcon column="situacao" sortColumn={sortColumn} sortDirection={sortDirection} />
+                          </button>
+                        </th>
+                        <th className="px-5 py-3 font-semibold text-slate-600 w-[15%]">
+                          <button onClick={() => handleSort('cargo')} className="flex items-center gap-1 hover:text-slate-900 transition-colors">
+                            Especialidade / Resposta <SortIcon column="cargo" sortColumn={sortColumn} sortDirection={sortDirection} />
+                          </button>
+                        </th>
+                        <th className="px-5 py-3 font-semibold text-slate-600 w-[13%]">
+                          <button onClick={() => handleSort('origem')} className="flex items-center gap-1 hover:text-slate-900 transition-colors">
+                            Origem <SortIcon column="origem" sortColumn={sortColumn} sortDirection={sortDirection} />
+                          </button>
+                        </th>
+                        <th className="px-5 py-3 font-semibold text-slate-600 w-[20%]">
+                          <button onClick={() => handleSort('anuncio')} className="flex items-center gap-1 hover:text-slate-900 transition-colors">
+                            Anúncio <SortIcon column="anuncio" sortColumn={sortColumn} sortDirection={sortDirection} />
+                          </button>
+                        </th>
+                        <th className="px-5 py-3 font-semibold text-slate-600 w-[12%]">
+                          <button onClick={() => handleSort('created_time')} className="flex items-center gap-1 hover:text-slate-900 transition-colors">
+                            Data de Entrada <SortIcon column="created_time" sortColumn={sortColumn} sortDirection={sortDirection} />
+                          </button>
+                        </th>
+                        <th className="px-5 py-3 font-semibold text-slate-600 w-[13%]">
+                          <button onClick={() => handleSort('observacoes')} className="flex items-center gap-1 hover:text-slate-900 transition-colors">
+                            Observações <SortIcon column="observacoes" sortColumn={sortColumn} sortDirection={sortDirection} />
+                          </button>
+                        </th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-red-50">
-                      {metrics.listaDesqualificados.map((lead: any, idx: number) => {
+                    <tbody className="divide-y divide-slate-100">
+                      {sortedLeads.map((lead: any, idx: number) => {
                         const anuncio = resolverNomeAnuncio(lead);
+                        
+                        // Lógica de Cores da Badge de Status
+                        let statusBg = "bg-slate-100 text-slate-700 border-slate-200";
+                        if (lead.situacao === "Fechado") statusBg = "bg-emerald-100 text-emerald-700 border-emerald-200";
+                        else if (lead.situacao === "Aguardando Ativação") statusBg = "bg-cyan-100 text-cyan-700 border-cyan-200";
+                        else if (lead.situacao === "Reunião agendada") statusBg = "bg-purple-100 text-purple-700 border-purple-200";
+                        else if (lead.situacao === "Em contato") statusBg = "bg-amber-100 text-amber-700 border-amber-200";
+                        else if (lead.situacao === "Recontato") statusBg = "bg-orange-100 text-orange-700 border-orange-200";
+                        else if (lead.situacao === "Novos Leads") statusBg = "bg-blue-100 text-blue-700 border-blue-200";
+                        else if (lead.situacao === "Desqualificado") statusBg = "bg-red-100 text-red-700 border-red-200";
+
                         return (
-                          <tr key={idx} className="hover:bg-red-50/20 transition-colors">
+                          <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
                             <td className="px-5 py-3 font-semibold text-slate-800 whitespace-nowrap">
                               {lead.nome || '—'}
                             </td>
+                            <td className="px-5 py-3 whitespace-nowrap">
+                              <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider border ${statusBg}`}>
+                                {lead.situacao || '—'}
+                              </span>
+                            </td>
                             <td className="px-5 py-3 max-w-0">
-                              <span
-                                className="block truncate text-slate-500 text-xs"
-                                title={lead.cargo || ''}
-                              >
+                              <span className="block truncate text-slate-500 text-xs" title={lead.cargo || ''}>
                                 {lead.cargo || '—'}
                               </span>
                             </td>
@@ -573,10 +719,7 @@ export default function RelatoriosPage() {
                               </span>
                             </td>
                             <td className="px-5 py-3 max-w-0">
-                              <span
-                                className="block truncate text-xs font-medium text-indigo-600"
-                                title={anuncio}
-                              >
+                              <span className="block truncate text-xs font-medium text-indigo-600" title={anuncio}>
                                 {anuncio}
                               </span>
                             </td>
@@ -584,10 +727,7 @@ export default function RelatoriosPage() {
                               {formatarDataLegivel(lead.created_time)}
                             </td>
                             <td className="px-5 py-3 max-w-0">
-                              <span
-                                className="block truncate text-slate-400 text-xs"
-                                title={lead.observacoes || ''}
-                              >
+                              <span className="block truncate text-slate-400 text-xs" title={lead.observacoes || ''}>
                                 {lead.observacoes || '—'}
                               </span>
                             </td>
