@@ -19,7 +19,6 @@ export async function POST(req: Request) {
     }
 
     if (type === 'email.opened') {
-      // Atualiza para ABERTO, mas SÓ SE o status atual for ENVIADO (para não rebaixar um CLICADO acidentalmente)
       await supabase.from('envios_campanha')
         .update({ status: 'ABERTO' })
         .eq('id', envioId)
