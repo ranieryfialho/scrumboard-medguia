@@ -1,16 +1,18 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { LayoutDashboard, KanbanSquare, Archive, LogOut, ChevronLeft, ChevronRight, MessageSquare, FileText, Mail, Users, Trophy, Target } from "lucide-react";
+import { LayoutDashboard, KanbanSquare, Archive, LogOut, ChevronLeft, ChevronRight, Mail, Users, Trophy, Target, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 interface SidebarProps {
   abaAtiva: string;
   setAbaAtiva: (aba: string) => void;
+  mobileOpen?: boolean;
+  onMobileClose?: () => void;
 }
 
-export function Sidebar({ abaAtiva, setAbaAtiva }: SidebarProps) {
+export function Sidebar({ abaAtiva, setAbaAtiva, mobileOpen = false, onMobileClose }: SidebarProps) {
   const [isExpanded, setIsExpanded] = useState(true);
   const [modulosPermitidos, setModulosPermitidos] = useState<string[]>([]);
   const router = useRouter();
@@ -89,20 +91,40 @@ export function Sidebar({ abaAtiva, setAbaAtiva }: SidebarProps) {
   }).filter(group => group.items.length > 0);
 
   return (
-    <aside 
-      className={`relative h-screen bg-[#111111] text-zinc-400 transition-all duration-300 ease-in-out flex flex-col rounded-r-[32px] shadow-2xl z-50 ${
-        isExpanded ? "w-[260px]" : "w-[80px]"
-      }`}
-    >
+    <>
+      {/* Overlay para mobile */}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={onMobileClose}
+        />
+      )}
+
+      <aside
+        className={`
+          fixed md:relative h-screen bg-[#111111] text-zinc-400 flex flex-col rounded-r-[32px] shadow-2xl z-50
+          transition-all duration-300 ease-in-out
+          ${mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
+          ${isExpanded ? "w-[260px]" : "w-[80px]"}
+        `}
+      >
       <div className="flex items-center justify-between p-6">
         {isExpanded && (
           <span className="text-xl font-bold text-white tracking-wider">
             MedGuia Hub
           </span>
         )}
+        {/* Botão fechar no mobile */}
+        <button
+          onClick={onMobileClose}
+          className="p-2 rounded-lg hover:bg-zinc-800 transition-colors md:hidden ml-auto"
+        >
+          <X className="w-4 h-4 text-zinc-400" />
+        </button>
+        {/* Botão expandir/colapsar no desktop */}
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="p-2 rounded-lg hover:bg-zinc-800 transition-colors absolute -right-4 top-6 bg-[#111111] border border-zinc-800 group"
+          className="p-2 rounded-lg hover:bg-zinc-800 transition-colors absolute -right-4 top-6 bg-[#111111] border border-zinc-800 group hidden md:flex"
         >
           {isExpanded ? (
             <ChevronLeft className="w-4 h-4 text-zinc-400 group-hover:text-white transition-colors" />
@@ -176,5 +198,6 @@ export function Sidebar({ abaAtiva, setAbaAtiva }: SidebarProps) {
         </button>
       </div>
     </aside>
+    </>
   );
 }

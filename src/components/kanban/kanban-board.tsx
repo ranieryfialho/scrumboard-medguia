@@ -149,8 +149,8 @@ export function KanbanBoard({ leads, onStatusChange, onSaveObs }: KanbanBoardPro
         </DragOverlay>
       </DndContext>
 
-      <div className="flex flex-wrap items-center gap-6 mt-4 px-4 shrink-0 bg-white/60 py-2.5 rounded-lg border border-slate-200/60 w-max shadow-sm">
-        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mr-2">
+      <div className="flex flex-wrap items-center gap-3 md:gap-6 mt-4 px-4 shrink-0 bg-white/60 py-2.5 rounded-lg border border-slate-200/60 shadow-sm">
+        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider w-full sm:w-auto">
           Termômetro de Novos Leads:
         </span>
         <div className="flex items-center gap-2">

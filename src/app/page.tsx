@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { KanbanBoard } from "@/components/kanban/kanban-board";
 import { LeadsTable } from "@/components/kanban/leads-table";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
-import { RefreshCcw, Activity, LayoutGrid, Table as TableIcon } from "lucide-react";
+import { RefreshCcw, Activity, LayoutGrid, Table as TableIcon, Menu } from "lucide-react";
 import { DndContext } from "@dnd-kit/core";
 import { LeadCard } from "@/components/kanban/lead-card";
 
@@ -47,10 +47,12 @@ export default function Home() {
     setViewMode, 
     buscaNome, 
     setBuscaNome,
-    filtroEspecialidade, 
-    setFiltroEspecialidade, 
-    filtroMes, 
+    filtroEspecialidade,
+    setFiltroEspecialidade,
+    filtroMes,
     setFiltroMes,
+    filtroSituacao,
+    setFiltroSituacao,
     buscarLeads, 
     buscarCampanhas, 
     excluirCampanha, 
@@ -63,6 +65,7 @@ export default function Home() {
   const [leadPendente, setLeadPendente] = useState<{ id: string, situacao: string } | null>(null);
   const [modalAgendamentoOpen, setModalAgendamentoOpen] = useState(false);
   const [modalFechamentoOpen, setModalFechamentoOpen] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   const processarMudancaStatus = async (leadId: string, novaSituacao: string) => {
     const leadAtual = leads.find(l => l.id === leadId);
@@ -169,30 +172,45 @@ ${leadObj?.observacoes || ''}
 
   return (
     <div className="flex h-screen bg-[#e4e5e7] overflow-hidden">
-      <Sidebar abaAtiva={abaAtiva} setAbaAtiva={setAbaAtiva} />
-      
+      <Sidebar
+        abaAtiva={abaAtiva}
+        setAbaAtiva={(aba) => { setAbaAtiva(aba); setMobileSidebarOpen(false); }}
+        mobileOpen={mobileSidebarOpen}
+        onMobileClose={() => setMobileSidebarOpen(false)}
+      />
+
       <main className="flex-1 flex flex-col h-screen overflow-hidden">
-        <header className="bg-transparent px-8 py-5 flex items-center justify-between shrink-0">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-slate-800 flex items-center gap-3">
-              {getTituloPagina()}
-            </h1>
-            <p className="text-sm text-slate-500 mt-1 flex items-center gap-2">
-              <Activity className="w-4 h-4 text-emerald-500" /> Sincronizado via Google Sheets
-            </p>
+        <header className="bg-transparent px-4 md:px-8 py-4 md:py-5 flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setMobileSidebarOpen(true)}
+              className="p-2 rounded-lg hover:bg-slate-200 transition-colors md:hidden"
+            >
+              <Menu className="w-5 h-5 text-slate-700" />
+            </button>
+            <div>
+              <h1 className="text-lg md:text-2xl font-bold tracking-tight text-slate-800 flex items-center gap-3">
+                {getTituloPagina()}
+              </h1>
+              <p className="text-sm text-slate-500 mt-1 flex items-center gap-2">
+                <Activity className="w-4 h-4 text-emerald-500" /> Sincronizado via Google Sheets
+              </p>
+            </div>
           </div>
 
-          <div className="flex flex-col items-end gap-1.5">
+          <div className="flex flex-col items-end gap-1.5 shrink-0">
             <Button
               onClick={() => buscarLeads(false)}
               disabled={loading || isSyncing}
               variant="outline"
-              className="bg-white border-slate-300 text-slate-700 min-w-[180px] shadow-sm hover:bg-slate-50 transition-all"
+              className="bg-white border-slate-300 text-slate-700 md:min-w-[180px] shadow-sm hover:bg-slate-50 transition-all"
             >
-              <RefreshCcw className={`w-4 h-4 mr-2 ${loading || isSyncing ? 'animate-spin' : ''}`} />
-              {loading ? 'Carregando...' : isSyncing ? 'Sincronizando...' : 'Sincronizar Dados'}
+              <RefreshCcw className={`w-4 h-4 md:mr-2 ${loading || isSyncing ? 'animate-spin' : ''}`} />
+              <span className="hidden md:inline">
+                {loading ? 'Carregando...' : isSyncing ? 'Sincronizando...' : 'Sincronizar Dados'}
+              </span>
             </Button>
-            <div className="flex items-center gap-1.5 text-[10px] text-slate-500 font-medium pr-1">
+            <div className="hidden md:flex items-center gap-1.5 text-[10px] text-slate-500 font-medium pr-1">
               <span className="relative flex h-1.5 w-1.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
@@ -207,9 +225,10 @@ ${leadObj?.observacoes || ''}
             buscaNome={buscaNome} setBuscaNome={setBuscaNome}
             filtroEspecialidade={filtroEspecialidade} setFiltroEspecialidade={setFiltroEspecialidade}
             filtroMes={filtroMes} setFiltroMes={setFiltroMes}
+            filtroSituacao={filtroSituacao} setFiltroSituacao={setFiltroSituacao}
             especialidadesUnicas={especialidadesUnicas} mesesUnicos={mesesUnicos}
             limparFiltros={limparFiltros}
-            temFiltroAtivo={buscaNome !== "" || filtroEspecialidade !== "" || filtroMes !== ""}
+            temFiltroAtivo={buscaNome !== "" || filtroEspecialidade !== "" || filtroMes !== "" || filtroSituacao.length > 0}
             onAddLead={adicionarLeadManual}
           />
         )}
@@ -224,6 +243,7 @@ ${leadObj?.observacoes || ''}
                 calendarMonth={calendarMonth} setCalendarMonth={setCalendarMonth}
                 dadosGrafico={dadosGrafico}
                 setFiltroEspecialidade={setFiltroEspecialidade}
+                setFiltroSituacao={setFiltroSituacao}
                 setAbaAtiva={setAbaAtiva}
               />
             </TabsContent>

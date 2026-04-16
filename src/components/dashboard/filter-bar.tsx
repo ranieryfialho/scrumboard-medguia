@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Stethoscope, CalendarDays, FilterX, Plus } from "lucide-react";
+import { Search, Stethoscope, CalendarDays, FilterX, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
@@ -10,6 +10,8 @@ interface FilterBarProps {
   setFiltroEspecialidade: (v: string) => void;
   filtroMes: string;
   setFiltroMes: (v: string) => void;
+  filtroSituacao: string[];
+  setFiltroSituacao: (v: string[]) => void;
   especialidadesUnicas: string[];
   mesesUnicos: string[];
   limparFiltros: () => void;
@@ -29,6 +31,7 @@ export function FilterBar({
   buscaNome, setBuscaNome,
   filtroEspecialidade, setFiltroEspecialidade,
   filtroMes, setFiltroMes,
+  filtroSituacao, setFiltroSituacao,
   especialidadesUnicas, mesesUnicos,
   limparFiltros, temFiltroAtivo,
   onAddLead
@@ -98,6 +101,17 @@ export function FilterBar({
             ))}
           </select>
         </div>
+
+        {filtroSituacao.length > 0 && (
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-indigo-100 border border-indigo-200 text-indigo-700 text-xs font-semibold">
+            <span>
+              {filtroSituacao.length === 1 ? filtroSituacao[0] : `${filtroSituacao.length} situações`}
+            </span>
+            <button onClick={() => setFiltroSituacao([])} className="hover:text-indigo-900 transition-colors">
+              <X className="w-3 h-3" />
+            </button>
+          </div>
+        )}
 
         {temFiltroAtivo && (
           <Button variant="ghost" onClick={limparFiltros} className="text-slate-500 hover:text-rose-600 h-9 px-3">

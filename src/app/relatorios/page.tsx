@@ -322,7 +322,7 @@ export default function RelatoriosPage() {
   };
 
   return (
-    <div className="p-8 space-y-8 max-w-7xl mx-auto">
+    <div className="p-4 md:p-8 space-y-6 md:space-y-8 max-w-7xl mx-auto">
       <div className="flex flex-col xl:flex-row xl:items-start justify-between gap-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Resultados de Tráfego Pago</h1>
@@ -337,10 +337,10 @@ export default function RelatoriosPage() {
           <div className="flex gap-2 w-full">
             <Select
               value={mesSelecionado.toString()}
-              onValueChange={(v) => { 
-                setDataInicio(""); 
-                setDataFim(""); 
-                setMesSelecionado(Number(v)); 
+              onValueChange={(v) => {
+                setDataInicio("");
+                setDataFim("");
+                setMesSelecionado(Number(v));
               }}
             >
               <SelectTrigger className="flex-1 h-10 bg-white border-slate-200 shadow-sm text-slate-800 focus:ring-2 focus:ring-indigo-500">
@@ -357,10 +357,10 @@ export default function RelatoriosPage() {
 
             <Select
               value={anoSelecionado.toString()}
-              onValueChange={(v) => { 
-                setDataInicio(""); 
-                setDataFim(""); 
-                setAnoSelecionado(Number(v)); 
+              onValueChange={(v) => {
+                setDataInicio("");
+                setDataFim("");
+                setAnoSelecionado(Number(v));
               }}
             >
               <SelectTrigger className="w-[100px] shrink-0 h-10 bg-white border-slate-200 shadow-sm text-slate-800 focus:ring-2 focus:ring-indigo-500">
@@ -379,13 +379,24 @@ export default function RelatoriosPage() {
               <Button
                 onClick={handleExportGamma}
                 variant="outline"
-                className="shrink-0 h-10 flex items-center gap-2 border-slate-300 bg-white hover:bg-slate-50 text-slate-800 shadow-sm"
+                className="hidden sm:flex shrink-0 h-10 items-center gap-2 border-slate-300 bg-white hover:bg-slate-50 text-slate-800 shadow-sm"
               >
                 <Download className="w-4 h-4" />
                 Exportar Dados
               </Button>
             )}
           </div>
+
+          {metrics?.geral?.totalLeads > 0 && (
+            <Button
+              onClick={handleExportGamma}
+              variant="outline"
+              className="sm:hidden w-full h-10 flex items-center justify-center gap-2 border-slate-300 bg-white hover:bg-slate-50 text-slate-800 shadow-sm"
+            >
+              <Download className="w-4 h-4" />
+              Exportar Dados
+            </Button>
+          )}
 
           <div className="grid grid-cols-2 gap-2 w-full">
             <div className="flex flex-col space-y-1">
@@ -533,8 +544,8 @@ export default function RelatoriosPage() {
           </div>
 
           {/* Gráficos e Tabelas */}
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-            <Card className="col-span-4">
+          <div className="grid gap-4 lg:grid-cols-7">
+            <Card className="lg:col-span-4">
               <CardHeader>
                 <CardTitle>Comparativo: Volume vs Conversão por Fonte</CardTitle>
               </CardHeader>
@@ -554,7 +565,7 @@ export default function RelatoriosPage() {
               </CardContent>
             </Card>
 
-            <Card className="col-span-3">
+            <Card className="lg:col-span-3">
               <CardHeader>
                 <CardTitle>Distribuição por Dia da Semana</CardTitle>
               </CardHeader>
@@ -657,7 +668,7 @@ export default function RelatoriosPage() {
                             Status <SortIcon column="situacao" sortColumn={sortColumn} sortDirection={sortDirection} />
                           </button>
                         </th>
-                        <th className="px-5 py-3 font-semibold text-slate-600 w-[15%]">
+                        <th className="hidden md:table-cell px-5 py-3 font-semibold text-slate-600 w-[15%]">
                           <button onClick={() => handleSort('cargo')} className="flex items-center gap-1 hover:text-slate-900 transition-colors">
                             Especialidade / Resposta <SortIcon column="cargo" sortColumn={sortColumn} sortDirection={sortDirection} />
                           </button>
@@ -667,7 +678,7 @@ export default function RelatoriosPage() {
                             Origem <SortIcon column="origem" sortColumn={sortColumn} sortDirection={sortDirection} />
                           </button>
                         </th>
-                        <th className="px-5 py-3 font-semibold text-slate-600 w-[20%]">
+                        <th className="hidden lg:table-cell px-5 py-3 font-semibold text-slate-600 w-[20%]">
                           <button onClick={() => handleSort('anuncio')} className="flex items-center gap-1 hover:text-slate-900 transition-colors">
                             Anúncio <SortIcon column="anuncio" sortColumn={sortColumn} sortDirection={sortDirection} />
                           </button>
@@ -677,7 +688,7 @@ export default function RelatoriosPage() {
                             Data de Entrada <SortIcon column="created_time" sortColumn={sortColumn} sortDirection={sortDirection} />
                           </button>
                         </th>
-                        <th className="px-5 py-3 font-semibold text-slate-600 w-[13%]">
+                        <th className="hidden lg:table-cell px-5 py-3 font-semibold text-slate-600 w-[13%]">
                           <button onClick={() => handleSort('observacoes')} className="flex items-center gap-1 hover:text-slate-900 transition-colors">
                             Observações <SortIcon column="observacoes" sortColumn={sortColumn} sortDirection={sortDirection} />
                           </button>
@@ -708,7 +719,7 @@ export default function RelatoriosPage() {
                                 {lead.situacao || '—'}
                               </span>
                             </td>
-                            <td className="px-5 py-3 max-w-0">
+                            <td className="hidden md:table-cell px-5 py-3 max-w-0">
                               <span className="block truncate text-slate-500 text-xs" title={lead.cargo || ''}>
                                 {lead.cargo || '—'}
                               </span>
@@ -718,7 +729,7 @@ export default function RelatoriosPage() {
                                 {lead.origem || '—'}
                               </span>
                             </td>
-                            <td className="px-5 py-3 max-w-0">
+                            <td className="hidden lg:table-cell px-5 py-3 max-w-0">
                               <span className="block truncate text-xs font-medium text-indigo-600" title={anuncio}>
                                 {anuncio}
                               </span>
@@ -726,7 +737,7 @@ export default function RelatoriosPage() {
                             <td className="px-5 py-3 text-slate-500 text-xs whitespace-nowrap">
                               {formatarDataLegivel(lead.created_time)}
                             </td>
-                            <td className="px-5 py-3 max-w-0">
+                            <td className="hidden lg:table-cell px-5 py-3 max-w-0">
                               <span className="block truncate text-slate-400 text-xs" title={lead.observacoes || ''}>
                                 {lead.observacoes || '—'}
                               </span>

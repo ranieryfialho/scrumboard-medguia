@@ -40,6 +40,7 @@ export function useLeads() {
   const [buscaNome, setBuscaNome] = useState("");
   const [filtroEspecialidade, setFiltroEspecialidade] = useState("");
   const [filtroMes, setFiltroMes] = useState("");
+  const [filtroSituacao, setFiltroSituacao] = useState<string[]>([]);
 
   // Busca de Leads (Google Sheets)
   const buscarLeads = async (isBackground = false) => {
@@ -214,6 +215,7 @@ export function useLeads() {
     return leads.filter(lead => {
       const matchNome = lead.nome?.toLowerCase().includes(buscaNome.toLowerCase());
       const matchEspec = filtroEspecialidade ? normalizarEspecialidade(lead.cargo) === filtroEspecialidade : true;
+      const matchSituacao = filtroSituacao.length > 0 ? filtroSituacao.includes(lead.situacao) : true;
       
       let matchMes = true;
       
@@ -246,7 +248,7 @@ export function useLeads() {
         matchMes = (mCriacao === filtroMes) || (mFechamento === filtroMes);
       }
       
-      return matchNome && matchEspec && matchMes;
+      return matchNome && matchEspec && matchMes && matchSituacao;
     });
   }, [leads, buscaNome, filtroEspecialidade, filtroMes]);
 
@@ -276,6 +278,7 @@ export function useLeads() {
     setBuscaNome("");
     setFiltroEspecialidade("");
     setFiltroMes("");
+    setFiltroSituacao([]);
   };
 
   return {
@@ -283,6 +286,7 @@ export function useLeads() {
     loading, isSyncing, ultimaAtualizacao, date, setDate, calendarMonth, setCalendarMonth,
     abaAtiva, setAbaAtiva, viewMode, setViewMode, buscaNome, setBuscaNome,
     filtroEspecialidade, setFiltroEspecialidade, filtroMes, setFiltroMes,
+    filtroSituacao, setFiltroSituacao,
     buscarLeads, buscarCampanhas, excluirCampanha, atualizarSituacaoLead, salvarObservacaoLead, adicionarLeadManual, limparFiltros
   };
 }

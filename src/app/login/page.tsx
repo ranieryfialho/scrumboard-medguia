@@ -34,7 +34,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4">
 
       {/* ── GIF de fundo ── */}
       <div

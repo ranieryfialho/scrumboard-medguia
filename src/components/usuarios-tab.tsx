@@ -175,10 +175,10 @@ export function UsuariosTab() {
   };
 
   return (
-    <div className="p-8 space-y-8 max-w-7xl mx-auto animate-in fade-in duration-500">
+    <div className="p-4 md:p-8 space-y-6 md:space-y-8 max-w-7xl mx-auto animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900">Gestão de Acessos</h1>
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-900">Gestão de Acessos</h1>
           <p className="text-slate-500 mt-2">Convide a equipe e personalize o que cada um pode visualizar.</p>
         </div>
 
@@ -196,7 +196,7 @@ export function UsuariosTab() {
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleSalvarUsuario} className="space-y-4 pt-2">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Nome Completo</Label>
                   <Input value={nome} onChange={e => setNome(e.target.value)} required placeholder="Ex: João Silva" />
@@ -215,7 +215,7 @@ export function UsuariosTab() {
                 </div>
               </div>
               
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Perfil Base (Template)</Label>
                   <Select value={perfil} onValueChange={handleMudancaPerfil}>
@@ -286,12 +286,12 @@ export function UsuariosTab() {
           <table className="w-full text-sm text-left">
             <thead className="bg-white border-b border-slate-100">
               <tr className="text-slate-500 font-medium">
-                <th className="px-6 py-4">Nome</th>
-                <th className="px-6 py-4">E-mail</th>
-                <th className="px-6 py-4">Perfil Base</th>
-                <th className="px-6 py-4">Acessos</th>
-                <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4 text-right">Ações</th>
+                <th className="px-4 md:px-6 py-4">Nome</th>
+                <th className="hidden md:table-cell px-6 py-4">E-mail</th>
+                <th className="px-4 md:px-6 py-4">Perfil</th>
+                <th className="hidden sm:table-cell px-6 py-4">Acessos</th>
+                <th className="px-4 md:px-6 py-4">Status</th>
+                <th className="px-4 md:px-6 py-4 text-right">Ações</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -307,26 +307,26 @@ export function UsuariosTab() {
 
                 return (
                   <tr key={user.id} className="hover:bg-slate-50/50 transition-colors">
-                    <td className="px-6 py-4 font-semibold text-slate-700">{user.nome}</td>
-                    <td className="px-6 py-4 text-slate-500">{user.email}</td>
-                    <td className="px-6 py-4">{getBadgePerfil(user.perfil)}</td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 md:px-6 py-4 font-semibold text-slate-700">{user.nome}</td>
+                    <td className="hidden md:table-cell px-6 py-4 text-slate-500">{user.email}</td>
+                    <td className="px-4 md:px-6 py-4">{getBadgePerfil(user.perfil)}</td>
+                    <td className="hidden sm:table-cell px-6 py-4">
                       <span className="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded-md border border-slate-200 font-medium">
                         {qtdModulos} módulos
                       </span>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 md:px-6 py-4">
                       {user.ativo ? (
                          <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100">
-                           <CheckCircle2 className="w-3 h-3" /> Ativo
+                           <CheckCircle2 className="w-3 h-3" /><span className="hidden sm:inline">Ativo</span>
                          </span>
                       ) : (
                         <span className="inline-flex items-center gap-1 text-xs font-semibold text-red-600 bg-red-50 px-2 py-1 rounded-md border border-red-100">
-                           <XCircle className="w-3 h-3" /> Bloqueado
+                           <XCircle className="w-3 h-3" /><span className="hidden sm:inline">Bloqueado</span>
                          </span>
                       )}
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-4 md:px-6 py-4 text-right">
                       <Button 
                         variant="ghost" 
                         size="icon" 

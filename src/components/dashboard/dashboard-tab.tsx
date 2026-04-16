@@ -20,6 +20,7 @@ interface DashboardTabProps {
   setCalendarMonth: (d: Date) => void;
   dadosGrafico: any[];
   setFiltroEspecialidade: (v: string) => void;
+  setFiltroSituacao: (v: string[]) => void;
   setAbaAtiva: (v: string) => void;
 }
 
@@ -31,14 +32,20 @@ interface AgendaEvent {
   type: string;
 }
 
-export function DashboardTab({ 
-  kpis, 
-  date, setDate, 
-  calendarMonth, setCalendarMonth, 
+export function DashboardTab({
+  kpis,
+  date, setDate,
+  calendarMonth, setCalendarMonth,
   dadosGrafico,
   setFiltroEspecialidade,
+  setFiltroSituacao,
   setAbaAtiva
 }: DashboardTabProps) {
+
+  const navegarParaKanbanComFiltro = (situacoes: string[]) => {
+    setFiltroSituacao(situacoes);
+    setAbaAtiva("kanban");
+  };
   const mesFormatado = format(calendarMonth, "MMMM yyyy", { locale: ptBR });
   const mesCapitalizado = mesFormatado.charAt(0).toUpperCase() + mesFormatado.slice(1);
 
@@ -128,10 +135,10 @@ export function DashboardTab({
     : [];
 
   return (
-    <div className="max-w-[1600px] mx-auto space-y-8">
+    <div className="max-w-[1600px] mx-auto space-y-6 md:space-y-8">
       {/* KPIs */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
+        <Card className="cursor-pointer hover:shadow-md hover:border-indigo-300 transition-all" onClick={() => navegarParaKanbanComFiltro([])}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-slate-600">Total Ativos</CardTitle>
             <Users className="h-4 w-4 text-indigo-600" />
@@ -141,7 +148,7 @@ export function DashboardTab({
             <p className="text-xs text-slate-500 mt-1">Leads na base atual</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="cursor-pointer hover:shadow-md hover:border-amber-300 transition-all" onClick={() => navegarParaKanbanComFiltro(["Novos Leads"])}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-slate-600">Novos Leads</CardTitle>
             <Clock className="h-4 w-4 text-amber-500" />
@@ -151,7 +158,7 @@ export function DashboardTab({
             <p className="text-xs text-slate-500 mt-1">Aguardando primeiro contato</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="cursor-pointer hover:shadow-md hover:border-blue-300 transition-all" onClick={() => navegarParaKanbanComFiltro(["Em contato", "Recontato", "Reunião agendada", "Aguardando Ativação"])}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-slate-600">Em Negociação</CardTitle>
             <TrendingUp className="h-4 w-4 text-blue-500" />
@@ -161,7 +168,7 @@ export function DashboardTab({
             <p className="text-xs text-slate-500 mt-1">Em contato ou reunião</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="cursor-pointer hover:shadow-md hover:border-emerald-300 transition-all" onClick={() => navegarParaKanbanComFiltro(["Fechado"])}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-slate-600">Fechados</CardTitle>
             <CheckCircle2 className="h-4 w-4 text-emerald-500" />
@@ -174,10 +181,10 @@ export function DashboardTab({
       </div>
 
       {/* Calendário e Gráfico */}
-      <div className="flex gap-6 items-stretch">
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr] lg:grid-cols-[280px_1fr] gap-6">
 
         {/* Calendário */}
-        <div className="w-[280px] shrink-0">
+        <div>
           <Card className="h-full">
             <CardHeader className="pb-2 pt-4 px-4 border-b border-slate-100">
               <div className="flex items-center justify-between">
@@ -199,7 +206,7 @@ export function DashboardTab({
                 </button>
               </div>
             </CardHeader>
-            <CardContent className="p-3">
+            <CardContent className="p-3 md:p-4">
               <Calendar
                 mode="single"
                 selected={date}
@@ -219,10 +226,10 @@ export function DashboardTab({
                   caption_label: "!hidden",
                   table: "w-full border-collapse",
                   head_row: "flex w-full justify-between mb-1",
-                  head_cell: "w-8 text-center text-slate-500 font-medium text-[0.65rem] uppercase py-1",
+                  head_cell: "flex-1 text-center text-slate-500 font-medium text-[0.65rem] uppercase py-1",
                   row: "flex w-full justify-between mt-1",
-                  cell: "w-8 h-8 p-0 flex items-center justify-center relative",
-                  day: "h-8 w-8 flex items-center justify-center font-normal text-slate-700 hover:bg-slate-100 rounded-md transition-colors text-xs relative",
+                  cell: "flex-1 p-0 flex items-center justify-center relative",
+                  day: "h-9 w-full flex items-center justify-center font-normal text-slate-700 hover:bg-slate-100 rounded-md transition-colors text-sm relative",
                   day_selected: "bg-indigo-600 text-white hover:bg-indigo-700 hover:text-white font-bold",
                   day_today: "bg-slate-200 text-slate-900 font-semibold",
                   day_outside: "text-slate-300",
@@ -251,12 +258,12 @@ export function DashboardTab({
         </div>
 
         {/* Gráfico */}
-        <div className="flex-1 min-w-0">
+        <div>
           <Card className="h-full">
             <CardHeader className="border-b border-slate-100">
               <CardTitle className="text-lg">Top Especialidades Cadastradas</CardTitle>
             </CardHeader>
-            <CardContent className="p-6 h-[320px]">
+            <CardContent className="p-4 md:p-6 h-[280px] md:h-full min-h-[280px]">
               {dadosGrafico.length > 0 ? (
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={dadosGrafico} margin={{ top: 10, right: 20, left: -10, bottom: 0 }}>

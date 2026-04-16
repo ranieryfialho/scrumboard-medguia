@@ -196,10 +196,10 @@ export default function RelatoriosComerciaisPage() {
   }
 
   return (
-    <div className="p-8 space-y-8 max-w-7xl mx-auto">
+    <div className="p-4 md:p-8 space-y-6 md:space-y-8 max-w-7xl mx-auto">
       <div className="flex flex-col xl:flex-row xl:items-start justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Comercial & Vendas</h1>
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Comercial & Vendas</h1>
           <p className="text-muted-foreground mt-2">
             Análise detalhada de fechamentos, perfis de clientes e dados da concorrência.
           </p>
@@ -416,12 +416,12 @@ export default function RelatoriosComerciaisPage() {
                           Cliente / Especialidade <SortIcon column="nome" sortColumn={sortColumn} sortDirection={sortDirection} />
                         </button>
                       </TableHead>
-                      <TableHead className="font-semibold text-slate-600">
+                      <TableHead className="hidden md:table-cell font-semibold text-slate-600">
                         <button onClick={() => handleSort('o_que_mais_interessou')} className="flex items-center gap-1 hover:text-slate-900 transition-colors">
                           O que MAIS atraiu? <SortIcon column="o_que_mais_interessou" sortColumn={sortColumn} sortDirection={sortDirection} />
                         </button>
                       </TableHead>
-                      <TableHead className="font-semibold text-slate-600">
+                      <TableHead className="hidden lg:table-cell font-semibold text-slate-600">
                         <button onClick={() => handleSort('o_que_deixou_a_desejar')} className="flex items-center gap-1 hover:text-slate-900 transition-colors">
                           Dor na concorrência <SortIcon column="o_que_deixou_a_desejar" sortColumn={sortColumn} sortDirection={sortDirection} />
                         </button>
@@ -451,7 +451,7 @@ export default function RelatoriosComerciaisPage() {
                           </div>
                         </TableCell>
 
-                        <TableCell className="py-4">
+                        <TableCell className="hidden md:table-cell py-4">
                           {(lead as any).o_que_mais_interessou ? (
                             <p className="text-sm text-slate-700 line-clamp-2 leading-relaxed" title={(lead as any).o_que_mais_interessou}>
                               {(lead as any).o_que_mais_interessou}
@@ -463,7 +463,7 @@ export default function RelatoriosComerciaisPage() {
                           )}
                         </TableCell>
 
-                        <TableCell className="py-4">
+                        <TableCell className="hidden lg:table-cell py-4">
                           {(lead as any).o_que_deixou_a_desejar ? (
                             <p className="text-sm text-slate-700 line-clamp-2 leading-relaxed" title={(lead as any).o_que_deixou_a_desejar}>
                               {(lead as any).o_que_deixou_a_desejar}
@@ -495,9 +495,12 @@ export default function RelatoriosComerciaisPage() {
 
               {/* Controles de Paginação */}
               {totalPages > 1 && (
-                <div className="flex items-center justify-between px-6 py-4 border-t border-slate-100 bg-white">
-                  <div className="text-sm text-slate-500">
-                    Mostrando <span className="font-medium">{(currentPage - 1) * ITENS_POR_PAGINA + 1}</span> a <span className="font-medium">{Math.min(currentPage * ITENS_POR_PAGINA, sortedLeads.length)}</span> de <span className="font-medium">{sortedLeads.length}</span> fechamentos
+                <div className="flex items-center justify-between px-4 md:px-6 py-4 border-t border-slate-100 bg-white gap-2">
+                  <div className="text-xs md:text-sm text-slate-500">
+                    <span className="hidden sm:inline">Mostrando </span>
+                    <span className="font-medium">{(currentPage - 1) * ITENS_POR_PAGINA + 1}</span>–<span className="font-medium">{Math.min(currentPage * ITENS_POR_PAGINA, sortedLeads.length)}</span>
+                    <span className="hidden sm:inline"> de </span><span className="sm:hidden"> / </span>
+                    <span className="font-medium">{sortedLeads.length}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Button
@@ -507,8 +510,8 @@ export default function RelatoriosComerciaisPage() {
                       disabled={currentPage === 1}
                       className="h-8 border-slate-200"
                     >
-                      <ChevronLeft className="w-4 h-4 mr-1" />
-                      Anterior
+                      <ChevronLeft className="w-4 h-4" />
+                      <span className="hidden sm:inline ml-1">Anterior</span>
                     </Button>
                     <Button
                       variant="outline"
@@ -517,8 +520,8 @@ export default function RelatoriosComerciaisPage() {
                       disabled={currentPage === totalPages}
                       className="h-8 border-slate-200"
                     >
-                      Próxima
-                      <ChevronRight className="w-4 h-4 ml-1" />
+                      <span className="hidden sm:inline mr-1">Próxima</span>
+                      <ChevronRight className="w-4 h-4" />
                     </Button>
                   </div>
                 </div>
