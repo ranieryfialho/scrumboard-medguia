@@ -19,12 +19,13 @@ interface KanbanBoardProps {
 }
 
 const COLUNAS_FIXAS = [
-  "Novos Leads", 
-  "Em contato", 
-  "Recontato", 
+  "Novos Leads",
+  "Em contato",
+  "Recontato",
   "Reunião agendada",
-  "Aguardando Ativação", 
-  "Fechado",
+  "Aguardando Ativação",
+  "Logins Ativados",
+  "Fechamento de Clientes",
   "Sem interesse",
   "Desqualificado"
 ];
@@ -190,7 +191,7 @@ export function KanbanBoard({ leads, onStatusChange, onSaveObs }: KanbanBoardPro
               >
                 <div className="flex flex-col gap-[1px]">
                   {leadsDaColuna.map((lead) => (
-                    <div key={`mini-card-${lead.id}`} className={`w-full h-[3px] rounded-sm ${coluna === 'Fechado' ? 'bg-emerald-400' : 'bg-indigo-400/80'}`} />
+                    <div key={`mini-card-${lead.id}`} className={`w-full h-[3px] rounded-sm ${coluna === 'Logins Ativados' ? 'bg-emerald-400' : 'bg-indigo-400/80'}`} />
                   ))}
                 </div>
               </div>

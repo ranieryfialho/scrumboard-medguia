@@ -103,7 +103,7 @@ export function useLeads() {
   // Funções de Mutação
   const atualizarSituacaoLead = async (leadId: string, novaSituacao: string) => {
     const dataAtual = new Date().toLocaleString('pt-BR');
-    const isFechado = ['Fechado', 'Aguardando Ativação'].includes(novaSituacao);
+    const isFechado = ['Logins Ativados', 'Fechamento de Clientes', 'Aguardando Ativação'].includes(novaSituacao);
 
     setLeads(prevLeads => prevLeads.map(lead => {
       if (lead.id === leadId) {
@@ -179,7 +179,7 @@ export function useLeads() {
       }
       
       // 2. Verifica Mês de Fechamento (Fallback restrito apenas à criação)
-      if (['Fechado', 'Aguardando Ativação'].includes(l.situacao)) {
+      if (['Logins Ativados', 'Fechamento de Clientes', 'Aguardando Ativação'].includes(l.situacao)) {
         const dataParaUsar = l.data_fechamento || l.created_time;
         if (dataParaUsar) {
           const dateObj = parseDateSegura(dataParaUsar);
@@ -232,8 +232,8 @@ export function useLeads() {
           }
         }
 
-        // Pega o mês em que ele foi dado como "Fechado" (Fallback restrito apenas à criação)
-        if (['Fechado', 'Aguardando Ativação'].includes(lead.situacao)) {
+        // Pega o mês em que ele foi dado como "Logins Ativados" ou "Fechamento de Clientes" (Fallback restrito apenas à criação)
+        if (['Logins Ativados', 'Fechamento de Clientes', 'Aguardando Ativação'].includes(lead.situacao)) {
           const dataParaUsar = lead.data_fechamento || lead.created_time;
           if (dataParaUsar) {
             const dateObj = parseDateSegura(dataParaUsar);
@@ -256,7 +256,7 @@ export function useLeads() {
     const ativos = leadsFiltrados.filter(l => l.situacao !== 'Arquivado');
     const total = ativos.length;
     const novos = ativos.filter(l => l.situacao === 'Novos Leads' || l.situacao === 'Sem situação').length;
-    const fechados = ativos.filter(l => l.situacao === 'Fechado').length;
+    const fechados = ativos.filter(l => ['Logins Ativados', 'Fechamento de Clientes'].includes(l.situacao)).length;
     const emAndamento = ativos.filter(l => ['Em contato', 'Recontato', 'Reunião agendada', 'Aguardando Ativação'].includes(l.situacao)).length;
     const taxaConversao = total > 0 ? ((fechados / total) * 100).toFixed(1) : "0.0";
     return { total, novos, fechados, emAndamento, taxaConversao };

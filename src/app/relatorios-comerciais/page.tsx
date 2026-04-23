@@ -120,7 +120,7 @@ export default function RelatoriosComerciaisPage() {
     }
 
     const fechados = leadsRaw.filter(l => {
-      if (!['Fechado', 'Aguardando Ativação'].includes(l.situacao)) return false;
+      if (!['Logins Ativados', 'Fechamento de Clientes', 'Aguardando Ativação'].includes(l.situacao)) return false;
       
       const dataF = (l as any).data_fechamento || l.created_time;
       if (!dataF) return false;
@@ -291,7 +291,7 @@ export default function RelatoriosComerciaisPage() {
         <Card className="flex flex-col items-center justify-center p-12 text-center text-muted-foreground">
           <Trophy className="w-12 h-12 mb-4 opacity-20" />
           <p className="text-lg font-medium">Nenhum fechamento registrado neste período.</p>
-          <p className="text-sm">Arraste os cards para a coluna "Fechado" no Kanban para gerar dados.</p>
+          <p className="text-sm">Arraste os cards para as colunas "Logins Ativados" ou "Fechamento de Clientes" no Kanban para gerar dados.</p>
         </Card>
       ) : (
         <>

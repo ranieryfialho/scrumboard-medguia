@@ -69,7 +69,8 @@ const SITUACAO_COLORS: Record<string, string> = {
   "Recontato":           "bg-orange-50 text-orange-700 border-orange-200",
   "Reunião agendada":    "bg-purple-50 text-purple-700 border-purple-200",
   "Aguardando Ativação": "bg-cyan-50   text-cyan-700   border-cyan-200",
-  "Fechado":             "bg-green-50  text-green-700  border-green-200",
+  "Logins Ativados":     "bg-green-50  text-green-700  border-green-200",
+  "Fechamento de Clientes": "bg-teal-50   text-teal-700   border-teal-200",
   "Sem interesse":       "bg-slate-100 text-slate-600  border-slate-200",
   "Desqualificado":      "bg-red-50    text-red-700    border-red-200",
   "Arquivado":           "bg-slate-100 text-slate-500  border-slate-200",
@@ -88,7 +89,7 @@ const ORIGEM_COLORS: Record<string, string> = {
 const SITUACOES = [
   "Novos Leads", "Em contato", "Recontato",
   "Reunião agendada", "Aguardando Ativação",
-  "Fechado", "Sem interesse", "Desqualificado", "Arquivado",
+  "Logins Ativados", "Fechamento de Clientes", "Sem interesse", "Desqualificado", "Arquivado",
 ];
 
 // ── Componente ────────────────────────────────────────────────────────────────
@@ -118,7 +119,7 @@ export function LeadDetailModal({
   };
 
   const handleSituacao = (nova: string) => {
-    if (nova !== "Reunião agendada" && nova !== "Fechado") {
+    if (nova !== "Reunião agendada" && nova !== "Logins Ativados" && nova !== "Fechamento de Clientes") {
       setSituacaoLocal(nova);
     }
     onStatusChange?.(lead.id, nova);

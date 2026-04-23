@@ -168,9 +168,9 @@ export function DashboardTab({
             <p className="text-xs text-slate-500 mt-1">Em contato ou reunião</p>
           </CardContent>
         </Card>
-        <Card className="cursor-pointer hover:shadow-md hover:border-emerald-300 transition-all" onClick={() => navegarParaKanbanComFiltro(["Fechado"])}>
+        <Card className="cursor-pointer hover:shadow-md hover:border-emerald-300 transition-all" onClick={() => navegarParaKanbanComFiltro(["Logins Ativados"])}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-slate-600">Fechados</CardTitle>
+            <CardTitle className="text-sm font-medium text-slate-600">Logins Ativados</CardTitle>
             <CheckCircle2 className="h-4 w-4 text-emerald-500" />
           </CardHeader>
           <CardContent>

@@ -160,7 +160,7 @@ export default function RelatoriosPage() {
         valA = (a.nome || '').toLowerCase();
         valB = (b.nome || '').toLowerCase();
       } else if (sortColumn === 'situacao') {
-        const ordem = ['Fechado', 'Aguardando Ativação', 'Reunião agendada', 'Em contato', 'Recontato', 'Novos Leads', 'Desqualificado'];
+        const ordem = ['Logins Ativados', 'Fechamento de Clientes', 'Aguardando Ativação', 'Reunião agendada', 'Em contato', 'Recontato', 'Novos Leads', 'Desqualificado'];
         valA = ordem.indexOf(a.situacao || '') === -1 ? 99 : ordem.indexOf(a.situacao || '');
         valB = ordem.indexOf(b.situacao || '') === -1 ? 99 : ordem.indexOf(b.situacao || '');
       } else if (sortColumn === 'cargo') {
@@ -303,7 +303,7 @@ export default function RelatoriosPage() {
     md += `> **Slide 3: O Canal Campeão** (Foque no canal '${melhorCanalNome}' e explique por que ele foi o vencedor).\n`;
     md += `> **Slide 4: Raio-X dos Anúncios** (Destaque o comportamento de entrada por dias da semana e os melhores horários, se dedutíveis).\n`;
     md += `> **Slide 5: Análise de Qualidade dos Leads** (Analise os ${metrics.geral.desqualificados} leads desqualificados (${metrics.geral.taxaDesqualificacao}% do total). Identifique quais anúncios ou origens geraram mais desqualificados e explique o que isso pode indicar sobre a segmentação. Se a taxa for alta (>15%), alerte sobre necessidade de revisão de criativos/público. Se for baixa (<5%), comemore como sinal de boa qualidade).\n`;
-    md += `> **Slide 6: Casos de Sucesso Reais** (Analise a LISTA NOMINAL fornecida acima, escolha 2 ou 3 leads com status 'Fechado' ou 'Aguardando Ativação' e cite o nome e origem como exemplos de sucesso. Se não houver fechados, cite novos leads promissores).\n`;
+    md += `> **Slide 6: Casos de Sucesso Reais** (Analise a LISTA NOMINAL fornecida acima, escolha 2 ou 3 leads com status 'Logins Ativados', 'Fechamento de Clientes' ou 'Aguardando Ativação' e cite o nome e origem como exemplos de sucesso. Se não houver conversões, cite novos leads promissores).\n`;
     md += `> **Slide 7: Insights e Próximos Passos** (Gere 3 recomendações estratégicas sobre onde devemos alocar o esforço comercial no próximo ciclo, levando em conta tanto as conversões quanto os desqualificados e seus respectivos anúncios de origem).\n>\n`;
     md += `> Regras de tom de voz: Seja direto, corporativo, visualmente limpo e comemore as vitórias."\n`;
 
@@ -646,7 +646,7 @@ export default function RelatoriosPage() {
                 </div>
                 <p className="text-xs text-slate-500 mt-1 leading-relaxed">
                   {filtroKpi === 'todos' && 'Lista nominal de todos os leads gerados ou convertidos neste período, com seus respectivos status e origens.'}
-                  {filtroKpi === 'conversoes' && 'Leads com status Fechado ou Aguardando Ativação cujo fechamento ocorreu no período.'}
+                  {filtroKpi === 'conversoes' && 'Leads com status Logins Ativados, Fechamento de Clientes ou Aguardando Ativação cujo fechamento ocorreu no período.'}
                   {filtroKpi === 'recuperacao' && 'Leads convertidos neste período que foram gerados em períodos anteriores.'}
                   {filtroKpi === 'desqualificados' && 'Leads marcados como Desqualificado no período selecionado.'}
                   {filtroKpi === 'melhorCanal' && `Leads originados pelo canal com maior taxa de conversão: ${melhorCanalNome}.`}
@@ -701,7 +701,8 @@ export default function RelatoriosPage() {
                         
                         // Lógica de Cores da Badge de Status
                         let statusBg = "bg-slate-100 text-slate-700 border-slate-200";
-                        if (lead.situacao === "Fechado") statusBg = "bg-emerald-100 text-emerald-700 border-emerald-200";
+                        if (lead.situacao === "Logins Ativados") statusBg = "bg-emerald-100 text-emerald-700 border-emerald-200";
+                        else if (lead.situacao === "Fechamento de Clientes") statusBg = "bg-teal-100 text-teal-700 border-teal-200";
                         else if (lead.situacao === "Aguardando Ativação") statusBg = "bg-cyan-100 text-cyan-700 border-cyan-200";
                         else if (lead.situacao === "Reunião agendada") statusBg = "bg-purple-100 text-purple-700 border-purple-200";
                         else if (lead.situacao === "Em contato") statusBg = "bg-amber-100 text-amber-700 border-amber-200";

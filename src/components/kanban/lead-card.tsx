@@ -105,7 +105,8 @@ export function LeadCard({ lead, isOverlay, disableDrag, onStatusChange, onSaveO
       case "Recontato":           theme.badgeBg = "bg-orange-100";  theme.text = "text-orange-700";  theme.border = "border-orange-200";  theme.bg = "bg-orange-50/30";  break;
       case "Reunião agendada":    theme.badgeBg = "bg-purple-100";  theme.text = "text-purple-700";  theme.border = "border-purple-200";  theme.bg = "bg-purple-50/30";  break;
       case "Aguardando Ativação": theme.badgeBg = "bg-cyan-100";    theme.text = "text-cyan-700";    theme.border = "border-cyan-200";    theme.bg = "bg-cyan-50/30";    break;
-      case "Fechado":             theme.badgeBg = "bg-emerald-100"; theme.text = "text-emerald-700"; theme.border = "border-emerald-200"; theme.bg = "bg-emerald-50/30"; break;
+      case "Logins Ativados":      theme.badgeBg = "bg-emerald-100"; theme.text = "text-emerald-700"; theme.border = "border-emerald-200"; theme.bg = "bg-emerald-50/30"; break;
+      case "Fechamento de Clientes": theme.badgeBg = "bg-teal-100"; theme.text = "text-teal-700"; theme.border = "border-teal-200"; theme.bg = "bg-teal-50/30"; break;
       case "Sem interesse":       theme.badgeBg = "bg-slate-200";   theme.text = "text-slate-600";   theme.border = "border-slate-300";   theme.bg = "bg-slate-50/50";   break;
       case "Desqualificado":      theme.badgeBg = "bg-red-100";     theme.text = "text-red-700";     theme.border = "border-red-200";     theme.bg = "bg-red-50/30";     break;
       default:                    theme.badgeBg = "bg-slate-100";   theme.text = "text-slate-500";   theme.border = "border-slate-200";   theme.bg = "bg-white";         break;

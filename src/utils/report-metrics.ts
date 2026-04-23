@@ -1,6 +1,6 @@
 import { Lead } from '@/types/lead';
 
-const STATUS_CONVERSAO = ['Fechado', 'Aguardando Ativação'];
+const STATUS_CONVERSAO = ['Logins Ativados', 'Fechamento de Clientes', 'Aguardando Ativação'];
 
 function resolverNomeAnuncio(lead: Lead): string {
   const anuncio = (lead.anuncio || '').trim();

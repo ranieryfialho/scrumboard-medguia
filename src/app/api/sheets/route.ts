@@ -18,9 +18,9 @@ const STATUS_MAP: Record<string, string> = {
   'meeting scheduled': 'Reunião agendada',
   'aguardando ativacao': 'Aguardando Ativação',
   'pending activation': 'Aguardando Ativação',
-  'fechado': 'Fechado',
-  'closed': 'Fechado',
-  'won': 'Fechado',
+  'fechado': 'Logins Ativados',
+  'closed': 'Logins Ativados',
+  'won': 'Logins Ativados',
   'sem interesse': 'Sem interesse',
   'not interested': 'Sem interesse',
   'desqualificado': 'Desqualificado',
@@ -301,7 +301,7 @@ export async function POST(request: Request) {
         updateData.status = novaSituacao;
         updateData.data_alteracao = dataAtualISO; 
         
-        if (['Fechado', 'Aguardando Ativação'].includes(novaSituacao)) {
+        if (['Logins Ativados', 'Fechamento de Clientes', 'Aguardando Ativação'].includes(novaSituacao)) {
            updateData.data_fechamento = dataAtualISO;
         }
       } 
@@ -477,7 +477,7 @@ export async function POST(request: Request) {
         values: [[dataAtualStr]],
       });
 
-      const STATUS_CONVERSAO = ['Fechado', 'Aguardando Ativação'];
+      const STATUS_CONVERSAO = ['Logins Ativados', 'Fechamento de Clientes', 'Aguardando Ativação'];
       if (STATUS_CONVERSAO.includes(novaSituacao)) {
         let fechamentoIdx = normalizedHeaders.indexOf('data_fechamento');
         if (fechamentoIdx === -1) fechamentoIdx = normalizedHeaders.indexOf('data de fechamento');

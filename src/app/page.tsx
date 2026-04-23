@@ -77,7 +77,7 @@ export default function Home() {
       return; 
     }
 
-    if (novaSituacao === "Fechado") {
+    if (novaSituacao === "Logins Ativados" || novaSituacao === "Fechamento de Clientes") {
       setLeadPendente({ id: leadId, situacao: novaSituacao });
       setModalFechamentoOpen(true);
       return; 
