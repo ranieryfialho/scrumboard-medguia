@@ -9,6 +9,8 @@ export interface Lead {
   email?: string;
   origem?: string;
   created_time?: string;
+  data_alteracao?: string;
+  data_fechamento?: string;
   anuncio?: string;
   [key: string]: any;
 }

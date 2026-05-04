@@ -113,12 +113,12 @@ export function useLeads() {
 
     setLeads(prevLeads => prevLeads.map(lead => {
       if (lead.id === leadId) {
-        const updatedLead = { ...lead, situacao: novaSituacao, data_alteracao: dataAtual };
-        // Injeta a data de fechamento no front-end para agilizar a UI
-        if (isFechado) {
-          updatedLead.data_fechamento = dataAtual;
-        }
-        return updatedLead;
+        return {
+          ...lead,
+          situacao: novaSituacao,
+          data_alteracao: dataAtual,
+          ...(isFechado ? { data_fechamento: dataAtual } : {}),
+        };
       }
       return lead;
     }));
