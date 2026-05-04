@@ -281,7 +281,7 @@ export function useLeads() {
     const contagem: Record<string, number> = {};
     leadsFiltrados.forEach(lead => {
       if (lead.situacao === 'Arquivado') return;
-      const normalizado = normalizarEspecialidade(lead.cargo);
+      const normalizado = normalizarEspecialidade(lead.cargo || "");
       if (normalizado) contagem[normalizado] = (contagem[normalizado] || 0) + 1;
     });
     return Object.keys(contagem).map(key => ({ name: key, total: contagem[key] })).sort((a, b) => b.total - a.total).slice(0, 7);
