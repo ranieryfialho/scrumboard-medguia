@@ -77,7 +77,7 @@ export default function Home() {
       return; 
     }
 
-    if (novaSituacao === "Logins Ativados" || novaSituacao === "Fechamento de Clientes") {
+    if (novaSituacao === "Fechamento de Clientes") {
       setLeadPendente({ id: leadId, situacao: novaSituacao });
       setModalFechamentoOpen(true);
       return; 
@@ -346,10 +346,11 @@ ${leadObj?.observacoes || ''}
         onConfirm={handleConfirmarAgendamento}
       />
 
-      <FechamentoModal 
+      <FechamentoModal
         isOpen={modalFechamentoOpen}
         onClose={() => { setModalFechamentoOpen(false); setLeadPendente(null); }}
         onConfirm={handleConfirmarFechamento}
+        tipo={leadPendente?.situacao === "Fechamento de Clientes" ? "clientes" : "logins"}
       />
     </div>
   );

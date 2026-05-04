@@ -64,9 +64,10 @@ interface FechamentoModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: (dados: FormFechamentoData) => Promise<void>;
+  tipo?: "logins" | "clientes";
 }
 
-export function FechamentoModal({ isOpen, onClose, onConfirm }: FechamentoModalProps) {
+export function FechamentoModal({ isOpen, onClose, onConfirm, tipo = "logins" }: FechamentoModalProps) {
   const [isSaving, setIsSaving] = useState(false);
   const [plataformaSelecionada, setPlataformaSelecionada] = useState("");
   const [plataformaOutro, setPlataformaOutro] = useState("");
@@ -114,12 +115,26 @@ export function FechamentoModal({ isOpen, onClose, onConfirm }: FechamentoModalP
     if (!isSaving) onClose();
   };
 
+  const tituloModal =
+    tipo === "clientes"
+      ? "Fechamento de Clientes confirmado. Vamos registrar os detalhes?"
+      : "Parabéns! Vamos documentar esse fechamento?";
+
+  const descricaoModal =
+    tipo === "clientes"
+      ? "Esse card entrou na etapa de fechamento comercial. Preencha os dados para manter o histórico completo."
+      : "Preencha as informações da conversão para alimentar os relatórios comerciais.";
+
+  const textoBotaoSalvar =
+    tipo === "clientes" ? "Salvar Fechamento de Clientes" : "Salvar Fechamento";
+
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto custom-scrollbar">
         <DialogHeader>
-          <DialogTitle>🎉 Parabéns! Vamos documentar esse fechamento?</DialogTitle>
+          <DialogTitle>{tituloModal}</DialogTitle>
         </DialogHeader>
+        <p className="text-sm text-slate-500 -mt-2">{descricaoModal}</p>
         <div className="grid gap-4 py-4">
 
           <div className="space-y-2">
@@ -243,7 +258,7 @@ export function FechamentoModal({ isOpen, onClose, onConfirm }: FechamentoModalP
             disabled={isSaving || !isFormValido}
           >
             {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
-            Salvar Fechamento
+            {textoBotaoSalvar}
           </Button>
         </DialogFooter>
       </DialogContent>

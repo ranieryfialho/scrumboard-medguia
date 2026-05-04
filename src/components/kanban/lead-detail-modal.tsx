@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Lead } from "@/types/lead";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -102,14 +101,10 @@ export function LeadDetailModal({
 }: LeadDetailModalProps) {
   const [obsTexto, setObsTexto]     = useState(lead.observacoes || "");
   const [salvandoObs, setSalvandoObs] = useState(false);
-  const [situacaoLocal, setSituacaoLocal] = useState(lead.situacao);
-
-  // Sincroniza o status visual sempre que o card for atualizado no servidor
-  useEffect(() => {
-    setSituacaoLocal(lead.situacao);
-  }, [lead.situacao, open]);
+  const [situacaoLocal, setSituacaoLocal] = useState<string | null>(null);
 
   const { realEmail, realPhone } = resolverContatos(lead);
+  const situacaoExibida = situacaoLocal ?? lead.situacao;
 
   const handleSalvarObs = async () => {
     if (!onSaveObs) return;
@@ -119,7 +114,7 @@ export function LeadDetailModal({
   };
 
   const handleSituacao = (nova: string) => {
-    if (nova !== "Reunião agendada" && nova !== "Logins Ativados" && nova !== "Fechamento de Clientes") {
+    if (nova !== "Reunião agendada" && nova !== "Fechamento de Clientes") {
       setSituacaoLocal(nova);
     }
     onStatusChange?.(lead.id, nova);
@@ -137,7 +132,7 @@ export function LeadDetailModal({
 
   const isManual = (lead.origem || "").startsWith("Manual");
   const origemCls = ORIGEM_COLORS[lead.origem || ""] ?? "bg-slate-100 text-slate-600 border-slate-200";
-  const situacaoCls = SITUACAO_COLORS[situacaoLocal] ?? "bg-slate-100 text-slate-700 border-slate-200";
+  const situacaoCls = SITUACAO_COLORS[situacaoExibida] ?? "bg-slate-100 text-slate-700 border-slate-200";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -156,7 +151,7 @@ export function LeadDetailModal({
           )}
           <div className="flex flex-wrap gap-2 mt-3">
             <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-bold border uppercase tracking-wider ${situacaoCls}`}>
-              {situacaoLocal}
+              {situacaoExibida}
             </span>
             {lead.origem && (
               <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-medium border ${origemCls}`}>
@@ -229,7 +224,7 @@ export function LeadDetailModal({
               <div className="flex flex-wrap gap-2">
                 {SITUACOES.map((s) => {
                   const cls = SITUACAO_COLORS[s] ?? "bg-slate-100 text-slate-700 border-slate-200";
-                  const ativo = situacaoLocal === s;
+                  const ativo = situacaoExibida === s;
                   return (
                     <button
                       key={s}

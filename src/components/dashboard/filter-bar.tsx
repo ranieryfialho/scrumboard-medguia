@@ -16,7 +16,16 @@ interface FilterBarProps {
   mesesUnicos: string[];
   limparFiltros: () => void;
   temFiltroAtivo: boolean;
-  onAddLead?: (lead: any) => void;
+  onAddLead?: (lead: ManualLeadForm) => void;
+}
+
+interface ManualLeadForm {
+  nome: string;
+  email: string;
+  cargo: string;
+  whatsapp: string;
+  origem: string;
+  created_time: string;
 }
 
 // Opções de origem para leads manuais
@@ -26,6 +35,12 @@ const ORIGENS_MANUAL = [
   { value: 'Manual - Indicação',label: 'Indicação' },
   { value: 'Manual - Outro',    label: 'Outro' },
 ];
+
+function getDataHoraLocalAtual() {
+  const agora = new Date();
+  const offset = agora.getTimezoneOffset();
+  return new Date(agora.getTime() - offset * 60_000).toISOString().slice(0, 16);
+}
 
 export function FilterBar({
   buscaNome, setBuscaNome,
@@ -38,18 +53,26 @@ export function FilterBar({
 }: FilterBarProps) {
 
   const [modalNovoLeadOpen, setModalNovoLeadOpen] = useState(false);
-  const [novoLead, setNovoLead] = useState({
+  const [novoLead, setNovoLead] = useState<ManualLeadForm>({
     nome: '',
     email: '',
     cargo: '',
     whatsapp: '',
     origem: 'Manual',
+    created_time: getDataHoraLocalAtual(),
   });
 
   const handleSalvarNovoLead = () => {
     if (!novoLead.nome) return;
     if (onAddLead) onAddLead(novoLead);
-    setNovoLead({ nome: '', email: '', cargo: '', whatsapp: '', origem: 'Manual' });
+    setNovoLead({
+      nome: '',
+      email: '',
+      cargo: '',
+      whatsapp: '',
+      origem: 'Manual',
+      created_time: getDataHoraLocalAtual(),
+    });
     setModalNovoLeadOpen(false);
   };
 
@@ -175,7 +198,16 @@ export function FilterBar({
                   />
                 </div>
 
-                {/* NOVO: Origem do lead manual */}
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Data de Entrada *</label>
+                  <input
+                    type="datetime-local"
+                    className="w-full p-2.5 rounded-md border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 bg-slate-50 text-slate-800"
+                    value={novoLead.created_time}
+                    onChange={e => setNovoLead({ ...novoLead, created_time: e.target.value })}
+                  />
+                </div>
+
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Origem *</label>
                   <select

@@ -1,8 +1,14 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import { Lead } from "@/types/lead";
 import { normalizarEspecialidade } from "@/utils/formatters";
 import { createClient } from "@/lib/supabase/client";
+
+interface Campanha {
+  id: string;
+  [key: string]: unknown;
+}
 
 function parseDateSegura(d: string): Date | null {
   if (!d) return null;
@@ -24,8 +30,8 @@ export function useLeads() {
   const supabase = createClient();
 
   // Estados de Dados
-  const [leads, setLeads] = useState<any[]>([]);
-  const [campanhas, setCampanhas] = useState<any[]>([]);
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [campanhas, setCampanhas] = useState<Campanha[]>([]);
   const [loading, setLoading] = useState(true);
   const [isSyncing, setIsSyncing] = useState(false);
   const [ultimaAtualizacao, setUltimaAtualizacao] = useState<string>("--:--");
@@ -135,8 +141,15 @@ export function useLeads() {
     });
   };
 
-  const adicionarLeadManual = async (novoLeadData: any) => {
-    const dataAtual = new Date().toLocaleString('pt-BR');
+  const adicionarLeadManual = async (novoLeadData: {
+    nome: string;
+    email: string;
+    cargo: string;
+    whatsapp?: string;
+    origem?: string;
+    created_time?: string;
+  }) => {
+    const dataCriacao = novoLeadData.created_time || new Date().toISOString();
     const idTemporario = `sheet1_Página1-lead-${Date.now()}`;
     const chavesCompletas = {
       id: idTemporario,
@@ -145,8 +158,8 @@ export function useLeads() {
       cargo: novoLeadData.cargo,
       whatsapp: novoLeadData.whatsapp || '',
       situacao: 'Novos Leads',
-      created_time: dataAtual,
-      data_alteracao: dataAtual,
+      created_time: dataCriacao,
+      data_alteracao: dataCriacao,
       origem: novoLeadData.origem || 'Manual',
     };
     setLeads(prev => [chavesCompletas, ...prev]);

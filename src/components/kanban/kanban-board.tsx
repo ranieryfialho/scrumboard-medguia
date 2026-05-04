@@ -30,8 +30,9 @@ const COLUNAS_FIXAS = [
   "Desqualificado"
 ];
 
+const STATUS_COM_CONFIRMACAO = ["Reunião agendada", "Fechamento de Clientes"];
+
 export function KanbanBoard({ leads, onStatusChange, onSaveObs }: KanbanBoardProps) {
-  // Estado local para suportar atualizações otimistas suaves no drag and drop
   const [localLeads, setLocalLeads] = useState<Lead[]>(leads);
   const [leadAtivo, setLeadAtivo] = useState<Lead | null>(null);
 
@@ -69,6 +70,14 @@ export function KanbanBoard({ leads, onStatusChange, onSaveObs }: KanbanBoardPro
     }
   };
 
+  const atualizarLocalSeNaoExigirConfirmacao = (id: string, novaSituacao: string) => {
+    if (STATUS_COM_CONFIRMACAO.includes(novaSituacao)) return;
+
+    setLocalLeads((prevLeads) =>
+      prevLeads.map((lead) => lead.id === id ? { ...lead, situacao: novaSituacao } : lead)
+    );
+  };
+
   const handleDragEnd = async (event: DragEndEvent) => {
     setLeadAtivo(null);
     const { active, over } = event;
@@ -82,6 +91,7 @@ export function KanbanBoard({ leads, onStatusChange, onSaveObs }: KanbanBoardPro
     if (!leadAtual || leadAtual.situacao === novaSituacao) return;
 
     if (onStatusChange) {
+      atualizarLocalSeNaoExigirConfirmacao(leadId, novaSituacao);
       onStatusChange(leadId, novaSituacao);
     } else {
       await efetivarMudancaStatus(leadId, novaSituacao);
@@ -127,6 +137,7 @@ export function KanbanBoard({ leads, onStatusChange, onSaveObs }: KanbanBoardPro
                     lead={lead} 
                     onStatusChange={(id, status) => {
                       if (onStatusChange) {
+                        atualizarLocalSeNaoExigirConfirmacao(id, status);
                         onStatusChange(id, status);
                       } else {
                         efetivarMudancaStatus(id, status);
