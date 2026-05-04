@@ -172,7 +172,7 @@ export function useLeads() {
 
   // Memos e Filtros
   const especialidadesUnicas = useMemo(() => {
-    const specs = leads.map(l => normalizarEspecialidade(l.cargo)).filter(Boolean) as string[];
+    const specs = leads.map(l => normalizarEspecialidade(l.cargo || "")).filter(Boolean) as string[];
     return Array.from(new Set(specs)).sort();
   }, [leads]);
 
@@ -227,7 +227,7 @@ export function useLeads() {
   const leadsFiltrados = useMemo(() => {
     return leads.filter(lead => {
       const matchNome = lead.nome?.toLowerCase().includes(buscaNome.toLowerCase());
-      const matchEspec = filtroEspecialidade ? normalizarEspecialidade(lead.cargo) === filtroEspecialidade : true;
+      const matchEspec = filtroEspecialidade ? normalizarEspecialidade(lead.cargo || "") === filtroEspecialidade : true;
       const matchSituacao = filtroSituacao.length > 0 ? filtroSituacao.includes(lead.situacao) : true;
       
       let matchMes = true;
