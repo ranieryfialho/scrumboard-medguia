@@ -18,6 +18,8 @@ const STATUS_MAP: Record<string, string> = {
   'meeting scheduled': 'Reunião agendada',
   'aguardando ativacao': 'Aguardando Ativação',
   'pending activation': 'Aguardando Ativação',
+  'logins ativados': 'Logins Ativados',
+  'fechamento de clientes': 'Fechamento de Clientes',
   'fechado': 'Logins Ativados',
   'closed': 'Logins Ativados',
   'won': 'Logins Ativados',

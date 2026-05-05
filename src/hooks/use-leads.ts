@@ -226,7 +226,12 @@ export function useLeads() {
 
   const leadsFiltrados = useMemo(() => {
     return leads.filter(lead => {
-      const matchNome = lead.nome?.toLowerCase().includes(buscaNome.toLowerCase());
+      const searchTerm = buscaNome.toLowerCase();
+      const matchBusca = 
+        lead.nome?.toLowerCase().includes(searchTerm) || 
+        lead.email?.toLowerCase().includes(searchTerm) || 
+        lead.cargo?.toLowerCase().includes(searchTerm);
+        
       const matchEspec = filtroEspecialidade ? normalizarEspecialidade(lead.cargo || "") === filtroEspecialidade : true;
       const matchSituacao = filtroSituacao.length > 0 ? filtroSituacao.includes(lead.situacao) : true;
       
@@ -261,9 +266,9 @@ export function useLeads() {
         matchMes = (mCriacao === filtroMes) || (mFechamento === filtroMes);
       }
       
-      return matchNome && matchEspec && matchMes && matchSituacao;
+      return matchBusca && matchEspec && matchMes && matchSituacao;
     });
-  }, [leads, buscaNome, filtroEspecialidade, filtroMes]);
+  }, [leads, buscaNome, filtroEspecialidade, filtroMes, filtroSituacao]);
 
   const kpis = useMemo(() => {
     const ativos = leadsFiltrados.filter(l => l.situacao !== 'Arquivado');
