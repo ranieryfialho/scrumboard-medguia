@@ -75,9 +75,20 @@ export function useLeads() {
   // Busca de Campanhas (Supabase)
   const buscarCampanhas = async () => {
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      let empresaId = user?.user_metadata?.empresa_id;
+
+      if (user?.user_metadata?.is_super_admin) {
+        const match = document.cookie.match(/selected_empresa_id=([^;]+)/);
+        if (match) empresaId = match[1];
+      }
+
+      if (!empresaId) return;
+
       const { data, error } = await supabase
         .from('campanhas')
         .select('*')
+        .eq('empresa_id', empresaId)
         .order('criado_em', { ascending: false });
 
       if (error) throw error;

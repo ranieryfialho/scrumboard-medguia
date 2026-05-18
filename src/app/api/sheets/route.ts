@@ -1,8 +1,65 @@
 import { google } from 'googleapis';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { createClient as createServerClient } from '@/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
+
+async function getEmpresa(request?: NextRequest) {
+  try {
+    const supabase = await createServerClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user?.user_metadata?.empresa_id) return null;
+
+    const admin = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+
+    // Super admin: usa empresa selecionada via cookie
+    if (user.user_metadata?.is_super_admin && request) {
+      const selectedId = request.cookies.get('selected_empresa_id')?.value;
+      if (selectedId) {
+        const { data } = await admin
+          .from('empresas')
+          .select('id, usa_sheets')
+          .eq('id', selectedId)
+          .single();
+        if (data) return data as { id: string; usa_sheets: boolean };
+      }
+    }
+
+    const { data } = await admin
+      .from('empresas')
+      .select('id, usa_sheets')
+      .eq('id', user.user_metadata.empresa_id)
+      .single();
+
+    return data as { id: string; usa_sheets: boolean } | null;
+  } catch {
+    return null;
+  }
+}
+
+async function getEmpresaConfig(empresaId: string): Promise<Record<string, string>> {
+  try {
+    const admin = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+    const { data } = await admin
+      .from('empresa_configuracoes')
+      .select('chave, valor')
+      .eq('empresa_id', empresaId);
+
+    return (data || []).reduce((acc: Record<string, string>, row) => {
+      acc[row.chave] = row.valor;
+      return acc;
+    }, {});
+  } catch {
+    return {};
+  }
+}
 
 const STATUS_MAP: Record<string, string> = {
   'created': 'Novos Leads',
@@ -188,24 +245,66 @@ async function fetchSheetData(
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const empresa = await getEmpresa(request);
+
+  // Tenant sem Google Sheets: lê da tabela leads do Supabase
+  if (empresa && !empresa.usa_sheets) {
+    const admin = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+    const { data: leads, error } = await admin
+      .from('leads')
+      .select('*')
+      .eq('empresa_id', empresa.id)
+      .order('criado_em', { ascending: false });
+
+    if (error) {
+      console.error('Erro ao buscar leads do Supabase:', error);
+      return NextResponse.json({ error: 'Erro ao buscar leads.' }, { status: 500 });
+    }
+
+    const leadsFormatados = (leads || []).map((lead: any) => ({
+      id: `sb-${lead.id}`,
+      nome: lead.nome || 'Sem Nome',
+      email: lead.email || '',
+      whatsapp: lead.whatsapp || '',
+      cargo: lead.cargo || '',
+      tipo: lead.tipo || '',
+      situacao: lead.situacao || 'Novos Leads',
+      origem: lead.origem || 'Manual',
+      observacoes: lead.observacoes || '',
+      anuncio: lead.anuncio || 'Desconhecido',
+      responsavel: lead.responsavel || '',
+      created_time: lead.criado_em || '',
+      data_alteracao: lead.data_alteracao || '',
+      data_fechamento: lead.data_fechamento || '',
+    }));
+
+    return NextResponse.json(leadsFormatados);
+  }
+
+  // Tenant com Google Sheets: lê credenciais do banco (fallback para env vars)
   try {
+    const dbConfig = empresa ? await getEmpresaConfig(empresa.id) : {};
+
     const auth = new google.auth.GoogleAuth({
       credentials: {
-        client_email: process.env.GOOGLE_CLIENT_EMAIL,
-        private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+        client_email: dbConfig.google_client_email || process.env.GOOGLE_CLIENT_EMAIL,
+        private_key: (dbConfig.google_private_key || process.env.GOOGLE_PRIVATE_KEY)?.replace(/\\n/g, '\n'),
       },
       scopes: ['https://www.googleapis.com/auth/spreadsheets'],
     });
 
     const sheets = google.sheets({ version: 'v4', auth });
-    const id1 = process.env.GOOGLE_SHEET_ID_1;
-    const id2 = process.env.GOOGLE_SHEET_ID_2;
-    const id3 = process.env.GOOGLE_SHEET_ID_3;
+    const id1 = dbConfig.google_sheet_id_1 || process.env.GOOGLE_SHEET_ID_1;
+    const id2 = dbConfig.google_sheet_id_2 || process.env.GOOGLE_SHEET_ID_2;
+    const id3 = dbConfig.google_sheet_id_3 || process.env.GOOGLE_SHEET_ID_3;
 
     if (!id1 || !id2 || !id3) {
       return NextResponse.json(
-        { error: 'Faltam IDs das planilhas nas variáveis de ambiente' },
+        { error: 'Faltam IDs das planilhas nas configurações' },
         { status: 500 }
       );
     }
@@ -277,10 +376,78 @@ export async function GET() {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { action, leadData, id, novaSituacao, observacoes, dadosFechamento } = body;
+
+    // =====================================================
+    // LEADS DO SUPABASE (tenants sem Google Sheets): sb-
+    // =====================================================
+    if (id && id.startsWith('sb-')) {
+      const admin = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+      );
+      const realId = id.replace('sb-', '');
+      const dataAtualISO = new Date().toISOString();
+      const updateData: any = {};
+
+      if (novaSituacao !== undefined) {
+        updateData.situacao = novaSituacao;
+        updateData.data_alteracao = dataAtualISO;
+        if (['Logins Ativados', 'Fechamento de Clientes', 'Aguardando Ativação'].includes(novaSituacao)) {
+          updateData.data_fechamento = dataAtualISO;
+        }
+      }
+      if (observacoes !== undefined) updateData.observacoes = observacoes;
+      if (dadosFechamento) updateData.dados_fechamento = dadosFechamento;
+
+      const { error } = await admin.from('leads').update(updateData).eq('id', realId);
+      if (error) {
+        console.error('Erro ao atualizar lead no Supabase:', error);
+        return NextResponse.json({ error: 'Erro ao atualizar lead.' }, { status: 500 });
+      }
+      return NextResponse.json({ success: true });
+    }
+
+    // =====================================================
+    // CRIAÇÃO DE LEAD MANUAL para tenant sem Google Sheets
+    // =====================================================
+    if (action === 'create') {
+      const empresa = await getEmpresa(request);
+      if (empresa && !empresa.usa_sheets) {
+        const admin = createClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL!,
+          process.env.SUPABASE_SERVICE_ROLE_KEY!
+        );
+        const { data: novoLead, error } = await admin
+          .from('leads')
+          .insert({
+            empresa_id: empresa.id,
+            nome: leadData?.nome || '',
+            email: leadData?.email || '',
+            whatsapp: leadData?.whatsapp || '',
+            cargo: leadData?.cargo || '',
+            situacao: leadData?.situacao || 'Novos Leads',
+            origem: leadData?.origem || 'Manual',
+            anuncio: leadData?.anuncio || '',
+            criado_em: leadData?.created_time
+              ? new Date(leadData.created_time).toISOString()
+              : new Date().toISOString(),
+            data_alteracao: new Date().toISOString(),
+          })
+          .select()
+          .single();
+
+        if (error) {
+          console.error('Erro ao criar lead no Supabase:', error);
+          return NextResponse.json({ error: 'Erro ao criar lead.' }, { status: 500 });
+        }
+        return NextResponse.json({ success: true, id: `sb-${novoLead.id}` });
+      }
+      // MedGuia ou tenant com Sheets: segue para o fluxo original abaixo
+    }
 
     // =================================================
     // INTERCEPTA ATUALIZAÇÕES PARA O BANCO DA LP - AULA

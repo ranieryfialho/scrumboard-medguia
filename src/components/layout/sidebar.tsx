@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { LayoutDashboard, KanbanSquare, Archive, LogOut, ChevronLeft, ChevronRight, Mail, Users, Trophy, Target, X } from "lucide-react";
+import { LayoutDashboard, KanbanSquare, Archive, LogOut, ChevronLeft, ChevronRight, Mail, Users, Trophy, Target, X, Building2, ShieldCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
@@ -15,6 +15,9 @@ interface SidebarProps {
 export function Sidebar({ abaAtiva, setAbaAtiva, mobileOpen = false, onMobileClose }: SidebarProps) {
   const [isExpanded, setIsExpanded] = useState(true);
   const [modulosPermitidos, setModulosPermitidos] = useState<string[]>([]);
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+  const [empresas, setEmpresas] = useState<{ id: string; nome: string }[]>([]);
+  const [empresaSelecionada, setEmpresaSelecionada] = useState('');
   const router = useRouter();
   const supabase = createClient();
 
@@ -40,12 +43,28 @@ export function Sidebar({ abaAtiva, setAbaAtiva, mobileOpen = false, onMobileClo
         } else if (perfilAntigo === 'GERENTE') {
           setModulosPermitidos(['dashboard', 'kanban', 'arquivados', 'relatorios', 'relatorios-comerciais']);
         } else {
-          setModulosPermitidos(['dashboard', 'kanban']); 
+          setModulosPermitidos(['dashboard', 'kanban']);
         }
+      }
+
+      if (user.user_metadata?.is_super_admin) {
+        setIsSuperAdmin(true);
+        const propria = user.user_metadata?.empresa_id as string;
+        const match = document.cookie.match(/selected_empresa_id=([^;]+)/);
+        setEmpresaSelecionada(match ? match[1] : propria);
+        const res = await fetch('/api/empresas');
+        const data = await res.json();
+        if (Array.isArray(data)) setEmpresas(data);
       }
     }
     carregarPermissoes();
   }, []);
+
+  const trocarTenant = (empresaId: string) => {
+    document.cookie = `selected_empresa_id=${empresaId}; path=/; max-age=86400`;
+    setEmpresaSelecionada(empresaId);
+    window.location.reload();
+  };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -182,6 +201,46 @@ export function Sidebar({ abaAtiva, setAbaAtiva, mobileOpen = false, onMobileClo
           ))
         )}
       </div>
+
+      {isSuperAdmin && (
+        <div className="px-3 pb-1">
+          <button
+            onClick={() => router.push('/admin')}
+            className="w-full flex items-center px-4 py-3 rounded-xl transition-all duration-200 hover:bg-indigo-500/10 hover:text-indigo-400 text-zinc-500 group"
+            title={!isExpanded ? "Painel Admin" : ""}
+          >
+            <ShieldCheck className="w-5 h-5 shrink-0 transition-colors group-hover:text-indigo-400" />
+            {isExpanded && <span className="ml-3 text-sm font-medium">Painel Admin</span>}
+          </button>
+        </div>
+      )}
+
+      {isSuperAdmin && (
+        <div className="px-4 pb-2 border-t border-zinc-800/50 pt-3">
+          {isExpanded ? (
+            <>
+              <p className="text-xs text-zinc-600 uppercase tracking-wider mb-2 font-semibold">
+                Tenant Ativo
+              </p>
+              <select
+                value={empresaSelecionada}
+                onChange={(e) => trocarTenant(e.target.value)}
+                className="w-full bg-zinc-800 text-zinc-300 text-sm rounded-lg px-3 py-2 border border-zinc-700 focus:outline-none focus:border-indigo-500 cursor-pointer"
+              >
+                {empresas.map(emp => (
+                  <option key={emp.id} value={emp.id}>{emp.nome}</option>
+                ))}
+              </select>
+            </>
+          ) : (
+            <div className="flex justify-center py-1">
+              <span title="Seletor de Tenant">
+                <Building2 className={`w-5 h-5 ${empresaSelecionada ? 'text-indigo-400' : 'text-zinc-500'}`} />
+              </span>
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="p-4 mt-auto border-t border-zinc-800/50">
         <button

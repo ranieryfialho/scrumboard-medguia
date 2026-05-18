@@ -80,6 +80,12 @@ export function NovaCampanhaModal({ leads = [], onSuccess, campanhaExistente }: 
     try {
       const { data: authData } = await supabase.auth.getUser();
       const userId = authData.user?.id;
+      let empresaId = authData.user?.user_metadata?.empresa_id;
+
+      if (authData.user?.user_metadata?.is_super_admin) {
+        const match = document.cookie.match(/selected_empresa_id=([^;]+)/);
+        if (match) empresaId = match[1];
+      }
 
       if (campanhaExistente) {
         const { error: updateError } = await supabase
@@ -102,7 +108,8 @@ export function NovaCampanhaModal({ leads = [], onSuccess, campanhaExistente }: 
               assunto: assunto,
               corpo_html: corpoEmail,
               status: 'RASCUNHO',
-              criado_por: userId
+              criado_por: userId,
+              empresa_id: empresaId,
           }])
           .select().single();
 
