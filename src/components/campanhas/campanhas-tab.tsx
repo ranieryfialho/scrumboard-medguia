@@ -16,7 +16,6 @@ interface CampanhasTabProps {
 }
 
 export function CampanhasTab({ leads, campanhas, onRefresh, onDelete }: CampanhasTabProps) {
-  // Novo estado que guarda se estamos vendo uma campanha específica
   const [campanhaSelecionada, setCampanhaSelecionada] = useState<any | null>(null);
   
   const handleExcluir = async (id: string) => {
