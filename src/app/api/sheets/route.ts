@@ -722,6 +722,22 @@ export async function POST(request: NextRequest) {
     }
 
     if (dataToUpdate.length > 0) {
+      const colunasNovas = nextAvailableCol - headers.length;
+      if (colunasNovas > 0) {
+        const metadataRes = await sheets.spreadsheets.get({ spreadsheetId });
+        const sheetMeta = metadataRes.data.sheets?.find(
+          (s: any) => s.properties?.title === rangeName
+        );
+        if (sheetMeta?.properties?.sheetId !== undefined) {
+          await sheets.spreadsheets.batchUpdate({
+            spreadsheetId,
+            requestBody: {
+              requests: [{ appendDimension: { sheetId: sheetMeta.properties.sheetId, dimension: 'COLUMNS', length: colunasNovas } }],
+            },
+          });
+        }
+      }
+
       await sheets.spreadsheets.values.batchUpdate({
         spreadsheetId,
         requestBody: { valueInputOption: 'USER_ENTERED', data: dataToUpdate },
