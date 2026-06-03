@@ -53,12 +53,13 @@ export default function Home() {
     setFiltroMes,
     filtroSituacao,
     setFiltroSituacao,
-    buscarLeads, 
-    buscarCampanhas, 
-    excluirCampanha, 
-    atualizarSituacaoLead, 
-    salvarObservacaoLead, 
-    adicionarLeadManual, 
+    buscarLeads,
+    buscarCampanhas,
+    excluirCampanha,
+    atualizarSituacaoLead,
+    atualizarLeadLocal,
+    salvarObservacaoLead,
+    adicionarLeadManual,
     limparFiltros
   } = useLeads();
 
@@ -138,18 +139,26 @@ ${leadObj?.observacoes || ''}
       await fetch('/api/sheets', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          id: leadPendente.id, 
+        body: JSON.stringify({
+          id: leadPendente.id,
           novaSituacao: leadPendente.situacao,
           observacoes: relatorioFechamento,
           dadosFechamento: dadosFechamento
         })
       });
-      
-      await buscarLeads(true);
-      
+
+      const dataAtual = new Date().toLocaleString('pt-BR');
+      atualizarLeadLocal(leadPendente.id, {
+        situacao: leadPendente.situacao,
+        observacoes: relatorioFechamento,
+        data_alteracao: dataAtual,
+        data_fechamento: dataAtual,
+      });
+
       setModalFechamentoOpen(false);
       setLeadPendente(null);
+
+      buscarLeads(true);
     } catch (error) {
       console.error("Erro ao salvar fechamento:", error);
     }

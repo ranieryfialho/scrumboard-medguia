@@ -141,6 +141,10 @@ export function useLeads() {
     });
   };
 
+  const atualizarLeadLocal = (leadId: string, updates: Partial<Lead>) => {
+    setLeads(prev => prev.map(l => l.id === leadId ? { ...l, ...updates } : l));
+  };
+
   const salvarObservacaoLead = async (leadId: string, observacoes: string) => {
     setLeads(prevLeads => prevLeads.map(lead =>
       lead.id === leadId ? { ...lead, observacoes } : lead
@@ -316,6 +320,6 @@ export function useLeads() {
     abaAtiva, setAbaAtiva, viewMode, setViewMode, buscaNome, setBuscaNome,
     filtroEspecialidade, setFiltroEspecialidade, filtroMes, setFiltroMes,
     filtroSituacao, setFiltroSituacao,
-    buscarLeads, buscarCampanhas, excluirCampanha, atualizarSituacaoLead, salvarObservacaoLead, adicionarLeadManual, limparFiltros
+    buscarLeads, buscarCampanhas, excluirCampanha, atualizarSituacaoLead, atualizarLeadLocal, salvarObservacaoLead, adicionarLeadManual, limparFiltros
   };
 }
