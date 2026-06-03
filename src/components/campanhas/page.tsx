@@ -7,7 +7,6 @@ export default function CampanhasPage() {
   return (
     <div className="flex-1 space-y-6 p-8 pt-6">
       
-      {/* Cabeçalho da Página */}
       <div className="flex items-center justify-between space-y-2">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">Mala Direta</h2>
@@ -25,7 +24,6 @@ export default function CampanhasPage() {
         </div>
       </div>
 
-      {/* Cards de Visão Geral (Métricas Globais) */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
