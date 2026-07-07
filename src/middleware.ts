@@ -33,7 +33,8 @@ export async function middleware(request: NextRequest) {
 
   const isPublicPage =
     request.nextUrl.pathname.startsWith('/login') ||
-    request.nextUrl.pathname.startsWith('/nova-senha')
+    request.nextUrl.pathname.startsWith('/nova-senha') ||
+    request.nextUrl.pathname.startsWith('/api/whatsapp/webhook')
 
   if (!user && !isPublicPage) {
     const url = request.nextUrl.clone()

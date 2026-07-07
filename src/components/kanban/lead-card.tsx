@@ -4,8 +4,9 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Lead } from "@/types/lead";
 import { useDraggable } from "@dnd-kit/core";
-import { Maximize2, Archive, RotateCcw, CalendarPlus, Clock, Mail, Phone, FileText } from "lucide-react";
+import { Maximize2, Archive, RotateCcw, CalendarPlus, Clock, Mail, Phone, FileText, MessageCircle } from "lucide-react";
 import { LeadDetailModal } from "./lead-detail-modal";
+import { useWhatsappUnread } from "@/contexts/whatsapp-unread-context";
 
 interface LeadCardProps {
   lead: Lead & { observacoes?: string; origem?: string };
@@ -50,6 +51,7 @@ const ORIGEM_COLORS: Record<string, string> = {
 
 export function LeadCard({ lead, isOverlay, disableDrag, onStatusChange, onSaveObs }: LeadCardProps) {
   const [modalOpen, setModalOpen] = useState(false);
+  const { unreadByNumero } = useWhatsappUnread();
 
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: lead.id,
@@ -76,6 +78,11 @@ export function LeadCard({ lead, isOverlay, disableDrag, onStatusChange, onSaveO
   };
   extrairContato(lead.email);
   extrairContato(lead.whatsapp);
+
+  const phoneNormalized = realPhone
+    ? (() => { const d = realPhone.replace(/\D/g, ''); return d.startsWith('55') && d.length >= 12 ? d : `55${d}`; })()
+    : '';
+  const hasUnread = phoneNormalized ? unreadByNumero[phoneNormalized] === true : false;
 
   const isNovoLead = lead.situacao === "Novos Leads";
 
@@ -121,6 +128,7 @@ export function LeadCard({ lead, isOverlay, disableDrag, onStatusChange, onSaveO
       <div
         ref={setNodeRef}
         {...dragProps}
+        id={`lead-card-${lead.id}`}
         className={`touch-none ${isOverlay ? "cursor-grabbing rotate-2 scale-105 shadow-2xl opacity-90" : ""}`}
       >
         <Card
@@ -176,7 +184,12 @@ export function LeadCard({ lead, isOverlay, disableDrag, onStatusChange, onSaveO
               {realPhone && (
                 <div className="flex items-center text-xs text-slate-600 truncate pr-4" title="Telefone/WhatsApp">
                   <Phone className="w-3.5 h-3.5 mr-2 text-slate-400 shrink-0" />
-                  <span className="font-medium text-slate-700">{formatarTelefone(realPhone)}</span>
+                  <span className="font-medium text-slate-700 truncate">{formatarTelefone(realPhone)}</span>
+                  {hasUnread && (
+                    <span className="ml-1.5 shrink-0 flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-emerald-500 text-white text-[9px] font-bold">
+                      <MessageCircle className="w-2.5 h-2.5" /> Nova
+                    </span>
+                  )}
                 </div>
               )}
               {realEmail && (

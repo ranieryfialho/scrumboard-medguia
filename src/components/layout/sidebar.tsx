@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { LayoutDashboard, KanbanSquare, Archive, LogOut, ChevronLeft, ChevronRight, Mail, Users, Trophy, Target, X, Building2, ShieldCheck } from "lucide-react";
+import { LayoutDashboard, KanbanSquare, Archive, LogOut, ChevronLeft, ChevronRight, Mail, Users, Trophy, Target, X, Building2, ShieldCheck, MessageCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { useWhatsappUnread } from "@/contexts/whatsapp-unread-context";
 
 interface SidebarProps {
   abaAtiva: string;
@@ -35,11 +36,17 @@ export function Sidebar({ abaAtiva, setAbaAtiva, mobileOpen = false, onMobileClo
         return;
       }
 
+      const isAdminPerfil = perfilAntigo === 'MASTER' || perfilAntigo === 'ADMIN' || user.user_metadata?.is_super_admin;
+
       if (metadataModulos && Array.isArray(metadataModulos)) {
-        setModulosPermitidos(metadataModulos);
+        // Garante que ADMIN/MASTER sempre veem 'whatsapp', mesmo em contas antigas
+        const modulos = isAdminPerfil && !metadataModulos.includes('whatsapp')
+          ? [...metadataModulos, 'whatsapp']
+          : metadataModulos;
+        setModulosPermitidos(modulos);
       } else {
-        if (perfilAntigo === 'MASTER' || perfilAntigo === 'ADMIN') {
-          setModulosPermitidos(['dashboard', 'kanban', 'arquivados', 'relatorios', 'relatorios-comerciais', 'campanhas', 'usuarios']);
+        if (isAdminPerfil) {
+          setModulosPermitidos(['dashboard', 'kanban', 'arquivados', 'relatorios', 'relatorios-comerciais', 'campanhas', 'whatsapp', 'usuarios']);
         } else if (perfilAntigo === 'GERENTE') {
           setModulosPermitidos(['dashboard', 'kanban', 'arquivados', 'relatorios', 'relatorios-comerciais']);
         } else {
@@ -92,6 +99,7 @@ export function Sidebar({ abaAtiva, setAbaAtiva, mobileOpen = false, onMobileClo
       category: "Comunicação",
       items: [
         { id: "campanhas", label: "Mala Direta", icon: Mail },
+        { id: "whatsapp", label: "WhatsApp", icon: MessageCircle },
       ]
     },
     {
@@ -101,6 +109,8 @@ export function Sidebar({ abaAtiva, setAbaAtiva, mobileOpen = false, onMobileClo
       ]
     }
   ];
+
+  const { totalUnread } = useWhatsappUnread();
 
   const menusFiltrados = menuConfig.map(group => {
     return {
@@ -182,10 +192,22 @@ export function Sidebar({ abaAtiva, setAbaAtiva, mobileOpen = false, onMobileClo
                         }`}
                         title={!isExpanded ? item.label : ""}
                       >
-                        <Icon className={`w-5 h-5 shrink-0 transition-colors ${isActive ? "text-indigo-400" : "text-zinc-500 group-hover:text-zinc-300"}`} />
+                        <div className="relative shrink-0">
+                          <Icon className={`w-5 h-5 transition-colors ${isActive ? "text-indigo-400" : "text-zinc-500 group-hover:text-zinc-300"}`} />
+                          {item.id === "whatsapp" && totalUnread > 0 && (
+                            <span className="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 px-0.5 rounded-full bg-emerald-500 text-white text-[9px] font-bold flex items-center justify-center leading-none">
+                              {totalUnread > 9 ? "9+" : totalUnread}
+                            </span>
+                          )}
+                        </div>
                         {isExpanded && (
-                          <span className={`ml-3 text-sm font-medium ${isActive ? "text-indigo-400" : ""}`}>
+                          <span className={`ml-3 text-sm font-medium flex-1 text-left ${isActive ? "text-indigo-400" : ""}`}>
                             {item.label}
+                          </span>
+                        )}
+                        {isExpanded && item.id === "whatsapp" && totalUnread > 0 && (
+                          <span className="ml-auto px-1.5 py-0.5 rounded-full bg-emerald-500 text-white text-[10px] font-bold leading-none">
+                            {totalUnread > 9 ? "9+" : totalUnread}
                           </span>
                         )}
                         

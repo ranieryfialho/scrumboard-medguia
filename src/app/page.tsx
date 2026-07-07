@@ -14,6 +14,7 @@ import { Sidebar } from "@/components/layout/sidebar";
 
 import { AgendamentoModal } from "@/components/kanban/agendamento-modal";
 import { FechamentoModal, FormFechamentoData } from "@/components/kanban/fechamento-modal";
+import { LeadDetailModal } from "@/components/kanban/lead-detail-modal";
 import { useState } from "react";
 
 import RelatoriosPage from "@/app/relatorios/page";
@@ -21,8 +22,11 @@ import RelatoriosComerciaisPage from "@/app/relatorios-comerciais/page";
 
 import { CampanhasTab } from "@/components/campanhas/campanhas-tab";
 import { UsuariosTab } from "@/components/usuarios-tab";
+import { WhatsappConfigTab } from "@/components/whatsapp/whatsapp-config-tab";
 
 import { useLeads } from "@/hooks/use-leads";
+import { WhatsappUnreadProvider } from "@/contexts/whatsapp-unread-context";
+import { WhatsappNotificationPanel } from "@/components/whatsapp/whatsapp-notification-panel";
 
 export default function Home() {
   const {
@@ -67,6 +71,15 @@ export default function Home() {
   const [modalAgendamentoOpen, setModalAgendamentoOpen] = useState(false);
   const [modalFechamentoOpen, setModalFechamentoOpen] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [leadNotificacao, setLeadNotificacao] = useState<(typeof leads[0]) | null>(null);
+
+  const handleNotificacaoClick = (lead: typeof leads[0]) => {
+    setAbaAtiva("kanban");
+    setLeadNotificacao(lead);
+    setTimeout(() => {
+      document.getElementById(`lead-card-${lead.id}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 300);
+  };
 
   const processarMudancaStatus = async (leadId: string, novaSituacao: string) => {
     const leadAtual = leads.find(l => l.id === leadId);
@@ -172,6 +185,7 @@ ${leadObj?.observacoes || ''}
       relatorios: 'Marketing & Tráfego',
       'relatorios-comerciais': 'Comercial & Vendas',
       campanhas: 'Mala Direta',
+      whatsapp: 'WhatsApp',
       usuarios: 'Gestão de Equipe e Acessos'
     };
     return titulos[abaAtiva] || '';
@@ -180,6 +194,7 @@ ${leadObj?.observacoes || ''}
   const animacaoPadrao = "animate-in fade-in slide-in-from-bottom-4 duration-500 ease-out";
 
   return (
+    <WhatsappUnreadProvider>
     <div className="flex h-screen bg-[#e4e5e7] overflow-hidden">
       <Sidebar
         abaAtiva={abaAtiva}
@@ -208,17 +223,20 @@ ${leadObj?.observacoes || ''}
           </div>
 
           <div className="flex flex-col items-end gap-1.5 shrink-0">
-            <Button
-              onClick={() => buscarLeads(false)}
-              disabled={loading || isSyncing}
-              variant="outline"
-              className="bg-white border-slate-300 text-slate-700 md:min-w-[180px] shadow-sm hover:bg-slate-50 transition-all"
-            >
+            <div className="flex items-center gap-2">
+              <WhatsappNotificationPanel leads={leads} onSelectLead={handleNotificacaoClick} />
+              <Button
+                onClick={() => buscarLeads(false)}
+                disabled={loading || isSyncing}
+                variant="outline"
+                className="bg-white border-slate-300 text-slate-700 md:min-w-[180px] shadow-sm hover:bg-slate-50 transition-all"
+              >
               <RefreshCcw className={`w-4 h-4 md:mr-2 ${loading || isSyncing ? 'animate-spin' : ''}`} />
               <span className="hidden md:inline">
                 {loading ? 'Carregando...' : isSyncing ? 'Sincronizando...' : 'Sincronizar Dados'}
               </span>
             </Button>
+            </div>
             <div className="hidden md:flex items-center gap-1.5 text-[10px] text-slate-500 font-medium pr-1">
               <span className="relative flex h-1.5 w-1.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -340,6 +358,10 @@ ${leadObj?.observacoes || ''}
               />
             </TabsContent>
 
+            <TabsContent value="whatsapp" className={`flex-1 overflow-y-auto m-0 h-full bg-slate-50 ${animacaoPadrao}`}>
+              <WhatsappConfigTab />
+            </TabsContent>
+
             <TabsContent value="usuarios" className={`flex-1 overflow-y-auto m-0 h-full bg-slate-50 ${animacaoPadrao}`}>
               <UsuariosTab />
             </TabsContent>
@@ -361,6 +383,18 @@ ${leadObj?.observacoes || ''}
         onConfirm={handleConfirmarFechamento}
         tipo={leadPendente?.situacao === "Fechamento de Clientes" ? "clientes" : "logins"}
       />
+
+      {leadNotificacao && (
+        <LeadDetailModal
+          lead={leadNotificacao}
+          open={true}
+          onOpenChange={(open) => { if (!open) setLeadNotificacao(null); }}
+          onStatusChange={processarMudancaStatus}
+          onSaveObs={salvarObservacaoLead}
+          initialTab="conversa"
+        />
+      )}
     </div>
+    </WhatsappUnreadProvider>
   );
 }

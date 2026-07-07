@@ -117,13 +117,14 @@ export function useLeads() {
     return () => clearInterval(intervalo);
   }, []);
 
-  // Funções de Mutação
   const atualizarSituacaoLead = async (leadId: string, novaSituacao: string) => {
     const dataAtual = new Date().toLocaleString('pt-BR');
     const isFechado = ['Logins Ativados', 'Fechamento de Clientes', 'Aguardando Ativação'].includes(novaSituacao);
 
+    let leadAlvo: Lead | undefined;
     setLeads(prevLeads => prevLeads.map(lead => {
       if (lead.id === leadId) {
+        leadAlvo = lead;
         return {
           ...lead,
           situacao: novaSituacao,
@@ -139,6 +140,7 @@ export function useLeads() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: leadId, novaSituacao })
     });
+
   };
 
   const atualizarLeadLocal = (leadId: string, updates: Partial<Lead>) => {

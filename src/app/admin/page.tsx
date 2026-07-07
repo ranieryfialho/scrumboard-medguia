@@ -36,7 +36,7 @@ interface Config {
 
 const MODULOS_ADMIN = [
   'dashboard', 'kanban', 'arquivados', 'relatorios',
-  'relatorios-comerciais', 'campanhas', 'usuarios'
+  'relatorios-comerciais', 'campanhas', 'whatsapp', 'usuarios'
 ];
 
 function gerarSlug(nome: string) {
