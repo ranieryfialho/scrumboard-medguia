@@ -1,12 +1,10 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { MessageCircle, X, UserPlus, Loader2 } from "lucide-react";
+import { MessageCircle, X, UserPlus } from "lucide-react";
 import { useWhatsappUnread } from "@/contexts/whatsapp-unread-context";
 import { Lead } from "@/types/lead";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { WhatsappInboxChat } from "@/components/whatsapp/whatsapp-inbox-chat";
 
 interface Props {
   leads: (Lead & { observacoes?: string; origem?: string })[];
@@ -49,11 +47,9 @@ function formatarTelefone(numero: string): string {
 }
 
 export function WhatsappNotificationPanel({ leads, onSelectLead, onCreateLead }: Props) {
-  const { totalUnread, conversasNaoLidas } = useWhatsappUnread();
+  const { totalUnread, conversasNaoLidas, markRead, markAllRead } = useWhatsappUnread();
   const [open, setOpen] = useState(false);
-  const [dialogNumero, setDialogNumero] = useState<string | null>(null);
-  const [nome, setNome] = useState("");
-  const [criando, setCriando] = useState(false);
+  const [inboxNumero, setInboxNumero] = useState<string | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -73,21 +69,9 @@ export function WhatsappNotificationPanel({ leads, onSelectLead, onCreateLead }:
     return { ...c, lead };
   });
 
-  const handleAbrirCriar = (numero: string) => {
-    setDialogNumero(numero);
-    setNome("");
+  const handleAbrirInbox = (numero: string) => {
+    setInboxNumero(numero);
     setOpen(false);
-  };
-
-  const handleCriarLead = async () => {
-    if (!dialogNumero || !nome.trim()) return;
-    setCriando(true);
-    try {
-      await onCreateLead(dialogNumero, nome.trim());
-      setDialogNumero(null);
-    } finally {
-      setCriando(false);
-    }
   };
 
   return (
@@ -111,11 +95,19 @@ export function WhatsappNotificationPanel({ leads, onSelectLead, onCreateLead }:
             <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
               <div className="flex items-center gap-2">
                 <MessageCircle className="w-4 h-4 text-emerald-500" />
-                <span className="text-sm font-bold text-slate-800">Mensagens não lidas</span>
+                <span className="text-sm font-bold text-slate-800">Não lidas</span>
               </div>
-              <button onClick={() => setOpen(false)} className="text-slate-400 hover:text-slate-600">
-                <X className="w-4 h-4" />
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => { markAllRead(); setOpen(false); }}
+                  className="text-[11px] text-slate-400 hover:text-indigo-600 font-medium transition-colors"
+                >
+                  Marcar todas como lidas
+                </button>
+                <button onClick={() => setOpen(false)} className="text-slate-400 hover:text-slate-600">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
             </div>
 
             <div className="max-h-80 overflow-y-auto divide-y divide-slate-50">
@@ -143,14 +135,20 @@ export function WhatsappNotificationPanel({ leads, onSelectLead, onCreateLead }:
                         </button>
                       ) : (
                         <button
-                          onClick={() => handleAbrirCriar(c.numero)}
+                          onClick={() => handleAbrirInbox(c.numero)}
                           className="mt-1.5 text-[11px] font-semibold text-indigo-600 hover:text-indigo-700 flex items-center gap-1"
                         >
-                          <UserPlus className="w-3 h-3" /> Criar lead
+                          <UserPlus className="w-3 h-3" /> Ver conversa e criar lead
                         </button>
                       )}
                     </div>
-                    <div className="w-2 h-2 rounded-full bg-emerald-500 shrink-0 mt-2" />
+                    <button
+                      onClick={(e) => { e.stopPropagation(); markRead(c.numero); }}
+                      className="text-slate-300 hover:text-slate-500 shrink-0 mt-1 transition-colors"
+                      title="Dispensar"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
                   </div>
                 </div>
               ))}
@@ -159,41 +157,15 @@ export function WhatsappNotificationPanel({ leads, onSelectLead, onCreateLead }:
         )}
       </div>
 
-      {/* Dialog: criar lead a partir do número */}
-      <Dialog open={!!dialogNumero} onOpenChange={(o) => { if (!o) setDialogNumero(null); }}>
-        <DialogContent className="sm:max-w-sm">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <UserPlus className="w-4 h-4 text-indigo-500" /> Criar lead do WhatsApp
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 pt-1">
-            <div className="bg-slate-50 rounded-lg px-3 py-2 text-sm text-slate-600 font-mono border border-slate-200">
-              {dialogNumero && formatarTelefone(dialogNumero)}
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-sm font-medium text-slate-700">Nome do lead</label>
-              <Input
-                autoFocus
-                value={nome}
-                onChange={e => setNome(e.target.value)}
-                placeholder="Ex: João Silva"
-                onKeyDown={e => e.key === "Enter" && handleCriarLead()}
-              />
-            </div>
-            <div className="flex gap-2 justify-end pt-1">
-              <Button variant="ghost" onClick={() => setDialogNumero(null)}>Cancelar</Button>
-              <Button
-                onClick={handleCriarLead}
-                disabled={!nome.trim() || criando}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white"
-              >
-                {criando ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Criando...</> : "Criar e abrir chat"}
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* Chat completo para números sem lead */}
+      {inboxNumero && (
+        <WhatsappInboxChat
+          numero={inboxNumero}
+          open={!!inboxNumero}
+          onOpenChange={(o) => { if (!o) setInboxNumero(null); }}
+          onCreateLead={onCreateLead}
+        />
+      )}
     </>
   );
 }

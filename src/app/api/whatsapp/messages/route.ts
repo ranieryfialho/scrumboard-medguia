@@ -21,22 +21,27 @@ export async function GET(request: NextRequest) {
 
   if (!rawNumero) return NextResponse.json({ mensagens: [] });
 
-  // Normaliza para o formato com DDI 55 (igual ao que a Evolution API envia no webhook)
-  const numero = rawNumero.startsWith('55') && rawNumero.length >= 12
+  // Gera variantes do número para cobrir todos os formatos possíveis no banco
+  const comPrefixo = rawNumero.startsWith('55') && rawNumero.length >= 12
     ? rawNumero
     : `55${rawNumero}`;
+  const semPrefixo = rawNumero.startsWith('55') && rawNumero.length > 12
+    ? rawNumero.slice(2)
+    : rawNumero;
+
+  const variantesUnicas = [...new Set([rawNumero, comPrefixo, semPrefixo])];
+  const filtroOr = variantesUnicas.map(n => `numero.eq.${n}`).join(',');
 
   const admin = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
 
-  // Busca tanto no formato com quanto sem o 55 para cobrir mensagens antigas
   const { data, error } = await admin
     .from('whatsapp_mensagens')
     .select('id, mensagem, direcao, created_at, numero, status')
     .eq('empresa_id', empresaId)
-    .or(`numero.eq.${numero},numero.eq.${rawNumero}`)
+    .or(filtroOr)
     .order('created_at', { ascending: true })
     .limit(200);
 

@@ -15,6 +15,7 @@ interface WhatsappUnreadContextValue {
   unreadByNumero: Record<string, boolean>;
   conversasNaoLidas: Conversa[];
   markRead: (numero: string) => void;
+  markAllRead: () => void;
 }
 
 const WhatsappUnreadContext = createContext<WhatsappUnreadContextValue>({
@@ -22,6 +23,7 @@ const WhatsappUnreadContext = createContext<WhatsappUnreadContextValue>({
   unreadByNumero: {},
   conversasNaoLidas: [],
   markRead: () => {},
+  markAllRead: () => {},
 });
 
 export function useWhatsappUnread() {
@@ -111,6 +113,17 @@ export function WhatsappUnreadProvider({ children }: { children: React.ReactNode
     setConversas(prev => [...prev]);
   }, []);
 
+  const markAllRead = useCallback(() => {
+    const now = new Date().toISOString();
+    try {
+      conversas.forEach(c => {
+        localStorage.setItem(`wpp_read_${c.numero}`, now);
+        localStorage.setItem(`wpp_read_${normalizePhone(c.numero)}`, now);
+      });
+    } catch {}
+    setConversas(prev => [...prev]);
+  }, [conversas]);
+
   const unreadByNumero: Record<string, boolean> = {};
   const conversasNaoLidas: Conversa[] = [];
   let totalUnread = 0;
@@ -124,7 +137,7 @@ export function WhatsappUnreadProvider({ children }: { children: React.ReactNode
   }
 
   return (
-    <WhatsappUnreadContext.Provider value={{ totalUnread, unreadByNumero, conversasNaoLidas, markRead }}>
+    <WhatsappUnreadContext.Provider value={{ totalUnread, unreadByNumero, conversasNaoLidas, markRead, markAllRead }}>
       {children}
     </WhatsappUnreadContext.Provider>
   );
