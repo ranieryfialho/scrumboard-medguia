@@ -81,6 +81,19 @@ export default function Home() {
     }, 300);
   };
 
+  const handleCriarLeadWhatsapp = async (whatsapp: string, nome: string) => {
+    const novoLead = await adicionarLeadManual({
+      nome,
+      email: '',
+      cargo: '',
+      whatsapp,
+      origem: 'Manual - WhatsApp',
+    });
+    if (novoLead) {
+      handleNotificacaoClick(novoLead as typeof leads[0]);
+    }
+  };
+
   const processarMudancaStatus = async (leadId: string, novaSituacao: string) => {
     const leadAtual = leads.find(l => l.id === leadId);
     if (!leadAtual || leadAtual.situacao === novaSituacao) return;
@@ -224,7 +237,7 @@ ${leadObj?.observacoes || ''}
 
           <div className="flex flex-col items-end gap-1.5 shrink-0">
             <div className="flex items-center gap-2">
-              <WhatsappNotificationPanel leads={leads} onSelectLead={handleNotificacaoClick} />
+              <WhatsappNotificationPanel leads={leads} onSelectLead={handleNotificacaoClick} onCreateLead={handleCriarLeadWhatsapp} />
               <Button
                 onClick={() => buscarLeads(false)}
                 disabled={loading || isSyncing}

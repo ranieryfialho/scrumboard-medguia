@@ -18,11 +18,12 @@ const MODULOS_SISTEMA = [
   { id: 'relatorios', label: 'Marketing e Tráfego' },
   { id: 'relatorios-comerciais', label: 'Comercial e Vendas' },
   { id: 'campanhas', label: 'Mala Direta (E-mails)' },
+  { id: 'whatsapp', label: 'WhatsApp' },
   { id: 'usuarios', label: 'Equipe e Acessos (Admin)' },
 ];
 
 const PERFIS_PRESET: Record<string, string[]> = {
-  ADMIN: ['dashboard', 'kanban', 'arquivados', 'relatorios', 'relatorios-comerciais', 'campanhas', 'usuarios'],
+  ADMIN: ['dashboard', 'kanban', 'arquivados', 'relatorios', 'relatorios-comerciais', 'campanhas', 'whatsapp', 'usuarios'],
   COMERCIAL: ['dashboard', 'kanban', 'arquivados', 'relatorios-comerciais'],
   MARKETING: ['dashboard', 'kanban', 'relatorios', 'campanhas'],
 };

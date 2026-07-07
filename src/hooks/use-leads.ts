@@ -185,6 +185,7 @@ export function useLeads() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'create', leadData: chavesCompletas })
     });
+    return chavesCompletas;
   };
 
   // Memos e Filtros
