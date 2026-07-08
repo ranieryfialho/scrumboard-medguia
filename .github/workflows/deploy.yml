@@ -32,6 +32,7 @@ jobs:
           script: |
             set -e
             cd ~/scrumboard-medguia
+            source .env
             docker compose build --no-cache
             docker compose up -d --remove-orphans
             docker image prune -f
