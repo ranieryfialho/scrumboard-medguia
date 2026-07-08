@@ -39,6 +39,7 @@ export async function POST(request: NextRequest) {
 
   // Processa apenas eventos de mensagem
   const event = (payload?.event as string | undefined)?.toLowerCase() || '';
+  console.log('[webhook] evento recebido:', event);
   if (!event.includes('messages')) {
     return NextResponse.json({ ok: true, skipped: true });
   }
@@ -55,11 +56,15 @@ export async function POST(request: NextRequest) {
     const fromMe = item?.key?.fromMe ?? false;
     if (fromMe) continue; // ignora enviadas por nós
 
-    const remoteJid: string = item?.key?.remoteJid || '';
+    // Prioriza remoteJidAlt (número real) sobre remoteJid (pode ser ID de device)
+    const remoteJid: string = item?.key?.remoteJidAlt || item?.key?.remoteJid || '';
+
     // Ignora grupos
     if (remoteJid.includes('@g.us')) continue;
 
-    const numero = remoteJid.replace('@s.whatsapp.net', '').replace(/\D/g, '');
+    // Extrai apenas o número, descartando o sufixo de device (:2, :8, etc.)
+    // Ex: "558599985587@s.whatsapp.net" → "558599985587"
+    const numero = remoteJid.split('@')[0].split(':')[0].replace(/\D/g, '');
     if (!numero) continue;
 
     const msgData = item?.message || item;
@@ -92,6 +97,4 @@ export async function POST(request: NextRequest) {
   }
 
   return NextResponse.json({ ok: true, inserido });
-
-  return NextResponse.json({ ok: true });
 }

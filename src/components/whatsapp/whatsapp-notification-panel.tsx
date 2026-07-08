@@ -4,12 +4,11 @@ import { useState, useRef, useEffect } from "react";
 import { MessageCircle, X, UserPlus } from "lucide-react";
 import { useWhatsappUnread } from "@/contexts/whatsapp-unread-context";
 import { Lead } from "@/types/lead";
-import { WhatsappInboxChat } from "@/components/whatsapp/whatsapp-inbox-chat";
 
 interface Props {
   leads: (Lead & { observacoes?: string; origem?: string })[];
   onSelectLead: (lead: Lead & { observacoes?: string; origem?: string }) => void;
-  onCreateLead: (whatsapp: string, nome: string) => Promise<void>;
+  onOpenInbox: (numero: string) => void;
 }
 
 function normalizePhone(phone: string): string {
@@ -46,10 +45,9 @@ function formatarTelefone(numero: string): string {
   return numero;
 }
 
-export function WhatsappNotificationPanel({ leads, onSelectLead, onCreateLead }: Props) {
+export function WhatsappNotificationPanel({ leads, onSelectLead, onOpenInbox }: Props) {
   const { totalUnread, conversasNaoLidas, markRead, markAllRead } = useWhatsappUnread();
   const [open, setOpen] = useState(false);
-  const [inboxNumero, setInboxNumero] = useState<string | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -70,8 +68,8 @@ export function WhatsappNotificationPanel({ leads, onSelectLead, onCreateLead }:
   });
 
   const handleAbrirInbox = (numero: string) => {
-    setInboxNumero(numero);
     setOpen(false);
+    onOpenInbox(numero);
   };
 
   return (
@@ -157,15 +155,6 @@ export function WhatsappNotificationPanel({ leads, onSelectLead, onCreateLead }:
         )}
       </div>
 
-      {/* Chat completo para números sem lead */}
-      {inboxNumero && (
-        <WhatsappInboxChat
-          numero={inboxNumero}
-          open={!!inboxNumero}
-          onOpenChange={(o) => { if (!o) setInboxNumero(null); }}
-          onCreateLead={onCreateLead}
-        />
-      )}
     </>
   );
 }

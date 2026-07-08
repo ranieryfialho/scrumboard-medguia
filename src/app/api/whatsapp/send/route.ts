@@ -25,11 +25,30 @@ export async function POST(request: NextRequest) {
   const config = await getEmpresaConfig(empresaId);
   if (!config) return NextResponse.json({ error: 'Instância WhatsApp não configurada' }, { status: 400 });
 
-  // Normaliza para o formato com DDI 55 (consistente com o que a Evolution API usa no webhook)
   const raw = numero.replace(/\D/g, '');
-  const numeroNormalizado = raw.startsWith('55') && raw.length >= 12 ? raw : `55${raw}`;
+  // Só adiciona DDI 55 para números brasileiros sem código de país (10 ou 11 dígitos)
+  const candidatos = raw.length === 10 || raw.length === 11
+    ? [`55${raw}`]
+    : raw.length >= 15
+      // Número longo pode ter device ID colado pelo webhook antigo — tenta remover 1 e 2 dígitos
+      ? [raw, raw.slice(0, -1), raw.slice(0, -2)]
+      : [raw];
 
-  const result = await sendTextMessage(config, numeroNormalizado, mensagem);
+  let result = await sendTextMessage(config, candidatos[0], mensagem);
+  let numeroEnviado = candidatos[0];
+
+  // Retry automático quando o número não é encontrado (device ID colado pelo webhook antigo)
+  if (result.numberNotFound && candidatos.length > 1) {
+    for (let i = 1; i < candidatos.length; i++) {
+      const tentativa = await sendTextMessage(config, candidatos[i], mensagem);
+      if (!tentativa.error) {
+        result = tentativa;
+        numeroEnviado = candidatos[i];
+        break;
+      }
+      if (!tentativa.numberNotFound) break; // erro diferente, para de tentar
+    }
+  }
 
   if (result.error) return NextResponse.json({ error: result.error }, { status: 502 });
 
@@ -40,7 +59,7 @@ export async function POST(request: NextRequest) {
   await admin.from('whatsapp_mensagens').insert({
     empresa_id: empresaId,
     lead_id: leadId || null,
-    numero: numeroNormalizado,
+    numero: numeroEnviado,
     mensagem,
     direcao: 'enviada',
     evolution_message_id: result.key?.id || null,

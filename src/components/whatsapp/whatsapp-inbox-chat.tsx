@@ -53,7 +53,9 @@ export function WhatsappInboxChat({ numero, open, onOpenChange, onCreateLead }: 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   // Usa o número exatamente como está no banco (sem normalização adicional)
   const numeroDB = numero.replace(/\D/g, "");
-  const { markRead } = useWhatsappUnread();
+  // Números com 14+ dígitos têm o device ID colado (bug antigo do webhook)
+  const numeroCorrompido = numeroDB.length >= 14;
+  useWhatsappUnread(); // mantém subscription ativa sem usar markRead aqui
   const supabase = createClient();
 
   const buscarMensagens = useCallback(async () => {
@@ -78,7 +80,6 @@ export function WhatsappInboxChat({ numero, open, onOpenChange, onCreateLead }: 
     setMensagens([]);
     setErro(null);
     buscarMensagens();
-    markRead(numeroDB);
 
     const channel = supabase
       .channel(`wpp-inbox-${numeroDB}`)
@@ -90,12 +91,11 @@ export function WhatsappInboxChat({ numero, open, onOpenChange, onCreateLead }: 
       }, (payload) => {
         const row = payload.new as Mensagem;
         setMensagens(prev => prev.some(m => m.id === row.id) ? prev : [...prev, row]);
-        if (row.direcao === "recebida") markRead(numeroDB);
       })
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
-  }, [open, numeroDB, buscarMensagens, markRead]);
+  }, [open, numeroDB, buscarMensagens]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -104,6 +104,12 @@ export function WhatsappInboxChat({ numero, open, onOpenChange, onCreateLead }: 
   const handleEnviar = async () => {
     const msg = texto.trim();
     if (!msg || enviando) return;
+
+    if (numeroCorrompido) {
+      setErro("Este número foi salvo de forma incorreta e não pode receber mensagens. Aguarde o contato enviar uma nova mensagem para que o número seja corrigido automaticamente.");
+      return;
+    }
+
     setEnviando(true);
     setErro(null);
 
@@ -265,16 +271,17 @@ export function WhatsappInboxChat({ numero, open, onOpenChange, onCreateLead }: 
               e.target.style.height = Math.min(e.target.scrollHeight, 120) + "px";
             }}
             onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleEnviar(); } }}
-            placeholder="Digite uma mensagem..."
+            placeholder={numeroCorrompido ? "Número inválido" : "Digite uma mensagem..."}
             rows={1}
-            className="flex-1 resize-none rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/40 text-slate-700 placeholder:text-slate-400"
+            disabled={numeroCorrompido}
+            className="flex-1 resize-none rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/40 text-slate-700 placeholder:text-slate-400 disabled:bg-slate-100 disabled:opacity-50"
             style={{ minHeight: 44, maxHeight: 120 }}
           />
           <Button
             onClick={handleEnviar}
-            disabled={enviando || !texto.trim()}
+            disabled={enviando || !texto.trim() || numeroCorrompido}
             size="icon"
-            className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-full w-10 h-10 shrink-0"
+            className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-full w-10 h-10 shrink-0 disabled:opacity-50"
           >
             {enviando ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
           </Button>

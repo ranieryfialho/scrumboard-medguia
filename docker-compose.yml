@@ -1,0 +1,26 @@
+services:
+  scrumboard-medguia:
+    build:
+      context: .
+      args:
+        - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+        - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+        - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}
+        - EVOLUTION_API_URL=${EVOLUTION_API_URL}
+        - EVOLUTION_API_KEY=${EVOLUTION_API_KEY}
+    container_name: scrumboard-medguia
+    ports:
+      - "3001:3000"
+    env_file:
+      - .env
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 2000m
+    networks:
+      - wp-network
+
+networks:
+  wp-network:
+    external: true

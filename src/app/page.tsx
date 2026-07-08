@@ -27,6 +27,7 @@ import { WhatsappConfigTab } from "@/components/whatsapp/whatsapp-config-tab";
 import { useLeads } from "@/hooks/use-leads";
 import { WhatsappUnreadProvider } from "@/contexts/whatsapp-unread-context";
 import { WhatsappNotificationPanel } from "@/components/whatsapp/whatsapp-notification-panel";
+import { WhatsappInboxChat } from "@/components/whatsapp/whatsapp-inbox-chat";
 
 export default function Home() {
   const {
@@ -72,6 +73,7 @@ export default function Home() {
   const [modalFechamentoOpen, setModalFechamentoOpen] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [leadNotificacao, setLeadNotificacao] = useState<(typeof leads[0]) | null>(null);
+  const [inboxNumero, setInboxNumero] = useState<string | null>(null);
 
   const handleNotificacaoClick = (lead: typeof leads[0]) => {
     setAbaAtiva("kanban");
@@ -237,7 +239,7 @@ ${leadObj?.observacoes || ''}
 
           <div className="flex flex-col items-end gap-1.5 shrink-0">
             <div className="flex items-center gap-2">
-              <WhatsappNotificationPanel leads={leads} onSelectLead={handleNotificacaoClick} onCreateLead={handleCriarLeadWhatsapp} />
+              <WhatsappNotificationPanel leads={leads} onSelectLead={handleNotificacaoClick} onOpenInbox={setInboxNumero} />
               <Button
                 onClick={() => buscarLeads(false)}
                 disabled={loading || isSyncing}
@@ -405,6 +407,15 @@ ${leadObj?.observacoes || ''}
           onStatusChange={processarMudancaStatus}
           onSaveObs={salvarObservacaoLead}
           initialTab="conversa"
+        />
+      )}
+
+      {inboxNumero && (
+        <WhatsappInboxChat
+          numero={inboxNumero}
+          open={true}
+          onOpenChange={(o) => { if (!o) setInboxNumero(null); }}
+          onCreateLead={handleCriarLeadWhatsapp}
         />
       )}
     </div>

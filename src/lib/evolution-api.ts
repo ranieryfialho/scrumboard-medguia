@@ -7,6 +7,7 @@ export interface EvolutionConfig {
 export interface EvolutionSendResult {
   key?: { id: string };
   error?: string;
+  numberNotFound?: boolean;
 }
 
 /** Constrói config a partir de variáveis de ambiente + nome de instância */
@@ -24,7 +25,8 @@ function base(config: EvolutionConfig) {
 
 function normalizeNumber(numero: string): string {
   const digits = numero.replace(/\D/g, '');
-  if (digits.length <= 11) return `55${digits}`;
+  // Adiciona DDI 55 apenas para números brasileiros sem código de país (10-11 dígitos)
+  if (digits.length === 10 || digits.length === 11) return `55${digits}`;
   return digits;
 }
 
@@ -33,14 +35,37 @@ export async function sendTextMessage(
   numero: string,
   texto: string
 ): Promise<EvolutionSendResult> {
-  const res = await fetch(`${base(config)}/message/sendText/${config.instance}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', apikey: config.apiKey },
-    body: JSON.stringify({ number: normalizeNumber(numero), text: texto }),
-  });
+  const normalized = normalizeNumber(numero);
 
+  const trySend = async (num: string) => {
+    return fetch(`${base(config)}/message/sendText/${config.instance}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', apikey: config.apiKey },
+      body: JSON.stringify({ number: num, text: texto }),
+    });
+  };
+
+  let res = await trySend(normalized);
+
+  // Se a validação falhou com "exists: false", tenta enviar direto pelo JID
+  // (bypassa a verificação de existência da Evolution API)
   if (!res.ok) {
     const body = await res.text();
+    try {
+      const parsed = JSON.parse(body);
+      const msg = parsed?.response?.message?.[0];
+      if (msg?.exists === false) {
+        // Tenta direto como JID (skip da validação)
+        const jid = normalized.includes('@') ? normalized : `${normalized}@s.whatsapp.net`;
+        res = await trySend(jid);
+        if (res.ok) return await res.json();
+
+        return {
+          error: `Número ${msg.number} não encontrado no WhatsApp.`,
+          numberNotFound: true,
+        };
+      }
+    } catch {}
     return { error: `Evolution API erro ${res.status}: ${body}` };
   }
 

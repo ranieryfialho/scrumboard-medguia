@@ -107,8 +107,8 @@ export function WhatsappUnreadProvider({ children }: { children: React.ReactNode
   }, [fetchUnread]);
 
   const markRead = useCallback((numero: string) => {
-    const normalized = normalizePhone(numero);
-    try { localStorage.setItem(`wpp_read_${normalized}`, new Date().toISOString()); }
+    const raw = numero.replace(/\D/g, '');
+    try { localStorage.setItem(`wpp_read_${raw}`, new Date().toISOString()); }
     catch {}
     setConversas(prev => [...prev]);
   }, []);
@@ -118,7 +118,6 @@ export function WhatsappUnreadProvider({ children }: { children: React.ReactNode
     try {
       conversas.forEach(c => {
         localStorage.setItem(`wpp_read_${c.numero}`, now);
-        localStorage.setItem(`wpp_read_${normalizePhone(c.numero)}`, now);
       });
     } catch {}
     setConversas(prev => [...prev]);
