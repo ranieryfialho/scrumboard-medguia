@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
         ativo: true,
         empresa_id: finalEmpresaId,
       },
-      redirectTo: 'https://scrumboard-medguia.vercel.app/nova-senha'
+      redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/nova-senha`
     });
 
     if (error) throw error;
