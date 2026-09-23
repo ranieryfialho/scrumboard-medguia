@@ -1,0 +1,153 @@
+{
+  "runId": "scrumboard-medguia-fase0-fundacao-ci-staging-mue4w9ly",
+  "feature": "fase0-fundacao-ci-staging",
+  "agent": "claude",
+  "modo": "sequencial",
+  "paralelizar": null,
+  "modeloForcado": null,
+  "esforcoForcado": null,
+  "geradoEm": "2026-09-23 13:23",
+  "branchTrabalho": "spec/fase0-fundacao-ci-staging",
+  "baseDir": ".spec/features/fase0-fundacao-ci-staging",
+  "specDir": ".spec",
+  "repoName": "scrumboard-medguia",
+  "logsDir": "../onp-worktrees/scrumboard-medguia-fase0-fundacao-ci-staging-logs",
+  "ondas": [],
+  "faixas": [],
+  "sequenciais": [
+    {
+      "id": "T-001",
+      "titulo": "Migrar runner de testes para Vitest",
+      "modelo": "claude-sonnet-5",
+      "esforco": "low",
+      "arquivos": [
+        "package.json",
+        "vitest.config.ts",
+        "onpspec.config.json"
+      ],
+      "refs": [
+        "US-001"
+      ]
+    },
+    {
+      "id": "T-002",
+      "titulo": "CI com gates (lint → typecheck → test → build)",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        ".github/workflows/ci.yml",
+        "package.json"
+      ],
+      "refs": [
+        "US-001",
+        "AC-001",
+        "AC-002"
+      ]
+    },
+    {
+      "id": "T-003",
+      "titulo": "Workflow de release: build e publish no GHCR por tag SHA",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        ".github/workflows/release.yml"
+      ],
+      "refs": [
+        "US-002",
+        "AC-003"
+      ]
+    },
+    {
+      "id": "T-004",
+      "titulo": "Deploy por pull de imagem + rollback por tag",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        ".github/workflows/deploy.yml",
+        "docker-compose.yml"
+      ],
+      "refs": [
+        "US-002",
+        "AC-004"
+      ]
+    },
+    {
+      "id": "T-005",
+      "titulo": "Databases crm_prod/crm_staging e roles crm_app/crm_migrator",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "infra/postgres/init/01-databases-and-roles.sql",
+        "docker-compose.yml"
+      ],
+      "refs": [
+        "US-003",
+        "US-004",
+        "AC-005",
+        "AC-007",
+        "AC-008",
+        "AC-009"
+      ]
+    },
+    {
+      "id": "T-006",
+      "titulo": "Topologia de staging atrás do proxy, sem porta nova exposta",
+      "modelo": "claude-sonnet-5",
+      "esforco": "low",
+      "arquivos": [
+        "docker-compose.yml",
+        "docker-compose.staging.yml"
+      ],
+      "refs": [
+        "US-003",
+        "AC-006"
+      ]
+    },
+    {
+      "id": "T-007",
+      "titulo": "Backup diário (pg_dump + checksum + rclone) com alerta",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "infra/backup/backup-crm.sh",
+        "infra/backup/crontab"
+      ],
+      "refs": [
+        "US-005",
+        "AC-010",
+        "AC-011"
+      ]
+    },
+    {
+      "id": "T-008",
+      "titulo": "Restore ensaiado, documentado e com script de verificação",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "infra/backup/restore-crm.sh",
+        "docs/runbooks/restore-backup-crm.md"
+      ],
+      "refs": [
+        "US-005",
+        "AC-012"
+      ]
+    },
+    {
+      "id": "T-009",
+      "titulo": "Endpoint `/api/health`",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/app/api/health/route.ts",
+        "src/lib/env.ts"
+      ],
+      "refs": [
+        "US-006",
+        "AC-013",
+        "AC-014"
+      ]
+    }
+  ],
+  "concluidas": [],
+  "avisos": []
+}
