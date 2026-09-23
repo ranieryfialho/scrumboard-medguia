@@ -122,7 +122,7 @@ export default function RelatoriosComerciaisPage() {
     const fechados = leadsRaw.filter(l => {
       if (!['Logins Ativados', 'Fechamento de Clientes', 'Aguardando Ativação'].includes(l.situacao)) return false;
       
-      const dataF = (l as any).data_fechamento || l.created_time;
+      const dataF = l.data_fechamento || l.created_time;
       if (!dataF) return false;
       
       if (tipoFiltro === "mes") {
@@ -134,10 +134,10 @@ export default function RelatoriosComerciaisPage() {
       }
     });
 
-    const agrupar = (campo: string) => {
+    const agrupar = (campo: keyof Lead) => {
       const counts: Record<string, number> = {};
       fechados.forEach(l => {
-        const val = (l as any)[campo] ? String((l as any)[campo]).trim() : 'Não Informado';
+        const val = l[campo] ? String(l[campo]).trim() : 'Não Informado';
         counts[val] = (counts[val] || 0) + 1;
       });
       return Object.entries(counts)
@@ -158,11 +158,11 @@ export default function RelatoriosComerciaisPage() {
     switch (filtroKpi) {
       case 'concorrente':
         return dadosComerciais.fechadosLista.filter(
-          (l: any) => l.plataforma_anterior === dadosComerciais.plataformasAnteriores[0]?.name
+          (l) => l.plataforma_anterior === dadosComerciais.plataformasAnteriores[0]?.name
         );
       case 'plano':
         return dadosComerciais.fechadosLista.filter(
-          (l: any) => l.plano_escolhido === dadosComerciais.planosEscolhidos[0]?.name
+          (l) => l.plano_escolhido === dadosComerciais.planosEscolhidos[0]?.name
         );
       default:
         return dadosComerciais.fechadosLista;
@@ -171,7 +171,7 @@ export default function RelatoriosComerciaisPage() {
 
   const sortedLeads = useMemo(() => {
     if (!sortColumn) return filteredLeads;
-    return [...filteredLeads].sort((a: any, b: any) => {
+    return [...filteredLeads].sort((a, b) => {
       let valA = '';
       let valB = '';
       if (sortColumn === 'nome')                    { valA = (a.nome || '').toLowerCase();                    valB = (b.nome || '').toLowerCase(); }
@@ -291,7 +291,7 @@ export default function RelatoriosComerciaisPage() {
         <Card className="flex flex-col items-center justify-center p-12 text-center text-muted-foreground">
           <Trophy className="w-12 h-12 mb-4 opacity-20" />
           <p className="text-lg font-medium">Nenhum fechamento registrado neste período.</p>
-          <p className="text-sm">Arraste os cards para as colunas "Logins Ativados" ou "Fechamento de Clientes" no Kanban para gerar dados.</p>
+          <p className="text-sm">Arraste os cards para as colunas &quot;Logins Ativados&quot; ou &quot;Fechamento de Clientes&quot; no Kanban para gerar dados.</p>
         </Card>
       ) : (
         <>
@@ -452,9 +452,9 @@ export default function RelatoriosComerciaisPage() {
                         </TableCell>
 
                         <TableCell className="hidden md:table-cell py-4">
-                          {(lead as any).o_que_mais_interessou ? (
-                            <p className="text-sm text-slate-700 line-clamp-2 leading-relaxed" title={(lead as any).o_que_mais_interessou}>
-                              {(lead as any).o_que_mais_interessou}
+                          {lead.o_que_mais_interessou ? (
+                            <p className="text-sm text-slate-700 line-clamp-2 leading-relaxed" title={lead.o_que_mais_interessou}>
+                              {lead.o_que_mais_interessou}
                             </p>
                           ) : (
                             <span className="inline-flex items-center text-[11px] font-medium text-slate-400 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-200 border-dashed">
@@ -464,9 +464,9 @@ export default function RelatoriosComerciaisPage() {
                         </TableCell>
 
                         <TableCell className="hidden lg:table-cell py-4">
-                          {(lead as any).o_que_deixou_a_desejar ? (
-                            <p className="text-sm text-slate-700 line-clamp-2 leading-relaxed" title={(lead as any).o_que_deixou_a_desejar}>
-                              {(lead as any).o_que_deixou_a_desejar}
+                          {lead.o_que_deixou_a_desejar ? (
+                            <p className="text-sm text-slate-700 line-clamp-2 leading-relaxed" title={lead.o_que_deixou_a_desejar}>
+                              {lead.o_que_deixou_a_desejar}
                             </p>
                           ) : (
                             <span className="inline-flex items-center text-[11px] font-medium text-slate-400 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-200 border-dashed">
@@ -476,9 +476,9 @@ export default function RelatoriosComerciaisPage() {
                         </TableCell>
 
                         <TableCell className="py-4 px-4">
-                          {(lead as any).plano_escolhido && (lead as any).plano_escolhido !== 'Não Informado' ? (
+                          {lead.plano_escolhido && lead.plano_escolhido !== 'Não Informado' ? (
                             <span className="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-700 border border-emerald-200">
-                              {(lead as any).plano_escolhido}
+                              {lead.plano_escolhido}
                             </span>
                           ) : (
                             <span className="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-semibold uppercase tracking-wider bg-slate-100 text-slate-500 border border-slate-200">

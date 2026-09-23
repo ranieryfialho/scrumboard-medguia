@@ -34,8 +34,9 @@ export async function GET(request: NextRequest) {
   // Fluxo completo: cria instância → configura webhook → retorna QR
   try {
     await createInstance(config);
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 502 });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    return NextResponse.json({ error: message }, { status: 502 });
   }
 
   // Configura webhook automaticamente

@@ -34,12 +34,13 @@ export async function getEmpresaConfig(empresaId: string): Promise<EvolutionConf
 
 /** Extrai empresa_id do usuário autenticado, respeitando super_admin + cookie de tenant. */
 export function extractEmpresaId(
-  userMetadata: Record<string, any>,
+  userMetadata: Record<string, unknown>,
   cookieHeader: string
 ): string | null {
   if (userMetadata?.is_super_admin) {
     const match = cookieHeader.match(/selected_empresa_id=([^;]+)/);
     if (match) return match[1];
   }
-  return userMetadata?.empresa_id || null;
+  const empresaId = userMetadata?.empresa_id;
+  return typeof empresaId === 'string' ? empresaId : null;
 }

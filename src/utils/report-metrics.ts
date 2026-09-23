@@ -97,8 +97,7 @@ export function generateReportMetrics(
     const dateCriacaoObj = getMonthYear(lead.created_time || '');
     const dateCriacaoStr = getComparableDate(lead.created_time || '');
 
-    const leadEstendido = lead as Record<string, any>;
-    const dataFechamento = leadEstendido.data_fechamento || lead.created_time || '';
+    const dataFechamento = lead.data_fechamento || lead.created_time || '';
     const dateFechamentoObj = getMonthYear(dataFechamento);
     const dateFechamentoStr = getComparableDate(dataFechamento);
 
@@ -123,8 +122,7 @@ export function generateReportMetrics(
 
   const leadsConvertidos = leadsFiltrados.filter(lead => {
     if (!STATUS_CONVERSAO.includes(lead.situacao)) return false;
-    const leadEstendido = lead as Record<string, any>;
-    const dataFechamento = leadEstendido.data_fechamento || lead.created_time || '';
+    const dataFechamento = lead.data_fechamento || lead.created_time || '';
     
     if (tipoFiltro === "mes") {
       const dateFechamentoObj = getMonthYear(dataFechamento);

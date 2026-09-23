@@ -1,17 +1,6 @@
 services:
   scrumboard-medguia:
-    build:
-      context: .
-      args:
-        - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
-        - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
-        - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}
-        - EVOLUTION_API_URL=${EVOLUTION_API_URL}
-        - EVOLUTION_API_KEY=${EVOLUTION_API_KEY}
-        - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
-        - GOOGLE_CLIENT_EMAIL=${GOOGLE_CLIENT_EMAIL}
-        - GOOGLE_PRIVATE_KEY=${GOOGLE_PRIVATE_KEY}
-        - GOOGLE_SHEET_ID=${GOOGLE_SHEET_ID}
+    image: ghcr.io/ranieryfialho/scrumboard-medguia:${IMAGE_TAG:-latest}
     container_name: scrumboard-medguia
     ports:
       - "3001:3000"
@@ -22,6 +11,31 @@ services:
       resources:
         limits:
           memory: 2000m
+    networks:
+      - wp-network
+
+  # Postgres compartilhado com outros projetos na VPS (RFC-001 §1.3). Sem
+  # `ports:` — acesso só pela rede Docker interna `wp-network` ou por túnel
+  # SSH para administração (AC-009). Databases/roles do CRM são provisionados
+  # por infra/postgres/init/01-databases-and-roles.sql (AC-005, AC-007, AC-008).
+  pg-master:
+    image: postgres:15-alpine
+    container_name: pg-master
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_ADMIN_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD}
+      CRM_APP_PASSWORD: ${CRM_APP_PASSWORD}
+      CRM_MIGRATOR_PASSWORD: ${CRM_MIGRATOR_PASSWORD}
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 1000m
+    volumes:
+      - /root/postgres/data:/var/lib/postgresql/data
+      - ./infra/postgres/init:/docker-entrypoint-initdb.d:ro
     networks:
       - wp-network
 

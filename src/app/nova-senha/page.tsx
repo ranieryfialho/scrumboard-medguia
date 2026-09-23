@@ -3,10 +3,12 @@
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import type { EmailOtpType } from "@supabase/supabase-js";
 import { Lock, Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { getErrorMessage } from "@/lib/utils";
 
 function NovaSenhaForm() {
   const [senha, setSenha] = useState("");
@@ -32,7 +34,7 @@ function NovaSenhaForm() {
 
       const { error } = await supabase.auth.verifyOtp({
         token_hash,
-        type: type as any,
+        type: type as EmailOtpType,
       });
 
       if (error) {
@@ -65,8 +67,8 @@ function NovaSenhaForm() {
 
       setSucesso(true);
       setTimeout(() => router.push("/"), 2000);
-    } catch (error: any) {
-      setErro(error.message || "Erro ao salvar a senha. Tente novamente.");
+    } catch (error) {
+      setErro(getErrorMessage(error) || "Erro ao salvar a senha. Tente novamente.");
     } finally {
       setLoading(false);
     }

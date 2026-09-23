@@ -10,6 +10,17 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { createClient } from "@/lib/supabase/client";
+import { getErrorMessage } from "@/lib/utils";
+
+interface Usuario {
+  id: string;
+  nome: string;
+  email: string;
+  perfil: string;
+  modulos: string[];
+  ativo: boolean;
+  criado_em: string;
+}
 
 const MODULOS_SISTEMA = [
   { id: 'dashboard', label: 'Dashboard' },
@@ -29,7 +40,7 @@ const PERFIS_PRESET: Record<string, string[]> = {
 };
 
 export function UsuariosTab() {
-  const [usuarios, setUsuarios] = useState<any[]>([]);
+  const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -94,7 +105,7 @@ export function UsuariosTab() {
     setIsModalOpen(true);
   };
 
-  const abrirModalEdicao = (user: any) => {
+  const abrirModalEdicao = (user: Usuario) => {
     setEditandoId(user.id);
     setNome(user.nome);
     setEmail(user.email);
@@ -145,8 +156,8 @@ export function UsuariosTab() {
 
       setIsModalOpen(false);
       verificarAcessoEBuscarUsuarios();
-    } catch (error: any) {
-      alert(`Erro: ${error.message}`);
+    } catch (error) {
+      alert(`Erro: ${getErrorMessage(error)}`);
     } finally {
       setIsSubmitting(false);
     }

@@ -7,16 +7,18 @@ import { NovaCampanhaModal } from "./nova-campanha-modal"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { CampanhaDetalhes } from "./campanha-detalhes"
+import { Campanha } from "@/types/campanha"
+import { Lead } from "@/types/lead"
 
 interface CampanhasTabProps {
-  leads: any[];
-  campanhas: any[];
+  leads: Lead[];
+  campanhas: Campanha[];
   onRefresh: () => void;
   onDelete?: (id: string) => Promise<void>;
 }
 
 export function CampanhasTab({ leads, campanhas, onRefresh, onDelete }: CampanhasTabProps) {
-  const [campanhaSelecionada, setCampanhaSelecionada] = useState<any | null>(null);
+  const [campanhaSelecionada, setCampanhaSelecionada] = useState<Campanha | null>(null);
   
   const handleExcluir = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir esta campanha? Os dados de envio também serão apagados.")) {

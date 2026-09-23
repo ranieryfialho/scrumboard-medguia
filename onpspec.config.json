@@ -1,0 +1,19 @@
+{
+  "testCommand": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
+  "reporter": "vitest-json",
+  "reporterOutputFile": ".spec/verification/raw.json",
+  "testGlobs": [
+    "test/**",
+    "tests/**",
+    "src/**/*.test.*",
+    "src/**/*.spec.*",
+    "__tests__/**"
+  ],
+  "srcGlobs": [
+    "infra/**",
+    "src/app/api/health/**",
+    "src/lib/env.ts",
+    ".github/workflows/**",
+    "docker-compose*.yml"
+  ]
+}

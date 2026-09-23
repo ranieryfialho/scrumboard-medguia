@@ -12,6 +12,7 @@
 
 # testing
 /coverage
+.spec/verification/raw.json
 
 # next.js
 /.next/

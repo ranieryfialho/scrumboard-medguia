@@ -12,13 +12,21 @@ import { ptBR } from "date-fns/locale";
 import { addMonths, subMonths, format } from "date-fns";
 import { cn } from "@/lib/utils";
 
+interface Kpis {
+  total: number;
+  novos: number;
+  fechados: number;
+  emAndamento: number;
+  taxaConversao: string;
+}
+
 interface DashboardTabProps {
-  kpis: any;
+  kpis: Kpis;
   date: Date | undefined;
   setDate: (d: Date | undefined) => void;
   calendarMonth: Date;
   setCalendarMonth: (d: Date) => void;
-  dadosGrafico: any[];
+  dadosGrafico: { name: string; total: number }[];
   setFiltroEspecialidade: (v: string) => void;
   setFiltroSituacao: (v: string[]) => void;
   setAbaAtiva: (v: string) => void;

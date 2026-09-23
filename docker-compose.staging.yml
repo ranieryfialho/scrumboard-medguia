@@ -1,0 +1,24 @@
+services:
+  # Staging do CRM — mesma VPS, mesma rede `wp-network` e mesmo
+  # nginx-proxy-manager de produção. Sem `ports:` publicado: o proxy alcança
+  # o container pela rede Docker interna e só quem tem o link/credencial do
+  # host virtual configurado no proxy acessa (AC-006). Conecta só em
+  # `crm_staging` (AC-005), nunca em `crm_prod`.
+  crm-app-staging:
+    image: ghcr.io/ranieryfialho/scrumboard-medguia:${IMAGE_TAG:-latest}
+    container_name: crm-app-staging
+    env_file:
+      - .env.staging
+    environment:
+      DATABASE_URL: postgres://crm_app:${CRM_APP_PASSWORD}@pg-master:5432/crm_staging
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 1000m
+    networks:
+      - wp-network
+
+networks:
+  wp-network:
+    external: true

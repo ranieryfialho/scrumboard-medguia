@@ -144,7 +144,7 @@ export default function RelatoriosPage() {
       case 'conversoes':   return metrics.listaConversoes;
       case 'recuperacao':  return metrics.listaRecuperacao;
       case 'desqualificados': return metrics.listaDesqualificados;
-      case 'melhorCanal':  return metrics.listaLeads.filter((l: any) => l.origem === melhorCanalNome);
+      case 'melhorCanal':  return metrics.listaLeads.filter((l) => l.origem === melhorCanalNome);
       default:             return metrics.listaLeads;
     }
   }, [filtroKpi, metrics, melhorCanalNome]);
@@ -515,7 +515,7 @@ export default function RelatoriosPage() {
                 </p>
                 {metrics.geral.desqPorOrigem.length > 1 && (
                   <div className="mt-2 space-y-0.5">
-                    {metrics.geral.desqPorOrigem.slice(0, 3).map((d: any) => (
+                    {metrics.geral.desqPorOrigem.slice(0, 3).map((d) => (
                       <div key={d.origem} className="flex justify-between text-[11px] text-slate-500">
                         <span className="truncate max-w-[120px]">{d.origem}</span>
                         <span className="font-semibold text-red-600">{d.total}</span>
@@ -599,7 +599,7 @@ export default function RelatoriosPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {metrics.porAnuncio.map((anuncio: any, idx: number) => (
+                  {metrics.porAnuncio.map((anuncio, idx: number) => (
                     <TableRow key={idx}>
                       <TableCell className="font-medium">{anuncio.fonte}</TableCell>
                       <TableCell>{anuncio.nome}</TableCell>
@@ -696,7 +696,7 @@ export default function RelatoriosPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                      {sortedLeads.map((lead: any, idx: number) => {
+                      {sortedLeads.map((lead, idx: number) => {
                         const anuncio = resolverNomeAnuncio(lead);
                         
                         // Lógica de Cores da Badge de Status

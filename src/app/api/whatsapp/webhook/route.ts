@@ -30,7 +30,24 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  let payload: any;
+  interface EvolutionMessageItem {
+    key?: { fromMe?: boolean; remoteJid?: string; remoteJidAlt?: string; id?: string };
+    message?: EvolutionMessageContent;
+    conversation?: string;
+    extendedTextMessage?: { text?: string };
+    imageMessage?: { caption?: string };
+    videoMessage?: { caption?: string };
+    documentMessage?: { caption?: string };
+    audioMessage?: unknown;
+    stickerMessage?: unknown;
+  }
+  type EvolutionMessageContent = Omit<EvolutionMessageItem, 'key' | 'message'>;
+  interface EvolutionWebhookPayload {
+    event?: string;
+    data?: EvolutionMessageItem | EvolutionMessageItem[];
+  }
+
+  let payload: EvolutionWebhookPayload;
   try {
     payload = await request.json();
   } catch {
@@ -45,7 +62,7 @@ export async function POST(request: NextRequest) {
   }
 
   // Suporte a payload único e array (Evolution API pode enviar ambos)
-  const dataItems: any[] = Array.isArray(payload?.data)
+  const dataItems: EvolutionMessageItem[] = Array.isArray(payload?.data)
     ? payload.data
     : payload?.data
       ? [payload.data]
