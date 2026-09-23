@@ -2,8 +2,7 @@
 
 > feature: fase1-schema-drizzle
 
-## T-010 — Instalar e configurar Drizzle ORM + drizzle-kit [pendente]
-
+## T-010 — Instalar e configurar Drizzle ORM + drizzle-kit [concluida]
 - Refs: US-007
 - Arquivos: package.json, package-lock.json, drizzle.config.ts, src/db/client.ts
 - Notas: adiciona `drizzle-orm`, `drizzle-kit`, `pg`, `@types/pg`; scripts npm
