@@ -12,4 +12,11 @@ export default defineConfig({
   dbCredentials: {
     url: databaseUrl,
   },
+  // `crm_migrator` só tem CREATE no schema `public` (não no database — ver
+  // infra/postgres/init/01-databases-and-roles.sql), então o journal de
+  // controle do drizzle-kit fica em `public` em vez do schema `drizzle`
+  // default, que exigiria criar um schema novo.
+  migrations: {
+    schema: 'public',
+  },
 });

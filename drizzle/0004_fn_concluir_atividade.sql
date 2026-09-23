@@ -24,7 +24,7 @@
 -- tocada aqui: a geração do próximo bloco de cadência (se o bloco atual se
 -- completou) é responsabilidade do worker/domínio, fora desta função — o
 -- que se prova aqui é apenas que nenhuma linha fica parcialmente escrita.
-CREATE FUNCTION concluir_atividade(
+CREATE OR REPLACE FUNCTION concluir_atividade(
   p_atividade_id uuid,
   p_resultado cadencia_resultado,
   p_ator_id uuid,

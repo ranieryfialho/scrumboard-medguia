@@ -46,6 +46,12 @@ WHERE NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'crm_app')\gexec
 \c crm_prod
 REVOKE ALL ON DATABASE crm_prod FROM PUBLIC;
 GRANT CONNECT ON DATABASE crm_prod TO crm_app, crm_migrator;
+-- CREATE no banco (não só no schema public) é exigido pelo próprio
+-- `drizzle-kit migrate` (fase1-schema-drizzle, achado do AC-017): mesmo
+-- com o journal apontado para o schema public, o comando roda
+-- `CREATE SCHEMA IF NOT EXISTS "public"`, que o Postgres sempre valida
+-- como um CREATE de banco — não basta ter CREATE só no schema.
+GRANT CREATE ON DATABASE crm_prod TO crm_migrator;
 
 REVOKE ALL ON SCHEMA public FROM PUBLIC;
 GRANT USAGE ON SCHEMA public TO crm_app;
@@ -61,6 +67,7 @@ ALTER DEFAULT PRIVILEGES FOR ROLE crm_migrator IN SCHEMA public
 \c crm_staging
 REVOKE ALL ON DATABASE crm_staging FROM PUBLIC;
 GRANT CONNECT ON DATABASE crm_staging TO crm_app, crm_migrator;
+GRANT CREATE ON DATABASE crm_staging TO crm_migrator;
 
 REVOKE ALL ON SCHEMA public FROM PUBLIC;
 GRANT USAGE ON SCHEMA public TO crm_app;

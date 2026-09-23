@@ -16,7 +16,7 @@
 -- também fecha a janela de corrida: uma segunda chamada concorrente para a
 -- mesma oportunidade espera esta transação terminar antes de reler a
 -- version, em vez de correr em paralelo sobre o mesmo valor antigo.
-CREATE FUNCTION mover_oportunidade(
+CREATE OR REPLACE FUNCTION mover_oportunidade(
   p_oportunidade_id uuid,
   p_version integer,
   p_etapa_destino_id integer,
