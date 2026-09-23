@@ -1,5 +1,5 @@
 // Testes de spec da feature fase0-fundacao-ci-staging — gerados por onp-spec scaffold
-import { test, describe, before, after } from 'node:test';
+import { test, describe, beforeAll, afterAll } from 'vitest';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -8,7 +8,8 @@ import net from 'node:net';
 import crypto from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import module from 'node:module';
-import yaml from 'js-yaml';
+import { load as yamlLoad } from 'js-yaml';
+const yaml = { load: yamlLoad };
 
 // `src/app/api/health/route.ts` importa `../../../lib/env` sem extensão —
 // convenção do resto do código (compilada normalmente pelo bundler do
@@ -299,7 +300,7 @@ describe('T-005 — integração com Postgres real (crm_prod/crm_staging, crm_ap
     ]);
   }
 
-  before(async () => {
+  beforeAll(async () => {
     const dockerCheck = runDocker(['ps']);
     assert.equal(
       dockerCheck.status,
@@ -333,7 +334,7 @@ describe('T-005 — integração com Postgres real (crm_prod/crm_staging, crm_ap
     assert.ok(ready, 'Postgres de teste não terminou de inicializar (databases/roles) a tempo');
   });
 
-  after(() => {
+  afterAll(() => {
     runDocker(['rm', '-f', containerName]);
   });
 
@@ -528,7 +529,7 @@ describe('T-007 — integração do backup-crm.sh contra um Postgres real', () =
     );
   }
 
-  before(async () => {
+  beforeAll(async () => {
     const dockerCheck = runDocker(['ps']);
     assert.equal(
       dockerCheck.status,
@@ -572,7 +573,7 @@ describe('T-007 — integração do backup-crm.sh contra um Postgres real', () =
     writeFakeRclone(fakeBinDir);
   });
 
-  after(() => {
+  afterAll(() => {
     runDocker(['rm', '-f', containerName]);
     if (tmpRoot) fs.rmSync(tmpRoot, { recursive: true, force: true });
   });
@@ -710,7 +711,7 @@ describe('T-008 — integração do restore-crm.sh contra um Postgres real', () 
     ]);
   }
 
-  before(async () => {
+  beforeAll(async () => {
     const dockerCheck = runDocker(['ps']);
     assert.equal(
       dockerCheck.status,
@@ -746,7 +747,7 @@ describe('T-008 — integração do restore-crm.sh contra um Postgres real', () 
     tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'crm-restore-test-'));
   });
 
-  after(() => {
+  afterAll(() => {
     runDocker(['rm', '-f', containerName]);
     if (tmpRoot) fs.rmSync(tmpRoot, { recursive: true, force: true });
   });
