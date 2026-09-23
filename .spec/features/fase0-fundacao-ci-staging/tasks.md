@@ -67,8 +67,7 @@
   `crm-app` de staging fica na mesma rede `wp-network`, roteado pelo
   nginx-proxy-manager existente — sem novo `ports:` publicado.
 
-## T-007 — Backup diário (pg_dump + checksum + rclone) com alerta [pendente]
-
+## T-007 — Backup diário (pg_dump + checksum + rclone) com alerta [concluida]
 - Refs: US-005, AC-010, AC-011
 - Arquivos: infra/backup/backup-crm.sh, infra/backup/crontab
 - Esforço: alto
