@@ -1,11 +1,11 @@
 {
   "feature": "fase1-schema-drizzle",
-  "timestamp": "2026-09-23T18:48:19.517Z",
-  "gitRev": "c2ba114",
+  "timestamp": "2026-09-23T19:04:33.884Z",
+  "gitRev": "583b19a",
   "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
   "exitCode": 1,
-  "testsParsed": 52,
+  "testsParsed": 97,
   "results": {
     "AC-015": {
       "status": "pass",
@@ -18,13 +18,23 @@
       "method": "vitest-json"
     },
     "AC-017": {
-      "status": "skip",
-      "testName": "T-021: schema completo e tenant obrigatório AC-017: reaplicar os seeds não falha nem duplica etapa, transição ou motivo @spec:AC-017 AC-017: reaplicar os seeds não falha nem duplica etapa, transição ou motivo @spec:AC-017",
+      "status": "pass",
+      "testName": "T-021: schema completo aplicado num Postgres limpo AC-017: migrations reaplicadas no mesmo banco não falham nem duplicam nada drizzle-kit migrate roda de novo sem falhar nem duplicar tabela @spec:AC-017 drizzle-kit migrate roda de novo sem falhar nem duplicar tabela @spec:AC-017",
       "method": "vitest-json"
     },
     "AC-018": {
       "status": "pass",
       "testName": "T-011: tabelas de identidade/tenant (@spec:AC-018) empresas existe com nome, slug e ativo obrigatórios empresas existe com nome, slug e ativo obrigatórios",
+      "method": "vitest-json"
+    },
+    "AC-019": {
+      "status": "pass",
+      "testName": "T-022: RLS garante isolamento por tenant AC-019: RLS ativo em toda tabela com empresa_id todas as tabelas de negócio têm rowsecurity habilitado @spec:AC-019 todas as tabelas de negócio têm rowsecurity habilitado @spec:AC-019",
+      "method": "vitest-json"
+    },
+    "AC-020": {
+      "status": "fail",
+      "testName": "T-022: RLS garante isolamento por tenant AC-020: sem app.empresa_id definido, crm_app não lê nem escreve linha nenhuma INSERT em \"empresa_configuracoes\" como crm_app sem SET LOCAL é rejeitado e não grava nenhuma linha @spec:AC-020 INSERT em \"empresa_configuracoes\" como crm_app sem SET LOCAL é rejeitado e não grava nenhuma linha @spec:AC-020",
       "method": "vitest-json"
     }
   },
