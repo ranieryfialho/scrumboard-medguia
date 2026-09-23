@@ -34,8 +34,7 @@
   `pull_request` e em `push` na `main`. Nenhum step de gate com
   `continue-on-error`.
 
-## T-003 — Workflow de release: build e publish no GHCR por tag SHA [pendente]
-
+## T-003 — Workflow de release: build e publish no GHCR por tag SHA [concluida]
 - Refs: US-002, AC-003
 - Arquivos: .github/workflows/release.yml
 - Esforço: medio
