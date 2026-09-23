@@ -833,10 +833,10 @@
       "codigo": "GLOB_SEM_ARQUIVOS",
       "feature": "—",
       "ref": "P-002",
-      "ocorrencias": 16,
+      "ocorrencias": 17,
       "primeiraVez": "2026-09-23T13:20:39.103Z",
-      "ultimaVez": "2026-09-23T19:05:22.378Z",
-      "gitRev": "ca57727"
+      "ultimaVez": "2026-09-23T19:05:28.500Z",
+      "gitRev": "fd90b2a"
     },
     "REF_MALFORMADA::fase0-fundacao-ci-staging::T-001": {
       "codigo": "REF_MALFORMADA",
@@ -1112,10 +1112,10 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "fase0-fundacao-ci-staging",
       "ref": "—",
-      "ocorrencias": 8,
+      "ocorrencias": 9,
       "primeiraVez": "2026-09-23T14:14:35.866Z",
-      "ultimaVez": "2026-09-23T19:05:22.377Z",
-      "gitRev": "ca57727"
+      "ultimaVez": "2026-09-23T19:05:28.498Z",
+      "gitRev": "fd90b2a"
     },
     "VERIFY_PULADO::fase0-fundacao-ci-staging::AC-005": {
       "codigo": "VERIFY_PULADO",
@@ -1391,55 +1391,55 @@
       "codigo": "AC_SEM_TESTE",
       "feature": "fase1-schema-drizzle",
       "ref": "AC-026",
-      "ocorrencias": 7,
+      "ocorrencias": 8,
       "primeiraVez": "2026-09-23T17:57:02.286Z",
-      "ultimaVez": "2026-09-23T19:05:22.378Z",
-      "gitRev": "ca57727"
+      "ultimaVez": "2026-09-23T19:05:28.500Z",
+      "gitRev": "fd90b2a"
     },
     "AC_SEM_TESTE::fase1-schema-drizzle::AC-027": {
       "codigo": "AC_SEM_TESTE",
       "feature": "fase1-schema-drizzle",
       "ref": "AC-027",
-      "ocorrencias": 7,
+      "ocorrencias": 8,
       "primeiraVez": "2026-09-23T17:57:02.286Z",
-      "ultimaVez": "2026-09-23T19:05:22.378Z",
-      "gitRev": "ca57727"
+      "ultimaVez": "2026-09-23T19:05:28.500Z",
+      "gitRev": "fd90b2a"
     },
     "AC_SEM_TESTE::fase1-schema-drizzle::AC-028": {
       "codigo": "AC_SEM_TESTE",
       "feature": "fase1-schema-drizzle",
       "ref": "AC-028",
-      "ocorrencias": 7,
+      "ocorrencias": 8,
       "primeiraVez": "2026-09-23T17:57:02.286Z",
-      "ultimaVez": "2026-09-23T19:05:22.378Z",
-      "gitRev": "ca57727"
+      "ultimaVez": "2026-09-23T19:05:28.500Z",
+      "gitRev": "fd90b2a"
     },
     "AC_SEM_TESTE::fase1-schema-drizzle::AC-029": {
       "codigo": "AC_SEM_TESTE",
       "feature": "fase1-schema-drizzle",
       "ref": "AC-029",
-      "ocorrencias": 7,
+      "ocorrencias": 8,
       "primeiraVez": "2026-09-23T17:57:02.286Z",
-      "ultimaVez": "2026-09-23T19:05:22.378Z",
-      "gitRev": "ca57727"
+      "ultimaVez": "2026-09-23T19:05:28.500Z",
+      "gitRev": "fd90b2a"
     },
     "AC_SEM_TESTE::fase1-schema-drizzle::AC-030": {
       "codigo": "AC_SEM_TESTE",
       "feature": "fase1-schema-drizzle",
       "ref": "AC-030",
-      "ocorrencias": 7,
+      "ocorrencias": 8,
       "primeiraVez": "2026-09-23T17:57:02.286Z",
-      "ultimaVez": "2026-09-23T19:05:22.378Z",
-      "gitRev": "ca57727"
+      "ultimaVez": "2026-09-23T19:05:28.500Z",
+      "gitRev": "fd90b2a"
     },
     "AC_SEM_TESTE::fase1-schema-drizzle::AC-031": {
       "codigo": "AC_SEM_TESTE",
       "feature": "fase1-schema-drizzle",
       "ref": "AC-031",
-      "ocorrencias": 7,
+      "ocorrencias": 8,
       "primeiraVez": "2026-09-23T17:57:02.286Z",
-      "ultimaVez": "2026-09-23T19:05:22.378Z",
-      "gitRev": "ca57727"
+      "ultimaVez": "2026-09-23T19:05:28.500Z",
+      "gitRev": "fd90b2a"
     },
     "AC_SEM_TESTE::fase1-schema-drizzle::AC-032": {
       "codigo": "AC_SEM_TESTE",
@@ -1580,19 +1580,19 @@
       "codigo": "ARQUIVO_INEXISTENTE",
       "feature": "fase1-schema-drizzle",
       "ref": "T-024",
-      "ocorrencias": 6,
+      "ocorrencias": 7,
       "primeiraVez": "2026-09-23T17:57:47.673Z",
-      "ultimaVez": "2026-09-23T19:05:22.378Z",
-      "gitRev": "ca57727"
+      "ultimaVez": "2026-09-23T19:05:28.499Z",
+      "gitRev": "fd90b2a"
     },
     "ARQUIVO_INEXISTENTE::fase1-schema-drizzle::T-025": {
       "codigo": "ARQUIVO_INEXISTENTE",
       "feature": "fase1-schema-drizzle",
       "ref": "T-025",
-      "ocorrencias": 6,
+      "ocorrencias": 7,
       "primeiraVez": "2026-09-23T17:57:47.673Z",
-      "ultimaVez": "2026-09-23T19:05:22.378Z",
-      "gitRev": "ca57727"
+      "ultimaVez": "2026-09-23T19:05:28.499Z",
+      "gitRev": "fd90b2a"
     },
     "TASK_CONCLUIDA_SEM_PROVA::fase1-schema-drizzle::T-014": {
       "codigo": "TASK_CONCLUIDA_SEM_PROVA",
@@ -1607,46 +1607,46 @@
       "codigo": "TASK_CONCLUIDA_SEM_PROVA",
       "feature": "fase1-schema-drizzle",
       "ref": "T-015",
-      "ocorrencias": 8,
+      "ocorrencias": 10,
       "primeiraVez": "2026-09-23T18:32:36.482Z",
-      "ultimaVez": "2026-09-23T19:05:22.378Z",
-      "gitRev": "ca57727"
+      "ultimaVez": "2026-09-23T19:05:28.499Z",
+      "gitRev": "fd90b2a"
     },
     "TASK_CONCLUIDA_SEM_PROVA::fase1-schema-drizzle::T-016": {
       "codigo": "TASK_CONCLUIDA_SEM_PROVA",
       "feature": "fase1-schema-drizzle",
       "ref": "T-016",
-      "ocorrencias": 27,
+      "ocorrencias": 33,
       "primeiraVez": "2026-09-23T18:32:36.482Z",
-      "ultimaVez": "2026-09-23T19:05:22.378Z",
-      "gitRev": "ca57727"
+      "ultimaVez": "2026-09-23T19:05:28.499Z",
+      "gitRev": "fd90b2a"
     },
     "TASK_CONCLUIDA_SEM_PROVA::fase1-schema-drizzle::T-017": {
       "codigo": "TASK_CONCLUIDA_SEM_PROVA",
       "feature": "fase1-schema-drizzle",
       "ref": "T-017",
-      "ocorrencias": 10,
+      "ocorrencias": 12,
       "primeiraVez": "2026-09-23T18:32:36.482Z",
-      "ultimaVez": "2026-09-23T19:05:22.378Z",
-      "gitRev": "ca57727"
+      "ultimaVez": "2026-09-23T19:05:28.499Z",
+      "gitRev": "fd90b2a"
     },
     "TASK_CONCLUIDA_SEM_PROVA::fase1-schema-drizzle::T-018": {
       "codigo": "TASK_CONCLUIDA_SEM_PROVA",
       "feature": "fase1-schema-drizzle",
       "ref": "T-018",
-      "ocorrencias": 5,
+      "ocorrencias": 6,
       "primeiraVez": "2026-09-23T18:32:36.482Z",
-      "ultimaVez": "2026-09-23T19:05:22.378Z",
-      "gitRev": "ca57727"
+      "ultimaVez": "2026-09-23T19:05:28.499Z",
+      "gitRev": "fd90b2a"
     },
     "TASK_CONCLUIDA_SEM_PROVA::fase1-schema-drizzle::T-019": {
       "codigo": "TASK_CONCLUIDA_SEM_PROVA",
       "feature": "fase1-schema-drizzle",
       "ref": "T-019",
-      "ocorrencias": 15,
+      "ocorrencias": 18,
       "primeiraVez": "2026-09-23T18:32:36.482Z",
-      "ultimaVez": "2026-09-23T19:05:22.378Z",
-      "gitRev": "ca57727"
+      "ultimaVez": "2026-09-23T19:05:28.499Z",
+      "gitRev": "fd90b2a"
     },
     "VERIFY_PULADO::fase1-schema-drizzle::AC-017": {
       "codigo": "VERIFY_PULADO",
@@ -1688,64 +1688,64 @@
       "codigo": "AC_SEM_PROVA",
       "feature": "fase1-schema-drizzle",
       "ref": "AC-020",
-      "ocorrencias": 2,
+      "ocorrencias": 3,
       "primeiraVez": "2026-09-23T19:04:35.231Z",
-      "ultimaVez": "2026-09-23T19:05:22.378Z",
-      "gitRev": "ca57727"
+      "ultimaVez": "2026-09-23T19:05:28.500Z",
+      "gitRev": "fd90b2a"
     },
     "AC_SEM_PROVA::fase1-schema-drizzle::AC-021": {
       "codigo": "AC_SEM_PROVA",
       "feature": "fase1-schema-drizzle",
       "ref": "AC-021",
-      "ocorrencias": 2,
+      "ocorrencias": 3,
       "primeiraVez": "2026-09-23T19:04:35.231Z",
-      "ultimaVez": "2026-09-23T19:05:22.378Z",
-      "gitRev": "ca57727"
+      "ultimaVez": "2026-09-23T19:05:28.500Z",
+      "gitRev": "fd90b2a"
     },
     "AC_SEM_PROVA::fase1-schema-drizzle::AC-022": {
       "codigo": "AC_SEM_PROVA",
       "feature": "fase1-schema-drizzle",
       "ref": "AC-022",
-      "ocorrencias": 1,
+      "ocorrencias": 2,
       "primeiraVez": "2026-09-23T19:04:35.231Z",
-      "ultimaVez": "2026-09-23T19:04:35.231Z",
-      "gitRev": "583b19a"
+      "ultimaVez": "2026-09-23T19:05:28.500Z",
+      "gitRev": "fd90b2a"
     },
     "AC_SEM_PROVA::fase1-schema-drizzle::AC-023": {
       "codigo": "AC_SEM_PROVA",
       "feature": "fase1-schema-drizzle",
       "ref": "AC-023",
-      "ocorrencias": 1,
+      "ocorrencias": 2,
       "primeiraVez": "2026-09-23T19:04:35.231Z",
-      "ultimaVez": "2026-09-23T19:04:35.231Z",
-      "gitRev": "583b19a"
+      "ultimaVez": "2026-09-23T19:05:28.500Z",
+      "gitRev": "fd90b2a"
     },
     "AC_SEM_PROVA::fase1-schema-drizzle::AC-024": {
       "codigo": "AC_SEM_PROVA",
       "feature": "fase1-schema-drizzle",
       "ref": "AC-024",
-      "ocorrencias": 1,
+      "ocorrencias": 2,
       "primeiraVez": "2026-09-23T19:04:35.231Z",
-      "ultimaVez": "2026-09-23T19:04:35.231Z",
-      "gitRev": "583b19a"
+      "ultimaVez": "2026-09-23T19:05:28.500Z",
+      "gitRev": "fd90b2a"
     },
     "AC_SEM_PROVA::fase1-schema-drizzle::AC-025": {
       "codigo": "AC_SEM_PROVA",
       "feature": "fase1-schema-drizzle",
       "ref": "AC-025",
-      "ocorrencias": 2,
+      "ocorrencias": 3,
       "primeiraVez": "2026-09-23T19:04:35.231Z",
-      "ultimaVez": "2026-09-23T19:05:22.378Z",
-      "gitRev": "ca57727"
+      "ultimaVez": "2026-09-23T19:05:28.500Z",
+      "gitRev": "fd90b2a"
     },
     "AC_SEM_PROVA::fase1-schema-drizzle::AC-032": {
       "codigo": "AC_SEM_PROVA",
       "feature": "fase1-schema-drizzle",
       "ref": "AC-032",
-      "ocorrencias": 2,
+      "ocorrencias": 3,
       "primeiraVez": "2026-09-23T19:04:35.231Z",
-      "ultimaVez": "2026-09-23T19:05:22.378Z",
-      "gitRev": "ca57727"
+      "ultimaVez": "2026-09-23T19:05:28.500Z",
+      "gitRev": "fd90b2a"
     },
     "VERIFY_FALHOU::fase1-schema-drizzle::AC-021": {
       "codigo": "VERIFY_FALHOU",
@@ -1773,6 +1773,87 @@
       "primeiraVez": "2026-09-23T19:05:21.312Z",
       "ultimaVez": "2026-09-23T19:05:21.312Z",
       "gitRev": "ca57727"
+    },
+    "VERIFY_PULADO::fase1-schema-drizzle::AC-019": {
+      "codigo": "VERIFY_PULADO",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-019",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-23T19:05:27.855Z",
+      "ultimaVez": "2026-09-23T19:05:27.855Z",
+      "gitRev": "fd90b2a"
+    },
+    "VERIFY_PULADO::fase1-schema-drizzle::AC-020": {
+      "codigo": "VERIFY_PULADO",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-020",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-23T19:05:27.855Z",
+      "ultimaVez": "2026-09-23T19:05:27.855Z",
+      "gitRev": "fd90b2a"
+    },
+    "VERIFY_PULADO::fase1-schema-drizzle::AC-021": {
+      "codigo": "VERIFY_PULADO",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-021",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-23T19:05:27.855Z",
+      "ultimaVez": "2026-09-23T19:05:27.855Z",
+      "gitRev": "fd90b2a"
+    },
+    "VERIFY_PULADO::fase1-schema-drizzle::AC-022": {
+      "codigo": "VERIFY_PULADO",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-022",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-23T19:05:27.855Z",
+      "ultimaVez": "2026-09-23T19:05:27.855Z",
+      "gitRev": "fd90b2a"
+    },
+    "VERIFY_PULADO::fase1-schema-drizzle::AC-023": {
+      "codigo": "VERIFY_PULADO",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-023",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-23T19:05:27.855Z",
+      "ultimaVez": "2026-09-23T19:05:27.855Z",
+      "gitRev": "fd90b2a"
+    },
+    "VERIFY_PULADO::fase1-schema-drizzle::AC-024": {
+      "codigo": "VERIFY_PULADO",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-024",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-23T19:05:27.855Z",
+      "ultimaVez": "2026-09-23T19:05:27.855Z",
+      "gitRev": "fd90b2a"
+    },
+    "VERIFY_PULADO::fase1-schema-drizzle::AC-025": {
+      "codigo": "VERIFY_PULADO",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-025",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-23T19:05:27.855Z",
+      "ultimaVez": "2026-09-23T19:05:27.855Z",
+      "gitRev": "fd90b2a"
+    },
+    "VERIFY_PULADO::fase1-schema-drizzle::AC-032": {
+      "codigo": "VERIFY_PULADO",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-032",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-23T19:05:27.855Z",
+      "ultimaVez": "2026-09-23T19:05:27.855Z",
+      "gitRev": "fd90b2a"
+    },
+    "AC_SEM_PROVA::fase1-schema-drizzle::AC-019": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-019",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-23T19:05:28.499Z",
+      "ultimaVez": "2026-09-23T19:05:28.499Z",
+      "gitRev": "fd90b2a"
     }
   }
 }
