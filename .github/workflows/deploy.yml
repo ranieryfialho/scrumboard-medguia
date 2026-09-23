@@ -1,12 +1,12 @@
 name: Deploy Scrumboard para VPS
 
 on:
-  push:
-    branches: [ "main", "master" ]
+  workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: prod
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4
