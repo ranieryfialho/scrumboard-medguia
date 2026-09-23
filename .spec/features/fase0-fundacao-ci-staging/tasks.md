@@ -50,8 +50,7 @@
   só executa `docker compose pull && up -d`, nunca `build`. Depende de T-003
   existir (precisa haver imagem publicada para puxar).
 
-## T-005 — Databases crm_prod/crm_staging e roles crm_app/crm_migrator [pendente]
-
+## T-005 — Databases crm_prod/crm_staging e roles crm_app/crm_migrator [concluida]
 - Refs: US-003, US-004, AC-005, AC-007, AC-008, AC-009
 - Arquivos: infra/postgres/init/01-databases-and-roles.sql, docker-compose.yml
 - Esforço: alto
