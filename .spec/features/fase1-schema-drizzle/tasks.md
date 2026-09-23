@@ -40,8 +40,7 @@
 - Arquivos: drizzle/0000_schema_inicial.sql, drizzle/meta/_journal.json, drizzle/meta/0000_snapshot.json
 - Depende de: T-011, T-012, T-013.
 
-## T-015 — Migration de RLS (ativar + policy por tenant em toda tabela de negócio) [pendente]
-
+## T-015 — Migration de RLS (ativar + policy por tenant em toda tabela de negócio) [concluida]
 - Refs: AC-019, AC-020
 - Arquivos: drizzle/0001_rls.sql
 - Notas: `ENABLE ROW LEVEL SECURITY` + policy `USING (empresa_id =
