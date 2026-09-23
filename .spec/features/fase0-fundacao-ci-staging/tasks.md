@@ -59,8 +59,7 @@
   contra um Postgres real (service container no CI) aplicando este script e
   tentando as operações vedadas com a role `crm_app`.
 
-## T-006 — Topologia de staging atrás do proxy, sem porta nova exposta [pendente]
-
+## T-006 — Topologia de staging atrás do proxy, sem porta nova exposta [concluida]
 - Refs: US-003, AC-006
 - Arquivos: docker-compose.yml, docker-compose.staging.yml
 - Esforço: baixo
