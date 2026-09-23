@@ -62,8 +62,7 @@
 - Arquivos: drizzle/0003_fn_mover_oportunidade.sql
 - Depende de: T-014, T-016.
 
-## T-018 — Função SQL `concluir_atividade` (resultado do toque + efeitos em cadeia) [pendente]
-
+## T-018 — Função SQL `concluir_atividade` (resultado do toque + efeitos em cadeia) [concluida]
 - Refs: AC-028
 - Arquivos: drizzle/0004_fn_concluir_atividade.sql
 - Depende de: T-014, T-016.
