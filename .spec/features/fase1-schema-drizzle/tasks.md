@@ -35,8 +35,7 @@
   `empresa_id` obrigatório.
 - Depende de: T-010.
 
-## T-014 — Gerar e versionar a migration inicial do schema [pendente]
-
+## T-014 — Gerar e versionar a migration inicial do schema [concluida]
 - Refs: AC-015, AC-017
 - Arquivos: drizzle/0000_schema_inicial.sql, drizzle/meta/_journal.json, drizzle/meta/0000_snapshot.json
 - Depende de: T-011, T-012, T-013.
