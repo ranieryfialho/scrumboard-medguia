@@ -83,8 +83,7 @@
   para os testes.
 - Depende de: T-010.
 
-## T-021 — Testes de schema e tenant obrigatório [pendente]
-
+## T-021 — Testes de schema e tenant obrigatório [concluida]
 - Refs: AC-015, AC-016, AC-017, AC-018
 - Arquivos: test/db/schema.test.ts
 - Depende de: T-014, T-020.

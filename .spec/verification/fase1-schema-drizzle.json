@@ -1,11 +1,11 @@
 {
   "feature": "fase1-schema-drizzle",
-  "timestamp": "2026-09-23T18:43:20.138Z",
-  "gitRev": "b9a777a",
+  "timestamp": "2026-09-23T18:48:19.517Z",
+  "gitRev": "c2ba114",
   "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
-  "exitCode": 0,
-  "testsParsed": 48,
+  "exitCode": 1,
+  "testsParsed": 52,
   "results": {
     "AC-015": {
       "status": "pass",
@@ -15,6 +15,11 @@
     "AC-016": {
       "status": "pass",
       "testName": "T-011: tabelas do adaptador Drizzle do Better Auth (@spec:AC-016) contas existe, vinculada a usuarios contas existe, vinculada a usuarios",
+      "method": "vitest-json"
+    },
+    "AC-017": {
+      "status": "skip",
+      "testName": "T-021: schema completo e tenant obrigatório AC-017: reaplicar os seeds não falha nem duplica etapa, transição ou motivo @spec:AC-017 AC-017: reaplicar os seeds não falha nem duplica etapa, transição ou motivo @spec:AC-017",
       "method": "vitest-json"
     },
     "AC-018": {
