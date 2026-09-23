@@ -57,8 +57,7 @@
   só `crm_migrator` tem `CREATE`/`ALTER`/`DROP` no schema `public`.
 - Depende de: T-014.
 
-## T-017 — Função SQL `mover_oportunidade` (transição + evento + lock otimista) [pendente]
-
+## T-017 — Função SQL `mover_oportunidade` (transição + evento + lock otimista) [concluida]
 - Refs: AC-026, AC-027
 - Arquivos: drizzle/0003_fn_mover_oportunidade.sql
 - Depende de: T-014, T-016.
