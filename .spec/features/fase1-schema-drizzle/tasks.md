@@ -18,8 +18,7 @@
   sessão, token de verificação) — sem configurar a biblioteca em si.
 - Depende de: T-010.
 
-## T-012 — Modelar tabelas do pipeline [pendente]
-
+## T-012 — Modelar tabelas do pipeline [concluida]
 - Refs: US-007, AC-015, AC-018
 - Arquivos: src/db/schema/pipeline.ts
 - Notas: `pipeline_etapas`, `pipeline_transicoes`, `motivos_perda`, `leads`,
