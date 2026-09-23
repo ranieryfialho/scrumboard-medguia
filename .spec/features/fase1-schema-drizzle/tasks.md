@@ -27,8 +27,7 @@
   TDD-001 §4.3.
 - Depende de: T-010.
 
-## T-013 — Modelar tabelas de operação e as reescritas do modelo legado [pendente]
-
+## T-013 — Modelar tabelas de operação e as reescritas do modelo legado [concluida]
 - Refs: US-007, AC-015, AC-018
 - Arquivos: src/db/schema/operacao.ts, src/db/schema/legado.ts
 - Notas: `cron_execucoes`, `importacoes`, `migracao_registros`;
