@@ -1,17 +1,6 @@
 services:
   scrumboard-medguia:
-    build:
-      context: .
-      args:
-        - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
-        - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
-        - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}
-        - EVOLUTION_API_URL=${EVOLUTION_API_URL}
-        - EVOLUTION_API_KEY=${EVOLUTION_API_KEY}
-        - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
-        - GOOGLE_CLIENT_EMAIL=${GOOGLE_CLIENT_EMAIL}
-        - GOOGLE_PRIVATE_KEY=${GOOGLE_PRIVATE_KEY}
-        - GOOGLE_SHEET_ID=${GOOGLE_SHEET_ID}
+    image: ghcr.io/ranieryfialho/scrumboard-medguia:${IMAGE_TAG:-latest}
     container_name: scrumboard-medguia
     ports:
       - "3001:3000"

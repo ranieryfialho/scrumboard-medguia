@@ -12,6 +12,14 @@ const releaseWorkflowPath = path.join(process.cwd(), '.github', 'workflows', 're
 const releaseWorkflowRaw = fs.readFileSync(releaseWorkflowPath, 'utf8');
 const releaseWorkflow = yaml.load(releaseWorkflowRaw);
 
+const deployWorkflowPath = path.join(process.cwd(), '.github', 'workflows', 'deploy.yml');
+const deployWorkflowRaw = fs.readFileSync(deployWorkflowPath, 'utf8');
+const deployWorkflow = yaml.load(deployWorkflowRaw);
+
+const dockerComposePath = path.join(process.cwd(), 'docker-compose.yml');
+const dockerComposeRaw = fs.readFileSync(dockerComposePath, 'utf8');
+const dockerCompose = yaml.load(dockerComposeRaw);
+
 function findGateSteps(job) {
   const gateOrder = ['lint', 'typecheck', 'test', 'build'];
   const matched = [];
@@ -153,9 +161,50 @@ test('AC-003: Build sai da VPS e a imagem é publicada com tag rastreável @spec
 // US-002 — Deploy por imagem versionada, com rollback em minutos
 test('AC-004: Rollback é trocar a tag, sem rebuild @spec:AC-004', () => {
   // Dado: uma imagem `sha-B` já rodando em produção e uma imagem anterior
+  //       `sha-A` publicada no GHCR
   // Quando: o operador aciona o rollback apontando para `sha-A`
-  // Então: a VPS sobe o container com `sha-A` sem executar nenhum build,
-  assert.fail('critério de aceite AC-004 ainda não provado — implemente este teste');
+  // Então: a VPS sobe o container com `sha-A` sem executar nenhum build
+  assert.ok(deployWorkflow.on, 'workflow de deploy deve ter gatilhos definidos');
+  assert.ok(
+    Object.prototype.hasOwnProperty.call(deployWorkflow.on, 'workflow_dispatch'),
+    'deploy deve ser disparado manualmente (workflow_dispatch)'
+  );
+
+  const inputs = deployWorkflow.on.workflow_dispatch?.inputs;
+  assert.ok(inputs, 'workflow_dispatch deve receber inputs (a tag da imagem)');
+  const tagInputKey = Object.keys(inputs).find((key) => /tag/i.test(key));
+  assert.ok(tagInputKey, 'deve existir um input para informar a tag da imagem (usado no rollback)');
+  assert.ok(inputs[tagInputKey].required, 'o input da tag deve ser obrigatório');
+
+  assert.doesNotMatch(
+    deployWorkflowRaw,
+    /docker\s+build|docker\s+compose\s+build|compose(\.\w+)?\s+build/i,
+    'o deploy não pode executar nenhum build — só pull'
+  );
+  assert.match(
+    deployWorkflowRaw,
+    /docker compose pull/,
+    'o deploy deve puxar a imagem já publicada (docker compose pull)'
+  );
+
+  const services = dockerCompose.services ?? {};
+  const serviceNames = Object.keys(services);
+  assert.ok(serviceNames.length >= 1, 'docker-compose.yml deve definir ao menos um serviço');
+  for (const name of serviceNames) {
+    assert.ok(
+      !Object.prototype.hasOwnProperty.call(services[name], 'build'),
+      `serviço "${name}" não pode ter build: — deploy é só pull de imagem publicada`
+    );
+    assert.ok(
+      typeof services[name].image === 'string' && services[name].image.includes('ghcr.io'),
+      `serviço "${name}" deve referenciar uma imagem publicada no GHCR`
+    );
+    assert.match(
+      services[name].image,
+      /\$\{?IMAGE_TAG/,
+      `a tag da imagem do serviço "${name}" deve ser parametrizável (variável IMAGE_TAG) para permitir rollback trocando só a tag`
+    );
+  }
 });
 
 // US-003 — Ambiente de staging isolado para ensaiar mudanças
