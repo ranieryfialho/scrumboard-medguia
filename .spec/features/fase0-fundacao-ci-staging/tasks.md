@@ -26,8 +26,7 @@
   `onpspec.config.json` para `vitest run` com reporter compatível
   (json/tap). Pré-requisito das demais tarefas que escrevem teste.
 
-## T-002 — CI com gates (lint → typecheck → test → build) [pendente]
-
+## T-002 — CI com gates (lint → typecheck → test → build) [concluida]
 - Refs: US-001, AC-001, AC-002
 - Arquivos: .github/workflows/ci.yml, package.json
 - Esforço: medio
