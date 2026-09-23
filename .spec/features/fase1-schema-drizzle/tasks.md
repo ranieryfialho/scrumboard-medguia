@@ -9,8 +9,7 @@
   `db:generate`/`db:migrate`; `DATABASE_URL` validada em `src/lib/env.ts`
   (já existe desde a fase0 — só adiciona a variável, não recria o arquivo).
 
-## T-011 — Modelar tabelas de identidade/tenant e Better Auth [pendente]
-
+## T-011 — Modelar tabelas de identidade/tenant e Better Auth [concluida]
 - Refs: US-007, AC-015, AC-016, AC-018
 - Arquivos: src/db/schema/identidade.ts, src/db/schema/auth.ts, src/db/schema/index.ts
 - Notas: `empresas`, `empresa_configuracoes`, `usuarios` (UUID como chave,
