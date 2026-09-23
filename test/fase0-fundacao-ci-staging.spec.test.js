@@ -386,7 +386,45 @@ test('AC-006: Staging é publicamente acessível só por quem tem o link/credenc
   // Dado: o container `crm-app` de staging subindo na VPS
   // Quando: inspecionada a topologia de rede (nginx-proxy-manager, `docker-compose`)
   // Então: staging fica atrás do mesmo proxy com TLS, sem porta adicional
-  assert.fail('critério de aceite AC-006 ainda não provado — implemente este teste');
+  //        exposta na internet além da já usada por produção
+  const stagingComposePath = path.join(process.cwd(), 'docker-compose.staging.yml');
+  assert.ok(fs.existsSync(stagingComposePath), 'deve existir docker-compose.staging.yml');
+  const stagingCompose = yaml.load(fs.readFileSync(stagingComposePath, 'utf8'));
+
+  const services = stagingCompose.services ?? {};
+  const serviceNames = Object.keys(services);
+  assert.ok(serviceNames.length >= 1, 'docker-compose.staging.yml deve definir o serviço crm-app de staging');
+
+  const stagingAppName = serviceNames.find((name) => /crm.*app/i.test(name)) ?? serviceNames[0];
+  const stagingApp = services[stagingAppName];
+
+  assert.ok(
+    !Object.prototype.hasOwnProperty.call(stagingApp, 'ports'),
+    'o serviço de staging não pode publicar nenhuma porta nova — deve ficar só atrás do proxy'
+  );
+
+  assert.ok(
+    Array.isArray(stagingApp.networks)
+      ? stagingApp.networks.includes('wp-network')
+      : stagingApp.networks?.['wp-network'] !== undefined,
+    'o serviço de staging deve estar na mesma rede wp-network do nginx-proxy-manager/produção'
+  );
+
+  // Staging conecta só em crm_staging (AC-005), nunca em crm_prod.
+  const envString = JSON.stringify(stagingApp.environment ?? '') + JSON.stringify(stagingApp.env_file ?? '');
+  assert.doesNotMatch(
+    envString,
+    /crm_prod/,
+    'o serviço de staging não pode referenciar crm_prod — só crm_staging'
+  );
+
+  // Nenhum outro arquivo docker-compose* do projeto pode publicar porta nova
+  // para o serviço de staging (garante "sem porta adicional exposta na
+  // internet além da já usada por produção").
+  assert.ok(
+    !Object.prototype.hasOwnProperty.call(dockerCompose.services?.[stagingAppName] ?? {}, 'ports'),
+    'docker-compose.yml de produção não pode publicar porta nova para o serviço de staging'
+  );
 });
 
 // US-005 — Backup diário automático com restore testado
