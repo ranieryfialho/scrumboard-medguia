@@ -41,8 +41,7 @@
 - Notas: Build acontece só no GitHub Actions, nunca na VPS. Tag da imagem é
   o SHA do commit (nunca `latest`).
 
-## T-004 — Deploy por pull de imagem + rollback por tag [pendente]
-
+## T-004 — Deploy por pull de imagem + rollback por tag [concluida]
 - Refs: US-002, AC-004
 - Arquivos: .github/workflows/deploy.yml, docker-compose.yml
 - Esforço: medio
