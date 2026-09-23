@@ -1,0 +1,11 @@
+{
+  "feature": "fase0-fundacao-ci-staging",
+  "timestamp": "2026-09-23T13:59:01.565Z",
+  "gitRev": "8a5f1f1",
+  "command": "node --test",
+  "reporter": "tap",
+  "exitCode": 0,
+  "testsParsed": 0,
+  "results": {},
+  "principles": {}
+}

@@ -84,8 +84,7 @@
   backup). Teste de integração gera um dump de um Postgres descartável,
   restaura em outro e confere que os dados batem.
 
-## T-009 — Endpoint `/api/health` [pendente]
-
+## T-009 — Endpoint `/api/health` [concluida]
 - Refs: US-006, AC-013, AC-014
 - Arquivos: src/app/api/health/route.ts, src/lib/env.ts
 - Esforço: medio
