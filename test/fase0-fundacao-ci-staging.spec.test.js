@@ -1,8 +1,10 @@
 // Testes de spec da feature fase0-fundacao-ci-staging — gerados por onp-spec scaffold
-import { test } from 'node:test';
+import { test, describe, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
+import crypto from 'node:crypto';
+import { spawnSync } from 'node:child_process';
 import yaml from 'js-yaml';
 
 const ciWorkflowPath = path.join(process.cwd(), '.github', 'workflows', 'ci.yml');
@@ -188,8 +190,14 @@ test('AC-004: Rollback é trocar a tag, sem rebuild @spec:AC-004', () => {
   );
 
   const services = dockerCompose.services ?? {};
-  const serviceNames = Object.keys(services);
-  assert.ok(serviceNames.length >= 1, 'docker-compose.yml deve definir ao menos um serviço');
+  // Só os serviços de app construídos por esta feature (release.yml) seguem
+  // a regra "imagem publicada no GHCR com tag parametrizável". Serviços de
+  // infra que usam imagem oficial de terceiro (ex.: pg-master, adicionado em
+  // T-005) ficam fora dessa checagem — eles nunca são buildados por este
+  // repositório nem fazem parte do rollback por tag do AC-004.
+  const infraServiceNames = new Set(['pg-master']);
+  const serviceNames = Object.keys(services).filter((name) => !infraServiceNames.has(name));
+  assert.ok(serviceNames.length >= 1, 'docker-compose.yml deve definir ao menos um serviço de app');
   for (const name of serviceNames) {
     assert.ok(
       !Object.prototype.hasOwnProperty.call(services[name], 'build'),
@@ -207,12 +215,170 @@ test('AC-004: Rollback é trocar a tag, sem rebuild @spec:AC-004', () => {
   }
 });
 
-// US-003 — Ambiente de staging isolado para ensaiar mudanças
-test('AC-005: Staging usa um database Postgres separado de produção @spec:AC-005', () => {
-  // Dado: o `pg-master` já existente na VPS (compartilhado com outros
-  // Quando: os databases do CRM são criados
-  // Então: existem `crm_prod` e `crm_staging` como databases distintos, e a
-  assert.fail('critério de aceite AC-005 ainda não provado — implemente este teste');
+// US-004 — Banco isolado por roles, sem superusuário compartilhado, sem porta exposta
+test('AC-009: Postgres não publica porta na internet @spec:AC-009', () => {
+  // Dado: o `docker-compose.yml` de produção/staging
+  // Quando: inspecionado o serviço `pg-master`
+  // Então: não há `ports:` publicando 5432 em `0.0.0.0` — o acesso é só pela
+  //        rede Docker interna (`wp-network`) ou por túnel SSH
+  const services = dockerCompose.services ?? {};
+  const pgMaster = services['pg-master'];
+  assert.ok(pgMaster, 'docker-compose.yml deve definir o serviço pg-master');
+  assert.ok(
+    !Object.prototype.hasOwnProperty.call(pgMaster, 'ports'),
+    'o serviço pg-master não pode publicar nenhuma porta — acesso só pela rede Docker interna'
+  );
+  assert.ok(
+    Array.isArray(pgMaster.networks) ? pgMaster.networks.includes('wp-network') : pgMaster.networks?.['wp-network'] !== undefined,
+    'pg-master deve estar na rede Docker interna wp-network'
+  );
+});
+
+// Suíte de integração das AC-005/007/008 — roda um Postgres real (container
+// descartável, postgres:15-alpine) aplicando infra/postgres/init/01-databases-and-roles.sql
+// e tentando de fato as operações permitidas/vedadas com cada role. Um
+// Postgres real (não uma leitura estática do .sql) é a única prova que
+// AC-007/AC-008 pedem: "o Postgres rejeita a operação".
+describe('T-005 — integração com Postgres real (crm_prod/crm_staging, crm_app/crm_migrator)', () => {
+  const containerName = `crm-pg-fase0-test-${crypto.randomBytes(4).toString('hex')}`;
+  const initDir = path
+    .join(process.cwd(), 'infra', 'postgres', 'init')
+    .split(path.sep)
+    .join('/');
+  const ADMIN_PASSWORD = 'test_admin_pw';
+  const CRM_APP_PASSWORD = 'test_crm_app_pw';
+  const CRM_MIGRATOR_PASSWORD = 'test_crm_migrator_pw';
+  const READY_TIMEOUT_MS = 90_000;
+
+  function runDocker(args) {
+    return spawnSync('docker', args, { encoding: 'utf8' });
+  }
+
+  // Conecta via socket local dentro do próprio container (auth "trust" para
+  // conexões locais no image oficial) — evita depender de psql/driver pg no
+  // host, e ainda assim exercita privilégios reais de cada role.
+  function psqlAs(role, db, sql) {
+    return runDocker([
+      'exec',
+      containerName,
+      'psql',
+      '-U', role,
+      '-d', db,
+      '-v', 'ON_ERROR_STOP=1',
+      '-t',
+      '-A',
+      '-c', sql,
+    ]);
+  }
+
+  before(async () => {
+    const dockerCheck = runDocker(['ps']);
+    assert.equal(
+      dockerCheck.status,
+      0,
+      'Docker precisa estar disponível para provar AC-005/AC-007/AC-008 contra um Postgres real'
+    );
+
+    const run = runDocker([
+      'run', '-d', '--name', containerName,
+      '-e', `POSTGRES_PASSWORD=${ADMIN_PASSWORD}`,
+      '-e', `CRM_APP_PASSWORD=${CRM_APP_PASSWORD}`,
+      '-e', `CRM_MIGRATOR_PASSWORD=${CRM_MIGRATOR_PASSWORD}`,
+      '-v', `${initDir}:/docker-entrypoint-initdb.d:ro`,
+      'postgres:15-alpine',
+    ]);
+    assert.equal(run.status, 0, `falha ao subir container de teste do Postgres: ${run.stderr}`);
+
+    const deadline = Date.now() + READY_TIMEOUT_MS;
+    let ready = false;
+    while (Date.now() < deadline) {
+      const isReady = runDocker(['exec', containerName, 'pg_isready', '-U', 'postgres']);
+      if (isReady.status === 0) {
+        const rolesExist = psqlAs('postgres', 'postgres', "SELECT count(*) FROM pg_roles WHERE rolname IN ('crm_app','crm_migrator')");
+        if (rolesExist.status === 0 && rolesExist.stdout.trim() === '2') {
+          ready = true;
+          break;
+        }
+      }
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    }
+    assert.ok(ready, 'Postgres de teste não terminou de inicializar (databases/roles) a tempo');
+  });
+
+  after(() => {
+    runDocker(['rm', '-f', containerName]);
+  });
+
+  // US-003 — Ambiente de staging isolado para ensaiar mudanças
+  test('AC-005: Staging usa um database Postgres separado de produção @spec:AC-005', () => {
+    // Dado: o `pg-master` já existente na VPS (compartilhado com outros
+    //       projetos — RFC-001 §1.3, P14)
+    // Quando: os databases do CRM são criados
+    // Então: existem `crm_prod` e `crm_staging` como databases distintos
+    const result = psqlAs('postgres', 'postgres', "SELECT datname FROM pg_database WHERE datname IN ('crm_prod', 'crm_staging') ORDER BY datname");
+    assert.equal(result.status, 0, `consulta a pg_database falhou: ${result.stderr}`);
+    const databases = result.stdout.trim().split('\n').filter(Boolean);
+    assert.deepEqual(databases, ['crm_prod', 'crm_staging'], 'devem existir crm_prod e crm_staging como databases distintos');
+  });
+
+  // US-004 — Banco isolado por roles, sem superusuário compartilhado, sem porta exposta
+  test('AC-007: `crm_app` não tem privilégio de superusuário nem DDL @spec:AC-007', () => {
+    // Dado: a role `crm_app` usada pela aplicação em runtime
+    // Quando: ela tenta executar `CREATE TABLE` ou qualquer DDL, ou ler dados
+    //         de outro database do cluster
+    // Então: o Postgres rejeita a operação (a role não tem `SUPERUSER`,
+    //        `BYPASSRLS` nem privilégio de DDL em `crm_prod`/`crm_staging`)
+    const attrs = psqlAs(
+      'postgres',
+      'postgres',
+      "SELECT rolsuper, rolbypassrls, rolcreatedb, rolcreaterole FROM pg_roles WHERE rolname = 'crm_app'"
+    );
+    assert.equal(attrs.status, 0, `consulta a pg_roles falhou: ${attrs.stderr}`);
+    assert.equal(attrs.stdout.trim(), 'f|f|f|f', 'crm_app não pode ter SUPERUSER, BYPASSRLS, CREATEDB nem CREATEROLE');
+
+    const ddlInProd = psqlAs('crm_app', 'crm_prod', 'CREATE TABLE ac007_deveria_falhar (id int)');
+    assert.notEqual(ddlInProd.status, 0, 'crm_app não pode executar CREATE TABLE em crm_prod');
+    assert.match(ddlInProd.stderr, /permission denied|permiss(a|ã)o negada/i, 'a rejeição deve ser por falta de privilégio');
+
+    const ddlInStaging = psqlAs('crm_app', 'crm_staging', 'CREATE TABLE ac007_deveria_falhar (id int)');
+    assert.notEqual(ddlInStaging.status, 0, 'crm_app não pode executar CREATE TABLE em crm_staging');
+
+    // "ler dados de outro database do cluster": um database de outro projeto
+    // que nunca concedeu nada a crm_app — sem GRANT explícito, a leitura é
+    // negada mesmo que a role consiga estabelecer a conexão.
+    const outroDbSetup = psqlAs('postgres', 'postgres', 'CREATE DATABASE outro_projeto_db');
+    assert.equal(outroDbSetup.status, 0, `falha ao preparar database de outro projeto para o teste: ${outroDbSetup.stderr}`);
+    const outroTabela = psqlAs('postgres', 'outro_projeto_db', 'CREATE TABLE dados_sensiveis (segredo text); INSERT INTO dados_sensiveis VALUES (\'top-secret\')');
+    assert.equal(outroTabela.status, 0, `falha ao popular tabela de outro projeto para o teste: ${outroTabela.stderr}`);
+
+    const leituraNegada = psqlAs('crm_app', 'outro_projeto_db', 'SELECT * FROM dados_sensiveis');
+    assert.notEqual(leituraNegada.status, 0, 'crm_app não pode ler dados de um database de outro projeto no mesmo cluster');
+  });
+
+  // US-004 — Banco isolado por roles, sem superusuário compartilhado, sem porta exposta
+  test('AC-008: `crm_migrator` é a única role com DDL, usada só pelo job de migration @spec:AC-008', () => {
+    // Dado: o job efêmero de migration (`crm_migrator`)
+    // Quando: ele roda uma migration do `drizzle-kit`
+    // Então: consegue alterar o schema, e nenhuma outra credencial usada pelo
+    //        `crm-app`/`crm-worker` em runtime tem esse privilégio
+    const migrationProd = psqlAs('crm_migrator', 'crm_prod', 'CREATE TABLE ac008_migration_probe (id int); DROP TABLE ac008_migration_probe');
+    assert.equal(migrationProd.status, 0, `crm_migrator deveria conseguir aplicar DDL em crm_prod: ${migrationProd.stderr}`);
+
+    const migrationStaging = psqlAs('crm_migrator', 'crm_staging', 'CREATE TABLE ac008_migration_probe (id int); DROP TABLE ac008_migration_probe');
+    assert.equal(migrationStaging.status, 0, `crm_migrator deveria conseguir aplicar DDL em crm_staging: ${migrationStaging.stderr}`);
+
+    const privileges = psqlAs(
+      'postgres',
+      'crm_prod',
+      "SELECT has_schema_privilege('crm_app', 'public', 'CREATE'), has_schema_privilege('crm_migrator', 'public', 'CREATE')"
+    );
+    assert.equal(privileges.status, 0, `consulta de privilégios falhou: ${privileges.stderr}`);
+    assert.equal(
+      privileges.stdout.trim(),
+      'f|t',
+      'só crm_migrator pode ter CREATE no schema public — crm_app (usada por crm-app/crm-worker) não'
+    );
+  });
 });
 
 // US-003 — Ambiente de staging isolado para ensaiar mudanças
@@ -221,30 +387,6 @@ test('AC-006: Staging é publicamente acessível só por quem tem o link/credenc
   // Quando: inspecionada a topologia de rede (nginx-proxy-manager, `docker-compose`)
   // Então: staging fica atrás do mesmo proxy com TLS, sem porta adicional
   assert.fail('critério de aceite AC-006 ainda não provado — implemente este teste');
-});
-
-// US-004 — Banco isolado por roles, sem superusuário compartilhado, sem porta exposta
-test('AC-007: `crm_app` não tem privilégio de superusuário nem DDL @spec:AC-007', () => {
-  // Dado: a role `crm_app` usada pela aplicação em runtime
-  // Quando: ela tenta executar `CREATE TABLE` ou qualquer DDL, ou ler dados
-  // Então: o Postgres rejeita a operação (a role não tem `SUPERUSER`,
-  assert.fail('critério de aceite AC-007 ainda não provado — implemente este teste');
-});
-
-// US-004 — Banco isolado por roles, sem superusuário compartilhado, sem porta exposta
-test('AC-008: `crm_migrator` é a única role com DDL, usada só pelo job de migration @spec:AC-008', () => {
-  // Dado: o job efêmero de migration (`crm_migrator`)
-  // Quando: ele roda uma migration do `drizzle-kit`
-  // Então: consegue alterar o schema, e nenhuma outra credencial usada pelo
-  assert.fail('critério de aceite AC-008 ainda não provado — implemente este teste');
-});
-
-// US-004 — Banco isolado por roles, sem superusuário compartilhado, sem porta exposta
-test('AC-009: Postgres não publica porta na internet @spec:AC-009', () => {
-  // Dado: o `docker-compose.yml` de produção/staging
-  // Quando: inspecionado o serviço `pg-master`
-  // Então: não há `ports:` publicando 5432 em `0.0.0.0` — o acesso é só pela
-  assert.fail('critério de aceite AC-009 ainda não provado — implemente este teste');
 });
 
 // US-005 — Backup diário automático com restore testado
