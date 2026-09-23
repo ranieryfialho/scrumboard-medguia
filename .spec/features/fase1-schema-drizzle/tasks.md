@@ -67,8 +67,7 @@
 - Arquivos: drizzle/0004_fn_concluir_atividade.sql
 - Depende de: T-014, T-016.
 
-## T-019 — Seeds idempotentes (etapas, grafo de transições, motivos de perda) [pendente]
-
+## T-019 — Seeds idempotentes (etapas, grafo de transições, motivos de perda) [concluida]
 - Refs: AC-029, AC-030, AC-031
 - Arquivos: drizzle/0005_seeds.sql
 - Notas: `INSERT ... ON CONFLICT DO NOTHING/UPDATE` — reaplicar não duplica

@@ -1,0 +1,27 @@
+{
+  "feature": "fase1-schema-drizzle",
+  "timestamp": "2026-09-23T18:32:35.637Z",
+  "gitRev": "ce86ce3",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
+  "reporter": "vitest-json",
+  "exitCode": 0,
+  "testsParsed": 48,
+  "results": {
+    "AC-015": {
+      "status": "pass",
+      "testName": "T-013: tabelas de operação (@spec:AC-015) cron_execucoes existe com job, status e contagem obrigatórios cron_execucoes existe com job, status e contagem obrigatórios",
+      "method": "vitest-json"
+    },
+    "AC-016": {
+      "status": "pass",
+      "testName": "T-011: tabelas do adaptador Drizzle do Better Auth (@spec:AC-016) contas existe, vinculada a usuarios contas existe, vinculada a usuarios",
+      "method": "vitest-json"
+    },
+    "AC-018": {
+      "status": "pass",
+      "testName": "T-011: tabelas de identidade/tenant (@spec:AC-018) empresas existe com nome, slug e ativo obrigatórios empresas existe com nome, slug e ativo obrigatórios",
+      "method": "vitest-json"
+    }
+  },
+  "principles": {}
+}
