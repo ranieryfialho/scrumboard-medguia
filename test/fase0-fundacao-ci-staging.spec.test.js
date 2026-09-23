@@ -4,9 +4,36 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import net from 'node:net';
 import crypto from 'node:crypto';
 import { spawnSync } from 'node:child_process';
+import module from 'node:module';
 import yaml from 'js-yaml';
+
+// `src/app/api/health/route.ts` importa `../../../lib/env` sem extensão —
+// convenção do resto do código (compilada normalmente pelo bundler do
+// Next.js). O loader ESM nativo de `node --test` exige extensão explícita
+// em specifiers relativos, então registramos aqui um hook mínimo que só
+// tenta de novo com `.ts` quando a resolução padrão falha — sem alterar
+// tsconfig.json/package.json nem o código de produção.
+const tsExtensionFallbackHook = `
+export async function resolve(specifier, context, nextResolve) {
+  try {
+    return await nextResolve(specifier, context);
+  } catch (err) {
+    if (specifier.startsWith('.') && !/\\.[a-zA-Z0-9]+$/.test(specifier)) {
+      return nextResolve(specifier + '.ts', context);
+    }
+    throw err;
+  }
+}
+`;
+module.register(
+  'data:text/javascript,' + encodeURIComponent(tsExtensionFallbackHook),
+  import.meta.url
+);
+
+const { GET: healthGET } = await import('../src/app/api/health/route.ts');
 
 const ciWorkflowPath = path.join(process.cwd(), '.github', 'workflows', 'ci.yml');
 const ciWorkflow = yaml.load(fs.readFileSync(ciWorkflowPath, 'utf8'));
@@ -802,18 +829,124 @@ describe('T-008 — integração do restore-crm.sh contra um Postgres real', () 
   });
 });
 
-// US-006 — Observabilidade mínima para detectar falha silenciosa
-test('AC-013: `/api/health` reporta app, banco e idade do último backup @spec:AC-013', () => {
-  // Dado: o sistema rodando normalmente
-  // Quando: `GET /api/health` é chamado
-  // Então: a resposta é `200` com `{ status: "ok", checks: [...] }`, e cada
-  assert.fail('critério de aceite AC-013 ainda não provado — implemente este teste');
-});
+// Suíte de integração do T-009 — chama de fato o handler `GET` de
+// `src/app/api/health/route.ts`, apontando os checks para um banco real
+// (via TCP) e um arquivo `.last-success` controlado (o mesmo formato que
+// infra/backup/backup-crm.sh grava), em vez de ler o texto do código-fonte.
+describe('T-009 — integração do handler GET /api/health', () => {
+  const healthEnvKeys = [
+    'PGHOST',
+    'PGPORT',
+    'HEALTH_DB_TIMEOUT_MS',
+    'BACKUP_LAST_SUCCESS_FILE',
+    'BACKUP_MAX_AGE_HOURS',
+  ];
 
-// US-006 — Observabilidade mínima para detectar falha silenciosa
-test('AC-014: `/api/health` reporta falha quando o banco está inacessível @spec:AC-014', () => {
-  // Dado: o banco indisponível (conexão recusada/timeout)
-  // Quando: `GET /api/health` é chamado
-  // Então: a resposta indica falha no check de banco (status HTTP `503` ou
-  assert.fail('critério de aceite AC-014 ainda não provado — implemente este teste');
+  function withHealthEnv(overrides, fn) {
+    const saved = {};
+    for (const key of healthEnvKeys) saved[key] = process.env[key];
+    Object.assign(process.env, overrides);
+    return Promise.resolve()
+      .then(fn)
+      .finally(() => {
+        for (const key of healthEnvKeys) {
+          if (saved[key] === undefined) delete process.env[key];
+          else process.env[key] = saved[key];
+        }
+      });
+  }
+
+  // US-006 — Observabilidade mínima para detectar falha silenciosa
+  test('AC-013: `/api/health` reporta app, banco e idade do último backup @spec:AC-013', async () => {
+    // Dado: o sistema rodando normalmente (banco alcançável, backup recente)
+    // Quando: `GET /api/health` é chamado
+    // Então: a resposta é `200` com `{ status: "ok", checks: [...] }`, e cada
+    //        check indica o estado de: conexão com o banco, idade do último
+    //        backup bem-sucedido e horário da última execução do worker/cron
+    const server = net.createServer((socket) => socket.end());
+    await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+    const port = server.address().port;
+
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'crm-health-ok-'));
+    const lastSuccessFile = path.join(tmpDir, '.last-success');
+    fs.writeFileSync(lastSuccessFile, new Date().toISOString());
+
+    try {
+      await withHealthEnv(
+        {
+          PGHOST: '127.0.0.1',
+          PGPORT: String(port),
+          BACKUP_LAST_SUCCESS_FILE: lastSuccessFile,
+          BACKUP_MAX_AGE_HOURS: '24',
+        },
+        async () => {
+          const res = await healthGET();
+          assert.equal(res.status, 200, 'sistema saudável deve responder 200');
+
+          const body = await res.json();
+          assert.equal(body.status, 'ok');
+          assert.ok(Array.isArray(body.checks), 'deve reportar checks[]');
+
+          const database = body.checks.find((c) => c.name === 'database');
+          assert.ok(database, 'deve reportar check de conexão com o banco');
+          assert.equal(database.status, 'ok');
+
+          const backup = body.checks.find((c) => /backup/i.test(c.name));
+          assert.ok(backup, 'deve reportar check de idade do último backup');
+          assert.equal(backup.status, 'ok');
+          assert.equal(typeof backup.ageHours, 'number', 'deve reportar a idade do backup em horas');
+          assert.ok(backup.lastSuccessAt, 'deve reportar o horário do último backup bem-sucedido');
+
+          const worker = body.checks.find((c) => /worker|cron/i.test(c.name));
+          assert.ok(worker, 'deve reportar check da última execução do worker/cron');
+          assert.equal(worker.status, 'ok');
+          assert.ok(worker.lastRunAt, 'deve reportar o horário da última execução do worker/cron');
+        }
+      );
+    } finally {
+      await new Promise((resolve) => server.close(resolve));
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    }
+  });
+
+  // US-006 — Observabilidade mínima para detectar falha silenciosa
+  test('AC-014: `/api/health` reporta falha quando o banco está inacessível @spec:AC-014', async () => {
+    // Dado: o banco indisponível (conexão recusada)
+    // Quando: `GET /api/health` é chamado
+    // Então: a resposta indica falha no check de banco (status HTTP `503` e
+    //        checks[].status = "fail" explícito), nunca um 200 genérico
+    //        mascarando o problema
+    const probe = net.createServer();
+    await new Promise((resolve) => probe.listen(0, '127.0.0.1', resolve));
+    const unusedPort = probe.address().port;
+    await new Promise((resolve) => probe.close(resolve));
+
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'crm-health-fail-'));
+    const lastSuccessFile = path.join(tmpDir, '.last-success');
+    fs.writeFileSync(lastSuccessFile, new Date().toISOString());
+
+    try {
+      await withHealthEnv(
+        {
+          PGHOST: '127.0.0.1',
+          PGPORT: String(unusedPort),
+          HEALTH_DB_TIMEOUT_MS: '1000',
+          BACKUP_LAST_SUCCESS_FILE: lastSuccessFile,
+        },
+        async () => {
+          const res = await healthGET();
+          const body = await res.json();
+
+          const database = body.checks.find((c) => c.name === 'database');
+          assert.ok(database, 'resposta deve conter o check de banco');
+          assert.equal(database.status, 'fail', 'check de banco deve reportar falha explícita');
+          assert.notEqual(body.status, 'ok', 'status geral não pode ser "ok" com o banco fora');
+
+          assert.equal(res.status, 503, 'deve responder 503 quando o banco está inacessível — nunca 200 mascarando a falha');
+        }
+      );
+    } finally {
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    }
+  });
 });
