@@ -76,8 +76,7 @@
   do CRM. Alerta via Evolution API em falha; `/api/health` (T-009) consome a
   idade do último backup.
 
-## T-008 — Restore ensaiado, documentado e com script de verificação [pendente]
-
+## T-008 — Restore ensaiado, documentado e com script de verificação [concluida]
 - Refs: US-005, AC-012
 - Arquivos: infra/backup/restore-crm.sh, docs/runbooks/restore-backup-crm.md
 - Esforço: medio
