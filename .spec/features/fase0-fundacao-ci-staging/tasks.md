@@ -18,8 +18,7 @@
     (atalho: `onp-spec tarefa <feature> <T-xxx> <status>`)
 -->
 
-## T-001 — Migrar runner de testes para Vitest [pendente]
-
+## T-001 — Migrar runner de testes para Vitest [concluida]
 - Refs: US-001
 - Arquivos: package.json, vitest.config.ts, onpspec.config.json
 - Esforço: baixo
