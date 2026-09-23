@@ -2,6 +2,7 @@
 import { test, describe, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { spawnSync } from 'node:child_process';
@@ -427,20 +428,224 @@ test('AC-006: Staging é publicamente acessível só por quem tem o link/credenc
   );
 });
 
-// US-005 — Backup diário automático com restore testado
-test('AC-010: Backup diário roda e é enviado para fora da VPS @spec:AC-010', () => {
-  // Dado: o cron de backup configurado às 03h
-  // Quando: o job roda com sucesso
-  // Então: existe, no remote externo (`rclone` → `gdrive:`, pasta própria do
-  assert.fail('critério de aceite AC-010 ainda não provado — implemente este teste');
-});
+// Suíte de integração do T-007 — roda um Postgres real (container
+// descartável, postgres:15-alpine, mesmo padrão do T-005) com o database
+// crm_prod já criado pelo script de init, e executa o
+// infra/backup/backup-crm.sh de verdade contra ele. `rclone` e `curl` não
+// existem/não podem sair para a internet no ambiente de teste, então são
+// substituídos por binários falsos numa pasta na frente do PATH — a única
+// forma de provar "existe no remote" e "o alerta foi chamado" sem depender
+// de credenciais reais do Google Drive/Evolution API.
+describe('T-007 — integração do backup-crm.sh contra um Postgres real', () => {
+  const backupScriptPath = path
+    .join(process.cwd(), 'infra', 'backup', 'backup-crm.sh')
+    .split(path.sep)
+    .join('/');
+  const crontabPath = path.join(process.cwd(), 'infra', 'backup', 'crontab');
 
-// US-005 — Backup diário automático com restore testado
-test('AC-011: Alerta dispara se o backup falhar ou atrasar @spec:AC-011', () => {
-  // Dado: o job de backup
-  // Quando: ele falha, ou quando `/api/health` verifica que o último backup
-  // Então: um alerta é enviado (WhatsApp via Evolution API, no padrão do
-  assert.fail('critério de aceite AC-011 ainda não provado — implemente este teste');
+  const containerName = `crm-pg-backup-test-${crypto.randomBytes(4).toString('hex')}`;
+  const initDir = path
+    .join(process.cwd(), 'infra', 'postgres', 'init')
+    .split(path.sep)
+    .join('/');
+  const ADMIN_PASSWORD = 'test_admin_pw';
+  const CRM_APP_PASSWORD = 'test_crm_app_pw';
+  const CRM_MIGRATOR_PASSWORD = 'test_crm_migrator_pw';
+  const READY_TIMEOUT_MS = 90_000;
+
+  let tmpRoot;
+  let fakeBinDir;
+
+  function runDocker(args) {
+    return spawnSync('docker', args, { encoding: 'utf8' });
+  }
+
+  function psqlAs(role, db, sql) {
+    return runDocker([
+      'exec', containerName,
+      'psql', '-U', role, '-d', db, '-v', 'ON_ERROR_STOP=1', '-t', '-A', '-c', sql,
+    ]);
+  }
+
+  // Instala um `rclone` falso que, em vez de sincronizar com o Google
+  // Drive, copia os arquivos para um diretório local — o suficiente para
+  // provar que o script *tenta* enviar o dump+checksum para o remote
+  // configurado, com o conteúdo certo.
+  function writeFakeRclone(dir) {
+    const scriptPath = path.join(dir, 'rclone');
+    fs.writeFileSync(
+      scriptPath,
+      '#!/usr/bin/env bash\n' +
+        'set -euo pipefail\n' +
+        'if [ "$1" = "copy" ]; then\n' +
+        '  mkdir -p "$3"\n' +
+        '  cp "$2" "$3/"\n' +
+        '  exit 0\n' +
+        'fi\n' +
+        'exit 1\n',
+      { mode: 0o755 }
+    );
+  }
+
+  // Instala um `curl` falso que grava cada chamada (URL + body) num log,
+  // em vez de bater na Evolution API de verdade — prova que o alerta foi
+  // disparado com o destino e a mensagem certos.
+  function writeFakeCurl(dir, logPath) {
+    const scriptPath = path.join(dir, 'curl');
+    fs.writeFileSync(
+      scriptPath,
+      '#!/usr/bin/env bash\n' +
+        `echo "CALL: $*" >> "${logPath}"\n` +
+        'exit 0\n',
+      { mode: 0o755 }
+    );
+  }
+
+  before(async () => {
+    const dockerCheck = runDocker(['ps']);
+    assert.equal(
+      dockerCheck.status,
+      0,
+      'Docker precisa estar disponível para provar AC-010/AC-011 contra um Postgres real'
+    );
+
+    const run = runDocker([
+      'run', '-d', '--name', containerName,
+      '-e', `POSTGRES_PASSWORD=${ADMIN_PASSWORD}`,
+      '-e', `CRM_APP_PASSWORD=${CRM_APP_PASSWORD}`,
+      '-e', `CRM_MIGRATOR_PASSWORD=${CRM_MIGRATOR_PASSWORD}`,
+      '-v', `${initDir}:/docker-entrypoint-initdb.d:ro`,
+      'postgres:15-alpine',
+    ]);
+    assert.equal(run.status, 0, `falha ao subir container de teste do Postgres: ${run.stderr}`);
+
+    const deadline = Date.now() + READY_TIMEOUT_MS;
+    let ready = false;
+    while (Date.now() < deadline) {
+      const isReady = runDocker(['exec', containerName, 'pg_isready', '-U', 'postgres']);
+      if (isReady.status === 0) {
+        const dbExists = psqlAs('postgres', 'postgres', "SELECT count(*) FROM pg_database WHERE datname = 'crm_prod'");
+        if (dbExists.status === 0 && dbExists.stdout.trim() === '1') {
+          ready = true;
+          break;
+        }
+      }
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    }
+    assert.ok(ready, 'Postgres de teste não terminou de inicializar (crm_prod) a tempo');
+
+    // Dado real em crm_prod: prova que o dump gerado não é um arquivo vazio
+    // nem de outro database.
+    const seed = psqlAs('postgres', 'crm_prod', 'CREATE TABLE backup_probe (id int); INSERT INTO backup_probe VALUES (42)');
+    assert.equal(seed.status, 0, `falha ao semear crm_prod para o teste: ${seed.stderr}`);
+
+    tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'crm-backup-test-'));
+    fakeBinDir = path.join(tmpRoot, 'bin');
+    fs.mkdirSync(fakeBinDir, { recursive: true });
+    writeFakeRclone(fakeBinDir);
+  });
+
+  after(() => {
+    runDocker(['rm', '-f', containerName]);
+    if (tmpRoot) fs.rmSync(tmpRoot, { recursive: true, force: true });
+  });
+
+  // US-005 — Backup diário automático com restore testado
+  test('AC-010: Backup diário roda e é enviado para fora da VPS @spec:AC-010', () => {
+    // Dado: o cron de backup configurado às 03h
+    // Quando: o job roda com sucesso
+    // Então: existe, no remote externo (`rclone` → `gdrive:`, pasta própria
+    //        do CRM), um dump datado de `crm_prod` com checksum
+    //        (`sha256sum`) gravado junto
+    assert.ok(fs.existsSync(crontabPath), 'deve existir infra/backup/crontab');
+    const crontab = fs.readFileSync(crontabPath, 'utf8');
+    assert.match(crontab, /^\s*0\s+3\s+\*\s+\*\s+\*\s+.*backup-crm\.sh/m, 'o cron deve rodar o backup-crm.sh às 03h (0 3 * * *)');
+
+    const backupDir = fs.mkdtempSync(path.join(tmpRoot, 'staging-'));
+    const remoteDir = fs.mkdtempSync(path.join(tmpRoot, 'remote-'));
+
+    const result = spawnSync('bash', [backupScriptPath], {
+      encoding: 'utf8',
+      env: {
+        ...process.env,
+        PATH: `${fakeBinDir}${path.delimiter}${process.env.PATH}`,
+        PG_CONTAINER: containerName,
+        PG_DATABASE: 'crm_prod',
+        POSTGRES_ADMIN_USER: 'postgres',
+        BACKUP_DIR: backupDir,
+        RCLONE_REMOTE: remoteDir,
+      },
+    });
+    assert.equal(result.status, 0, `backup-crm.sh deveria terminar com sucesso: ${result.stderr}`);
+
+    const remoteFiles = fs.readdirSync(remoteDir);
+    const dumpFile = remoteFiles.find((name) => /^crm_prod_.*\.dump$/.test(name));
+    const checksumFile = remoteFiles.find((name) => name.endsWith('.sha256'));
+    assert.ok(dumpFile, `deve existir no remote um dump datado de crm_prod — encontrado: ${remoteFiles.join(', ')}`);
+    assert.ok(checksumFile, 'deve existir no remote o checksum sha256 do dump');
+    assert.equal(checksumFile, `${dumpFile}.sha256`, 'o checksum deve ser gravado junto do dump correspondente');
+
+    const dumpBytes = fs.readFileSync(path.join(remoteDir, dumpFile));
+    assert.ok(dumpBytes.length > 0, 'o dump enviado ao remote não pode estar vazio');
+    const actualHash = crypto.createHash('sha256').update(dumpBytes).digest('hex');
+    const checksumContent = fs.readFileSync(path.join(remoteDir, checksumFile), 'utf8').trim();
+    assert.ok(
+      checksumContent.startsWith(actualHash),
+      `o checksum gravado deve corresponder ao sha256 real do dump (esperado ${actualHash}, achou "${checksumContent}")`
+    );
+
+    // Prova que o dump é de fato de crm_prod (contém a tabela semeada), não
+    // um arquivo qualquer com o nome certo.
+    runDocker(['cp', path.join(remoteDir, dumpFile), `${containerName}:/tmp/probe.dump`]);
+    const listing = runDocker(['exec', containerName, 'pg_restore', '--list', '/tmp/probe.dump']);
+    assert.equal(listing.status, 0, `pg_restore --list falhou no dump enviado: ${listing.stderr}`);
+    assert.match(listing.stdout, /backup_probe/, 'o dump deve conter a tabela de crm_prod, não estar vazio/corrompido');
+  });
+
+  // US-005 — Backup diário automático com restore testado
+  test('AC-011: Alerta dispara se o backup falhar @spec:AC-011', () => {
+    // Dado: o job de backup
+    // Quando: ele falha
+    // Então: um alerta é enviado (WhatsApp via Evolution API, no padrão do
+    //        script já existente na VPS)
+    // Nota: a outra metade do AC-011 ("ou quando /api/health verifica que o
+    // último backup tem mais de 24h") é responsabilidade do T-009, que ainda
+    // vai existir — a nota da própria T-007 em tasks.md diz que o
+    // /api/health "consome a idade do último backup" produzido aqui.
+    const curlLog = path.join(tmpRoot, `curl-calls-${crypto.randomBytes(4).toString('hex')}.log`);
+    const failureBinDir = fs.mkdtempSync(path.join(tmpRoot, 'bin-fail-'));
+    writeFakeCurl(failureBinDir, curlLog);
+
+    const backupDir = fs.mkdtempSync(path.join(tmpRoot, 'staging-fail-'));
+
+    const result = spawnSync('bash', [backupScriptPath], {
+      encoding: 'utf8',
+      env: {
+        ...process.env,
+        // fakeBinDir primeiro dá o rclone falso (não deveria nem ser
+        // chamado, já que o pg_dump falha antes); failureBinDir dá o curl
+        // falso que grava o alerta.
+        PATH: `${failureBinDir}${path.delimiter}${fakeBinDir}${path.delimiter}${process.env.PATH}`,
+        PG_CONTAINER: containerName,
+        PG_DATABASE: 'database_que_nao_existe',
+        POSTGRES_ADMIN_USER: 'postgres',
+        BACKUP_DIR: backupDir,
+        RCLONE_REMOTE: fs.mkdtempSync(path.join(tmpRoot, 'remote-fail-')),
+        EVOLUTION_API_URL: 'http://evolution.internal:8080',
+        EVOLUTION_API_KEY: 'test-api-key',
+        EVOLUTION_INSTANCE: 'crm-alerts',
+        ALERT_WHATSAPP_NUMBER: '5511999999999',
+      },
+    });
+
+    assert.notEqual(result.status, 0, 'backup-crm.sh deve falhar quando o pg_dump falha (database inexistente)');
+
+    assert.ok(fs.existsSync(curlLog), 'o alerta (curl para a Evolution API) deveria ter sido disparado na falha');
+    const calls = fs.readFileSync(curlLog, 'utf8');
+    assert.match(calls, /message\/sendText\/crm-alerts/, 'o alerta deve ser enviado para o endpoint sendText da instância configurada');
+    assert.match(calls, /apikey: test-api-key/, 'o alerta deve usar a apikey da Evolution API configurada');
+    assert.match(calls, /5511999999999/, 'o alerta deve ser endereçado ao número configurado');
+  });
 });
 
 // US-005 — Backup diário automático com restore testado
