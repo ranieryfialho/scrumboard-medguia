@@ -648,12 +648,158 @@ describe('T-007 — integração do backup-crm.sh contra um Postgres real', () =
   });
 });
 
-// US-005 — Backup diário automático com restore testado
-test('AC-012: Restore ensaiado recupera um dump em staging @spec:AC-012', () => {
-  // Dado: um dump de backup válido
-  // Quando: o procedimento de restore documentado é executado contra
-  // Então: o banco de staging fica íntegro e consultável, provando que o
-  assert.fail('critério de aceite AC-012 ainda não provado — implemente este teste');
+// Suíte de integração do T-008 — roda um Postgres real (container
+// descartável, postgres:15-alpine, mesmo padrão do T-005/T-007) com
+// crm_prod e crm_staging criados pelo script de init, semeia crm_prod,
+// gera um dump de verdade com pg_dump, e prova que infra/backup/restore-crm.sh
+// consegue restaurar esse dump em crm_staging — dados batendo, não só "o
+// comando terminou sem erro".
+describe('T-008 — integração do restore-crm.sh contra um Postgres real', () => {
+  const restoreScriptPath = path
+    .join(process.cwd(), 'infra', 'backup', 'restore-crm.sh')
+    .split(path.sep)
+    .join('/');
+
+  const containerName = `crm-pg-restore-test-${crypto.randomBytes(4).toString('hex')}`;
+  const initDir = path
+    .join(process.cwd(), 'infra', 'postgres', 'init')
+    .split(path.sep)
+    .join('/');
+  const ADMIN_PASSWORD = 'test_admin_pw';
+  const CRM_APP_PASSWORD = 'test_crm_app_pw';
+  const CRM_MIGRATOR_PASSWORD = 'test_crm_migrator_pw';
+  const READY_TIMEOUT_MS = 90_000;
+
+  let tmpRoot;
+
+  function runDocker(args) {
+    return spawnSync('docker', args, { encoding: 'utf8' });
+  }
+
+  function psqlAs(role, db, sql) {
+    return runDocker([
+      'exec', containerName,
+      'psql', '-U', role, '-d', db, '-v', 'ON_ERROR_STOP=1', '-t', '-A', '-c', sql,
+    ]);
+  }
+
+  before(async () => {
+    const dockerCheck = runDocker(['ps']);
+    assert.equal(
+      dockerCheck.status,
+      0,
+      'Docker precisa estar disponível para provar AC-012 contra um Postgres real'
+    );
+
+    const run = runDocker([
+      'run', '-d', '--name', containerName,
+      '-e', `POSTGRES_PASSWORD=${ADMIN_PASSWORD}`,
+      '-e', `CRM_APP_PASSWORD=${CRM_APP_PASSWORD}`,
+      '-e', `CRM_MIGRATOR_PASSWORD=${CRM_MIGRATOR_PASSWORD}`,
+      '-v', `${initDir}:/docker-entrypoint-initdb.d:ro`,
+      'postgres:15-alpine',
+    ]);
+    assert.equal(run.status, 0, `falha ao subir container de teste do Postgres: ${run.stderr}`);
+
+    const deadline = Date.now() + READY_TIMEOUT_MS;
+    let ready = false;
+    while (Date.now() < deadline) {
+      const isReady = runDocker(['exec', containerName, 'pg_isready', '-U', 'postgres']);
+      if (isReady.status === 0) {
+        const dbsExist = psqlAs('postgres', 'postgres', "SELECT count(*) FROM pg_database WHERE datname IN ('crm_prod','crm_staging')");
+        if (dbsExist.status === 0 && dbsExist.stdout.trim() === '2') {
+          ready = true;
+          break;
+        }
+      }
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    }
+    assert.ok(ready, 'Postgres de teste não terminou de inicializar (crm_prod/crm_staging) a tempo');
+
+    tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'crm-restore-test-'));
+  });
+
+  after(() => {
+    runDocker(['rm', '-f', containerName]);
+    if (tmpRoot) fs.rmSync(tmpRoot, { recursive: true, force: true });
+  });
+
+  // US-005 — Backup diário automático com restore testado
+  test('AC-012: Restore ensaiado recupera um dump em staging @spec:AC-012', () => {
+    // Dado: um dump de backup válido
+    // Quando: o procedimento de restore documentado é executado contra
+    //         crm_staging
+    // Então: o banco de staging fica íntegro e consultável, provando que o
+    //        backup é restaurável de fato (não só "existe o arquivo")
+
+    // Dado: semeia crm_prod com dados conhecidos e gera um dump real via
+    // pg_dump (o mesmo formato que backup-crm.sh produz em produção).
+    const seed = psqlAs(
+      'postgres',
+      'crm_prod',
+      "CREATE TABLE restore_probe (id int, nome text); INSERT INTO restore_probe VALUES (1, 'alpha'), (2, 'beta')"
+    );
+    assert.equal(seed.status, 0, `falha ao semear crm_prod para o teste: ${seed.stderr}`);
+
+    const dumpPath = path.join(tmpRoot, 'crm_prod_test.dump');
+    const dumpResult = spawnSync(
+      'docker',
+      ['exec', containerName, 'pg_dump', '--format=custom', '--no-owner', '-U', 'postgres', 'crm_prod'],
+      { encoding: 'buffer' }
+    );
+    assert.equal(dumpResult.status, 0, `pg_dump falhou ao gerar o dump de teste: ${dumpResult.stderr}`);
+    fs.writeFileSync(dumpPath, dumpResult.stdout);
+    assert.ok(fs.statSync(dumpPath).size > 0, 'o dump gerado para o teste não pode estar vazio');
+
+    const checksum = crypto.createHash('sha256').update(fs.readFileSync(dumpPath)).digest('hex');
+    fs.writeFileSync(`${dumpPath}.sha256`, `${checksum}  crm_prod_test.dump\n`);
+
+    // Confere que crm_staging começa sem a tabela semeada, para provar que
+    // os dados vieram do restore, não de coincidência de estado prévio.
+    const beforeRestore = psqlAs(
+      'postgres',
+      'crm_staging',
+      "SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'restore_probe'"
+    );
+    assert.equal(beforeRestore.status, 0, `consulta prévia a crm_staging falhou: ${beforeRestore.stderr}`);
+    assert.equal(beforeRestore.stdout.trim(), '0', 'crm_staging não deveria ter restore_probe antes do restore');
+
+    // Quando: o script de restore documentado roda contra crm_staging.
+    const restoreResult = spawnSync('bash', [restoreScriptPath, dumpPath], {
+      encoding: 'utf8',
+      env: {
+        ...process.env,
+        PG_CONTAINER: containerName,
+        PG_TARGET_DATABASE: 'crm_staging',
+        POSTGRES_ADMIN_USER: 'postgres',
+      },
+    });
+    assert.equal(restoreResult.status, 0, `restore-crm.sh deveria terminar com sucesso: ${restoreResult.stderr}`);
+    assert.match(restoreResult.stdout, /consultável/, 'o script deve reportar que o banco ficou consultável depois do restore');
+
+    // Então: crm_staging fica íntegro e consultável, com os mesmos dados de
+    // crm_prod no momento do dump.
+    const afterRestore = psqlAs(
+      'postgres',
+      'crm_staging',
+      "SELECT id, nome FROM restore_probe ORDER BY id"
+    );
+    assert.equal(afterRestore.status, 0, `crm_staging deveria estar consultável e conter restore_probe depois do restore: ${afterRestore.stderr}`);
+    assert.equal(afterRestore.stdout.trim(), '1|alpha\n2|beta', 'os dados restaurados em crm_staging devem bater com os de crm_prod no momento do dump');
+
+    // Recusa apontar para crm_prod — a proteção existe para o uso rotineiro
+    // do script (ver runbook para o procedimento manual de incidente real).
+    const guardResult = spawnSync('bash', [restoreScriptPath, dumpPath], {
+      encoding: 'utf8',
+      env: {
+        ...process.env,
+        PG_CONTAINER: containerName,
+        PG_TARGET_DATABASE: 'crm_prod',
+        POSTGRES_ADMIN_USER: 'postgres',
+      },
+    });
+    assert.notEqual(guardResult.status, 0, 'restore-crm.sh não pode restaurar direto em crm_prod');
+  });
 });
 
 // US-006 — Observabilidade mínima para detectar falha silenciosa
