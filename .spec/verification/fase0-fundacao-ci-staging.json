@@ -1,0 +1,82 @@
+{
+  "feature": "fase0-fundacao-ci-staging",
+  "timestamp": "2026-09-23T14:05:19.131Z",
+  "gitRev": "5558425",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
+  "reporter": "vitest-json",
+  "exitCode": 0,
+  "testsParsed": 14,
+  "results": {
+    "AC-001": {
+      "status": "pass",
+      "testName": "AC-001: Workflow de CI cobre os quatro gates na ordem certa @spec:AC-001 AC-001: Workflow de CI cobre os quatro gates na ordem certa @spec:AC-001",
+      "method": "vitest-json"
+    },
+    "AC-002": {
+      "status": "pass",
+      "testName": "AC-002: CI roda em todo Pull Request e em todo push @spec:AC-002 AC-002: CI roda em todo Pull Request e em todo push @spec:AC-002",
+      "method": "vitest-json"
+    },
+    "AC-003": {
+      "status": "pass",
+      "testName": "AC-003: Build sai da VPS e a imagem é publicada com tag rastreável @spec:AC-003 AC-003: Build sai da VPS e a imagem é publicada com tag rastreável @spec:AC-003",
+      "method": "vitest-json"
+    },
+    "AC-004": {
+      "status": "pass",
+      "testName": "AC-004: Rollback é trocar a tag, sem rebuild @spec:AC-004 AC-004: Rollback é trocar a tag, sem rebuild @spec:AC-004",
+      "method": "vitest-json"
+    },
+    "AC-005": {
+      "status": "pass",
+      "testName": "T-005 — integração com Postgres real (crm_prod/crm_staging, crm_app/crm_migrator) AC-005: Staging usa um database Postgres separado de produção @spec:AC-005 AC-005: Staging usa um database Postgres separado de produção @spec:AC-005",
+      "method": "vitest-json"
+    },
+    "AC-006": {
+      "status": "pass",
+      "testName": "AC-006: Staging é publicamente acessível só por quem tem o link/credencial da equipe @spec:AC-006 AC-006: Staging é publicamente acessível só por quem tem o link/credencial da equipe @spec:AC-006",
+      "method": "vitest-json"
+    },
+    "AC-007": {
+      "status": "pass",
+      "testName": "T-005 — integração com Postgres real (crm_prod/crm_staging, crm_app/crm_migrator) AC-007: `crm_app` não tem privilégio de superusuário nem DDL @spec:AC-007 AC-007: `crm_app` não tem privilégio de superusuário nem DDL @spec:AC-007",
+      "method": "vitest-json"
+    },
+    "AC-008": {
+      "status": "pass",
+      "testName": "T-005 — integração com Postgres real (crm_prod/crm_staging, crm_app/crm_migrator) AC-008: `crm_migrator` é a única role com DDL, usada só pelo job de migration @spec:AC-008 AC-008: `crm_migrator` é a única role com DDL, usada só pelo job de migration @spec:AC-008",
+      "method": "vitest-json"
+    },
+    "AC-009": {
+      "status": "pass",
+      "testName": "AC-009: Postgres não publica porta na internet @spec:AC-009 AC-009: Postgres não publica porta na internet @spec:AC-009",
+      "method": "vitest-json"
+    },
+    "AC-010": {
+      "status": "pass",
+      "testName": "T-007 — integração do backup-crm.sh contra um Postgres real AC-010: Backup diário roda e é enviado para fora da VPS @spec:AC-010 AC-010: Backup diário roda e é enviado para fora da VPS @spec:AC-010",
+      "method": "vitest-json"
+    },
+    "AC-011": {
+      "status": "pass",
+      "testName": "T-007 — integração do backup-crm.sh contra um Postgres real AC-011: Alerta dispara se o backup falhar @spec:AC-011 AC-011: Alerta dispara se o backup falhar @spec:AC-011",
+      "method": "vitest-json"
+    },
+    "AC-012": {
+      "status": "pass",
+      "testName": "T-008 — integração do restore-crm.sh contra um Postgres real AC-012: Restore ensaiado recupera um dump em staging @spec:AC-012 AC-012: Restore ensaiado recupera um dump em staging @spec:AC-012",
+      "method": "vitest-json"
+    },
+    "AC-013": {
+      "status": "pass",
+      "testName": "T-009 — integração do handler GET /api/health AC-013: `/api/health` reporta app, banco e idade do último backup @spec:AC-013 AC-013: `/api/health` reporta app, banco e idade do último backup @spec:AC-013",
+      "method": "vitest-json"
+    },
+    "AC-014": {
+      "status": "pass",
+      "testName": "T-009 — integração do handler GET /api/health AC-014: `/api/health` reporta falha quando o banco está inacessível @spec:AC-014 AC-014: `/api/health` reporta falha quando o banco está inacessível @spec:AC-014",
+      "method": "vitest-json"
+    }
+  },
+  "principles": {}
+}

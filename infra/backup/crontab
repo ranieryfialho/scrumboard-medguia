@@ -1,0 +1,10 @@
+# Backup diário do CRM na VPS — pg_dump + checksum + rclone, com alerta via
+# Evolution API se o job falhar (AC-010, AC-011). 03h, em horário diferente
+# do backup do outro projeto na mesma VPS (/root/backups/supabase/backup-supabase.sh),
+# para não disputar CPU/disco com ele (a VPS tem só 2 vCPU — RFC-001 §8).
+#
+# Instalar com: crontab infra/backup/crontab (como o usuário root da VPS).
+# As variáveis de ambiente do script (POSTGRES_ADMIN_USER, RCLONE_REMOTE,
+# EVOLUTION_API_URL/API_KEY/INSTANCE, ALERT_WHATSAPP_NUMBER) vêm do .env do
+# projeto em ~/scrumboard-medguia.
+0 3 * * * cd /root/scrumboard-medguia && set -a && . ./.env && set +a && ./infra/backup/backup-crm.sh >> /var/log/crm-backup.log 2>&1

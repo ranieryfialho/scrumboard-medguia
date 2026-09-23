@@ -1,7 +1,7 @@
 # Spec: Fase 0 — Fundação (CI, imagem versionada, staging, backup, observabilidade)
 
 > feature: fase0-fundacao-ci-staging
-> status: rascunho
+> status: auditada
 
 <!--
   Como ler este arquivo (o formato é verificado por `onp-spec audit`):
@@ -202,10 +202,10 @@ fora, backup atrasado, cron travado) antes que a operação comercial perceba.
 | ID | Suposição | Status | Resolução |
 |---|---|---|---|
 | ASM-001 | O RFC-001 ainda não tem o Outcome (§12) preenchido nem passou pela reunião de decisão de 2026-09-30 com os Approvers (@Alana, @Caetano). Está sendo implementado mesmo assim por decisão explícita do Driver/usuário nesta conversa (2026-09-23), tratando a aprovação formal como pendente-mas-não-bloqueante para o trabalho de infraestrutura agnóstico à decisão D/A. | confirmada | Confirmado pelo usuário (Raniery, Driver do RFC) em 2026-09-23: seguir com a Fase 0 completa sem esperar a reunião de 30/09. |
-| ASM-002 | O runner de testes é Vitest (RFC-001 Q6), substituindo o `node --test` hoje configurado em `onpspec.config.json`. | aberta | — |
-| ASM-003 | O nome da imagem publicada no GHCR segue o padrão `ghcr.io/ranieryfialho/scrumboard-medguia:<sha>`. | aberta | — |
-| ASM-004 | O remote `rclone` (`gdrive:`) e as credenciais já configuradas na VPS para o backup do outro projeto podem ser reaproveitados para o backup do CRM, numa pasta própria — sem precisar de uma nova conta/remote. | aberta | — |
-| ASM-005 | O deploy de produção continua manual (`workflow_dispatch`) mesmo depois desta feature — a trava tática adotada nesta conversa (2026-09-23) não é substituída automaticamente pelo gate de CI; a decisão de voltar a deploy automático por push (agora protegido por CI verde + PR obrigatório) é uma escolha explícita a ser tomada depois que a Fase 0 estiver auditada. | aberta | — |
+| ASM-002 | O runner de testes é Vitest (RFC-001 Q6), substituindo o `node --test` hoje configurado em `onpspec.config.json`. | confirmada | Migração concluída em 2026-09-23: `vitest` instalado (`^3.2.7`, compatível com `@types/node ^20`), `vitest.config.ts` criado, `package.json`/`onpspec.config.json` apontando para `vitest run` com reporter JSON. Os 14 testes passam e têm prova registrada via `onp-spec verify`. |
+| ASM-003 | O nome da imagem publicada no GHCR segue o padrão `ghcr.io/ranieryfialho/scrumboard-medguia:<sha>`. | confirmada | Verificado em `.github/workflows/release.yml` (`ghcr.io/${{ github.repository_owner }}/scrumboard-medguia:${{ github.sha }}`) e `docker-compose.yml` (`ghcr.io/ranieryfialho/scrumboard-medguia:${IMAGE_TAG:-latest}`). |
+| ASM-004 | O remote `rclone` (`gdrive:`) e as credenciais já configuradas na VPS para o backup do outro projeto podem ser reaproveitados para o backup do CRM, numa pasta própria — sem precisar de uma nova conta/remote. | confirmada | `infra/backup/backup-crm.sh` usa `RCLONE_REMOTE="gdrive:backups/crm"` — mesmo remote, pasta própria, sem nova credencial. |
+| ASM-005 | O deploy de produção continua manual (`workflow_dispatch`) mesmo depois desta feature — a trava tática adotada nesta conversa (2026-09-23) não é substituída automaticamente pelo gate de CI. | confirmada | Decisão mantida: `deploy.yml` segue `workflow_dispatch`. Voltar a deploy automático por push (protegido por CI verde + PR obrigatório) é decisão explícita futura do usuário, fora do escopo desta feature. |
 
 ## Perguntas em aberto
 
@@ -213,6 +213,6 @@ fora, backup atrasado, cron travado) antes que a operação comercial perceba.
 
 | ID | Pergunta | Status | Resposta |
 |---|---|---|---|
-| Q-001 | O restore ensaiado (AC-012) deve rodar automaticamente todo mês (como o TDD-001 §4.9 recomenda para o regime permanente) ou, nesta feature de fundação, basta provar que o procedimento funciona uma vez (manual, documentado)? | aberta | — |
-| Q-002 | Existe hoje uma conta Sentry (ou equivalente) disponível para o projeto, ou a criação de uma conta/projeto Sentry é um passo manual que o usuário fará fora desta feature? | aberta | — |
-| Q-003 | O CI precisa de um Postgres real como *service container* para os testes de integração de roles/RLS (AC-007 a AC-009) — confirmar que o GitHub Actions runner padrão (`ubuntu-latest`) é aceitável, sem precisar de self-hosted runner. | aberta | — |
+| Q-001 | O restore ensaiado (AC-012) deve rodar automaticamente todo mês (como o TDD-001 §4.9 recomenda para o regime permanente) ou, nesta feature de fundação, basta provar que o procedimento funciona uma vez (manual, documentado)? | respondida | Decidido pelo usuário em 2026-09-23: fica para depois. O teste automatizado no CI (`AC-012`) já prova que `restore-crm.sh` funciona; o ensaio mensal contra o backup real da VPS é rotina operacional futura, não bloqueia esta feature. |
+| Q-002 | Existe hoje uma conta Sentry (ou equivalente) disponível para o projeto, ou a criação de uma conta/projeto Sentry é um passo manual que o usuário fará fora desta feature? | respondida | Decidido pelo usuário em 2026-09-23: não existe conta ainda — fica fora do escopo desta feature. `/api/health` cobre a observabilidade mínima; Sentry fica como integração manual futura. |
+| Q-003 | O CI precisa de um Postgres real como *service container* para os testes de integração de roles/RLS (AC-007 a AC-009) — confirmar que o GitHub Actions runner padrão (`ubuntu-latest`) é aceitável, sem precisar de self-hosted runner. | respondida | Confirmado em 2026-09-23: os testes de integração sobem seu próprio container Postgres via `docker run` (não via `services:` do workflow), e `ubuntu-latest` já vem com Docker disponível — `runs-on: ubuntu-latest` em `ci.yml` é suficiente, sem runner dedicado. |

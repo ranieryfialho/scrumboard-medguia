@@ -18,8 +18,7 @@
     (atalho: `onp-spec tarefa <feature> <T-xxx> <status>`)
 -->
 
-## T-001 — Migrar runner de testes para Vitest [pendente]
-
+## T-001 — Migrar runner de testes para Vitest [concluida]
 - Refs: US-001
 - Arquivos: package.json, vitest.config.ts, onpspec.config.json
 - Esforço: baixo
@@ -27,8 +26,7 @@
   `onpspec.config.json` para `vitest run` com reporter compatível
   (json/tap). Pré-requisito das demais tarefas que escrevem teste.
 
-## T-002 — CI com gates (lint → typecheck → test → build) [pendente]
-
+## T-002 — CI com gates (lint → typecheck → test → build) [concluida]
 - Refs: US-001, AC-001, AC-002
 - Arquivos: .github/workflows/ci.yml, package.json
 - Esforço: medio
@@ -36,16 +34,14 @@
   `pull_request` e em `push` na `main`. Nenhum step de gate com
   `continue-on-error`.
 
-## T-003 — Workflow de release: build e publish no GHCR por tag SHA [pendente]
-
+## T-003 — Workflow de release: build e publish no GHCR por tag SHA [concluida]
 - Refs: US-002, AC-003
 - Arquivos: .github/workflows/release.yml
 - Esforço: medio
 - Notas: Build acontece só no GitHub Actions, nunca na VPS. Tag da imagem é
   o SHA do commit (nunca `latest`).
 
-## T-004 — Deploy por pull de imagem + rollback por tag [pendente]
-
+## T-004 — Deploy por pull de imagem + rollback por tag [concluida]
 - Refs: US-002, AC-004
 - Arquivos: .github/workflows/deploy.yml, docker-compose.yml
 - Esforço: medio
@@ -54,8 +50,7 @@
   só executa `docker compose pull && up -d`, nunca `build`. Depende de T-003
   existir (precisa haver imagem publicada para puxar).
 
-## T-005 — Databases crm_prod/crm_staging e roles crm_app/crm_migrator [pendente]
-
+## T-005 — Databases crm_prod/crm_staging e roles crm_app/crm_migrator [concluida]
 - Refs: US-003, US-004, AC-005, AC-007, AC-008, AC-009
 - Arquivos: infra/postgres/init/01-databases-and-roles.sql, docker-compose.yml
 - Esforço: alto
@@ -64,8 +59,7 @@
   contra um Postgres real (service container no CI) aplicando este script e
   tentando as operações vedadas com a role `crm_app`.
 
-## T-006 — Topologia de staging atrás do proxy, sem porta nova exposta [pendente]
-
+## T-006 — Topologia de staging atrás do proxy, sem porta nova exposta [concluida]
 - Refs: US-003, AC-006
 - Arquivos: docker-compose.yml, docker-compose.staging.yml
 - Esforço: baixo
@@ -73,8 +67,7 @@
   `crm-app` de staging fica na mesma rede `wp-network`, roteado pelo
   nginx-proxy-manager existente — sem novo `ports:` publicado.
 
-## T-007 — Backup diário (pg_dump + checksum + rclone) com alerta [pendente]
-
+## T-007 — Backup diário (pg_dump + checksum + rclone) com alerta [concluida]
 - Refs: US-005, AC-010, AC-011
 - Arquivos: infra/backup/backup-crm.sh, infra/backup/crontab
 - Esforço: alto
@@ -83,8 +76,7 @@
   do CRM. Alerta via Evolution API em falha; `/api/health` (T-009) consome a
   idade do último backup.
 
-## T-008 — Restore ensaiado, documentado e com script de verificação [pendente]
-
+## T-008 — Restore ensaiado, documentado e com script de verificação [concluida]
 - Refs: US-005, AC-012
 - Arquivos: infra/backup/restore-crm.sh, docs/runbooks/restore-backup-crm.md
 - Esforço: medio
@@ -92,8 +84,7 @@
   backup). Teste de integração gera um dump de um Postgres descartável,
   restaura em outro e confere que os dados batem.
 
-## T-009 — Endpoint `/api/health` [pendente]
-
+## T-009 — Endpoint `/api/health` [concluida]
 - Refs: US-006, AC-013, AC-014
 - Arquivos: src/app/api/health/route.ts, src/lib/env.ts
 - Esforço: medio
