@@ -2,7 +2,7 @@ import { google } from 'googleapis';
 
 export function getGoogleSheetsClient() {
   const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
-  let privateKey = process.env.GOOGLE_PRIVATE_KEY;
+  const privateKey = process.env.GOOGLE_PRIVATE_KEY;
 
   if (!clientEmail || !privateKey) {
     throw new Error('Variáveis de ambiente do Google não encontradas.');

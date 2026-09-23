@@ -14,8 +14,8 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { type, data } = body;
 
-    const tags = data?.tags || [];
-    const envioIdTag = tags.find((t: any) => t.name === 'envio_id');
+    const tags: Array<{ name: string; value?: string }> = data?.tags || [];
+    const envioIdTag = tags.find((t) => t.name === 'envio_id');
     const envioId = envioIdTag ? envioIdTag.value : null;
 
     if (!envioId) {

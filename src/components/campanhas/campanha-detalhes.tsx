@@ -7,15 +7,16 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { createClient } from "@/lib/supabase/client";
+import { Campanha, Destinatario } from "@/types/campanha";
 
 interface CampanhaDetalhesProps {
-  campanha: any;
+  campanha: Campanha;
   onBack: () => void;
   onRefresh: () => void;
 }
 
 export function CampanhaDetalhes({ campanha, onBack, onRefresh }: CampanhaDetalhesProps) {
-  const [destinatarios, setDestinatarios] = useState<any[]>([]);
+  const [destinatarios, setDestinatarios] = useState<Destinatario[]>([]);
   const [loading, setLoading] = useState(true);
   const [isStarting, setIsStarting] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
@@ -43,7 +44,7 @@ export function CampanhaDetalhes({ campanha, onBack, onRefresh }: CampanhaDetalh
       // alteramos o status dela para FINALIZADA.
       // =========================================================
       if (campanha.status === 'PROCESSANDO' && data && data.length > 0) {
-        const aindaTemFila = data.some((d: any) => d.status === 'PENDENTE' || d.status === 'RASCUNHO');
+        const aindaTemFila = data.some((d: Destinatario) => d.status === 'PENDENTE' || d.status === 'RASCUNHO');
         
         if (!aindaTemFila) {
           // 1. Atualiza no Supabase

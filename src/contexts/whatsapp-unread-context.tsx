@@ -44,19 +44,16 @@ export function WhatsappUnreadProvider({ children }: { children: React.ReactNode
   const [conversas, setConversas] = useState<Conversa[]>([]);
   const supabase = createClient();
 
-  // Busca inicial
-  const fetchUnread = useCallback(async () => {
-    try {
-      const res = await fetch('/api/whatsapp/unread');
-      if (res.ok) {
-        const data = await res.json();
-        setConversas(data.conversas || []);
-      }
-    } catch {}
-  }, []);
-
   useEffect(() => {
-    fetchUnread();
+    let ignore = false;
+
+    // Busca inicial
+    fetch('/api/whatsapp/unread')
+      .then(res => (res.ok ? res.json() : null))
+      .then(data => {
+        if (!ignore && data) setConversas(data.conversas || []);
+      })
+      .catch(() => {});
 
     // Supabase Realtime — atualiza instantaneamente quando chega mensagem nova
     let channel: ReturnType<typeof supabase.channel> | null = null;
@@ -102,9 +99,10 @@ export function WhatsappUnreadProvider({ children }: { children: React.ReactNode
     });
 
     return () => {
+      ignore = true;
       if (channel) supabase.removeChannel(channel);
     };
-  }, [fetchUnread]);
+  }, [supabase]);
 
   const markRead = useCallback((numero: string) => {
     const raw = numero.replace(/\D/g, '');

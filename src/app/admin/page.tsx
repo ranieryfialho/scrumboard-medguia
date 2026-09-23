@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { getErrorMessage } from "@/lib/utils";
 import {
   ArrowLeft, Building2, Plus, Edit, Settings, Loader2, Eye, EyeOff, UserPlus, Mail
 } from "lucide-react";
@@ -179,8 +180,8 @@ export default function AdminPage() {
 
       await buscarEmpresas();
       setIsModalOpen(false);
-    } catch (error: any) {
-      alert(`Erro: ${error.message}`);
+    } catch (error) {
+      alert(`Erro: ${getErrorMessage(error)}`);
     } finally {
       setIsSaving(false);
     }
@@ -326,16 +327,18 @@ export default function AdminPage() {
                   <Settings className="w-3.5 h-3.5" /> Configurações Google Sheets
                 </h3>
                 <div className="grid grid-cols-1 gap-3">
-                  {[
-                    { key: 'google_sheet_id_1', label: 'Sheet ID 1', placeholder: 'ID da primeira planilha' },
-                    { key: 'google_sheet_id_2', label: 'Sheet ID 2', placeholder: 'ID da segunda planilha' },
-                    { key: 'google_sheet_id_3', label: 'Sheet ID 3', placeholder: 'ID da terceira planilha' },
-                    { key: 'google_client_email', label: 'Client Email', placeholder: 'service-account@projeto.iam.gserviceaccount.com' },
-                  ].map(field => (
+                  {(
+                    [
+                      { key: 'google_sheet_id_1', label: 'Sheet ID 1', placeholder: 'ID da primeira planilha' },
+                      { key: 'google_sheet_id_2', label: 'Sheet ID 2', placeholder: 'ID da segunda planilha' },
+                      { key: 'google_sheet_id_3', label: 'Sheet ID 3', placeholder: 'ID da terceira planilha' },
+                      { key: 'google_client_email', label: 'Client Email', placeholder: 'service-account@projeto.iam.gserviceaccount.com' },
+                    ] satisfies { key: keyof Config; label: string; placeholder: string }[]
+                  ).map(field => (
                     <div key={field.key} className="space-y-1">
                       <Label className="text-xs">{field.label}</Label>
                       <Input
-                        value={(config as any)[field.key] || ''}
+                        value={config[field.key] || ''}
                         onChange={e => setConfig(p => ({ ...p, [field.key]: e.target.value }))}
                         placeholder={field.placeholder}
                         className="font-mono text-xs"

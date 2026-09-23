@@ -19,11 +19,19 @@ import {
 } from "@/components/ui/dialog";
 
 import { createClient } from "@/lib/supabase/client";
+import { getErrorMessage } from "@/lib/utils";
+import { Campanha } from "@/types/campanha";
+import { Lead } from "@/types/lead";
+
+interface ContatoExcel {
+  nome: string;
+  email: string;
+}
 
 interface NovaCampanhaModalProps {
-  leads?: any[];
+  leads?: Lead[];
   onSuccess?: () => void;
-  campanhaExistente?: any;
+  campanhaExistente?: Campanha;
 }
 
 export function NovaCampanhaModal({ leads = [], onSuccess, campanhaExistente }: NovaCampanhaModalProps) {
@@ -35,7 +43,7 @@ export function NovaCampanhaModal({ leads = [], onSuccess, campanhaExistente }: 
   const [colunaKanban, setColunaKanban] = useState("Novos Leads");
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  const [dadosExcel, setDadosExcel] = useState<any[]>([]);
+  const [dadosExcel, setDadosExcel] = useState<ContatoExcel[]>([]);
   const [nomeArquivo, setNomeArquivo] = useState("");
 
   const supabase = createClient();
@@ -60,12 +68,12 @@ export function NovaCampanhaModal({ leads = [], onSuccess, campanhaExistente }: 
       const workbook = XLSX.read(bstr, { type: "binary" });
       const sheetName = workbook.SheetNames[0];
       const sheet = workbook.Sheets[sheetName];
-      const json: any[] = XLSX.utils.sheet_to_json(sheet);
+      const json: Record<string, string | undefined>[] = XLSX.utils.sheet_to_json(sheet);
 
       const dadosFormatados = json.map(row => ({
         nome: row.nome || row.Nome || row.NOME || "Cliente",
         email: row.email || row.Email || row.EMAIL || row['e-mail'] || row['E-mail'] || row.e_mail || null
-      })).filter(item => item.email);
+      })).filter((item): item is ContatoExcel => Boolean(item.email));
 
       setDadosExcel(dadosFormatados);
     };
@@ -118,7 +126,9 @@ export function NovaCampanhaModal({ leads = [], onSuccess, campanhaExistente }: 
         let loteEnvios = [];
 
         if (origem === 'kanban') {
-          const leadsDaColuna = leads.filter(l => l.situacao === colunaKanban && l.email);
+          const leadsDaColuna = leads.filter(
+            (l): l is typeof l & { email: string } => l.situacao === colunaKanban && Boolean(l.email)
+          );
           loteEnvios = leadsDaColuna.map(l => ({
             campanha_id: campanha.id,
             nome_destinatario: l.nome || "Cliente",
@@ -146,8 +156,8 @@ export function NovaCampanhaModal({ leads = [], onSuccess, campanhaExistente }: 
       setOpen(false);
       if (onSuccess) onSuccess();
 
-    } catch (error: any) {
-      console.error(error);
+    } catch (error) {
+      console.error(getErrorMessage(error));
       alert("Erro ao processar campanha.");
     } finally {
       setIsSubmitting(false);

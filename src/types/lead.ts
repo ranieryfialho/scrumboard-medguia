@@ -12,5 +12,11 @@ export interface Lead {
   data_alteracao?: string;
   data_fechamento?: string;
   anuncio?: string;
-  [key: string]: any;
+  observacoes?: string;
+  o_que_mais_interessou?: string;
+  o_que_deixou_a_desejar?: string;
+  plano_escolhido?: string;
+  plataforma_anterior?: string;
+  por_onde_conheceu?: string;
+  [key: string]: unknown;
 }

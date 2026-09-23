@@ -51,6 +51,7 @@ const ORIGEM_COLORS: Record<string, string> = {
 
 export function LeadCard({ lead, isOverlay, disableDrag, onStatusChange, onSaveObs }: LeadCardProps) {
   const [modalOpen, setModalOpen] = useState(false);
+  const [renderedAt] = useState(() => Date.now());
   const { unreadByNumero } = useWhatsappUnread();
 
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
@@ -97,7 +98,7 @@ export function LeadCard({ lead, isOverlay, disableDrag, onStatusChange, onSaveO
     if (lead.created_time) {
       const created = new Date(lead.created_time);
       if (!isNaN(created.getTime()))
-        horas = (Date.now() - created.getTime()) / 3_600_000;
+        horas = (renderedAt - created.getTime()) / 3_600_000;
     }
     if (horas >= 48) {
       theme = { bg: "bg-rose-50/40", border: "border-rose-300", ring: "ring-1 ring-rose-200/50", dot: "bg-rose-500", ping: "bg-rose-400", text: "text-rose-700", footerBorder: "border-rose-100", badgeBg: "bg-rose-100" };

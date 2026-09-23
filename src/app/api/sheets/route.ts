@@ -1,4 +1,4 @@
-import { google } from 'googleapis';
+import { google, sheets_v4 } from 'googleapis';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { createClient as createServerClient } from '@/lib/supabase/server';
@@ -121,18 +121,18 @@ function enriquecerOrigemManual(origemAtual: string, observacoes: string): strin
 }
 
 async function fetchSheetData(
-  sheets: any,
+  sheets: sheets_v4.Sheets,
   spreadsheetId: string,
   sheetAlias: string,
   rangeName: string
-) {
+): Promise<Record<string, string>[]> {
   try {
     const response = await sheets.spreadsheets.values.get({ spreadsheetId, range: rangeName });
     const rows = response.data.values;
 
     if (!rows || rows.length === 0) return [];
 
-    const headers: string[] = rows[0].map((header: any) =>
+    const headers: string[] = rows[0].map((header) =>
       header
         ? header.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim()
         : ''
@@ -141,8 +141,8 @@ async function fetchSheetData(
     const sheetKey = `${sheetAlias}/${rangeName}`;
     const origemDaPlanilha = SHEET_KEY_ORIGEM_MAP[sheetKey] || '';
 
-    return rows.slice(1).map((row: any[], index: number) => {
-      const leadData: any = { id: `${sheetAlias}_${rangeName}-lead-${index}` };
+    return rows.slice(1).map((row, index: number) => {
+      const leadData: Record<string, string> = { id: `${sheetAlias}_${rangeName}-lead-${index}` };
 
       headers.forEach((header: string, colIndex: number) => {
         const valor = row[colIndex] ?? '';
@@ -265,7 +265,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Erro ao buscar leads.' }, { status: 500 });
     }
 
-    const leadsFormatados = (leads || []).map((lead: any) => ({
+    const leadsFormatados = (leads || []).map((lead) => ({
       id: `sb-${lead.id}`,
       nome: lead.nome || 'Sem Nome',
       email: lead.email || '',
@@ -319,7 +319,7 @@ export async function GET(request: NextRequest) {
     // =============================================
     // BUSCA OS LEADS DO BANCO DE DADOS DA LP - AULA
     // =============================================
-    let leadsDaLP: any[] = [];
+    let leadsDaLP: Record<string, string>[] = [];
     const supabaseLpUrl = process.env.SUPABASE_LP_URL;
     const supabaseLpKey = process.env.SUPABASE_LP_ANON_KEY;
 
@@ -349,7 +349,7 @@ export async function GET(request: NextRequest) {
     }
 
     const todosLeads = [...leadsBM1_Pag1, ...leadsBM1_Pag2, ...leadsBM2, ...leadsBM3, ...leadsDaLP];
-    const leadsUnicos: any[] = [];
+    const leadsUnicos: Record<string, string>[] = [];
     const telefonesVistos = new Set<string>();
     const emailsVistos = new Set<string>();
 
@@ -391,7 +391,7 @@ export async function POST(request: NextRequest) {
       );
       const realId = id.replace('sb-', '');
       const dataAtualISO = new Date().toISOString();
-      const updateData: any = {};
+      const updateData: Record<string, unknown> = {};
 
       if (novaSituacao !== undefined) {
         updateData.situacao = novaSituacao;
@@ -464,8 +464,8 @@ export async function POST(request: NextRequest) {
       const realId = id.replace('lp-', '');
       const dataAtualISO = new Date().toISOString(); 
 
-      const updateData: any = {};
-      
+      const updateData: Record<string, unknown> = {};
+
       if (novaSituacao !== undefined) {
         updateData.status = novaSituacao;
         updateData.data_alteracao = dataAtualISO; 
@@ -520,11 +520,11 @@ export async function POST(request: NextRequest) {
       const headers: string[] = headerResponse.data.values?.[0] || [];
       const originalHeaderLength = headers.length;
 
-      const normalizedHeaders = headers.map((h: any) =>
+      const normalizedHeaders = headers.map((h) =>
         h ? h.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim() : ''
       );
 
-      const newRow: any[] = new Array(headers.length).fill('');
+      const newRow: string[] = new Array(headers.length).fill('');
 
       const setCol = (nameAliases: string[], value: string) => {
         let idx = -1;
@@ -598,7 +598,7 @@ export async function POST(request: NextRequest) {
       range: `${rangeName}!1:1`,
     });
     const headers = headerResponse.data.values?.[0] || [];
-    const normalizedHeaders = headers.map((h: any) =>
+    const normalizedHeaders = headers.map((h) =>
       h ? h.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim() : ''
     );
 
@@ -612,7 +612,7 @@ export async function POST(request: NextRequest) {
       return letter;
     };
 
-    const dataToUpdate: any[] = [];
+    const dataToUpdate: { range: string; values: string[][] }[] = [];
     let nextAvailableCol = headers.length;
 
     if (novaSituacao !== undefined) {
@@ -726,7 +726,7 @@ export async function POST(request: NextRequest) {
       if (colunasNovas > 0) {
         const metadataRes = await sheets.spreadsheets.get({ spreadsheetId });
         const sheetMeta = metadataRes.data.sheets?.find(
-          (s: any) => s.properties?.title === rangeName
+          (s) => s.properties?.title === rangeName
         );
         if (sheetMeta?.properties?.sheetId !== undefined) {
           await sheets.spreadsheets.batchUpdate({

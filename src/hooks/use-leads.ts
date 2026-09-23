@@ -2,13 +2,9 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { Lead } from "@/types/lead";
+import { Campanha } from "@/types/campanha";
 import { normalizarEspecialidade } from "@/utils/formatters";
 import { createClient } from "@/lib/supabase/client";
-
-interface Campanha {
-  id: string;
-  [key: string]: unknown;
-}
 
 function parseDateSegura(d: string): Date | null {
   if (!d) return null;
