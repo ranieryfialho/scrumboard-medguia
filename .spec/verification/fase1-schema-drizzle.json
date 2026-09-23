@@ -1,11 +1,11 @@
 {
   "feature": "fase1-schema-drizzle",
-  "timestamp": "2026-09-23T19:04:33.884Z",
-  "gitRev": "583b19a",
+  "timestamp": "2026-09-23T19:05:21.212Z",
+  "gitRev": "ca57727",
   "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
   "exitCode": 1,
-  "testsParsed": 97,
+  "testsParsed": 120,
   "results": {
     "AC-015": {
       "status": "pass",
@@ -35,6 +35,36 @@
     "AC-020": {
       "status": "fail",
       "testName": "T-022: RLS garante isolamento por tenant AC-020: sem app.empresa_id definido, crm_app não lê nem escreve linha nenhuma INSERT em \"empresa_configuracoes\" como crm_app sem SET LOCAL é rejeitado e não grava nenhuma linha @spec:AC-020 INSERT em \"empresa_configuracoes\" como crm_app sem SET LOCAL é rejeitado e não grava nenhuma linha @spec:AC-020",
+      "method": "vitest-json"
+    },
+    "AC-021": {
+      "status": "fail",
+      "testName": "T-023: invariantes do pipeline (constraints) e privilégios de DDL AC-021: card não entra em Proposta sem valor > 0 etapa Proposta com valor nulo é rejeitada por CHECK @spec:AC-021 etapa Proposta com valor nulo é rejeitada por CHECK @spec:AC-021",
+      "method": "vitest-json"
+    },
+    "AC-022": {
+      "status": "pass",
+      "testName": "T-023: invariantes do pipeline (constraints) e privilégios de DDL AC-022: card não entra em Perdido sem motivo etapa Perdido sem motivo_perda_id é rejeitada por CHECK @spec:AC-022 etapa Perdido sem motivo_perda_id é rejeitada por CHECK @spec:AC-022",
+      "method": "vitest-json"
+    },
+    "AC-023": {
+      "status": "pass",
+      "testName": "T-023: invariantes do pipeline (constraints) e privilégios de DDL AC-023: card não entra em etapas de acompanhamento sem próxima ação etapa \"Follow de longo prazo\" com próxima ação nula é rejeitada por CHECK @spec:AC-023 etapa \"Follow de longo prazo\" com próxima ação nula é rejeitada por CHECK @spec:AC-023",
+      "method": "vitest-json"
+    },
+    "AC-024": {
+      "status": "pass",
+      "testName": "T-023: invariantes do pipeline (constraints) e privilégios de DDL AC-024: sequência de cadência é única e limitada por oportunidade duas atividades com a mesma sequência para a mesma oportunidade violam UNIQUE @spec:AC-024 duas atividades com a mesma sequência para a mesma oportunidade violam UNIQUE @spec:AC-024",
+      "method": "vitest-json"
+    },
+    "AC-025": {
+      "status": "fail",
+      "testName": "T-023: invariantes do pipeline (constraints) e privilégios de DDL AC-025: log de eventos é imutável para a aplicação crm_app tentando UPDATE em oportunidade_eventos é recusado por falta de privilégio @spec:AC-025 crm_app tentando UPDATE em oportunidade_eventos é recusado por falta de privilégio @spec:AC-025",
+      "method": "vitest-json"
+    },
+    "AC-032": {
+      "status": "fail",
+      "testName": "T-023: invariantes do pipeline (constraints) e privilégios de DDL AC-032: crm_app não executa DDL crm_app tentando ALTER TABLE é recusado por falta de privilégio @spec:AC-032 crm_app tentando ALTER TABLE é recusado por falta de privilégio @spec:AC-032",
       "method": "vitest-json"
     }
   },
