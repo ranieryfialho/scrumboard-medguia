@@ -48,8 +48,7 @@
   sem policy permissiva default (fail-closed).
 - Depende de: T-014.
 
-## T-016 — Migration das invariantes do pipeline (constraints + privilégios) [pendente]
-
+## T-016 — Migration das invariantes do pipeline (constraints + privilégios) [concluida]
 - Refs: AC-021, AC-022, AC-023, AC-024, AC-025, AC-032
 - Arquivos: drizzle/0002_constraints.sql
 - Notas: `CHECK` condicionais por etapa (valor/motivo/próxima ação),
