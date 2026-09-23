@@ -74,8 +74,7 @@
   (prova do AC-017 também passa por aqui).
 - Depende de: T-014.
 
-## T-020 — Harness de teste com Postgres efêmero (CI) [pendente]
-
+## T-020 — Harness de teste com Postgres efêmero (CI) [concluida]
 - Refs: US-007
 - Arquivos: test/support/postgres-efemero.ts
 - Notas: sobe um container Postgres 15 via `docker run` (mesmo padrão da
