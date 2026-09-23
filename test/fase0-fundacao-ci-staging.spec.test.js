@@ -8,6 +8,10 @@ import yaml from 'js-yaml';
 const ciWorkflowPath = path.join(process.cwd(), '.github', 'workflows', 'ci.yml');
 const ciWorkflow = yaml.load(fs.readFileSync(ciWorkflowPath, 'utf8'));
 
+const releaseWorkflowPath = path.join(process.cwd(), '.github', 'workflows', 'release.yml');
+const releaseWorkflowRaw = fs.readFileSync(releaseWorkflowPath, 'utf8');
+const releaseWorkflow = yaml.load(releaseWorkflowRaw);
+
 function findGateSteps(job) {
   const gateOrder = ['lint', 'typecheck', 'test', 'build'];
   const matched = [];
@@ -97,7 +101,53 @@ test('AC-003: Build sai da VPS e a imagem é publicada com tag rastreável @spec
   // Dado: um push que dispara o workflow de release
   // Quando: o job de build roda
   // Então: ele publica a imagem no GHCR com uma tag baseada no SHA do commit
-  assert.fail('critério de aceite AC-003 ainda não provado — implemente este teste');
+  //        (não em `latest`), e nenhum step roda `docker build`/`compose build`
+  //        contra a VPS — só o registro GHCR é usado
+  assert.ok(releaseWorkflow.jobs, 'workflow de release deve ter jobs definidos');
+
+  assert.ok(
+    Object.prototype.hasOwnProperty.call(releaseWorkflow.on, 'push'),
+    'workflow de release deve disparar em push'
+  );
+
+  const jobs = Object.values(releaseWorkflow.jobs);
+  assert.ok(jobs.length >= 1, 'deve existir pelo menos um job de build/publish');
+
+  const allSteps = jobs.flatMap((job) => job.steps ?? []);
+
+  const publishStep = allSteps.find((step) => {
+    const usesOrRun = `${step.uses ?? ''} ${step.run ?? ''}`.toLowerCase();
+    return usesOrRun.includes('build-push') || usesOrRun.includes('docker push') || usesOrRun.includes('docker buildx build');
+  });
+  assert.ok(publishStep, 'deve existir um step que builda e publica a imagem');
+
+  const tagsValue = JSON.stringify(publishStep.with ?? publishStep.run ?? '');
+  assert.match(
+    tagsValue,
+    /ghcr\.io\//,
+    'a imagem deve ser publicada no GHCR (ghcr.io/...)'
+  );
+  assert.match(
+    tagsValue,
+    /github\.sha/,
+    'a tag da imagem deve ser baseada no SHA do commit (github.sha)'
+  );
+  assert.doesNotMatch(
+    tagsValue,
+    /:\s*latest['"]?(\s|,|$)/,
+    'a imagem não pode ser publicada com a tag latest'
+  );
+  assert.doesNotMatch(
+    tagsValue.toLowerCase(),
+    /-t\s+[^\s'"]*:latest\b/,
+    'a imagem não pode ser publicada com a tag latest'
+  );
+
+  assert.doesNotMatch(
+    releaseWorkflowRaw,
+    /ssh|scp|rsync/i,
+    'o workflow de release não deve conter passos que builda/executa nada na VPS'
+  );
 });
 
 // US-002 — Deploy por imagem versionada, com rollback em minutos
