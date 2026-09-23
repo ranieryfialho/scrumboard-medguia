@@ -833,10 +833,10 @@
       "codigo": "GLOB_SEM_ARQUIVOS",
       "feature": "—",
       "ref": "P-002",
-      "ocorrencias": 9,
+      "ocorrencias": 11,
       "primeiraVez": "2026-09-23T13:20:39.103Z",
-      "ultimaVez": "2026-09-23T16:58:14.412Z",
-      "gitRev": "d242d93"
+      "ultimaVez": "2026-09-23T17:57:47.673Z",
+      "gitRev": "ecf2833"
     },
     "REF_MALFORMADA::fase0-fundacao-ci-staging::T-001": {
       "codigo": "REF_MALFORMADA",
@@ -1112,10 +1112,10 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "fase0-fundacao-ci-staging",
       "ref": "—",
-      "ocorrencias": 1,
+      "ocorrencias": 3,
       "primeiraVez": "2026-09-23T14:14:35.866Z",
-      "ultimaVez": "2026-09-23T14:14:35.868Z",
-      "gitRev": "1b83a06"
+      "ultimaVez": "2026-09-23T17:57:47.672Z",
+      "gitRev": "ecf2833"
     },
     "VERIFY_PULADO::fase0-fundacao-ci-staging::AC-005": {
       "codigo": "VERIFY_PULADO",
@@ -1143,6 +1143,456 @@
       "primeiraVez": "2026-09-23T14:15:07.028Z",
       "ultimaVez": "2026-09-23T14:15:07.028Z",
       "gitRev": "1b83a06"
+    },
+    "ARQUIVO_INEXISTENTE::fase1-schema-drizzle::T-001": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "fase1-schema-drizzle",
+      "ref": "T-001",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-23T17:57:02.286Z",
+      "ultimaVez": "2026-09-23T17:57:02.286Z",
+      "gitRev": "ecf2833"
+    },
+    "AC_SEM_TASK::fase1-schema-drizzle::AC-018": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-018",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-23T17:57:02.286Z",
+      "ultimaVez": "2026-09-23T17:57:02.286Z",
+      "gitRev": "ecf2833"
+    },
+    "AC_SEM_TASK::fase1-schema-drizzle::AC-019": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-019",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-23T17:57:02.286Z",
+      "ultimaVez": "2026-09-23T17:57:02.286Z",
+      "gitRev": "ecf2833"
+    },
+    "AC_SEM_TASK::fase1-schema-drizzle::AC-020": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-020",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-23T17:57:02.286Z",
+      "ultimaVez": "2026-09-23T17:57:02.286Z",
+      "gitRev": "ecf2833"
+    },
+    "AC_SEM_TASK::fase1-schema-drizzle::AC-021": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-021",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-23T17:57:02.286Z",
+      "ultimaVez": "2026-09-23T17:57:02.286Z",
+      "gitRev": "ecf2833"
+    },
+    "AC_SEM_TASK::fase1-schema-drizzle::AC-022": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-022",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-23T17:57:02.286Z",
+      "ultimaVez": "2026-09-23T17:57:02.286Z",
+      "gitRev": "ecf2833"
+    },
+    "AC_SEM_TASK::fase1-schema-drizzle::AC-023": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-023",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-23T17:57:02.286Z",
+      "ultimaVez": "2026-09-23T17:57:02.286Z",
+      "gitRev": "ecf2833"
+    },
+    "AC_SEM_TASK::fase1-schema-drizzle::AC-024": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-024",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-23T17:57:02.286Z",
+      "ultimaVez": "2026-09-23T17:57:02.286Z",
+      "gitRev": "ecf2833"
+    },
+    "AC_SEM_TASK::fase1-schema-drizzle::AC-025": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-025",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-23T17:57:02.286Z",
+      "ultimaVez": "2026-09-23T17:57:02.286Z",
+      "gitRev": "ecf2833"
+    },
+    "AC_SEM_TASK::fase1-schema-drizzle::AC-026": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-026",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-23T17:57:02.286Z",
+      "ultimaVez": "2026-09-23T17:57:02.286Z",
+      "gitRev": "ecf2833"
+    },
+    "AC_SEM_TASK::fase1-schema-drizzle::AC-027": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-027",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-23T17:57:02.286Z",
+      "ultimaVez": "2026-09-23T17:57:02.286Z",
+      "gitRev": "ecf2833"
+    },
+    "AC_SEM_TASK::fase1-schema-drizzle::AC-028": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-028",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-23T17:57:02.286Z",
+      "ultimaVez": "2026-09-23T17:57:02.286Z",
+      "gitRev": "ecf2833"
+    },
+    "AC_SEM_TASK::fase1-schema-drizzle::AC-029": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-029",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-23T17:57:02.286Z",
+      "ultimaVez": "2026-09-23T17:57:02.286Z",
+      "gitRev": "ecf2833"
+    },
+    "AC_SEM_TASK::fase1-schema-drizzle::AC-030": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-030",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-23T17:57:02.286Z",
+      "ultimaVez": "2026-09-23T17:57:02.286Z",
+      "gitRev": "ecf2833"
+    },
+    "AC_SEM_TASK::fase1-schema-drizzle::AC-031": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-031",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-23T17:57:02.286Z",
+      "ultimaVez": "2026-09-23T17:57:02.286Z",
+      "gitRev": "ecf2833"
+    },
+    "AC_SEM_TASK::fase1-schema-drizzle::AC-032": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-032",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-23T17:57:02.286Z",
+      "ultimaVez": "2026-09-23T17:57:02.286Z",
+      "gitRev": "ecf2833"
+    },
+    "AC_SEM_TESTE::fase1-schema-drizzle::AC-015": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-015",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-23T17:57:02.286Z",
+      "ultimaVez": "2026-09-23T17:57:47.673Z",
+      "gitRev": "ecf2833"
+    },
+    "AC_SEM_TESTE::fase1-schema-drizzle::AC-016": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-016",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-23T17:57:02.286Z",
+      "ultimaVez": "2026-09-23T17:57:47.673Z",
+      "gitRev": "ecf2833"
+    },
+    "AC_SEM_TESTE::fase1-schema-drizzle::AC-017": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-017",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-23T17:57:02.286Z",
+      "ultimaVez": "2026-09-23T17:57:47.673Z",
+      "gitRev": "ecf2833"
+    },
+    "AC_SEM_TESTE::fase1-schema-drizzle::AC-018": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-018",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-23T17:57:02.286Z",
+      "ultimaVez": "2026-09-23T17:57:47.673Z",
+      "gitRev": "ecf2833"
+    },
+    "AC_SEM_TESTE::fase1-schema-drizzle::AC-019": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-019",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-23T17:57:02.286Z",
+      "ultimaVez": "2026-09-23T17:57:47.673Z",
+      "gitRev": "ecf2833"
+    },
+    "AC_SEM_TESTE::fase1-schema-drizzle::AC-020": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-020",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-23T17:57:02.286Z",
+      "ultimaVez": "2026-09-23T17:57:47.673Z",
+      "gitRev": "ecf2833"
+    },
+    "AC_SEM_TESTE::fase1-schema-drizzle::AC-021": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-021",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-23T17:57:02.286Z",
+      "ultimaVez": "2026-09-23T17:57:47.673Z",
+      "gitRev": "ecf2833"
+    },
+    "AC_SEM_TESTE::fase1-schema-drizzle::AC-022": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-022",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-23T17:57:02.286Z",
+      "ultimaVez": "2026-09-23T17:57:47.673Z",
+      "gitRev": "ecf2833"
+    },
+    "AC_SEM_TESTE::fase1-schema-drizzle::AC-023": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-023",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-23T17:57:02.286Z",
+      "ultimaVez": "2026-09-23T17:57:47.673Z",
+      "gitRev": "ecf2833"
+    },
+    "AC_SEM_TESTE::fase1-schema-drizzle::AC-024": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-024",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-23T17:57:02.286Z",
+      "ultimaVez": "2026-09-23T17:57:47.673Z",
+      "gitRev": "ecf2833"
+    },
+    "AC_SEM_TESTE::fase1-schema-drizzle::AC-025": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-025",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-23T17:57:02.286Z",
+      "ultimaVez": "2026-09-23T17:57:47.673Z",
+      "gitRev": "ecf2833"
+    },
+    "AC_SEM_TESTE::fase1-schema-drizzle::AC-026": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-026",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-23T17:57:02.286Z",
+      "ultimaVez": "2026-09-23T17:57:47.673Z",
+      "gitRev": "ecf2833"
+    },
+    "AC_SEM_TESTE::fase1-schema-drizzle::AC-027": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-027",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-23T17:57:02.286Z",
+      "ultimaVez": "2026-09-23T17:57:47.673Z",
+      "gitRev": "ecf2833"
+    },
+    "AC_SEM_TESTE::fase1-schema-drizzle::AC-028": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-028",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-23T17:57:02.286Z",
+      "ultimaVez": "2026-09-23T17:57:47.673Z",
+      "gitRev": "ecf2833"
+    },
+    "AC_SEM_TESTE::fase1-schema-drizzle::AC-029": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-029",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-23T17:57:02.286Z",
+      "ultimaVez": "2026-09-23T17:57:47.673Z",
+      "gitRev": "ecf2833"
+    },
+    "AC_SEM_TESTE::fase1-schema-drizzle::AC-030": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-030",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-23T17:57:02.286Z",
+      "ultimaVez": "2026-09-23T17:57:47.673Z",
+      "gitRev": "ecf2833"
+    },
+    "AC_SEM_TESTE::fase1-schema-drizzle::AC-031": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-031",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-23T17:57:02.286Z",
+      "ultimaVez": "2026-09-23T17:57:47.673Z",
+      "gitRev": "ecf2833"
+    },
+    "AC_SEM_TESTE::fase1-schema-drizzle::AC-032": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase1-schema-drizzle",
+      "ref": "AC-032",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-23T17:57:02.286Z",
+      "ultimaVez": "2026-09-23T17:57:47.673Z",
+      "gitRev": "ecf2833"
+    },
+    "ARQUIVO_INEXISTENTE::fase1-schema-drizzle::T-010": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "fase1-schema-drizzle",
+      "ref": "T-010",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-23T17:57:47.673Z",
+      "ultimaVez": "2026-09-23T17:57:47.673Z",
+      "gitRev": "ecf2833"
+    },
+    "ARQUIVO_INEXISTENTE::fase1-schema-drizzle::T-011": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "fase1-schema-drizzle",
+      "ref": "T-011",
+      "ocorrencias": 3,
+      "primeiraVez": "2026-09-23T17:57:47.673Z",
+      "ultimaVez": "2026-09-23T17:57:47.673Z",
+      "gitRev": "ecf2833"
+    },
+    "ARQUIVO_INEXISTENTE::fase1-schema-drizzle::T-012": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "fase1-schema-drizzle",
+      "ref": "T-012",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-23T17:57:47.673Z",
+      "ultimaVez": "2026-09-23T17:57:47.673Z",
+      "gitRev": "ecf2833"
+    },
+    "ARQUIVO_INEXISTENTE::fase1-schema-drizzle::T-013": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "fase1-schema-drizzle",
+      "ref": "T-013",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-23T17:57:47.673Z",
+      "ultimaVez": "2026-09-23T17:57:47.673Z",
+      "gitRev": "ecf2833"
+    },
+    "ARQUIVO_INEXISTENTE::fase1-schema-drizzle::T-014": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "fase1-schema-drizzle",
+      "ref": "T-014",
+      "ocorrencias": 3,
+      "primeiraVez": "2026-09-23T17:57:47.673Z",
+      "ultimaVez": "2026-09-23T17:57:47.673Z",
+      "gitRev": "ecf2833"
+    },
+    "ARQUIVO_INEXISTENTE::fase1-schema-drizzle::T-015": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "fase1-schema-drizzle",
+      "ref": "T-015",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-23T17:57:47.673Z",
+      "ultimaVez": "2026-09-23T17:57:47.673Z",
+      "gitRev": "ecf2833"
+    },
+    "ARQUIVO_INEXISTENTE::fase1-schema-drizzle::T-016": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "fase1-schema-drizzle",
+      "ref": "T-016",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-23T17:57:47.673Z",
+      "ultimaVez": "2026-09-23T17:57:47.673Z",
+      "gitRev": "ecf2833"
+    },
+    "ARQUIVO_INEXISTENTE::fase1-schema-drizzle::T-017": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "fase1-schema-drizzle",
+      "ref": "T-017",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-23T17:57:47.673Z",
+      "ultimaVez": "2026-09-23T17:57:47.673Z",
+      "gitRev": "ecf2833"
+    },
+    "ARQUIVO_INEXISTENTE::fase1-schema-drizzle::T-018": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "fase1-schema-drizzle",
+      "ref": "T-018",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-23T17:57:47.673Z",
+      "ultimaVez": "2026-09-23T17:57:47.673Z",
+      "gitRev": "ecf2833"
+    },
+    "ARQUIVO_INEXISTENTE::fase1-schema-drizzle::T-019": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "fase1-schema-drizzle",
+      "ref": "T-019",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-23T17:57:47.673Z",
+      "ultimaVez": "2026-09-23T17:57:47.673Z",
+      "gitRev": "ecf2833"
+    },
+    "ARQUIVO_INEXISTENTE::fase1-schema-drizzle::T-020": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "fase1-schema-drizzle",
+      "ref": "T-020",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-23T17:57:47.673Z",
+      "ultimaVez": "2026-09-23T17:57:47.673Z",
+      "gitRev": "ecf2833"
+    },
+    "ARQUIVO_INEXISTENTE::fase1-schema-drizzle::T-021": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "fase1-schema-drizzle",
+      "ref": "T-021",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-23T17:57:47.673Z",
+      "ultimaVez": "2026-09-23T17:57:47.673Z",
+      "gitRev": "ecf2833"
+    },
+    "ARQUIVO_INEXISTENTE::fase1-schema-drizzle::T-022": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "fase1-schema-drizzle",
+      "ref": "T-022",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-23T17:57:47.673Z",
+      "ultimaVez": "2026-09-23T17:57:47.673Z",
+      "gitRev": "ecf2833"
+    },
+    "ARQUIVO_INEXISTENTE::fase1-schema-drizzle::T-023": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "fase1-schema-drizzle",
+      "ref": "T-023",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-23T17:57:47.673Z",
+      "ultimaVez": "2026-09-23T17:57:47.673Z",
+      "gitRev": "ecf2833"
+    },
+    "ARQUIVO_INEXISTENTE::fase1-schema-drizzle::T-024": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "fase1-schema-drizzle",
+      "ref": "T-024",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-23T17:57:47.673Z",
+      "ultimaVez": "2026-09-23T17:57:47.673Z",
+      "gitRev": "ecf2833"
+    },
+    "ARQUIVO_INEXISTENTE::fase1-schema-drizzle::T-025": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "fase1-schema-drizzle",
+      "ref": "T-025",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-23T17:57:47.673Z",
+      "ultimaVez": "2026-09-23T17:57:47.673Z",
+      "gitRev": "ecf2833"
     }
   }
 }
