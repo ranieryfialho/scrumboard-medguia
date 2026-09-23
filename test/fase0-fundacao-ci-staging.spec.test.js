@@ -1,13 +1,66 @@
 // Testes de spec da feature fase0-fundacao-ci-staging — gerados por onp-spec scaffold
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import yaml from 'js-yaml';
+
+const ciWorkflowPath = path.join(process.cwd(), '.github', 'workflows', 'ci.yml');
+const ciWorkflow = yaml.load(fs.readFileSync(ciWorkflowPath, 'utf8'));
+
+function findGateSteps(job) {
+  const gateOrder = ['lint', 'typecheck', 'test', 'build'];
+  const matched = [];
+  for (const gate of gateOrder) {
+    const step = job.steps.find((candidate) => {
+      const haystack = `${candidate.name ?? ''} ${candidate.run ?? ''}`.toLowerCase();
+      if (gate === 'typecheck') {
+        return haystack.includes('typecheck') || haystack.includes('tsc') || haystack.includes('checagem de tipos');
+      }
+      if (gate === 'test') {
+        return haystack.includes('npm test') || haystack.includes('npm run test') || (haystack.includes('teste') && !haystack.includes('typecheck'));
+      }
+      return haystack.includes(gate);
+    });
+    matched.push(step);
+  }
+  return matched;
+}
 
 // US-001 — CI bloqueia código quebrado antes da main
 test('AC-001: Workflow de CI cobre os quatro gates na ordem certa @spec:AC-001', () => {
   // Dado: o arquivo `.github/workflows/ci.yml`
   // Quando: ele é inspecionado
   // Então: existe um job que executa, nessa ordem, lint → checagem de tipos
-  assert.fail('critério de aceite AC-001 ainda não provado — implemente este teste');
+  //        (tsc --noEmit) → testes → build, cada passo dependendo do
+  //        anterior ter passado (nenhum continue-on-error: true nos gates)
+  assert.ok(ciWorkflow.jobs, 'workflow deve ter jobs definidos');
+  const jobs = Object.values(ciWorkflow.jobs);
+  assert.ok(jobs.length >= 1, 'deve existir pelo menos um job');
+
+  const job = jobs[0];
+  assert.ok(Array.isArray(job.steps), 'job deve ter steps');
+
+  const [lintStep, typecheckStep, testStep, buildStep] = findGateSteps(job);
+  assert.ok(lintStep, 'deve existir um step de lint');
+  assert.ok(typecheckStep, 'deve existir um step de checagem de tipos (tsc --noEmit)');
+  assert.ok(testStep, 'deve existir um step de testes');
+  assert.ok(buildStep, 'deve existir um step de build');
+
+  const indices = [lintStep, typecheckStep, testStep, buildStep].map((step) => job.steps.indexOf(step));
+  assert.deepEqual(
+    indices,
+    [...indices].sort((a, b) => a - b),
+    'os gates devem aparecer nessa ordem: lint → typecheck → test → build'
+  );
+
+  for (const step of job.steps) {
+    assert.notEqual(
+      step['continue-on-error'],
+      true,
+      `step "${step.name ?? step.run}" não pode ter continue-on-error: true`
+    );
+  }
 });
 
 // US-001 — CI bloqueia código quebrado antes da main
@@ -15,7 +68,28 @@ test('AC-002: CI roda em todo Pull Request e em todo push @spec:AC-002', () => {
   // Dado: o mesmo workflow
   // Quando: inspecionado o gatilho (`on:`)
   // Então: ele dispara em `pull_request` (qualquer branch contra `main`) e em
-  assert.fail('critério de aceite AC-002 ainda não provado — implemente este teste');
+  //        `push` na `main`
+  assert.ok(ciWorkflow.on, 'workflow deve ter gatilhos (on:) definidos');
+
+  assert.ok(
+    Object.prototype.hasOwnProperty.call(ciWorkflow.on, 'pull_request'),
+    'workflow deve disparar em pull_request'
+  );
+  const pullRequestBranches = ciWorkflow.on.pull_request?.branches;
+  assert.ok(
+    !pullRequestBranches || pullRequestBranches.includes('main'),
+    'pull_request deve cobrir PRs contra a main'
+  );
+
+  assert.ok(
+    Object.prototype.hasOwnProperty.call(ciWorkflow.on, 'push'),
+    'workflow deve disparar em push'
+  );
+  const pushBranches = ciWorkflow.on.push?.branches;
+  assert.ok(
+    Array.isArray(pushBranches) && pushBranches.includes('main'),
+    'push deve disparar na branch main'
+  );
 });
 
 // US-002 — Deploy por imagem versionada, com rollback em minutos
