@@ -1,0 +1,251 @@
+{
+  "runId": "scrumboard-medguia-fase1-schema-drizzle-mueeq3ry",
+  "feature": "fase1-schema-drizzle",
+  "agent": "claude",
+  "modo": "sequencial",
+  "paralelizar": null,
+  "modeloForcado": null,
+  "esforcoForcado": null,
+  "geradoEm": "2026-09-23 17:58",
+  "branchTrabalho": "spec/fase1-schema-drizzle",
+  "baseDir": ".spec/features/fase1-schema-drizzle",
+  "specDir": ".spec",
+  "repoName": "scrumboard-medguia",
+  "logsDir": "../onp-worktrees/scrumboard-medguia-fase1-schema-drizzle-logs",
+  "ondas": [],
+  "faixas": [],
+  "sequenciais": [
+    {
+      "id": "T-010",
+      "titulo": "Instalar e configurar Drizzle ORM + drizzle-kit",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "package.json",
+        "package-lock.json",
+        "drizzle.config.ts",
+        "src/db/client.ts"
+      ],
+      "refs": [
+        "US-007"
+      ]
+    },
+    {
+      "id": "T-011",
+      "titulo": "Modelar tabelas de identidade/tenant e Better Auth",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/db/schema/identidade.ts",
+        "src/db/schema/auth.ts",
+        "src/db/schema/index.ts"
+      ],
+      "refs": [
+        "US-007",
+        "AC-015",
+        "AC-016",
+        "AC-018"
+      ]
+    },
+    {
+      "id": "T-012",
+      "titulo": "Modelar tabelas do pipeline",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/db/schema/pipeline.ts"
+      ],
+      "refs": [
+        "US-007",
+        "AC-015",
+        "AC-018"
+      ]
+    },
+    {
+      "id": "T-013",
+      "titulo": "Modelar tabelas de operação e as reescritas do modelo legado",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/db/schema/operacao.ts",
+        "src/db/schema/legado.ts"
+      ],
+      "refs": [
+        "US-007",
+        "AC-015",
+        "AC-018"
+      ]
+    },
+    {
+      "id": "T-014",
+      "titulo": "Gerar e versionar a migration inicial do schema",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "drizzle/0000_schema_inicial.sql",
+        "drizzle/meta/_journal.json",
+        "drizzle/meta/0000_snapshot.json"
+      ],
+      "refs": [
+        "AC-015",
+        "AC-017"
+      ]
+    },
+    {
+      "id": "T-015",
+      "titulo": "Migration de RLS (ativar + policy por tenant em toda tabela de negócio)",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "drizzle/0001_rls.sql"
+      ],
+      "refs": [
+        "AC-019",
+        "AC-020"
+      ]
+    },
+    {
+      "id": "T-016",
+      "titulo": "Migration das invariantes do pipeline (constraints + privilégios)",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "drizzle/0002_constraints.sql"
+      ],
+      "refs": [
+        "AC-021",
+        "AC-022",
+        "AC-023",
+        "AC-024",
+        "AC-025",
+        "AC-032"
+      ]
+    },
+    {
+      "id": "T-017",
+      "titulo": "Função SQL `mover_oportunidade` (transição + evento + lock otimista)",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "drizzle/0003_fn_mover_oportunidade.sql"
+      ],
+      "refs": [
+        "AC-026",
+        "AC-027"
+      ]
+    },
+    {
+      "id": "T-018",
+      "titulo": "Função SQL `concluir_atividade` (resultado do toque + efeitos em cadeia)",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "drizzle/0004_fn_concluir_atividade.sql"
+      ],
+      "refs": [
+        "AC-028"
+      ]
+    },
+    {
+      "id": "T-019",
+      "titulo": "Seeds idempotentes (etapas, grafo de transições, motivos de perda)",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "drizzle/0005_seeds.sql"
+      ],
+      "refs": [
+        "AC-029",
+        "AC-030",
+        "AC-031"
+      ]
+    },
+    {
+      "id": "T-020",
+      "titulo": "Harness de teste com Postgres efêmero (CI)",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "test/support/postgres-efemero.ts"
+      ],
+      "refs": [
+        "US-007"
+      ]
+    },
+    {
+      "id": "T-021",
+      "titulo": "Testes de schema e tenant obrigatório",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "test/db/schema.test.ts"
+      ],
+      "refs": [
+        "AC-015",
+        "AC-016",
+        "AC-017",
+        "AC-018"
+      ]
+    },
+    {
+      "id": "T-022",
+      "titulo": "Testes de RLS (isolamento por tenant)",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "test/db/rls.test.ts"
+      ],
+      "refs": [
+        "AC-019",
+        "AC-020"
+      ]
+    },
+    {
+      "id": "T-023",
+      "titulo": "Testes das invariantes (constraints) e dos privilégios de DDL",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "test/db/constraints.test.ts"
+      ],
+      "refs": [
+        "AC-021",
+        "AC-022",
+        "AC-023",
+        "AC-024",
+        "AC-025",
+        "AC-032"
+      ]
+    },
+    {
+      "id": "T-024",
+      "titulo": "Testes das funções SQL transacionais",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "test/db/funcoes.test.ts"
+      ],
+      "refs": [
+        "AC-026",
+        "AC-027",
+        "AC-028"
+      ]
+    },
+    {
+      "id": "T-025",
+      "titulo": "Testes dos seeds",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "test/db/seeds.test.ts"
+      ],
+      "refs": [
+        "AC-029",
+        "AC-030",
+        "AC-031"
+      ]
+    }
+  ],
+  "concluidas": [],
+  "avisos": []
+}

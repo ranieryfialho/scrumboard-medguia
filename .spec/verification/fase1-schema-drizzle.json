@@ -1,0 +1,102 @@
+{
+  "feature": "fase1-schema-drizzle",
+  "timestamp": "2026-09-24T17:32:17.955Z",
+  "gitRev": "b489cdd",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
+  "reporter": "vitest-json",
+  "exitCode": 0,
+  "testsParsed": 128,
+  "results": {
+    "AC-015": {
+      "status": "pass",
+      "testName": "T-013: tabelas de operação (@spec:AC-015) cron_execucoes existe com job, status e contagem obrigatórios cron_execucoes existe com job, status e contagem obrigatórios",
+      "method": "vitest-json"
+    },
+    "AC-016": {
+      "status": "pass",
+      "testName": "T-011: tabelas do adaptador Drizzle do Better Auth (@spec:AC-016) contas existe, vinculada a usuarios contas existe, vinculada a usuarios",
+      "method": "vitest-json"
+    },
+    "AC-017": {
+      "status": "pass",
+      "testName": "T-021: schema completo aplicado num Postgres limpo AC-017: migrations reaplicadas no mesmo banco não falham nem duplicam nada drizzle-kit migrate roda de novo sem falhar nem duplicar tabela @spec:AC-017 drizzle-kit migrate roda de novo sem falhar nem duplicar tabela @spec:AC-017",
+      "method": "vitest-json"
+    },
+    "AC-018": {
+      "status": "pass",
+      "testName": "T-011: tabelas de identidade/tenant (@spec:AC-018) empresas existe com nome, slug e ativo obrigatórios empresas existe com nome, slug e ativo obrigatórios",
+      "method": "vitest-json"
+    },
+    "AC-019": {
+      "status": "pass",
+      "testName": "T-022: RLS garante isolamento por tenant AC-019: RLS ativo em toda tabela com empresa_id todas as tabelas de negócio têm rowsecurity habilitado @spec:AC-019 todas as tabelas de negócio têm rowsecurity habilitado @spec:AC-019",
+      "method": "vitest-json"
+    },
+    "AC-020": {
+      "status": "pass",
+      "testName": "T-022: RLS garante isolamento por tenant AC-020: sem app.empresa_id definido, crm_app não lê nem escreve linha nenhuma SELECT em \"empresa_configuracoes\" como crm_app sem SET LOCAL não retorna nenhuma linha @spec:AC-020 SELECT em \"empresa_configuracoes\" como crm_app sem SET LOCAL não retorna nenhuma linha @spec:AC-020",
+      "method": "vitest-json"
+    },
+    "AC-021": {
+      "status": "pass",
+      "testName": "T-023: invariantes do pipeline (constraints) e privilégios de DDL AC-021: card não entra em Proposta sem valor > 0 etapa Proposta com valor nulo é rejeitada por CHECK @spec:AC-021 etapa Proposta com valor nulo é rejeitada por CHECK @spec:AC-021",
+      "method": "vitest-json"
+    },
+    "AC-022": {
+      "status": "pass",
+      "testName": "T-023: invariantes do pipeline (constraints) e privilégios de DDL AC-022: card não entra em Perdido sem motivo etapa Perdido sem motivo_perda_id é rejeitada por CHECK @spec:AC-022 etapa Perdido sem motivo_perda_id é rejeitada por CHECK @spec:AC-022",
+      "method": "vitest-json"
+    },
+    "AC-023": {
+      "status": "pass",
+      "testName": "T-023: invariantes do pipeline (constraints) e privilégios de DDL AC-023: card não entra em etapas de acompanhamento sem próxima ação etapa \"Follow de longo prazo\" com próxima ação nula é rejeitada por CHECK @spec:AC-023 etapa \"Follow de longo prazo\" com próxima ação nula é rejeitada por CHECK @spec:AC-023",
+      "method": "vitest-json"
+    },
+    "AC-024": {
+      "status": "pass",
+      "testName": "T-023: invariantes do pipeline (constraints) e privilégios de DDL AC-024: sequência de cadência é única e limitada por oportunidade duas atividades com a mesma sequência para a mesma oportunidade violam UNIQUE @spec:AC-024 duas atividades com a mesma sequência para a mesma oportunidade violam UNIQUE @spec:AC-024",
+      "method": "vitest-json"
+    },
+    "AC-025": {
+      "status": "pass",
+      "testName": "T-023: invariantes do pipeline (constraints) e privilégios de DDL AC-025: log de eventos é imutável para a aplicação crm_app tentando UPDATE em oportunidade_eventos é recusado por falta de privilégio @spec:AC-025 crm_app tentando UPDATE em oportunidade_eventos é recusado por falta de privilégio @spec:AC-025",
+      "method": "vitest-json"
+    },
+    "AC-026": {
+      "status": "pass",
+      "testName": "T-024: funções SQL transacionais AC-026: mover_oportunidade grava estado e evento juntos, ou nenhum dos dois etapa avança, version incrementa e o evento de transição é gravado na mesma chamada @spec:AC-026 etapa avança, version incrementa e o evento de transição é gravado na mesma chamada @spec:AC-026",
+      "method": "vitest-json"
+    },
+    "AC-027": {
+      "status": "pass",
+      "testName": "T-024: funções SQL transacionais AC-027: escrita com versão desatualizada é rejeitada (lock otimista) version diferente da atual é recusada sem alterar etapa, evento ou version @spec:AC-027 version diferente da atual é recusada sem alterar etapa, evento ou version @spec:AC-027",
+      "method": "vitest-json"
+    },
+    "AC-028": {
+      "status": "pass",
+      "testName": "T-024: funções SQL transacionais AC-028: concluir_atividade grava o resultado do toque e o efeito em cadeia, atomicamente resultado \"conectou\" cancela as demais atividades pendentes e grava o evento de conexão @spec:AC-028 resultado \"conectou\" cancela as demais atividades pendentes e grava o evento de conexão @spec:AC-028",
+      "method": "vitest-json"
+    },
+    "AC-029": {
+      "status": "pass",
+      "testName": "T-025: seeds idempotentes do pipeline AC-029: as 15 etapas existem após a migration, na ordem certa pipeline_etapas tem as 15 etapas do TDD-001 §4.4, com macrofluxo e flags corretos @spec:AC-029 pipeline_etapas tem as 15 etapas do TDD-001 §4.4, com macrofluxo e flags corretos @spec:AC-029",
+      "method": "vitest-json"
+    },
+    "AC-030": {
+      "status": "pass",
+      "testName": "T-025: seeds idempotentes do pipeline AC-030: o grafo de transições permitido existe e bloqueia o resto por omissão pipeline_transicoes tem exatamente as combinações do TDD-001 §4.4 + saltos do RFC-001 §6, nenhuma outra @spec:AC-030 pipeline_transicoes tem exatamente as combinações do TDD-001 §4.4 + saltos do RFC-001 §6, nenhuma outra @spec:AC-030",
+      "method": "vitest-json"
+    },
+    "AC-031": {
+      "status": "pass",
+      "testName": "T-025: seeds idempotentes do pipeline AC-031: seeds de motivos_perda cobrem os motivos já exigidos pelo mapeamento de migração os 8 motivos validados existem, com \"Cadência esgotada\" sistêmico e \"Legado — arquivado\" inativo @spec:AC-031 os 8 motivos validados existem, com \"Cadência esgotada\" sistêmico e \"Legado — arquivado\" inativo @spec:AC-031",
+      "method": "vitest-json"
+    },
+    "AC-032": {
+      "status": "pass",
+      "testName": "T-023: invariantes do pipeline (constraints) e privilégios de DDL AC-032: crm_app não executa DDL crm_app tentando CREATE TABLE é recusado por falta de privilégio @spec:AC-032 crm_app tentando CREATE TABLE é recusado por falta de privilégio @spec:AC-032",
+      "method": "vitest-json"
+    }
+  },
+  "principles": {}
+}
