@@ -1,7 +1,7 @@
 # Spec: Fase1 schema drizzle
 
 > feature: fase1-schema-drizzle
-> status: rascunho
+> status: auditada
 
 ## Contexto
 
@@ -200,11 +200,13 @@ de pipeline, sem passo manual (TDD-001 §4.3, §4.8).
 
 - **Dado** as migrations aplicadas
 - **Quando** se consulta `motivos_perda`
-- **Então** ao menos os motivos usados no mapeamento de etapas do RFC-001 §6
-  existem (`Sem interesse`, `Sem perfil/fit`, `Cadência esgotada` com
-  `e_sistemico = true`, `Legado — arquivado`) — a lista completa e definitiva
-  (TDD-001 §17 pergunta 2, ainda em aberto com @Alana/@Erivelton) pode crescer
-  depois sem quebrar nada, porque a tabela não é um enum fechado
+- **Então** os 8 motivos validados existem (`Sem interesse`, `Sem perfil/fit`,
+  `Preço/orçamento`, `Escolheu concorrente`, `Não é o momento`, `Decisor não
+  disponível/trocou`, `Cadência esgotada` com `e_sistemico = true`, e
+  `Legado — arquivado` com `ativo = false` — bucket só de migração, RFC-001
+  §6, não escolhível pelo time comercial) — a lista pode crescer depois sem
+  quebrar nada, porque a tabela não é um enum fechado (TDD-001 §17 pergunta 2,
+  resolvida por @Raniery em 2026-09-24, ver Q-004)
 
 ### US-013 — Só a role de migration tem DDL
 
@@ -236,8 +238,8 @@ que comprometida (TDD-001 §4.8; RFC-001 R-VPS-3).
   for religado.
 - ETL de Supabase/Sheets/LP para o modelo novo — feature da Fase 3 (Migração).
 - UI, rotas HTTP, worker de cadência.
-- Lista final e fechada de `motivos_perda` — pendência de negócio (TDD-001
-  §17 pergunta 2), não bloqueia o schema (AC-031).
+- Lista **fechada** de `motivos_perda` — a tabela nunca vira enum fechado por
+  design; os 8 motivos validados (Q-004) são o seed inicial, não um teto.
 
 ## Suposições
 
@@ -245,11 +247,11 @@ que comprometida (TDD-001 §4.8; RFC-001 R-VPS-3).
 |---|---|---|---|
 | ASM-006 | UUIDs são gerados com `gen_random_uuid()` nativo do Postgres 15 (disponível desde o core a partir do PG13, sem precisar da extensão `pgcrypto`) | confirmada | Verificado: o `pg-master` roda PostgreSQL 15.18 (RFC-001 §1.3), que já embute `gen_random_uuid()` no core. |
 | ASM-007 | O isolamento multi-tenant usa um único schema `public` (sem schema por empresa) — quem isola é o RLS, não a separação de schema | confirmada | Alinhado à sub-decisão D-S3(b) do RFC-001 §5, escolhida explicitamente sobre a opção (c) "um schema/database por empresa". |
-| ASM-008 | `pipeline_transicoes.papeis_permitidos` só guarda a lista de papéis autorizados (coluna de dados); **validar** se o ator tem esse papel é responsabilidade da camada de domínio (`fase1-dominio-pipeline`), não desta feature | aberta | — |
+| ASM-008 | `pipeline_transicoes.papeis_permitidos` só guarda a lista de papéis autorizados (coluna de dados); **validar** se o ator tem esse papel é responsabilidade da camada de domínio (`fase1-dominio-pipeline`), não desta feature | confirmada | Escopo explícito, não incerteza: esta feature entrega só o schema/dado (`papeis_permitidos` como coluna). A validação em runtime (o ator tem o papel? bloqueia se não tiver?) é responsabilidade da `fase1-dominio-pipeline`, listada em "Fora de escopo". |
 | ASM-009 | Os testes de integração desta feature sobem seu próprio Postgres 15 efêmero via `docker run` (mesmo padrão decidido em `fase0-fundacao-ci-staging` Q-003), sem tocar `crm_staging`/`crm_prod` da VPS | confirmada | Confirmado pelo usuário nesta conversa (2026-09-23): migrations só entregues e provadas em CI; aplicação real na VPS fica para o religamento do deploy. |
 
 ## Perguntas em aberto
 
 | ID | Pergunta | Status | Resposta |
 |---|---|---|---|
-| Q-004 | A lista final de `motivos_perda` (TDD-001 §17 pergunta 2) ainda depende de @Alana/@Erivelton, prevista para 2026-10-09 | aberta | — |
+| Q-004 | A lista final de `motivos_perda` (TDD-001 §17 pergunta 2) ainda depende de @Alana/@Erivelton, prevista para 2026-10-09 | respondida | Validado por @Raniery (Driver) em 2026-09-24: `Sem interesse`, `Sem perfil/fit`, `Preço/orçamento`, `Escolheu concorrente`, `Não é o momento`, `Decisor não disponível/trocou`, `Cadência esgotada` (sistêmico), `Legado — arquivado` (inativo, só para mapear cards do cutover). Lista aberta — pode crescer depois, a tabela não é enum fechado. |

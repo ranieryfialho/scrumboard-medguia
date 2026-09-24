@@ -1,7 +1,7 @@
 {
   "feature": "fase1-schema-drizzle",
-  "timestamp": "2026-09-24T15:44:53.735Z",
-  "gitRev": "c55ad44",
+  "timestamp": "2026-09-24T17:32:17.955Z",
+  "gitRev": "b489cdd",
   "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
   "exitCode": 0,
@@ -89,7 +89,7 @@
     },
     "AC-031": {
       "status": "pass",
-      "testName": "T-025: seeds idempotentes do pipeline AC-031: seeds de motivos_perda cobrem os motivos já exigidos pelo mapeamento de migração os 4 motivos do RFC-001 §6 item 8 existem, com \"Cadência esgotada\" sistêmico @spec:AC-031 os 4 motivos do RFC-001 §6 item 8 existem, com \"Cadência esgotada\" sistêmico @spec:AC-031",
+      "testName": "T-025: seeds idempotentes do pipeline AC-031: seeds de motivos_perda cobrem os motivos já exigidos pelo mapeamento de migração os 8 motivos validados existem, com \"Cadência esgotada\" sistêmico e \"Legado — arquivado\" inativo @spec:AC-031 os 8 motivos validados existem, com \"Cadência esgotada\" sistêmico e \"Legado — arquivado\" inativo @spec:AC-031",
       "method": "vitest-json"
     },
     "AC-032": {

@@ -84,12 +84,24 @@ VALUES
   (15, 14, false, ARRAY['MASTER','GERENTE','ATENDENTE']::papel_usuario[])
 ON CONFLICT ("etapa_origem_id", "etapa_destino_id") DO NOTHING;
 
--- Motivos exigidos pelo mapeamento de migração do RFC-001 §6 item 8
--- (lista aberta — não é enum fechado, ON CONFLICT por nome permite crescer).
+-- Motivos de perda (TDD-001 §17 pergunta 2, Q-004 da spec desta feature):
+-- lista validada por @Raniery (Driver) em 24/09/2026, cobrindo os motivos
+-- mínimos exigidos pelo mapeamento de migração do RFC-001 §6 item 8 mais os
+-- motivos de perda mais comuns de uma venda B2B (preço, concorrência,
+-- timing, troca de decisor) — ainda lista aberta, não é enum fechado,
+-- ON CONFLICT por nome permite crescer sem quebrar nada.
+--
+-- "Legado — arquivado" nasce com `ativo = false`: existe só para mapear
+-- cards antigos já perdidos no cutover (RFC-001 §6), não deve aparecer como
+-- opção escolhível pelo time comercial daqui pra frente.
 INSERT INTO "motivos_perda" ("nome", "ativo", "e_sistemico")
 VALUES
   ('Sem interesse', true, false),
   ('Sem perfil/fit', true, false),
+  ('Preço/orçamento', true, false),
+  ('Escolheu concorrente', true, false),
+  ('Não é o momento', true, false),
+  ('Decisor não disponível/trocou', true, false),
   ('Cadência esgotada', true, true),
-  ('Legado — arquivado', true, false)
+  ('Legado — arquivado', false, false)
 ON CONFLICT ("nome") DO NOTHING;

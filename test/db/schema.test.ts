@@ -210,7 +210,7 @@ describe('T-021: schema completo aplicado num Postgres limpo', () => {
       const transicoesAntes = contar('pipeline_transicoes');
       const motivosAntes = contar('motivos_perda');
       expect(etapasAntes).toBe('15');
-      expect(motivosAntes).toBe('4');
+      expect(motivosAntes).toBe('8');
 
       const reaplicarSeeds = pg.psqlComo('crm_migrator', seedSql);
       expect(reaplicarSeeds.status, `reaplicar o seed deveria terminar com sucesso: ${reaplicarSeeds.stderr}`).toBe(0);

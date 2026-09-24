@@ -117,7 +117,10 @@ describe('T-025: seeds idempotentes do pipeline', () => {
   });
 
   describe('AC-031: seeds de motivos_perda cobrem os motivos já exigidos pelo mapeamento de migração', () => {
-    test('os 4 motivos do RFC-001 §6 item 8 existem, com "Cadência esgotada" sistêmico @spec:AC-031', () => {
+    // Lista validada por @Raniery (Driver) em 24/09/2026 (Q-004 da spec) —
+    // os 4 motivos mínimos do RFC-001 §6 item 8 mais os motivos de perda
+    // mais comuns de uma venda B2B (preço, concorrência, timing, decisor).
+    test('os 8 motivos validados existem, com "Cadência esgotada" sistêmico e "Legado — arquivado" inativo @spec:AC-031', () => {
       const resultado = pg.psqlComo(
         'crm_migrator',
         `SELECT "nome", "ativo", "e_sistemico" FROM "motivos_perda" ORDER BY "nome"`
@@ -136,8 +139,15 @@ describe('T-025: seeds idempotentes do pipeline', () => {
 
       expect(linhas.get('Sem interesse')).toEqual({ ativo: 't', eSistemico: 'f' });
       expect(linhas.get('Sem perfil/fit')).toEqual({ ativo: 't', eSistemico: 'f' });
+      expect(linhas.get('Preço/orçamento')).toEqual({ ativo: 't', eSistemico: 'f' });
+      expect(linhas.get('Escolheu concorrente')).toEqual({ ativo: 't', eSistemico: 'f' });
+      expect(linhas.get('Não é o momento')).toEqual({ ativo: 't', eSistemico: 'f' });
+      expect(linhas.get('Decisor não disponível/trocou')).toEqual({ ativo: 't', eSistemico: 'f' });
       expect(linhas.get('Cadência esgotada')).toEqual({ ativo: 't', eSistemico: 't' });
-      expect(linhas.get('Legado — arquivado')).toEqual({ ativo: 't', eSistemico: 'f' });
+      // Bucket só de migração (RFC-001 §6) — inativo, não deve aparecer como
+      // opção escolhível pelo time comercial daqui pra frente.
+      expect(linhas.get('Legado — arquivado')).toEqual({ ativo: 'f', eSistemico: 'f' });
+      expect(linhas.size, 'não deveria existir motivo além dos 8 validados').toBe(8);
     });
   });
 });
