@@ -1,11 +1,11 @@
 {
   "feature": "fase1-schema-drizzle",
-  "timestamp": "2026-09-24T17:32:17.955Z",
-  "gitRev": "b489cdd",
+  "timestamp": "2026-09-24T19:17:44.447Z",
+  "gitRev": "e47e272",
   "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
   "exitCode": 0,
-  "testsParsed": 128,
+  "testsParsed": 171,
   "results": {
     "AC-015": {
       "status": "pass",

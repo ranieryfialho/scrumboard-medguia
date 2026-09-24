@@ -48,6 +48,12 @@ export const usuarios = pgTable(
     id: uuid('id').primaryKey(),
     email: text('email').notNull(),
     nome: text('nome').notNull(),
+    // Exigidos pelo modelo `user` do Better Auth (fase1-auth-rbac, T-026) —
+    // `emailVerificado` não deve ser confundido com `ativo`, campo de
+    // negócio já existente. `imagem` fica opcional (nenhum fluxo desta
+    // feature a usa ainda).
+    emailVerificado: boolean('email_verificado').notNull().default(false),
+    imagem: text('imagem'),
     isSuperAdmin: boolean('is_super_admin').notNull().default(false),
     ativo: boolean('ativo').notNull().default(true),
     criadoEm: timestamp('criado_em', { withTimezone: true }).notNull().defaultNow(),

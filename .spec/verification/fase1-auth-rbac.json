@@ -1,0 +1,87 @@
+{
+  "feature": "fase1-auth-rbac",
+  "timestamp": "2026-09-24T19:13:08.949Z",
+  "gitRev": "e47e272",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
+  "reporter": "vitest-json",
+  "exitCode": 0,
+  "testsParsed": 171,
+  "results": {
+    "AC-033": {
+      "status": "pass",
+      "testName": "T-027: login com e-mail/senha AC-033: login com credenciais corretas cria sessão cria uma sessão em `sessoes` com token, expiração e cookie httpOnly/Secure/SameSite=Lax @spec:AC-033 cria uma sessão em `sessoes` com token, expiração e cookie httpOnly/Secure/SameSite=Lax @spec:AC-033",
+      "method": "vitest-json"
+    },
+    "AC-034": {
+      "status": "pass",
+      "testName": "T-027: login com e-mail/senha AC-034: login com credenciais incorretas é recusado senha errada não cria sessão @spec:AC-034 senha errada não cria sessão @spec:AC-034",
+      "method": "vitest-json"
+    },
+    "AC-035": {
+      "status": "pass",
+      "testName": "T-027: login com e-mail/senha AC-035: login de usuário inativo é bloqueado usuário com ativo=false é recusado mesmo com senha correta @spec:AC-035 usuário com ativo=false é recusado mesmo com senha correta @spec:AC-035",
+      "method": "vitest-json"
+    },
+    "AC-036": {
+      "status": "pass",
+      "testName": "T-028: convite de usuário por administrador da empresa AC-036: convite válido cria vínculo pendente e token de uso único MASTER convida um e-mail novo: vínculo em empresas_usuarios e token de uso único em tokens_verificacao @spec:AC-036 MASTER convida um e-mail novo: vínculo em empresas_usuarios e token de uso único em tokens_verificacao @spec:AC-036",
+      "method": "vitest-json"
+    },
+    "AC-037": {
+      "status": "pass",
+      "testName": "T-028: convite de usuário por administrador da empresa AC-037: papel sem permissão de convidar é recusado ATENDENTE tenta convidar: recusado e nenhum convite criado @spec:AC-037 ATENDENTE tenta convidar: recusado e nenhum convite criado @spec:AC-037",
+      "method": "vitest-json"
+    },
+    "AC-038": {
+      "status": "pass",
+      "testName": "T-028: convite de usuário por administrador da empresa AC-038: super admin convida explicitamente para qualquer empresa super admin informa a empresa de destino: convite criado lá, com evento de auditoria @spec:AC-038 super admin informa a empresa de destino: convite criado lá, com evento de auditoria @spec:AC-038",
+      "method": "vitest-json"
+    },
+    "AC-039": {
+      "status": "pass",
+      "testName": "T-029: definição de senha a partir do convite AC-039: token de convite válido define a senha e habilita o login define senha com token válido: credencial criada e token invalidado @spec:AC-039 define senha com token válido: credencial criada e token invalidado @spec:AC-039",
+      "method": "vitest-json"
+    },
+    "AC-040": {
+      "status": "pass",
+      "testName": "T-029: definição de senha a partir do convite AC-040: token expirado ou já usado é recusado token expirado é recusado: nenhuma credencial criada @spec:AC-040 token expirado é recusado: nenhuma credencial criada @spec:AC-040",
+      "method": "vitest-json"
+    },
+    "AC-041": {
+      "status": "pass",
+      "testName": "T-030: reset de senha AC-041: reset com token válido troca a senha e revoga sessões ativas token válido troca a senha e revoga todas as sessões ativas @spec:AC-041 token válido troca a senha e revoga todas as sessões ativas @spec:AC-041",
+      "method": "vitest-json"
+    },
+    "AC-042": {
+      "status": "pass",
+      "testName": "T-030: reset de senha AC-042: solicitação de reset não revela se o e-mail existe resposta é idêntica para e-mail existente e inexistente @spec:AC-042 resposta é idêntica para e-mail existente e inexistente @spec:AC-042",
+      "method": "vitest-json"
+    },
+    "AC-043": {
+      "status": "pass",
+      "testName": "T-031: resolução de sessão e tenant no servidor AC-043: empresa_id da sessão prevalece sobre o do corpo da requisição GERENTE autenticado na empresa X: empresa_id resolvido é X mesmo com outro valor no corpo @spec:AC-043 GERENTE autenticado na empresa X: empresa_id resolvido é X mesmo com outro valor no corpo @spec:AC-043",
+      "method": "vitest-json"
+    },
+    "AC-044": {
+      "status": "pass",
+      "testName": "T-031: resolução de sessão e tenant no servidor AC-044: requisição sem sessão válida é bloqueada sem token (ausente): recusado @spec:AC-044 sem token (ausente): recusado @spec:AC-044",
+      "method": "vitest-json"
+    },
+    "AC-045": {
+      "status": "pass",
+      "testName": "T-032: troca de empresa pelo super admin AC-045: super admin troca de empresa com evento de auditoria super admin atuando na empresa X troca para a empresa Y: próxima resolução retorna Y @spec:AC-045 super admin atuando na empresa X troca para a empresa Y: próxima resolução retorna Y @spec:AC-045",
+      "method": "vitest-json"
+    },
+    "AC-046": {
+      "status": "pass",
+      "testName": "T-032: troca de empresa pelo super admin AC-046: usuário comum não pode alternar de empresa usuário sem is_super_admin é recusado @spec:AC-046 usuário sem is_super_admin é recusado @spec:AC-046",
+      "method": "vitest-json"
+    },
+    "AC-047": {
+      "status": "pass",
+      "testName": "T-033: rate limit de login, convite e reset AC-047: excesso de tentativas de login bloqueia temporariamente até o limite de falhas, a verificação permanece liberada @spec:AC-047 até o limite de falhas, a verificação permanece liberada @spec:AC-047",
+      "method": "vitest-json"
+    }
+  },
+  "principles": {}
+}

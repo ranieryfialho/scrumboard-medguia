@@ -29,6 +29,11 @@ jobs:
 
       - name: Checagem de tipos
         run: npm run typecheck
+        env:
+          # fase1-auth-rbac (Better Auth) aumentou bastante a superfície de
+          # tipos do projeto (~3,5M linhas de definições instanciadas) — o
+          # heap default do Node no runner (~2GB) não é suficiente.
+          NODE_OPTIONS: --max-old-space-size=4096
 
       - name: Testes
         run: npm test
@@ -38,3 +43,6 @@ jobs:
         env:
           NEXT_PUBLIC_SUPABASE_URL: https://ci-placeholder.supabase.co
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-placeholder-anon-key
+          # Mesmo motivo do passo de Checagem de tipos: o `next build`
+          # roda sua própria checagem de tipos internamente.
+          NODE_OPTIONS: --max-old-space-size=4096
