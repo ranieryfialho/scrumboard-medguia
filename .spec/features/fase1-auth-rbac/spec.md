@@ -1,7 +1,7 @@
 # Spec: Fase 1 — Auth + RBAC
 
 > feature: fase1-auth-rbac
-> status: rascunho
+> status: auditada
 
 <!--
   Como ler este arquivo (o formato é verificado por `onp-spec audit`):
@@ -198,9 +198,9 @@ por e-mail, para mitigar força bruta e abuso, com as tentativas registradas.
 
 | ID | Suposição | Status | Resolução |
 |---|---|---|---|
-| ASM-010 | Os testes desta feature sobem seu próprio Postgres 15 efêmero (mesmo padrão de `fase0-fundacao-ci-staging`/`fase1-schema-drizzle`), sem tocar `crm_staging`/`crm_prod` da VPS — Better Auth fica configurado e provado, mas não substitui a autenticação da aplicação em produção até o cutover | aberta | — |
-| ASM-011 | O Better Auth consegue ser configurado para usar os nomes de tabela/coluna em português já definidos em `src/db/schema/auth.ts` (`contas`, `sessoes`, `tokens_verificacao`) e `identidade.ts` (`usuarios`) via mapeamento de campos, sem exigir tabelas adicionais no padrão em inglês da biblioteca | aberta | — |
-| ASM-012 | Um usuário `GERENTE` pode convidar apenas para o papel `ATENDENTE` (não pode criar outro `MASTER` ou `GERENTE`); apenas `MASTER` e super admin podem convidar para qualquer papel dentro da própria empresa | aberta | — |
+| ASM-010 | Os testes desta feature sobem seu próprio Postgres 15 efêmero (mesmo padrão de `fase0-fundacao-ci-staging`/`fase1-schema-drizzle`), sem tocar `crm_staging`/`crm_prod` da VPS — Better Auth fica configurado e provado, mas não substitui a autenticação da aplicação em produção até o cutover | confirmada | Confirmado: os 8 arquivos de teste desta feature usam `test/support/postgres-efemero.ts` (mesmo harness Docker de `fase1-schema-drizzle`). |
+| ASM-011 | O Better Auth consegue ser configurado para usar os nomes de tabela/coluna em português já definidos em `src/db/schema/auth.ts` (`contas`, `sessoes`, `tokens_verificacao`) e `identidade.ts` (`usuarios`) via mapeamento de campos, sem exigir tabelas adicionais no padrão em inglês da biblioteca | confirmada | Confirmado via `modelName`/`fields` em `src/lib/auth/server.ts` (T-026) — `sessoes`/`contas`/`tokens_verificacao` mapearam 1:1; `usuarios` precisou de 2 colunas novas (`email_verificado`, `imagem`), adicionadas nesta feature (migration `drizzle/0006_...`). Confirmado também que os campos internos do Better Auth (`providerId="credential"`, `accountId=<id do usuário>`) são literais fixos da lib — T-028/T-029/T-030 foram ajustadas para escrevê-los corretamente, corrigindo uma incompatibilidade que a implementação inicial (hand-rolled, sem a lib) tinha introduzido. |
+| ASM-012 | Um usuário `GERENTE` pode convidar apenas para o papel `ATENDENTE` (não pode criar outro `MASTER` ou `GERENTE`); apenas `MASTER` e super admin podem convidar para qualquer papel dentro da própria empresa | confirmada | Implementado em `podeConvidar` (T-028, `src/lib/auth/convites.ts`) e provado por `AC-037`. |
 
 ## Perguntas em aberto
 

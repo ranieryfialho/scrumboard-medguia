@@ -11,7 +11,8 @@ import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { contas, tokensVerificacao, usuarios } from '../../db/schema';
 import { identificadorConvite } from './convites';
 
-const PROVEDOR_CREDENCIAL = 'credencial';
+// Literal exigido pelas rotas internas do Better Auth (T-026/T-027) — nunca traduzir.
+const PROVEDOR_CREDENCIAL = 'credential';
 const SCRYPT_KEYLEN = 64;
 
 // Único prefixo de identificador usado por convites (T-028) — derivado da
@@ -105,7 +106,9 @@ export async function definirSenhaComToken(
 
     await tx.insert(contas).values({
       usuarioId: usuario.id,
-      idConta: email,
+      // `idConta` precisa ser o id do usuário (não o e-mail) — é o que as
+      // rotas internas do Better Auth (T-026) buscam ao autenticar.
+      idConta: usuario.id,
       idProvedor: PROVEDOR_CREDENCIAL,
       senha: hashSenha(novaSenha),
     });

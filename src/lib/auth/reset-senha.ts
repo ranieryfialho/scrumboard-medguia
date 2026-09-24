@@ -11,7 +11,8 @@ import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { contas, sessoes, tokensVerificacao, usuarios } from '../../db/schema';
 import { hashSenha } from './definir-senha';
 
-const PROVEDOR_CREDENCIAL = 'credencial';
+// Literal exigido pelas rotas internas do Better Auth (T-026/T-027) — nunca traduzir.
+const PROVEDOR_CREDENCIAL = 'credential';
 const PREFIXO_IDENTIFICADOR_RESET = 'reset';
 
 // Prazo do token de reset — número exato depende de Q-006 (spec, em aberto);
@@ -145,7 +146,9 @@ export async function resetarSenhaComToken(
     if (atualizados.length === 0) {
       await tx.insert(contas).values({
         usuarioId: usuario.id,
-        idConta: email,
+        // `idConta` precisa ser o id do usuário (não o e-mail) — é o que as
+        // rotas internas do Better Auth (T-026) buscam ao autenticar.
+        idConta: usuario.id,
         idProvedor: PROVEDOR_CREDENCIAL,
         senha: novoHash,
       });
