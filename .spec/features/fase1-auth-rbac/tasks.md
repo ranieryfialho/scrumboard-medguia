@@ -74,8 +74,7 @@
   papel resolvidos exclusivamente da sessão — nunca aceitos do corpo da
   requisição.
 
-## T-032 — Troca de empresa pelo super admin [pendente]
-
+## T-032 — Troca de empresa pelo super admin [concluida]
 - Refs: US-019, AC-045, AC-046
 - Arquivos: src/lib/auth/troca-empresa.ts, test/auth/troca-empresa.test.ts
 - Modelo: claude-sonnet-5
