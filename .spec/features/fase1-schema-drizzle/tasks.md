@@ -98,14 +98,12 @@
 - Arquivos: test/db/constraints.test.ts
 - Depende de: T-016, T-020.
 
-## T-024 — Testes das funções SQL transacionais [pendente]
-
+## T-024 — Testes das funções SQL transacionais [concluida]
 - Refs: AC-026, AC-027, AC-028
 - Arquivos: test/db/funcoes.test.ts
 - Depende de: T-017, T-018, T-020.
 
 ## T-025 — Testes dos seeds [pendente]
-
 - Refs: AC-029, AC-030, AC-031
 - Arquivos: test/db/seeds.test.ts
 - Depende de: T-019, T-020.
