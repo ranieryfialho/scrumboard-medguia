@@ -833,10 +833,10 @@
       "codigo": "GLOB_SEM_ARQUIVOS",
       "feature": "—",
       "ref": "P-002",
-      "ocorrencias": 21,
+      "ocorrencias": 24,
       "primeiraVez": "2026-09-23T13:20:39.103Z",
-      "ultimaVez": "2026-09-24T15:45:06.204Z",
-      "gitRev": "c55ad44"
+      "ultimaVez": "2026-09-24T15:46:23.840Z",
+      "gitRev": "a228893"
     },
     "REF_MALFORMADA::fase0-fundacao-ci-staging::T-001": {
       "codigo": "REF_MALFORMADA",
@@ -1890,6 +1890,24 @@
       "primeiraVez": "2026-09-24T15:43:08.558Z",
       "ultimaVez": "2026-09-24T15:43:08.559Z",
       "gitRev": "c55ad44"
+    },
+    "ASM_ABERTA::fase1-schema-drizzle::ASM-008": {
+      "codigo": "ASM_ABERTA",
+      "feature": "fase1-schema-drizzle",
+      "ref": "ASM-008",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-24T15:46:08.714Z",
+      "ultimaVez": "2026-09-24T15:46:08.714Z",
+      "gitRev": "a228893"
+    },
+    "Q_ABERTA::fase1-schema-drizzle::Q-004": {
+      "codigo": "Q_ABERTA",
+      "feature": "fase1-schema-drizzle",
+      "ref": "Q-004",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-24T15:46:08.714Z",
+      "ultimaVez": "2026-09-24T15:46:08.714Z",
+      "gitRev": "a228893"
     }
   }
 }
