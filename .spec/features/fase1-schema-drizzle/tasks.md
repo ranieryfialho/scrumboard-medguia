@@ -88,8 +88,7 @@
 - Arquivos: test/db/schema.test.ts
 - Depende de: T-014, T-020.
 
-## T-022 — Testes de RLS (isolamento por tenant) [pendente]
-
+## T-022 — Testes de RLS (isolamento por tenant) [concluida]
 - Refs: AC-019, AC-020
 - Arquivos: test/db/rls.test.ts
 - Depende de: T-015, T-020.
