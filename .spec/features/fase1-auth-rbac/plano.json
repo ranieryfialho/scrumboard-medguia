@@ -1,0 +1,141 @@
+{
+  "runId": "scrumboard-medguia-fase1-auth-rbac-mufuzl8v",
+  "feature": "fase1-auth-rbac",
+  "agent": "claude",
+  "modo": "sequencial",
+  "paralelizar": null,
+  "modeloForcado": null,
+  "esforcoForcado": null,
+  "geradoEm": "2026-09-24 18:22",
+  "branchTrabalho": "spec/fase1-auth-rbac",
+  "baseDir": ".spec/features/fase1-auth-rbac",
+  "specDir": ".spec",
+  "repoName": "scrumboard-medguia",
+  "logsDir": "../onp-worktrees/scrumboard-medguia-fase1-auth-rbac-logs",
+  "ondas": [],
+  "faixas": [],
+  "sequenciais": [
+    {
+      "id": "T-026",
+      "titulo": "Instala e configura o Better Auth sobre o schema existente",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "package.json",
+        "src/lib/auth/server.ts",
+        "test/auth/config.test.ts"
+      ],
+      "refs": [
+        "US-014"
+      ]
+    },
+    {
+      "id": "T-027",
+      "titulo": "Login com e-mail/senha",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/lib/auth/login.ts",
+        "test/auth/login.test.ts"
+      ],
+      "refs": [
+        "US-014",
+        "AC-033",
+        "AC-034",
+        "AC-035"
+      ]
+    },
+    {
+      "id": "T-028",
+      "titulo": "Convite de usuário por administrador da empresa",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "src/lib/auth/convites.ts",
+        "test/auth/convites.test.ts"
+      ],
+      "refs": [
+        "US-015",
+        "AC-036",
+        "AC-037",
+        "AC-038"
+      ]
+    },
+    {
+      "id": "T-029",
+      "titulo": "Definição de senha a partir do convite",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/lib/auth/definir-senha.ts",
+        "test/auth/definir-senha.test.ts"
+      ],
+      "refs": [
+        "US-016",
+        "AC-039",
+        "AC-040"
+      ]
+    },
+    {
+      "id": "T-030",
+      "titulo": "Reset de senha",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/lib/auth/reset-senha.ts",
+        "test/auth/reset-senha.test.ts"
+      ],
+      "refs": [
+        "US-017",
+        "AC-041",
+        "AC-042"
+      ]
+    },
+    {
+      "id": "T-031",
+      "titulo": "Resolução de sessão e tenant no servidor",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/lib/auth/tenant.ts",
+        "test/auth/tenant.test.ts"
+      ],
+      "refs": [
+        "US-018",
+        "AC-043",
+        "AC-044"
+      ]
+    },
+    {
+      "id": "T-032",
+      "titulo": "Troca de empresa pelo super admin",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/lib/auth/troca-empresa.ts",
+        "test/auth/troca-empresa.test.ts"
+      ],
+      "refs": [
+        "US-019",
+        "AC-045",
+        "AC-046"
+      ]
+    },
+    {
+      "id": "T-033",
+      "titulo": "Rate limit de login, convite e reset",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/lib/auth/rate-limit.ts",
+        "test/auth/rate-limit.test.ts"
+      ],
+      "refs": [
+        "US-020",
+        "AC-047"
+      ]
+    }
+  ],
+  "concluidas": [],
+  "avisos": []
+}
