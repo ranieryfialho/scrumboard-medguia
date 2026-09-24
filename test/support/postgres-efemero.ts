@@ -111,7 +111,13 @@ export async function subirPostgresEfemero(
   }
 
   function parar() {
-    runDocker(['rm', '-f', containerName]);
+    // `-v` remove também o volume anônimo que a imagem oficial do Postgres
+    // declara para `/var/lib/postgresql/data` — sem isso, cada container
+    // efêmero deixa um volume órfão para trás (acúmulo silencioso de disco
+    // que, com uso suficiente, pressiona a memória do Docker Desktop e causa
+    // falhas espúrias de "database system is shutting down" em containers
+    // concorrentes).
+    runDocker(['rm', '-f', '-v', containerName]);
   }
 
   const deadline = Date.now() + READY_TIMEOUT_MS;
