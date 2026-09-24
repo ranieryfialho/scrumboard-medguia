@@ -82,8 +82,7 @@
 - Notas: depende de T-031 (usa a resolução de tenant). Só super admin troca;
   a troca gera evento de auditoria com usuário, empresa anterior e nova.
 
-## T-033 — Rate limit de login, convite e reset [pendente]
-
+## T-033 — Rate limit de login, convite e reset [concluida]
 - Refs: US-020, AC-047
 - Arquivos: src/lib/auth/rate-limit.ts, test/auth/rate-limit.test.ts
 - Modelo: claude-sonnet-5

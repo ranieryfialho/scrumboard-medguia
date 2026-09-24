@@ -1,0 +1,87 @@
+{
+  "feature": "fase1-auth-rbac",
+  "timestamp": "2026-09-24T18:50:01.437Z",
+  "gitRev": "e09add3",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
+  "reporter": "vitest-json",
+  "exitCode": 1,
+  "testsParsed": 181,
+  "results": {
+    "AC-033": {
+      "status": "fail",
+      "testName": "AC-033: Login com credenciais corretas cria sessão @spec:AC-033 AC-033: Login com credenciais corretas cria sessão @spec:AC-033",
+      "method": "vitest-json"
+    },
+    "AC-034": {
+      "status": "fail",
+      "testName": "AC-034: Login com credenciais incorretas é recusado @spec:AC-034 AC-034: Login com credenciais incorretas é recusado @spec:AC-034",
+      "method": "vitest-json"
+    },
+    "AC-035": {
+      "status": "fail",
+      "testName": "AC-035: Login de usuário inativo é bloqueado @spec:AC-035 AC-035: Login de usuário inativo é bloqueado @spec:AC-035",
+      "method": "vitest-json"
+    },
+    "AC-036": {
+      "status": "fail",
+      "testName": "AC-036: Convite válido cria vínculo pendente e token de uso único @spec:AC-036 AC-036: Convite válido cria vínculo pendente e token de uso único @spec:AC-036",
+      "method": "vitest-json"
+    },
+    "AC-037": {
+      "status": "fail",
+      "testName": "AC-037: Papel sem permissão de convidar é recusado @spec:AC-037 AC-037: Papel sem permissão de convidar é recusado @spec:AC-037",
+      "method": "vitest-json"
+    },
+    "AC-038": {
+      "status": "fail",
+      "testName": "AC-038: Super admin convida explicitamente para qualquer empresa @spec:AC-038 AC-038: Super admin convida explicitamente para qualquer empresa @spec:AC-038",
+      "method": "vitest-json"
+    },
+    "AC-039": {
+      "status": "fail",
+      "testName": "AC-039: Token de convite válido define a senha e habilita o login @spec:AC-039 AC-039: Token de convite válido define a senha e habilita o login @spec:AC-039",
+      "method": "vitest-json"
+    },
+    "AC-040": {
+      "status": "fail",
+      "testName": "AC-040: Token expirado ou já usado é recusado @spec:AC-040 AC-040: Token expirado ou já usado é recusado @spec:AC-040",
+      "method": "vitest-json"
+    },
+    "AC-041": {
+      "status": "fail",
+      "testName": "AC-041: Reset com token válido troca a senha e revoga sessões ativas @spec:AC-041 AC-041: Reset com token válido troca a senha e revoga sessões ativas @spec:AC-041",
+      "method": "vitest-json"
+    },
+    "AC-042": {
+      "status": "fail",
+      "testName": "AC-042: Solicitação de reset não revela se o e-mail existe @spec:AC-042 AC-042: Solicitação de reset não revela se o e-mail existe @spec:AC-042",
+      "method": "vitest-json"
+    },
+    "AC-043": {
+      "status": "fail",
+      "testName": "AC-043: `empresa_id` da sessão prevalece sobre o do corpo da requisição @spec:AC-043 AC-043: `empresa_id` da sessão prevalece sobre o do corpo da requisição @spec:AC-043",
+      "method": "vitest-json"
+    },
+    "AC-044": {
+      "status": "fail",
+      "testName": "AC-044: Requisição sem sessão válida é bloqueada @spec:AC-044 AC-044: Requisição sem sessão válida é bloqueada @spec:AC-044",
+      "method": "vitest-json"
+    },
+    "AC-045": {
+      "status": "fail",
+      "testName": "AC-045: Super admin troca de empresa com evento de auditoria @spec:AC-045 AC-045: Super admin troca de empresa com evento de auditoria @spec:AC-045",
+      "method": "vitest-json"
+    },
+    "AC-046": {
+      "status": "fail",
+      "testName": "AC-046: Usuário comum não pode alternar de empresa @spec:AC-046 AC-046: Usuário comum não pode alternar de empresa @spec:AC-046",
+      "method": "vitest-json"
+    },
+    "AC-047": {
+      "status": "fail",
+      "testName": "AC-047: Excesso de tentativas de login bloqueia temporariamente @spec:AC-047 AC-047: Excesso de tentativas de login bloqueia temporariamente @spec:AC-047",
+      "method": "vitest-json"
+    }
+  },
+  "principles": {}
+}
