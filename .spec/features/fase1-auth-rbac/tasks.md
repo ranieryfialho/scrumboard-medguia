@@ -18,8 +18,7 @@
     (atalho: `onp-spec tarefa <feature> <T-xxx> <status>`)
 -->
 
-## T-026 — Instala e configura o Better Auth sobre o schema existente [pendente]
-
+## T-026 — Instala e configura o Better Auth sobre o schema existente [concluida]
 - Refs: US-014
 - Arquivos: package.json, src/lib/auth/server.ts, test/auth/config.test.ts
 - Modelo: claude-sonnet-5
