@@ -103,7 +103,7 @@
 - Arquivos: test/db/funcoes.test.ts
 - Depende de: T-017, T-018, T-020.
 
-## T-025 — Testes dos seeds [pendente]
+## T-025 — Testes dos seeds [concluida]
 - Refs: AC-029, AC-030, AC-031
 - Arquivos: test/db/seeds.test.ts
 - Depende de: T-019, T-020.

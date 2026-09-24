@@ -1,11 +1,11 @@
 {
   "feature": "fase1-schema-drizzle",
-  "timestamp": "2026-09-24T15:26:15.229Z",
-  "gitRev": "1aa7169",
+  "timestamp": "2026-09-24T15:44:53.735Z",
+  "gitRev": "c55ad44",
   "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
-  "exitCode": 1,
-  "testsParsed": 120,
+  "exitCode": 0,
+  "testsParsed": 128,
   "results": {
     "AC-015": {
       "status": "pass",
@@ -60,6 +60,36 @@
     "AC-025": {
       "status": "pass",
       "testName": "T-023: invariantes do pipeline (constraints) e privilégios de DDL AC-025: log de eventos é imutável para a aplicação crm_app tentando UPDATE em oportunidade_eventos é recusado por falta de privilégio @spec:AC-025 crm_app tentando UPDATE em oportunidade_eventos é recusado por falta de privilégio @spec:AC-025",
+      "method": "vitest-json"
+    },
+    "AC-026": {
+      "status": "pass",
+      "testName": "T-024: funções SQL transacionais AC-026: mover_oportunidade grava estado e evento juntos, ou nenhum dos dois etapa avança, version incrementa e o evento de transição é gravado na mesma chamada @spec:AC-026 etapa avança, version incrementa e o evento de transição é gravado na mesma chamada @spec:AC-026",
+      "method": "vitest-json"
+    },
+    "AC-027": {
+      "status": "pass",
+      "testName": "T-024: funções SQL transacionais AC-027: escrita com versão desatualizada é rejeitada (lock otimista) version diferente da atual é recusada sem alterar etapa, evento ou version @spec:AC-027 version diferente da atual é recusada sem alterar etapa, evento ou version @spec:AC-027",
+      "method": "vitest-json"
+    },
+    "AC-028": {
+      "status": "pass",
+      "testName": "T-024: funções SQL transacionais AC-028: concluir_atividade grava o resultado do toque e o efeito em cadeia, atomicamente resultado \"conectou\" cancela as demais atividades pendentes e grava o evento de conexão @spec:AC-028 resultado \"conectou\" cancela as demais atividades pendentes e grava o evento de conexão @spec:AC-028",
+      "method": "vitest-json"
+    },
+    "AC-029": {
+      "status": "pass",
+      "testName": "T-025: seeds idempotentes do pipeline AC-029: as 15 etapas existem após a migration, na ordem certa pipeline_etapas tem as 15 etapas do TDD-001 §4.4, com macrofluxo e flags corretos @spec:AC-029 pipeline_etapas tem as 15 etapas do TDD-001 §4.4, com macrofluxo e flags corretos @spec:AC-029",
+      "method": "vitest-json"
+    },
+    "AC-030": {
+      "status": "pass",
+      "testName": "T-025: seeds idempotentes do pipeline AC-030: o grafo de transições permitido existe e bloqueia o resto por omissão pipeline_transicoes tem exatamente as combinações do TDD-001 §4.4 + saltos do RFC-001 §6, nenhuma outra @spec:AC-030 pipeline_transicoes tem exatamente as combinações do TDD-001 §4.4 + saltos do RFC-001 §6, nenhuma outra @spec:AC-030",
+      "method": "vitest-json"
+    },
+    "AC-031": {
+      "status": "pass",
+      "testName": "T-025: seeds idempotentes do pipeline AC-031: seeds de motivos_perda cobrem os motivos já exigidos pelo mapeamento de migração os 4 motivos do RFC-001 §6 item 8 existem, com \"Cadência esgotada\" sistêmico @spec:AC-031 os 4 motivos do RFC-001 §6 item 8 existem, com \"Cadência esgotada\" sistêmico @spec:AC-031",
       "method": "vitest-json"
     },
     "AC-032": {
