@@ -93,8 +93,7 @@
 - Arquivos: test/db/rls.test.ts
 - Depende de: T-015, T-020.
 
-## T-023 — Testes das invariantes (constraints) e dos privilégios de DDL [pendente]
-
+## T-023 — Testes das invariantes (constraints) e dos privilégios de DDL [concluida]
 - Refs: AC-021, AC-022, AC-023, AC-024, AC-025, AC-032
 - Arquivos: test/db/constraints.test.ts
 - Depende de: T-016, T-020.
