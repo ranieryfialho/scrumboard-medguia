@@ -39,8 +39,7 @@
   (cria sessão), credencial incorreta (recusa) e usuário `ativo = false`
   (bloqueia mesmo com credencial correta).
 
-## T-028 — Convite de usuário por administrador da empresa [pendente]
-
+## T-028 — Convite de usuário por administrador da empresa [concluida]
 - Refs: US-015, AC-036, AC-037, AC-038
 - Arquivos: src/lib/auth/convites.ts, test/auth/convites.test.ts
 - Modelo: claude-sonnet-5
