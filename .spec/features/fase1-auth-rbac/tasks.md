@@ -56,8 +56,7 @@
 - Notas: depende de T-026 e do token gerado por T-028. Token de uso único:
   válido define a credencial; expirado ou já usado é recusado.
 
-## T-030 — Reset de senha [pendente]
-
+## T-030 — Reset de senha [concluida]
 - Refs: US-017, AC-041, AC-042
 - Arquivos: src/lib/auth/reset-senha.ts, test/auth/reset-senha.test.ts
 - Modelo: claude-sonnet-5
