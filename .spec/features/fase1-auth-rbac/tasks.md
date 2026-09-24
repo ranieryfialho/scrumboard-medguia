@@ -48,8 +48,7 @@
   da própria empresa, conforme papel do convidado — ASM-012; super admin
   para qualquer empresa com evento de auditoria).
 
-## T-029 — Definição de senha a partir do convite [pendente]
-
+## T-029 — Definição de senha a partir do convite [concluida]
 - Refs: US-016, AC-039, AC-040
 - Arquivos: src/lib/auth/definir-senha.ts, test/auth/definir-senha.test.ts
 - Modelo: claude-sonnet-5
