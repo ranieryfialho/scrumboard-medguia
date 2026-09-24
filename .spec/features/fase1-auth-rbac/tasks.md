@@ -65,8 +65,7 @@
   a resposta da solicitação não distingue e-mail existente de inexistente
   (evita enumeração de contas).
 
-## T-031 — Resolução de sessão e tenant no servidor [pendente]
-
+## T-031 — Resolução de sessão e tenant no servidor [concluida]
 - Refs: US-018, AC-043, AC-044
 - Arquivos: src/lib/auth/tenant.ts, test/auth/tenant.test.ts
 - Modelo: claude-sonnet-5
