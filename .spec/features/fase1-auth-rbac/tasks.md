@@ -30,8 +30,7 @@
   `crm_staging`/`crm_prod` da VPS (ASM-010). Base para todas as tarefas
   seguintes.
 
-## T-027 — Login com e-mail/senha [pendente]
-
+## T-027 — Login com e-mail/senha [concluida]
 - Refs: US-014, AC-033, AC-034, AC-035
 - Arquivos: src/lib/auth/login.ts, test/auth/login.test.ts
 - Modelo: claude-sonnet-5
