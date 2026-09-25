@@ -36,8 +36,7 @@
   `contexto`, nunca de parâmetro externo; etapa fixa em 1, `version` 1
   (default da coluna).
 
-## T-045 — Repositório: `moverOportunidade` (chama a função SQL estendida) [pendente]
-
+## T-045 — Repositório: `moverOportunidade` (chama a função SQL estendida) [concluida]
 - Refs: AC-082, AC-086
 - Arquivos: src/repositories/oportunidades.ts, test/repositories/oportunidades.test.ts
 - Esforço: alto
