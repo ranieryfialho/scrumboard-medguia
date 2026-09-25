@@ -11,8 +11,10 @@ import {
   atualizarOportunidade,
   buscarOportunidadePorId,
   criarOportunidade,
+  ErroConflitoDeVersao,
   ErroLeadNaoEncontrado,
   listarOportunidades,
+  moverOportunidade,
 } from '../../src/repositories/oportunidades';
 import type { ContextoTenant } from '../../src/lib/auth/tenant';
 
@@ -221,6 +223,65 @@ describe('T-042: repositório de oportunidades', () => {
 
       const depois = await listarOportunidades(db, contextoA, { limite: 1000 });
       expect(depois.itens.map((o) => o.id).sort()).toEqual(antes.itens.map((o) => o.id).sort());
+    });
+  });
+
+  describe('T-045: moverOportunidade', () => {
+    test('transição permitida grava etapa, valor e próxima ação na mesma linha, version incrementada e evento gravado @spec:AC-082', async () => {
+      const contextoA = contextoDe(tenants.empresaA);
+      const nova = await criarOportunidade(db, contextoA, { leadId: tenants.leadA });
+      const proximaAcaoEm = new Date('2026-10-05T10:00:00.000Z');
+
+      const movida = await moverOportunidade(db, contextoA, nova.id, {
+        version: nova.version,
+        etapaDestinoId: ETAPA_ALTERNATIVA,
+        atorId: null,
+        atorTipo: 'sistema',
+        valor: '2500.00',
+        proximaAcaoEm,
+      });
+
+      expect(movida.etapaId).toBe(ETAPA_ALTERNATIVA);
+      expect(movida.version).toBe(nova.version + 1);
+      expect(movida.valor).toBe('2500.00');
+      expect(movida.proximaAcaoEm?.toISOString()).toBe(proximaAcaoEm.toISOString());
+
+      const evento = pg.psqlComo(
+        'crm_migrator',
+        `SELECT count(*) FROM "oportunidade_eventos"
+         WHERE "oportunidade_id" = '${nova.id}' AND "tipo" = 'transicao_etapa'
+           AND "etapa_origem_id" = ${nova.etapaId} AND "etapa_destino_id" = ${ETAPA_ALTERNATIVA}`
+      );
+      expect(evento.status).toBe(0);
+      expect(evento.stdout.trim()).toBe('1');
+    });
+
+    test('conflito de versão é rejeitado sem sobrescrever etapa, dados ou version @spec:AC-086', async () => {
+      const contextoA = contextoDe(tenants.empresaA);
+      const nova = await criarOportunidade(db, contextoA, { leadId: tenants.leadA });
+      const versaoDesatualizada = nova.version + 1;
+
+      await expect(
+        moverOportunidade(db, contextoA, nova.id, {
+          version: versaoDesatualizada,
+          etapaDestinoId: ETAPA_ALTERNATIVA,
+          atorId: null,
+          atorTipo: 'sistema',
+          valor: '9999.00',
+        })
+      ).rejects.toThrow(ErroConflitoDeVersao);
+
+      const inalterada = await buscarOportunidadePorId(db, contextoA, nova.id);
+      expect(inalterada?.etapaId).toBe(nova.etapaId);
+      expect(inalterada?.version).toBe(nova.version);
+      expect(inalterada?.valor).toBeNull();
+
+      const evento = pg.psqlComo(
+        'crm_migrator',
+        `SELECT count(*) FROM "oportunidade_eventos" WHERE "oportunidade_id" = '${nova.id}'`
+      );
+      expect(evento.status).toBe(0);
+      expect(evento.stdout.trim()).toBe('0');
     });
   });
 });

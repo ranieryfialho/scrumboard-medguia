@@ -5,10 +5,14 @@
 // nunca finge sucesso quando o id pertence a outro tenant (AC-070) — reporta
 // zero linhas afetadas.
 //
-// Fora de escopo (ver spec, "Fora de escopo"): chamar `mover_oportunidade`
-// ou orquestrar `validarTransicao` — isso é da futura feature de rotas
-// HTTP, que compõe domínio + este repositório.
-import { and, asc, eq } from 'drizzle-orm';
+// T-045 (fase2-kanban, US-031) acrescenta `moverOportunidade`: único ponto
+// deste repositório que chama a função SQL `mover_oportunidade` (0006,
+// estendida por T-043). Quem decide SE a transição é permitida é o domínio
+// (`validarTransicao`, fase1-dominio-pipeline) — chamado pela rota (T-047)
+// ANTES deste repositório. Este repositório só grava o que já foi validado
+// e traduz o conflito de lock otimista do Postgres (`ERRCODE = 'P0001'`) num
+// erro tipado; o código HTTP (409/422) é decisão da rota, não daqui.
+import { and, asc, eq, sql } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
 import { leads, oportunidades } from '../db/schema';
@@ -28,6 +32,30 @@ export class ErroLeadNaoEncontrado extends Error {
     super('Lead informado não existe no tenant da sessão.');
     this.name = 'ErroLeadNaoEncontrado';
   }
+}
+
+/** T-045 (US-031): `version` informada não bate com a `version` atual da linha (AC-086) — lock otimista rejeitado pelo Postgres. */
+export class ErroConflitoDeVersao extends Error {
+  constructor() {
+    super('A oportunidade foi alterada por outra ação; recarregue e tente novamente.');
+    this.name = 'ErroConflitoDeVersao';
+  }
+}
+
+// ERRCODE usado por `RAISE EXCEPTION ... USING ERRCODE = 'P0001'` dentro de
+// `mover_oportunidade` (drizzle/0006_fn_mover_oportunidade_guards.sql) —
+// único caso em que a função lança exceção, então basta checar o código.
+const ERRCODE_CONFLITO_DE_VERSAO = 'P0001';
+
+/**
+ * O driver `pg` expõe o SQLSTATE em `error.code`, mas o Drizzle (node-postgres)
+ * embrulha esse erro num `DrizzleQueryError` cuja causa (`error.cause`) é o
+ * erro original do `pg` — checa os dois formatos.
+ */
+function codigoErroPostgres(erro: unknown): string | undefined {
+  if (!erro || typeof erro !== 'object') return undefined;
+  const comCodigo = erro as { code?: string; cause?: { code?: string } };
+  return comCodigo.code ?? comCodigo.cause?.code;
 }
 
 export interface DadosNovaOportunidade {
@@ -146,6 +174,67 @@ export async function criarOportunidade(
         etapaId: ETAPA_ENTRADA_DE_LEADS,
       })
       .returning();
+    return oportunidade;
+  });
+}
+
+export interface DadosMoverOportunidade {
+  /** `version` que o chamador acredita ser a atual — lock otimista (AC-086). */
+  version: number;
+  etapaDestinoId: number;
+  /** `null` quando o ator é o sistema (sem usuário humano por trás). */
+  atorId: string | null;
+  atorTipo: 'usuario' | 'sistema' | 'migracao';
+  valor?: string | null;
+  motivoPerdaId?: string | null;
+  proximaAcaoEm?: Date | null;
+}
+
+/**
+ * Move uma oportunidade de etapa chamando `mover_oportunidade` (função SQL
+ * estendida por T-043), sob o tenant do `contexto`. Grava etapa, `version`
+ * incrementada, os dados de guard enviados (`valor`/`motivoPerdaId`/
+ * `proximaAcaoEm`) e o evento `transicao_etapa` numa única chamada
+ * transacional (AC-082) — quem decide SE a transição é permitida (grafo,
+ * papel, dados obrigatórios) é o domínio, chamado pela rota antes deste
+ * repositório.
+ *
+ * Rejeita (`ErroConflitoDeVersao`) sem gravar nada se `dados.version` não
+ * bater com a `version` atual da linha (AC-086, lock otimista no Postgres).
+ */
+export async function moverOportunidade(
+  db: NodePgDatabase,
+  contexto: ContextoTenant,
+  id: string,
+  dados: DadosMoverOportunidade
+): Promise<Oportunidade> {
+  return comTenant(db, contexto, async (tx) => {
+    try {
+      await tx.execute(sql`
+        select mover_oportunidade(
+          ${id}::uuid,
+          ${dados.version}::integer,
+          ${dados.etapaDestinoId}::integer,
+          ${dados.atorId}::uuid,
+          ${dados.atorTipo}::ator_tipo,
+          null::jsonb,
+          ${dados.valor ?? null}::numeric,
+          ${dados.motivoPerdaId ?? null}::uuid,
+          ${dados.proximaAcaoEm ?? null}::timestamptz
+        )
+      `);
+    } catch (erro) {
+      if (codigoErroPostgres(erro) === ERRCODE_CONFLITO_DE_VERSAO) {
+        throw new ErroConflitoDeVersao();
+      }
+      throw erro;
+    }
+
+    const [oportunidade] = await tx
+      .select()
+      .from(oportunidades)
+      .where(and(eq(oportunidades.id, id), eq(oportunidades.empresaId, contexto.empresaId)))
+      .limit(1);
     return oportunidade;
   });
 }
