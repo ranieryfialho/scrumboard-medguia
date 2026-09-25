@@ -75,31 +75,39 @@
   fase1-repositorios-isolamento) + join simples para nome do lead/
   responsável.
 
-## T-049 — Componentes do board: colunas, card, drag-and-drop [pendente]
-
+## T-049 — Componentes do board: colunas, card, drag-and-drop [concluida]
 - Refs: US-029, US-031, AC-074, AC-075, AC-076, AC-077, AC-094, AC-083, AC-084, AC-091
-- Arquivos: src/components/pipeline/board-kanban.tsx, src/components/pipeline/coluna-etapa.tsx, src/components/pipeline/card-oportunidade.tsx, src/app/pipeline/page.tsx
+- Arquivos: src/components/pipeline/board-kanban.tsx, src/components/pipeline/coluna-etapa.tsx, src/components/pipeline/card-oportunidade.tsx, src/app/pipeline/page.tsx, src/domain/pipeline/classificar-erro-transicao.ts, test/domain/pipeline/classificar-erro-transicao.test.ts
 - Esforço: xalto
 - Notas: depende de T-046, T-047. `DndContext` do dnd-kit (mesmo padrão já
   usado em `src/components/kanban/kanban-board.tsx`, mas componente novo —
   não editar o antigo, ver design.md). Restringe drop às etapas do mapa de
   AC-094. Ao soltar num destino válido, chama a rota de transição; erro
   `TRANSICAO_NAO_PERMITIDA`/`PAPEL_NAO_PERMITIDO` mostra mensagem (AC-091) e
-  devolve o card à coluna de origem.
+  devolve o card à coluna de origem. `classificar-erro-transicao.ts` é a
+  única peça de decisão pura desta tarefa (nenhum outro arquivo daqui é
+  testável sem DOM) — separa "abre modal" (AC-088, T-050) de "só mensagem"
+  (AC-091) para o board e o modal reaproveitarem a mesma regra.
 
-## T-050 — Modal de dado faltante [pendente]
-
+## T-050 — Modal de dado faltante [concluida]
 - Refs: US-032, AC-088, AC-089, AC-090
-- Arquivos: src/components/pipeline/modal-dado-faltante.tsx
+- Arquivos: src/components/pipeline/modal-dado-faltante.tsx, src/app/api/motivos-perda/route.ts, test/api/motivos-perda.test.ts, test/components/pipeline/modal-dado-faltante.test.tsx
 - Esforço: medio
 - Notas: depende de T-047, T-049. Um campo por código
   (`VALOR_OBRIGATORIO`→valor, `MOTIVO_PERDA_OBRIGATORIO`→select de motivo,
   `PROXIMA_ACAO_OBRIGATORIA`→data futura, `JUSTIFICATIVA_OBRIGATORIA`→
   textarea). Confirmar reenvia a transição com o campo preenchido; cancelar
-  não chama nada (AC-090).
+  não chama nada (AC-090). `motivos_perda.id` é `uuid defaultRandom()` — não
+  dá pra hardcodar no cliente como as 15 etapas (fixas por `id` literal); o
+  select de `MOTIVO_PERDA_OBRIGATORIO` precisa de uma rota própria
+  (`GET /api/motivos-perda`, não prevista no design original) pra listar os
+  motivos ativos com o id real. AC-089/AC-090 são comportamento de clique
+  real (confirmar/cancelar) — únicos testes desta feature que precisam de
+  DOM; primeira vez que o projeto usa jsdom/@testing-library/react
+  (devDependencies novas, `environmentMatchGlobs` no vitest.config.ts
+  restrito a `test/components/**`, resto do projeto continua em `node` puro).
 
-## T-051 — Página de detalhe do card [pendente]
-
+## T-051 — Página de detalhe do card [concluida]
 - Refs: US-033, AC-092, AC-093
 - Arquivos: src/app/pipeline/[id]/page.tsx
 - Esforço: medio

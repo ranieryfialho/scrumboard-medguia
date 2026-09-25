@@ -1112,10 +1112,10 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "fase0-fundacao-ci-staging",
       "ref": "—",
-      "ocorrencias": 23,
+      "ocorrencias": 24,
       "primeiraVez": "2026-09-23T14:14:35.866Z",
-      "ultimaVez": "2026-09-25T19:08:22.267Z",
-      "gitRev": "344b5f9"
+      "ultimaVez": "2026-09-25T20:09:03.220Z",
+      "gitRev": "7484bce"
     },
     "VERIFY_PULADO::fase0-fundacao-ci-staging::AC-005": {
       "codigo": "VERIFY_PULADO",
@@ -1886,10 +1886,10 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "fase1-schema-drizzle",
       "ref": "—",
-      "ocorrencias": 12,
+      "ocorrencias": 13,
       "primeiraVez": "2026-09-24T15:43:08.558Z",
-      "ultimaVez": "2026-09-25T19:08:22.268Z",
-      "gitRev": "344b5f9"
+      "ultimaVez": "2026-09-25T20:09:03.220Z",
+      "gitRev": "7484bce"
     },
     "ASM_ABERTA::fase1-schema-drizzle::ASM-008": {
       "codigo": "ASM_ABERTA",
@@ -2615,10 +2615,10 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "fase1-auth-rbac",
       "ref": "—",
-      "ocorrencias": 7,
+      "ocorrencias": 8,
       "primeiraVez": "2026-09-25T11:58:40.273Z",
-      "ultimaVez": "2026-09-25T19:08:22.268Z",
-      "gitRev": "344b5f9"
+      "ultimaVez": "2026-09-25T20:09:03.220Z",
+      "gitRev": "7484bce"
     },
     "VERIFY_PULADO::fase0-fundacao-ci-staging::AC-010": {
       "codigo": "VERIFY_PULADO",
@@ -2858,10 +2858,10 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "fase1-dominio-pipeline",
       "ref": "—",
-      "ocorrencias": 5,
+      "ocorrencias": 6,
       "primeiraVez": "2026-09-25T12:54:10.359Z",
-      "ultimaVez": "2026-09-25T19:08:22.268Z",
-      "gitRev": "344b5f9"
+      "ultimaVez": "2026-09-25T20:09:03.220Z",
+      "gitRev": "7484bce"
     },
     "ARQUIVO_INEXISTENTE::fase1-repositorios-isolamento::T-001": {
       "codigo": "ARQUIVO_INEXISTENTE",
@@ -3200,10 +3200,10 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "fase1-repositorios-isolamento",
       "ref": "—",
-      "ocorrencias": 3,
+      "ocorrencias": 4,
       "primeiraVez": "2026-09-25T14:55:10.861Z",
-      "ultimaVez": "2026-09-25T19:08:22.268Z",
-      "gitRev": "344b5f9"
+      "ultimaVez": "2026-09-25T20:09:03.220Z",
+      "gitRev": "7484bce"
     },
     "AC_INCOMPLETO::fase2-kanban::AC-091": {
       "codigo": "AC_INCOMPLETO",

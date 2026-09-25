@@ -1,11 +1,11 @@
 {
   "feature": "fase2-kanban",
-  "timestamp": "2026-09-25T19:49:42.356Z",
-  "gitRev": "ed1c040",
+  "timestamp": "2026-09-25T20:08:49.445Z",
+  "gitRev": "7484bce",
   "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
   "exitCode": 0,
-  "testsParsed": 237,
+  "testsParsed": 250,
   "results": {
     "AC-074": {
       "status": "pass",
@@ -80,6 +80,26 @@
     "AC-087": {
       "status": "pass",
       "testName": "T-047: rota POST /api/oportunidades/:id/transicao AC-087: card de outro tenant não é encontrado (fail closed) sessão da empresa B tentando mover card da empresa A: 404 @spec:AC-087 sessão da empresa B tentando mover card da empresa A: 404 @spec:AC-087",
+      "method": "vitest-json"
+    },
+    "AC-088": {
+      "status": "pass",
+      "testName": "T-049: exigeDadoFaltante AC-088: rejeição por dado obrigatório abre o modal correspondente VALOR_OBRIGATORIO: true @spec:AC-088 VALOR_OBRIGATORIO: true @spec:AC-088",
+      "method": "vitest-json"
+    },
+    "AC-089": {
+      "status": "pass",
+      "testName": "T-050: ModalDadoFaltante AC-089: preencher e confirmar o modal reenvia a transição com o dado VALOR_OBRIGATORIO: preencher o valor e confirmar chama onConfirmar com o número @spec:AC-089 VALOR_OBRIGATORIO: preencher o valor e confirmar chama onConfirmar com o número @spec:AC-089",
+      "method": "vitest-json"
+    },
+    "AC-090": {
+      "status": "pass",
+      "testName": "T-050: ModalDadoFaltante AC-090: cancelar o modal não faz nenhuma chamada clicar em Cancelar chama onCancelar e nunca onConfirmar @spec:AC-090 clicar em Cancelar chama onCancelar e nunca onConfirmar @spec:AC-090",
+      "method": "vitest-json"
+    },
+    "AC-091": {
+      "status": "pass",
+      "testName": "T-049: exigeDadoFaltante AC-091: rejeição por grafo ou papel não abre modal de dado TRANSICAO_NAO_PERMITIDA: false @spec:AC-091 TRANSICAO_NAO_PERMITIDA: false @spec:AC-091",
       "method": "vitest-json"
     },
     "AC-092": {
