@@ -1,7 +1,7 @@
 {
   "feature": "fase1-schema-drizzle",
-  "timestamp": "2026-09-24T19:17:44.447Z",
-  "gitRev": "e47e272",
+  "timestamp": "2026-09-25T12:10:41.120Z",
+  "gitRev": "337ae53",
   "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
   "exitCode": 0,

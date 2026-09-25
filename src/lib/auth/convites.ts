@@ -19,9 +19,8 @@ export type PapelUsuario = (typeof papelUsuarioEnum.enumValues)[number];
 
 const PAPEIS_VALIDOS = new Set<string>(papelUsuarioEnum.enumValues);
 
-// Prazo curto (AC-036) — número exato depende de Q-006 (spec, em aberto);
-// 48h é o default razoável até a resposta, documentado aqui.
-export const TTL_CONVITE_MS = 48 * 60 * 60 * 1000;
+// Prazo curto (AC-036) — 24h, decidido em Q-006 (spec).
+export const TTL_CONVITE_MS = 24 * 60 * 60 * 1000;
 
 const PREFIXO_IDENTIFICADOR_CONVITE = 'convite';
 

@@ -208,5 +208,5 @@ por e-mail, para mitigar força bruta e abuso, com as tentativas registradas.
 
 | ID | Pergunta | Status | Resposta |
 |---|---|---|---|
-| Q-005 | Qual o limite exato de tentativas e a janela de tempo do rate limit de login/convite/reset (TDD-001 §7 menciona "limite por IP e por e-mail" sem números)? | aberta | — |
-| Q-006 | Qual o prazo de expiração da sessão (TDD-001 §4.7 diz "expiração configurável" sem valor) e do token de convite/reset? | aberta | — |
+| Q-005 | Qual o limite exato de tentativas e a janela de tempo do rate limit de login/convite/reset (TDD-001 §7 menciona "limite por IP e por e-mail" sem números)? | respondida | Decidido pelo usuário (Raniery) em 2026-09-25: 5 tentativas / 15 minutos, por IP e por e-mail. Aplicado em `src/lib/auth/rate-limit.ts` (`LIMITE_PADRAO_TENTATIVAS`/`JANELA_PADRAO_MS`, já batia com o default) e no `rateLimit` interno do Better Auth em `src/lib/auth/server.ts` (`window: 15 * 60, max: 5`). |
+| Q-006 | Qual o prazo de expiração da sessão (TDD-001 §4.7 diz "expiração configurável" sem valor) e do token de convite/reset? | respondida | Decidido pelo usuário (Raniery) em 2026-09-25: sessão expira em 7 dias, convite e reset de senha em 24h. Aplicado em `src/lib/auth/server.ts` (`session.expiresIn = 60*60*24*7`), `src/lib/auth/convites.ts` (`TTL_CONVITE_MS` de 48h para 24h) e `src/lib/auth/reset-senha.ts` (`TTL_RESET_MS` de 1h para 24h). |

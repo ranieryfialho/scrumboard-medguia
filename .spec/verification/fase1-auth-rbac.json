@@ -1,7 +1,7 @@
 {
   "feature": "fase1-auth-rbac",
-  "timestamp": "2026-09-24T19:13:08.949Z",
-  "gitRev": "e47e272",
+  "timestamp": "2026-09-25T12:05:09.181Z",
+  "gitRev": "337ae53",
   "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
   "exitCode": 0,

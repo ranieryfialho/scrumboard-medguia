@@ -50,6 +50,8 @@ export function criarAuth(db: NodePgDatabase, opcoes: CriarAuthOpcoes = {}) {
       },
     },
     session: {
+      // Q-006 (spec): sessão expira em 7 dias.
+      expiresIn: 60 * 60 * 24 * 7,
       modelName: 'sessoes',
       fields: {
         userId: 'usuarioId',
@@ -94,12 +96,11 @@ export function criarAuth(db: NodePgDatabase, opcoes: CriarAuthOpcoes = {}) {
           verificarSenha(password, hash),
       },
     },
-    // AC-047: limite por IP e e-mail em memória (por processo) — número
-    // exato depende de Q-005 (spec, em aberto); defaults razoáveis até a
-    // resposta, documentados aqui.
+    // AC-047: limite por IP e e-mail em memória (por processo) — 5
+    // tentativas / 15 minutos, decidido em Q-005 (spec).
     rateLimit: {
       enabled: true,
-      window: 60,
+      window: 15 * 60,
       max: 5,
     },
     advanced: {

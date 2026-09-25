@@ -15,9 +15,8 @@ import { hashSenha } from './definir-senha';
 const PROVEDOR_CREDENCIAL = 'credential';
 const PREFIXO_IDENTIFICADOR_RESET = 'reset';
 
-// Prazo do token de reset — número exato depende de Q-006 (spec, em aberto);
-// 1h é o default razoável até a resposta, documentado aqui.
-export const TTL_RESET_MS = 60 * 60 * 1000;
+// Prazo do token de reset — 24h, decidido em Q-006 (spec).
+export const TTL_RESET_MS = 24 * 60 * 60 * 1000;
 
 /** Convenção do `identificador` em `tokens_verificacao` para tokens de reset. */
 export function identificadorReset(email: string): string {

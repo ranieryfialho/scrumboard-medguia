@@ -2,8 +2,7 @@
 // e reset por e-mail e por IP. Fica em memória de processo (sem tabela nova):
 // `login.ts`/`convites.ts`/`reset-senha.ts` chamariam `verificar` antes de
 // processar a tentativa e `registrarFalha` quando ela falhar. Limite e
-// janela exatos dependem de Q-005 (spec, em aberto); os defaults abaixo são
-// o "razoável documentado" até a resposta.
+// janela decididos em Q-005 (spec): 5 tentativas / 15 minutos.
 export const LIMITE_PADRAO_TENTATIVAS = 5;
 export const JANELA_PADRAO_MS = 15 * 60 * 1000; // 15 minutos
 

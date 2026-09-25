@@ -1112,37 +1112,37 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "fase0-fundacao-ci-staging",
       "ref": "—",
-      "ocorrencias": 16,
+      "ocorrencias": 17,
       "primeiraVez": "2026-09-23T14:14:35.866Z",
-      "ultimaVez": "2026-09-24T18:55:01.169Z",
-      "gitRev": "5f13f04"
+      "ultimaVez": "2026-09-25T11:58:40.272Z",
+      "gitRev": "337ae53"
     },
     "VERIFY_PULADO::fase0-fundacao-ci-staging::AC-005": {
       "codigo": "VERIFY_PULADO",
       "feature": "fase0-fundacao-ci-staging",
       "ref": "AC-005",
-      "ocorrencias": 1,
+      "ocorrencias": 2,
       "primeiraVez": "2026-09-23T14:15:07.028Z",
-      "ultimaVez": "2026-09-23T14:15:07.028Z",
-      "gitRev": "1b83a06"
+      "ultimaVez": "2026-09-25T12:00:03.972Z",
+      "gitRev": "337ae53"
     },
     "VERIFY_PULADO::fase0-fundacao-ci-staging::AC-007": {
       "codigo": "VERIFY_PULADO",
       "feature": "fase0-fundacao-ci-staging",
       "ref": "AC-007",
-      "ocorrencias": 1,
+      "ocorrencias": 2,
       "primeiraVez": "2026-09-23T14:15:07.028Z",
-      "ultimaVez": "2026-09-23T14:15:07.028Z",
-      "gitRev": "1b83a06"
+      "ultimaVez": "2026-09-25T12:00:03.972Z",
+      "gitRev": "337ae53"
     },
     "VERIFY_PULADO::fase0-fundacao-ci-staging::AC-008": {
       "codigo": "VERIFY_PULADO",
       "feature": "fase0-fundacao-ci-staging",
       "ref": "AC-008",
-      "ocorrencias": 1,
+      "ocorrencias": 2,
       "primeiraVez": "2026-09-23T14:15:07.028Z",
-      "ultimaVez": "2026-09-23T14:15:07.028Z",
-      "gitRev": "1b83a06"
+      "ultimaVez": "2026-09-25T12:00:03.972Z",
+      "gitRev": "337ae53"
     },
     "ARQUIVO_INEXISTENTE::fase1-schema-drizzle::T-001": {
       "codigo": "ARQUIVO_INEXISTENTE",
@@ -1886,10 +1886,10 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "fase1-schema-drizzle",
       "ref": "—",
-      "ocorrencias": 6,
+      "ocorrencias": 7,
       "primeiraVez": "2026-09-24T15:43:08.558Z",
-      "ultimaVez": "2026-09-24T18:55:01.170Z",
-      "gitRev": "5f13f04"
+      "ultimaVez": "2026-09-25T11:58:40.273Z",
+      "gitRev": "337ae53"
     },
     "ASM_ABERTA::fase1-schema-drizzle::ASM-008": {
       "codigo": "ASM_ABERTA",
@@ -2592,6 +2592,60 @@
       "primeiraVez": "2026-09-24T18:50:02.074Z",
       "ultimaVez": "2026-09-24T18:55:01.170Z",
       "gitRev": "5f13f04"
+    },
+    "Q_ABERTA::fase1-auth-rbac::Q-005": {
+      "codigo": "Q_ABERTA",
+      "feature": "fase1-auth-rbac",
+      "ref": "Q-005",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T11:58:40.273Z",
+      "ultimaVez": "2026-09-25T11:58:40.273Z",
+      "gitRev": "337ae53"
+    },
+    "Q_ABERTA::fase1-auth-rbac::Q-006": {
+      "codigo": "Q_ABERTA",
+      "feature": "fase1-auth-rbac",
+      "ref": "Q-006",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T11:58:40.273Z",
+      "ultimaVez": "2026-09-25T11:58:40.273Z",
+      "gitRev": "337ae53"
+    },
+    "VERIFY_OBSOLETO::fase1-auth-rbac::—": {
+      "codigo": "VERIFY_OBSOLETO",
+      "feature": "fase1-auth-rbac",
+      "ref": "—",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T11:58:40.273Z",
+      "ultimaVez": "2026-09-25T11:58:40.273Z",
+      "gitRev": "337ae53"
+    },
+    "VERIFY_PULADO::fase0-fundacao-ci-staging::AC-010": {
+      "codigo": "VERIFY_PULADO",
+      "feature": "fase0-fundacao-ci-staging",
+      "ref": "AC-010",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T12:00:03.972Z",
+      "ultimaVez": "2026-09-25T12:00:03.972Z",
+      "gitRev": "337ae53"
+    },
+    "VERIFY_PULADO::fase0-fundacao-ci-staging::AC-011": {
+      "codigo": "VERIFY_PULADO",
+      "feature": "fase0-fundacao-ci-staging",
+      "ref": "AC-011",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T12:00:03.972Z",
+      "ultimaVez": "2026-09-25T12:00:03.972Z",
+      "gitRev": "337ae53"
+    },
+    "VERIFY_PULADO::fase0-fundacao-ci-staging::AC-012": {
+      "codigo": "VERIFY_PULADO",
+      "feature": "fase0-fundacao-ci-staging",
+      "ref": "AC-012",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T12:00:03.972Z",
+      "ultimaVez": "2026-09-25T12:00:03.972Z",
+      "gitRev": "337ae53"
     }
   }
 }
