@@ -27,8 +27,7 @@
   convenção de teste de `test/db/funcoes.test.ts` (Postgres efêmero real).
   Base para todas as tarefas de repositório/rota de transição.
 
-## T-044 — Repositório: `criarOportunidade` [pendente]
-
+## T-044 — Repositório: `criarOportunidade` [concluida]
 - Refs: US-030, AC-079, AC-080, AC-081
 - Arquivos: src/repositories/oportunidades.ts, test/repositories/oportunidades.test.ts
 - Esforço: medio
