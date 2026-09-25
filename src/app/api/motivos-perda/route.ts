@@ -8,16 +8,13 @@ import { NextResponse, type NextRequest } from 'next/server';
 
 import { getDb } from '../../../db/client';
 import { motivosPerda } from '../../../db/schema';
-import { criarAuth } from '../../../lib/auth/server';
+import { getAuth } from '../../../lib/auth/instancia';
 import { ErroSessaoInvalida, resolverContextoTenant } from '../../../lib/auth/tenant';
 
-const auth = criarAuth(getDb(), {
-  secret: process.env.BETTER_AUTH_SECRET,
-  baseURL: process.env.BETTER_AUTH_URL,
-});
+export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
-  const sessao = await auth.api.getSession({ headers: request.headers });
+  const sessao = await getAuth().api.getSession({ headers: request.headers });
   if (!sessao) {
     return NextResponse.json({ codigo: 'NAO_AUTENTICADO' }, { status: 401 });
   }

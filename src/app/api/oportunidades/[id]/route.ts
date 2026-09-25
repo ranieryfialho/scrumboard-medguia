@@ -7,19 +7,16 @@ import { NextResponse, type NextRequest } from 'next/server';
 
 import { getDb } from '../../../../db/client';
 import { leads, motivosPerda, usuarios } from '../../../../db/schema';
-import { criarAuth } from '../../../../lib/auth/server';
+import { getAuth } from '../../../../lib/auth/instancia';
 import { ErroSessaoInvalida, resolverContextoTenant, type ContextoTenant } from '../../../../lib/auth/tenant';
 import { comTenant } from '../../../../repositories/contexto';
 import { buscarOportunidadePorId } from '../../../../repositories/oportunidades';
 
-const auth = criarAuth(getDb(), {
-  secret: process.env.BETTER_AUTH_SECRET,
-  baseURL: process.env.BETTER_AUTH_URL,
-});
+export const dynamic = 'force-dynamic';
 
 /** AC-078 (mesmo padrão das demais rotas de /api/oportunidades): resolve o `ContextoTenant`, ou `null` sem tocar em nenhuma tabela de negócio. */
 async function resolverContexto(request: NextRequest): Promise<ContextoTenant | null> {
-  const sessao = await auth.api.getSession({ headers: request.headers });
+  const sessao = await getAuth().api.getSession({ headers: request.headers });
   if (!sessao) return null;
 
   try {
