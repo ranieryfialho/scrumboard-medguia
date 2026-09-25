@@ -5,6 +5,11 @@
 // resultado do toque e o efeito em cadeia atomicamente (AC-028). As duas
 // funções rodam sem SECURITY DEFINER, então os testes chamam como `crm_app`
 // com `SET app.empresa_id` — o mesmo caminho da aplicação em produção.
+//
+// T-043 (fase2-kanban, US-031) estende esses testes: `mover_oportunidade`
+// (0006_fn_mover_oportunidade_guards) ganhou 3 parâmetros novos (`p_valor`,
+// `p_motivo_perda_id`, `p_proxima_acao_em`) que gravam os dados de guard da
+// etapa de destino na mesma linha/transação da transição (AC-082).
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 
 import { subirPostgresEfemero, type PostgresEfemero } from '../support/postgres-efemero';
@@ -80,6 +85,73 @@ describe('T-024: funções SQL transacionais', () => {
       );
       expect(evento.status).toBe(0);
       expect(evento.stdout.trim()).toBe('1');
+    });
+  });
+
+  describe('AC-082: mover_oportunidade grava valor/motivo_perda/proxima_acao junto com a etapa, atomicamente', () => {
+    test('valor e proxima_acao_em enviados na transição ficam gravados na mesma linha, junto com etapa/version/evento @spec:AC-082', () => {
+      const oportunidadeId = criarOportunidade(ETAPA_ENTRADA);
+      const proximaAcaoEm = '2026-10-01T12:00:00+00:00';
+
+      const mover = pg.psqlComo(
+        'crm_app',
+        `SET app.empresa_id = '${EMPRESA_ID}';
+         SELECT mover_oportunidade('${oportunidadeId}', 1, ${ETAPA_1_DIA}, NULL, 'sistema', NULL, 1500.50, NULL, '${proximaAcaoEm}')`
+      );
+      expect(mover.status, `mover_oportunidade deveria ter sucesso: ${mover.stderr}`).toBe(0);
+
+      const estado = pg.psqlComo(
+        'crm_migrator',
+        `SELECT "etapa_id", "version", "valor", "proxima_acao_em" FROM "oportunidades" WHERE "id" = '${oportunidadeId}'`
+      );
+      expect(estado.status).toBe(0);
+      expect(estado.stdout.trim()).toBe(`${ETAPA_1_DIA}|2|1500.50|2026-10-01 12:00:00+00`);
+
+      const evento = pg.psqlComo(
+        'crm_migrator',
+        `SELECT count(*) FROM "oportunidade_eventos"
+         WHERE "oportunidade_id" = '${oportunidadeId}' AND "tipo" = 'transicao_etapa'
+           AND "etapa_origem_id" = ${ETAPA_ENTRADA} AND "etapa_destino_id" = ${ETAPA_1_DIA}`
+      );
+      expect(evento.status).toBe(0);
+      expect(evento.stdout.trim()).toBe('1');
+    });
+
+    test('motivo_perda_id enviado é gravado, e valor/proxima_acao_em ausentes preservam o que já estava na linha @spec:AC-082', () => {
+      const motivoId = proximoUuid();
+      const criarMotivo = pg.psqlComo(
+        'crm_migrator',
+        `INSERT INTO "motivos_perda" ("id", "nome") VALUES ('${motivoId}', 'Motivo Teste ${motivoId}')`
+      );
+      if (criarMotivo.status !== 0) {
+        throw new Error(`Falha ao criar motivo_perda fixture: ${criarMotivo.stderr}`);
+      }
+
+      const oportunidadeId = criarOportunidade(ETAPA_ENTRADA);
+      const preExistente = pg.psqlComo(
+        'crm_migrator',
+        `UPDATE "oportunidades" SET "valor" = 999.00 WHERE "id" = '${oportunidadeId}'`
+      );
+      if (preExistente.status !== 0) {
+        throw new Error(`Falha ao preparar valor existente na fixture: ${preExistente.stderr}`);
+      }
+
+      const mover = pg.psqlComo(
+        'crm_app',
+        `SET app.empresa_id = '${EMPRESA_ID}';
+         SELECT mover_oportunidade('${oportunidadeId}', 1, ${ETAPA_1_DIA}, NULL, 'sistema', NULL, NULL, '${motivoId}', NULL)`
+      );
+      expect(mover.status, `mover_oportunidade deveria ter sucesso: ${mover.stderr}`).toBe(0);
+
+      const estado = pg.psqlComo(
+        'crm_migrator',
+        `SELECT "etapa_id", "version", "valor", "motivo_perda_id" FROM "oportunidades" WHERE "id" = '${oportunidadeId}'`
+      );
+      expect(estado.status).toBe(0);
+      expect(
+        estado.stdout.trim(),
+        'valor pré-existente deveria ser preservado (não enviado nesta chamada)'
+      ).toBe(`${ETAPA_1_DIA}|2|999.00|${motivoId}`);
     });
   });
 
