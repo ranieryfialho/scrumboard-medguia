@@ -1,0 +1,174 @@
+{
+  "runId": "scrumboard-medguia-fase2-kanban-muhahtmu",
+  "feature": "fase2-kanban",
+  "agent": "claude",
+  "modo": "sequencial",
+  "paralelizar": null,
+  "modeloForcado": null,
+  "esforcoForcado": null,
+  "geradoEm": "2026-09-25 18:23",
+  "branchTrabalho": "spec/fase2-kanban",
+  "baseDir": ".spec/features/fase2-kanban",
+  "specDir": ".spec",
+  "repoName": "scrumboard-medguia",
+  "logsDir": "../onp-worktrees/scrumboard-medguia-fase2-kanban-logs",
+  "ondas": [],
+  "faixas": [],
+  "sequenciais": [
+    {
+      "id": "T-043",
+      "titulo": "Migration: `mover_oportunidade` grava valor/motivo/próxima ação",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "drizzle/0006_fn_mover_oportunidade_guards.sql",
+        "test/db/funcoes.test.ts"
+      ],
+      "refs": [
+        "AC-082"
+      ]
+    },
+    {
+      "id": "T-044",
+      "titulo": "Repositório: `criarOportunidade`",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/repositories/oportunidades.ts",
+        "test/repositories/oportunidades.test.ts"
+      ],
+      "refs": [
+        "US-030",
+        "AC-079",
+        "AC-080",
+        "AC-081"
+      ]
+    },
+    {
+      "id": "T-045",
+      "titulo": "Repositório: `moverOportunidade` (chama a função SQL estendida)",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "src/repositories/oportunidades.ts",
+        "test/repositories/oportunidades.test.ts"
+      ],
+      "refs": [
+        "AC-082",
+        "AC-086"
+      ]
+    },
+    {
+      "id": "T-046",
+      "titulo": "Rota `GET /api/oportunidades` (board) e `POST /api/oportunidades` (criar)",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "src/app/api/oportunidades/route.ts",
+        "test/api/oportunidades.test.ts"
+      ],
+      "refs": [
+        "US-029",
+        "US-030",
+        "AC-074",
+        "AC-075",
+        "AC-076",
+        "AC-077",
+        "AC-078",
+        "AC-079",
+        "AC-080",
+        "AC-081",
+        "AC-094"
+      ]
+    },
+    {
+      "id": "T-047",
+      "titulo": "Rota `POST /api/oportunidades/:id/transicao`",
+      "modelo": "claude-sonnet-5",
+      "esforco": "xhigh",
+      "arquivos": [
+        "src/app/api/oportunidades/[id]/transicao/route.ts",
+        "test/api/oportunidades-transicao.test.ts"
+      ],
+      "refs": [
+        "US-031",
+        "AC-082",
+        "AC-083",
+        "AC-084",
+        "AC-085",
+        "AC-086",
+        "AC-087"
+      ]
+    },
+    {
+      "id": "T-048",
+      "titulo": "Rota `GET /api/oportunidades/:id` (detalhe)",
+      "modelo": "claude-sonnet-5",
+      "esforco": "low",
+      "arquivos": [
+        "src/app/api/oportunidades/[id]/route.ts",
+        "test/api/oportunidades-detalhe.test.ts"
+      ],
+      "refs": [
+        "US-033",
+        "AC-092",
+        "AC-093"
+      ]
+    },
+    {
+      "id": "T-049",
+      "titulo": "Componentes do board: colunas, card, drag-and-drop",
+      "modelo": "claude-sonnet-5",
+      "esforco": "xhigh",
+      "arquivos": [
+        "src/components/pipeline/board-kanban.tsx",
+        "src/components/pipeline/coluna-etapa.tsx",
+        "src/components/pipeline/card-oportunidade.tsx",
+        "src/app/pipeline/page.tsx"
+      ],
+      "refs": [
+        "US-029",
+        "US-031",
+        "AC-074",
+        "AC-075",
+        "AC-076",
+        "AC-077",
+        "AC-094",
+        "AC-083",
+        "AC-084",
+        "AC-091"
+      ]
+    },
+    {
+      "id": "T-050",
+      "titulo": "Modal de dado faltante",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/components/pipeline/modal-dado-faltante.tsx"
+      ],
+      "refs": [
+        "US-032",
+        "AC-088",
+        "AC-089",
+        "AC-090"
+      ]
+    },
+    {
+      "id": "T-051",
+      "titulo": "Página de detalhe do card",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/app/pipeline/[id]/page.tsx"
+      ],
+      "refs": [
+        "US-033",
+        "AC-092",
+        "AC-093"
+      ]
+    }
+  ],
+  "concluidas": [],
+  "avisos": []
+}

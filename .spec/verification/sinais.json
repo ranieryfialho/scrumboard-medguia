@@ -3204,6 +3204,420 @@
       "primeiraVez": "2026-09-25T14:55:10.861Z",
       "ultimaVez": "2026-09-25T15:13:48.010Z",
       "gitRev": "3838967"
+    },
+    "AC_INCOMPLETO::fase2-kanban::AC-091": {
+      "codigo": "AC_INCOMPLETO",
+      "feature": "fase2-kanban",
+      "ref": "AC-091",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T18:20:16.289Z",
+      "ultimaVez": "2026-09-25T18:20:16.291Z",
+      "gitRev": "0bb6544"
+    },
+    "ARQUIVO_INEXISTENTE::fase2-kanban::T-001": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "fase2-kanban",
+      "ref": "T-001",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T18:20:16.291Z",
+      "ultimaVez": "2026-09-25T18:20:16.291Z",
+      "gitRev": "0bb6544"
+    },
+    "AC_SEM_TASK::fase2-kanban::AC-079": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "fase2-kanban",
+      "ref": "AC-079",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T18:20:16.291Z",
+      "ultimaVez": "2026-09-25T18:20:16.291Z",
+      "gitRev": "0bb6544"
+    },
+    "AC_SEM_TASK::fase2-kanban::AC-080": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "fase2-kanban",
+      "ref": "AC-080",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T18:20:16.291Z",
+      "ultimaVez": "2026-09-25T18:20:16.291Z",
+      "gitRev": "0bb6544"
+    },
+    "AC_SEM_TASK::fase2-kanban::AC-081": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "fase2-kanban",
+      "ref": "AC-081",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T18:20:16.291Z",
+      "ultimaVez": "2026-09-25T18:20:16.291Z",
+      "gitRev": "0bb6544"
+    },
+    "AC_SEM_TASK::fase2-kanban::AC-082": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "fase2-kanban",
+      "ref": "AC-082",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T18:20:16.291Z",
+      "ultimaVez": "2026-09-25T18:20:16.291Z",
+      "gitRev": "0bb6544"
+    },
+    "AC_SEM_TASK::fase2-kanban::AC-083": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "fase2-kanban",
+      "ref": "AC-083",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T18:20:16.291Z",
+      "ultimaVez": "2026-09-25T18:20:16.291Z",
+      "gitRev": "0bb6544"
+    },
+    "AC_SEM_TASK::fase2-kanban::AC-084": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "fase2-kanban",
+      "ref": "AC-084",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T18:20:16.291Z",
+      "ultimaVez": "2026-09-25T18:20:16.291Z",
+      "gitRev": "0bb6544"
+    },
+    "AC_SEM_TASK::fase2-kanban::AC-085": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "fase2-kanban",
+      "ref": "AC-085",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T18:20:16.291Z",
+      "ultimaVez": "2026-09-25T18:20:16.291Z",
+      "gitRev": "0bb6544"
+    },
+    "AC_SEM_TASK::fase2-kanban::AC-086": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "fase2-kanban",
+      "ref": "AC-086",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T18:20:16.291Z",
+      "ultimaVez": "2026-09-25T18:20:16.291Z",
+      "gitRev": "0bb6544"
+    },
+    "AC_SEM_TASK::fase2-kanban::AC-087": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "fase2-kanban",
+      "ref": "AC-087",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T18:20:16.291Z",
+      "ultimaVez": "2026-09-25T18:20:16.291Z",
+      "gitRev": "0bb6544"
+    },
+    "AC_SEM_TASK::fase2-kanban::AC-088": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "fase2-kanban",
+      "ref": "AC-088",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T18:20:16.291Z",
+      "ultimaVez": "2026-09-25T18:20:16.291Z",
+      "gitRev": "0bb6544"
+    },
+    "AC_SEM_TASK::fase2-kanban::AC-089": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "fase2-kanban",
+      "ref": "AC-089",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T18:20:16.291Z",
+      "ultimaVez": "2026-09-25T18:20:16.291Z",
+      "gitRev": "0bb6544"
+    },
+    "AC_SEM_TASK::fase2-kanban::AC-090": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "fase2-kanban",
+      "ref": "AC-090",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T18:20:16.291Z",
+      "ultimaVez": "2026-09-25T18:20:16.291Z",
+      "gitRev": "0bb6544"
+    },
+    "AC_SEM_TASK::fase2-kanban::AC-091": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "fase2-kanban",
+      "ref": "AC-091",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T18:20:16.291Z",
+      "ultimaVez": "2026-09-25T18:20:16.291Z",
+      "gitRev": "0bb6544"
+    },
+    "AC_SEM_TASK::fase2-kanban::AC-092": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "fase2-kanban",
+      "ref": "AC-092",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T18:20:16.291Z",
+      "ultimaVez": "2026-09-25T18:20:16.291Z",
+      "gitRev": "0bb6544"
+    },
+    "AC_SEM_TASK::fase2-kanban::AC-093": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "fase2-kanban",
+      "ref": "AC-093",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T18:20:16.291Z",
+      "ultimaVez": "2026-09-25T18:20:16.291Z",
+      "gitRev": "0bb6544"
+    },
+    "AC_SEM_TESTE::fase2-kanban::AC-074": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase2-kanban",
+      "ref": "AC-074",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-25T18:20:16.291Z",
+      "ultimaVez": "2026-09-25T18:21:48.881Z",
+      "gitRev": "0bb6544"
+    },
+    "AC_SEM_TESTE::fase2-kanban::AC-075": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase2-kanban",
+      "ref": "AC-075",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-25T18:20:16.291Z",
+      "ultimaVez": "2026-09-25T18:21:48.881Z",
+      "gitRev": "0bb6544"
+    },
+    "AC_SEM_TESTE::fase2-kanban::AC-076": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase2-kanban",
+      "ref": "AC-076",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-25T18:20:16.291Z",
+      "ultimaVez": "2026-09-25T18:21:48.881Z",
+      "gitRev": "0bb6544"
+    },
+    "AC_SEM_TESTE::fase2-kanban::AC-077": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase2-kanban",
+      "ref": "AC-077",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-25T18:20:16.291Z",
+      "ultimaVez": "2026-09-25T18:21:48.881Z",
+      "gitRev": "0bb6544"
+    },
+    "AC_SEM_TESTE::fase2-kanban::AC-078": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase2-kanban",
+      "ref": "AC-078",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-25T18:20:16.291Z",
+      "ultimaVez": "2026-09-25T18:21:48.881Z",
+      "gitRev": "0bb6544"
+    },
+    "AC_SEM_TESTE::fase2-kanban::AC-094": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase2-kanban",
+      "ref": "AC-094",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-25T18:20:16.291Z",
+      "ultimaVez": "2026-09-25T18:21:48.881Z",
+      "gitRev": "0bb6544"
+    },
+    "AC_SEM_TESTE::fase2-kanban::AC-079": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase2-kanban",
+      "ref": "AC-079",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-25T18:20:16.291Z",
+      "ultimaVez": "2026-09-25T18:21:48.881Z",
+      "gitRev": "0bb6544"
+    },
+    "AC_SEM_TESTE::fase2-kanban::AC-080": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase2-kanban",
+      "ref": "AC-080",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-25T18:20:16.291Z",
+      "ultimaVez": "2026-09-25T18:21:48.881Z",
+      "gitRev": "0bb6544"
+    },
+    "AC_SEM_TESTE::fase2-kanban::AC-081": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase2-kanban",
+      "ref": "AC-081",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-25T18:20:16.291Z",
+      "ultimaVez": "2026-09-25T18:21:48.881Z",
+      "gitRev": "0bb6544"
+    },
+    "AC_SEM_TESTE::fase2-kanban::AC-082": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase2-kanban",
+      "ref": "AC-082",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-25T18:20:16.291Z",
+      "ultimaVez": "2026-09-25T18:21:48.881Z",
+      "gitRev": "0bb6544"
+    },
+    "AC_SEM_TESTE::fase2-kanban::AC-083": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase2-kanban",
+      "ref": "AC-083",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-25T18:20:16.291Z",
+      "ultimaVez": "2026-09-25T18:21:48.881Z",
+      "gitRev": "0bb6544"
+    },
+    "AC_SEM_TESTE::fase2-kanban::AC-084": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase2-kanban",
+      "ref": "AC-084",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-25T18:20:16.291Z",
+      "ultimaVez": "2026-09-25T18:21:48.881Z",
+      "gitRev": "0bb6544"
+    },
+    "AC_SEM_TESTE::fase2-kanban::AC-085": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase2-kanban",
+      "ref": "AC-085",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-25T18:20:16.291Z",
+      "ultimaVez": "2026-09-25T18:21:48.882Z",
+      "gitRev": "0bb6544"
+    },
+    "AC_SEM_TESTE::fase2-kanban::AC-086": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase2-kanban",
+      "ref": "AC-086",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-25T18:20:16.291Z",
+      "ultimaVez": "2026-09-25T18:21:48.882Z",
+      "gitRev": "0bb6544"
+    },
+    "AC_SEM_TESTE::fase2-kanban::AC-087": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase2-kanban",
+      "ref": "AC-087",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-25T18:20:16.291Z",
+      "ultimaVez": "2026-09-25T18:21:48.882Z",
+      "gitRev": "0bb6544"
+    },
+    "AC_SEM_TESTE::fase2-kanban::AC-088": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase2-kanban",
+      "ref": "AC-088",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-25T18:20:16.291Z",
+      "ultimaVez": "2026-09-25T18:21:48.882Z",
+      "gitRev": "0bb6544"
+    },
+    "AC_SEM_TESTE::fase2-kanban::AC-089": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase2-kanban",
+      "ref": "AC-089",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-25T18:20:16.291Z",
+      "ultimaVez": "2026-09-25T18:21:48.882Z",
+      "gitRev": "0bb6544"
+    },
+    "AC_SEM_TESTE::fase2-kanban::AC-090": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase2-kanban",
+      "ref": "AC-090",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-25T18:20:16.291Z",
+      "ultimaVez": "2026-09-25T18:21:48.882Z",
+      "gitRev": "0bb6544"
+    },
+    "AC_SEM_TESTE::fase2-kanban::AC-091": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase2-kanban",
+      "ref": "AC-091",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-25T18:20:16.291Z",
+      "ultimaVez": "2026-09-25T18:21:48.882Z",
+      "gitRev": "0bb6544"
+    },
+    "AC_SEM_TESTE::fase2-kanban::AC-092": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase2-kanban",
+      "ref": "AC-092",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-25T18:20:16.291Z",
+      "ultimaVez": "2026-09-25T18:21:48.882Z",
+      "gitRev": "0bb6544"
+    },
+    "AC_SEM_TESTE::fase2-kanban::AC-093": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase2-kanban",
+      "ref": "AC-093",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-25T18:20:16.291Z",
+      "ultimaVez": "2026-09-25T18:21:48.882Z",
+      "gitRev": "0bb6544"
+    },
+    "REF_MALFORMADA::fase2-kanban::T-043": {
+      "codigo": "REF_MALFORMADA",
+      "feature": "fase2-kanban",
+      "ref": "T-043",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T18:21:48.878Z",
+      "ultimaVez": "2026-09-25T18:21:48.880Z",
+      "gitRev": "0bb6544"
+    },
+    "ARQUIVO_INEXISTENTE::fase2-kanban::T-043": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "fase2-kanban",
+      "ref": "T-043",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T18:21:48.880Z",
+      "ultimaVez": "2026-09-25T18:21:48.880Z",
+      "gitRev": "0bb6544"
+    },
+    "ARQUIVO_INEXISTENTE::fase2-kanban::T-046": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "fase2-kanban",
+      "ref": "T-046",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-25T18:21:48.880Z",
+      "ultimaVez": "2026-09-25T18:21:48.880Z",
+      "gitRev": "0bb6544"
+    },
+    "ARQUIVO_INEXISTENTE::fase2-kanban::T-047": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "fase2-kanban",
+      "ref": "T-047",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-25T18:21:48.880Z",
+      "ultimaVez": "2026-09-25T18:21:48.880Z",
+      "gitRev": "0bb6544"
+    },
+    "ARQUIVO_INEXISTENTE::fase2-kanban::T-048": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "fase2-kanban",
+      "ref": "T-048",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-25T18:21:48.880Z",
+      "ultimaVez": "2026-09-25T18:21:48.880Z",
+      "gitRev": "0bb6544"
+    },
+    "ARQUIVO_INEXISTENTE::fase2-kanban::T-049": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "fase2-kanban",
+      "ref": "T-049",
+      "ocorrencias": 4,
+      "primeiraVez": "2026-09-25T18:21:48.880Z",
+      "ultimaVez": "2026-09-25T18:21:48.881Z",
+      "gitRev": "0bb6544"
+    },
+    "ARQUIVO_INEXISTENTE::fase2-kanban::T-050": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "fase2-kanban",
+      "ref": "T-050",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T18:21:48.881Z",
+      "ultimaVez": "2026-09-25T18:21:48.881Z",
+      "gitRev": "0bb6544"
+    },
+    "ARQUIVO_INEXISTENTE::fase2-kanban::T-051": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "fase2-kanban",
+      "ref": "T-051",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T18:21:48.881Z",
+      "ultimaVez": "2026-09-25T18:21:48.881Z",
+      "gitRev": "0bb6544"
     }
   }
 }
