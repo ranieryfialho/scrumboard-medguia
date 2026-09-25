@@ -1,7 +1,7 @@
 # Spec: Fase 1 — Repositórios + isolamento
 
 > feature: fase1-repositorios-isolamento
-> status: rascunho
+> status: auditada
 
 <!--
   Como ler este arquivo (o formato é verificado por `onp-spec audit`):

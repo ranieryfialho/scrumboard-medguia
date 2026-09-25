@@ -1112,10 +1112,10 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "fase0-fundacao-ci-staging",
       "ref": "—",
-      "ocorrencias": 21,
+      "ocorrencias": 22,
       "primeiraVez": "2026-09-23T14:14:35.866Z",
-      "ultimaVez": "2026-09-25T13:24:52.244Z",
-      "gitRev": "37033fd"
+      "ultimaVez": "2026-09-25T17:05:35.153Z",
+      "gitRev": "3838967"
     },
     "VERIFY_PULADO::fase0-fundacao-ci-staging::AC-005": {
       "codigo": "VERIFY_PULADO",
@@ -1886,10 +1886,10 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "fase1-schema-drizzle",
       "ref": "—",
-      "ocorrencias": 11,
+      "ocorrencias": 13,
       "primeiraVez": "2026-09-24T15:43:08.558Z",
-      "ultimaVez": "2026-09-25T13:24:52.246Z",
-      "gitRev": "37033fd"
+      "ultimaVez": "2026-09-25T17:23:04.518Z",
+      "gitRev": "3838967"
     },
     "ASM_ABERTA::fase1-schema-drizzle::ASM-008": {
       "codigo": "ASM_ABERTA",
@@ -2615,10 +2615,10 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "fase1-auth-rbac",
       "ref": "—",
-      "ocorrencias": 5,
+      "ocorrencias": 6,
       "primeiraVez": "2026-09-25T11:58:40.273Z",
-      "ultimaVez": "2026-09-25T13:24:52.246Z",
-      "gitRev": "37033fd"
+      "ultimaVez": "2026-09-25T17:05:35.154Z",
+      "gitRev": "3838967"
     },
     "VERIFY_PULADO::fase0-fundacao-ci-staging::AC-010": {
       "codigo": "VERIFY_PULADO",
@@ -2858,10 +2858,10 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "fase1-dominio-pipeline",
       "ref": "—",
-      "ocorrencias": 3,
+      "ocorrencias": 4,
       "primeiraVez": "2026-09-25T12:54:10.359Z",
-      "ultimaVez": "2026-09-25T13:24:52.246Z",
-      "gitRev": "37033fd"
+      "ultimaVez": "2026-09-25T17:05:35.154Z",
+      "gitRev": "3838967"
     },
     "ARQUIVO_INEXISTENTE::fase1-repositorios-isolamento::T-001": {
       "codigo": "ARQUIVO_INEXISTENTE",
@@ -3195,6 +3195,96 @@
       "primeiraVez": "2026-09-25T14:08:22.479Z",
       "ultimaVez": "2026-09-25T14:08:22.479Z",
       "gitRev": "37033fd"
+    },
+    "VERIFY_OBSOLETO::fase1-repositorios-isolamento::—": {
+      "codigo": "VERIFY_OBSOLETO",
+      "feature": "fase1-repositorios-isolamento",
+      "ref": "—",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T17:05:35.154Z",
+      "ultimaVez": "2026-09-25T17:05:35.154Z",
+      "gitRev": "3838967"
+    },
+    "VERIFY_PULADO::fase1-repositorios-isolamento::AC-065": {
+      "codigo": "VERIFY_PULADO",
+      "feature": "fase1-repositorios-isolamento",
+      "ref": "AC-065",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T17:16:52.203Z",
+      "ultimaVez": "2026-09-25T17:16:52.203Z",
+      "gitRev": "3838967"
+    },
+    "VERIFY_PULADO::fase1-repositorios-isolamento::AC-066": {
+      "codigo": "VERIFY_PULADO",
+      "feature": "fase1-repositorios-isolamento",
+      "ref": "AC-066",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T17:16:52.203Z",
+      "ultimaVez": "2026-09-25T17:16:52.203Z",
+      "gitRev": "3838967"
+    },
+    "VERIFY_PULADO::fase1-repositorios-isolamento::AC-067": {
+      "codigo": "VERIFY_PULADO",
+      "feature": "fase1-repositorios-isolamento",
+      "ref": "AC-067",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T17:16:52.203Z",
+      "ultimaVez": "2026-09-25T17:16:52.203Z",
+      "gitRev": "3838967"
+    },
+    "VERIFY_PULADO::fase1-repositorios-isolamento::AC-068": {
+      "codigo": "VERIFY_PULADO",
+      "feature": "fase1-repositorios-isolamento",
+      "ref": "AC-068",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T17:16:52.203Z",
+      "ultimaVez": "2026-09-25T17:16:52.203Z",
+      "gitRev": "3838967"
+    },
+    "VERIFY_PULADO::fase1-repositorios-isolamento::AC-069": {
+      "codigo": "VERIFY_PULADO",
+      "feature": "fase1-repositorios-isolamento",
+      "ref": "AC-069",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T17:16:52.203Z",
+      "ultimaVez": "2026-09-25T17:16:52.203Z",
+      "gitRev": "3838967"
+    },
+    "VERIFY_PULADO::fase1-repositorios-isolamento::AC-070": {
+      "codigo": "VERIFY_PULADO",
+      "feature": "fase1-repositorios-isolamento",
+      "ref": "AC-070",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T17:16:52.203Z",
+      "ultimaVez": "2026-09-25T17:16:52.203Z",
+      "gitRev": "3838967"
+    },
+    "VERIFY_PULADO::fase1-repositorios-isolamento::AC-071": {
+      "codigo": "VERIFY_PULADO",
+      "feature": "fase1-repositorios-isolamento",
+      "ref": "AC-071",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T17:16:52.203Z",
+      "ultimaVez": "2026-09-25T17:16:52.203Z",
+      "gitRev": "3838967"
+    },
+    "VERIFY_PULADO::fase1-repositorios-isolamento::AC-072": {
+      "codigo": "VERIFY_PULADO",
+      "feature": "fase1-repositorios-isolamento",
+      "ref": "AC-072",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T17:16:52.203Z",
+      "ultimaVez": "2026-09-25T17:16:52.203Z",
+      "gitRev": "3838967"
+    },
+    "VERIFY_PULADO::fase1-repositorios-isolamento::AC-073": {
+      "codigo": "VERIFY_PULADO",
+      "feature": "fase1-repositorios-isolamento",
+      "ref": "AC-073",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T17:16:52.203Z",
+      "ultimaVez": "2026-09-25T17:16:52.203Z",
+      "gitRev": "3838967"
     }
   }
 }

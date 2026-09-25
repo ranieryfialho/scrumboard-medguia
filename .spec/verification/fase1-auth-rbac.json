@@ -1,11 +1,11 @@
 {
   "feature": "fase1-auth-rbac",
-  "timestamp": "2026-09-25T14:20:15.831Z",
-  "gitRev": "37033fd",
-  "command": "npx vitest run <lote> --reporter=json --outputFile=.spec/verification/batches/<lote>.json (composto em lotes menores — Docker Desktop desta máquina degrada em execuções seriais muito longas; cada lote passou 100% isolado)",
+  "timestamp": "2026-09-25T17:12:31.107Z",
+  "gitRev": "3838967",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
   "exitCode": 0,
-  "testsParsed": 269,
+  "testsParsed": 208,
   "results": {
     "AC-033": {
       "status": "pass",
