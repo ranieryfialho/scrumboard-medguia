@@ -11,13 +11,34 @@
 import { and, asc, eq } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
-import { oportunidades } from '../db/schema';
+import { leads, oportunidades } from '../db/schema';
 import type { ContextoTenant } from '../lib/auth/tenant';
 import { comTenant } from './contexto';
 
 export type Oportunidade = typeof oportunidades.$inferSelect;
 
 const LIMITE_PADRAO = 20;
+
+// AC-079: toda oportunidade nova nasce na primeira etapa do playbook.
+const ETAPA_ENTRADA_DE_LEADS = 1;
+
+/** T-044 (US-030): `leadId` não existe no tenant do `contexto` (AC-081) — nem em outro tenant, nem em lugar nenhum. */
+export class ErroLeadNaoEncontrado extends Error {
+  constructor() {
+    super('Lead informado não existe no tenant da sessão.');
+    this.name = 'ErroLeadNaoEncontrado';
+  }
+}
+
+export interface DadosNovaOportunidade {
+  leadId: string;
+  /**
+   * Deliberadamente aceito na entrada só para o caso de um chamador
+   * descuidado repassar um payload externo inteiro — nunca é lido: o
+   * `empresa_id` gravado é sempre `contexto.empresaId` (AC-080).
+   */
+  empresaId?: string;
+}
 
 export interface FiltroListarOportunidades {
   etapaId?: number;
@@ -92,6 +113,40 @@ export async function listarOportunidades(
       .offset(deslocamento);
 
     return { itens, limite, deslocamento };
+  });
+}
+
+/**
+ * Cria uma oportunidade em "Entrada de leads" (AC-079) sob o tenant do
+ * `contexto` (AC-080: `dados.empresaId`, se enviado, é ignorado). Rejeita
+ * (`ErroLeadNaoEncontrado`) se `dados.leadId` não existir nesse tenant
+ * (AC-081) — nada é inserido nesse caso.
+ */
+export async function criarOportunidade(
+  db: NodePgDatabase,
+  contexto: ContextoTenant,
+  dados: DadosNovaOportunidade
+): Promise<Oportunidade> {
+  return comTenant(db, contexto, async (tx) => {
+    const leadDoTenant = await tx
+      .select({ id: leads.id })
+      .from(leads)
+      .where(and(eq(leads.id, dados.leadId), eq(leads.empresaId, contexto.empresaId)))
+      .limit(1);
+
+    if (leadDoTenant.length === 0) {
+      throw new ErroLeadNaoEncontrado();
+    }
+
+    const [oportunidade] = await tx
+      .insert(oportunidades)
+      .values({
+        empresaId: contexto.empresaId,
+        leadId: dados.leadId,
+        etapaId: ETAPA_ENTRADA_DE_LEADS,
+      })
+      .returning();
+    return oportunidade;
   });
 }
 

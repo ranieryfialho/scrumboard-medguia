@@ -10,6 +10,8 @@ import { ETAPA_SEM_EXIGENCIAS, seedarDoisTenants, type TenantsSeedados } from '.
 import {
   atualizarOportunidade,
   buscarOportunidadePorId,
+  criarOportunidade,
+  ErroLeadNaoEncontrado,
   listarOportunidades,
 } from '../../src/repositories/oportunidades';
 import type { ContextoTenant } from '../../src/lib/auth/tenant';
@@ -172,6 +174,53 @@ describe('T-042: repositório de oportunidades', () => {
       expect(idsConcatenados).toHaveLength(totalDeA);
       expect(new Set(idsConcatenados).size).toBe(totalDeA); // nenhum item repetido entre páginas
       expect(idsConcatenados.sort()).toEqual(todasAsOportunidadesDeA.itens.map((o) => o.id).sort());
+    });
+  });
+
+  describe('T-044: criarOportunidade', () => {
+    test('card novo nasce em "Entrada de leads" (etapaId 1) com version 1 @spec:AC-079', async () => {
+      const contextoA = contextoDe(tenants.empresaA);
+      const oportunidade = await criarOportunidade(db, contextoA, { leadId: tenants.leadA });
+
+      expect(oportunidade.etapaId).toBe(1);
+      expect(oportunidade.version).toBe(1);
+    });
+
+    test('card novo pertence ao tenant da sessão, ignorando empresaId do corpo @spec:AC-080', async () => {
+      const contextoA = contextoDe(tenants.empresaA);
+      const oportunidade = await criarOportunidade(db, contextoA, {
+        leadId: tenants.leadA,
+        empresaId: tenants.empresaB,
+      });
+
+      expect(oportunidade.empresaId).toBe(tenants.empresaA);
+
+      const encontrada = await buscarOportunidadePorId(db, contextoA, oportunidade.id);
+      expect(encontrada?.empresaId).toBe(tenants.empresaA);
+    });
+
+    test('leadId de outro tenant é rejeitado e nenhum card é criado @spec:AC-081', async () => {
+      const contextoA = contextoDe(tenants.empresaA);
+      const antes = await listarOportunidades(db, contextoA, { limite: 1000 });
+
+      await expect(criarOportunidade(db, contextoA, { leadId: tenants.leadB })).rejects.toThrow(
+        ErroLeadNaoEncontrado
+      );
+
+      const depois = await listarOportunidades(db, contextoA, { limite: 1000 });
+      expect(depois.itens.map((o) => o.id).sort()).toEqual(antes.itens.map((o) => o.id).sort());
+    });
+
+    test('leadId inexistente em qualquer tenant é rejeitado e nenhum card é criado @spec:AC-081', async () => {
+      const contextoA = contextoDe(tenants.empresaA);
+      const antes = await listarOportunidades(db, contextoA, { limite: 1000 });
+
+      await expect(
+        criarOportunidade(db, contextoA, { leadId: '00000000-0000-0000-0000-000000000000' })
+      ).rejects.toThrow(ErroLeadNaoEncontrado);
+
+      const depois = await listarOportunidades(db, contextoA, { limite: 1000 });
+      expect(depois.itens.map((o) => o.id).sort()).toEqual(antes.itens.map((o) => o.id).sort());
     });
   });
 });
