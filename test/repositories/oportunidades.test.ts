@@ -10,7 +10,11 @@ import { ETAPA_SEM_EXIGENCIAS, seedarDoisTenants, type TenantsSeedados } from '.
 import {
   atualizarOportunidade,
   buscarOportunidadePorId,
+  criarOportunidade,
+  ErroConflitoDeVersao,
+  ErroLeadNaoEncontrado,
   listarOportunidades,
+  moverOportunidade,
 } from '../../src/repositories/oportunidades';
 import type { ContextoTenant } from '../../src/lib/auth/tenant';
 
@@ -172,6 +176,112 @@ describe('T-042: repositório de oportunidades', () => {
       expect(idsConcatenados).toHaveLength(totalDeA);
       expect(new Set(idsConcatenados).size).toBe(totalDeA); // nenhum item repetido entre páginas
       expect(idsConcatenados.sort()).toEqual(todasAsOportunidadesDeA.itens.map((o) => o.id).sort());
+    });
+  });
+
+  describe('T-044: criarOportunidade', () => {
+    test('card novo nasce em "Entrada de leads" (etapaId 1) com version 1 @spec:AC-079', async () => {
+      const contextoA = contextoDe(tenants.empresaA);
+      const oportunidade = await criarOportunidade(db, contextoA, { leadId: tenants.leadA });
+
+      expect(oportunidade.etapaId).toBe(1);
+      expect(oportunidade.version).toBe(1);
+    });
+
+    test('card novo pertence ao tenant da sessão, ignorando empresaId do corpo @spec:AC-080', async () => {
+      const contextoA = contextoDe(tenants.empresaA);
+      const oportunidade = await criarOportunidade(db, contextoA, {
+        leadId: tenants.leadA,
+        empresaId: tenants.empresaB,
+      });
+
+      expect(oportunidade.empresaId).toBe(tenants.empresaA);
+
+      const encontrada = await buscarOportunidadePorId(db, contextoA, oportunidade.id);
+      expect(encontrada?.empresaId).toBe(tenants.empresaA);
+    });
+
+    test('leadId de outro tenant é rejeitado e nenhum card é criado @spec:AC-081', async () => {
+      const contextoA = contextoDe(tenants.empresaA);
+      const antes = await listarOportunidades(db, contextoA, { limite: 1000 });
+
+      await expect(criarOportunidade(db, contextoA, { leadId: tenants.leadB })).rejects.toThrow(
+        ErroLeadNaoEncontrado
+      );
+
+      const depois = await listarOportunidades(db, contextoA, { limite: 1000 });
+      expect(depois.itens.map((o) => o.id).sort()).toEqual(antes.itens.map((o) => o.id).sort());
+    });
+
+    test('leadId inexistente em qualquer tenant é rejeitado e nenhum card é criado @spec:AC-081', async () => {
+      const contextoA = contextoDe(tenants.empresaA);
+      const antes = await listarOportunidades(db, contextoA, { limite: 1000 });
+
+      await expect(
+        criarOportunidade(db, contextoA, { leadId: '00000000-0000-0000-0000-000000000000' })
+      ).rejects.toThrow(ErroLeadNaoEncontrado);
+
+      const depois = await listarOportunidades(db, contextoA, { limite: 1000 });
+      expect(depois.itens.map((o) => o.id).sort()).toEqual(antes.itens.map((o) => o.id).sort());
+    });
+  });
+
+  describe('T-045: moverOportunidade', () => {
+    test('transição permitida grava etapa, valor e próxima ação na mesma linha, version incrementada e evento gravado @spec:AC-082', async () => {
+      const contextoA = contextoDe(tenants.empresaA);
+      const nova = await criarOportunidade(db, contextoA, { leadId: tenants.leadA });
+      const proximaAcaoEm = new Date('2026-10-05T10:00:00.000Z');
+
+      const movida = await moverOportunidade(db, contextoA, nova.id, {
+        version: nova.version,
+        etapaDestinoId: ETAPA_ALTERNATIVA,
+        atorId: null,
+        atorTipo: 'sistema',
+        valor: '2500.00',
+        proximaAcaoEm,
+      });
+
+      expect(movida.etapaId).toBe(ETAPA_ALTERNATIVA);
+      expect(movida.version).toBe(nova.version + 1);
+      expect(movida.valor).toBe('2500.00');
+      expect(movida.proximaAcaoEm?.toISOString()).toBe(proximaAcaoEm.toISOString());
+
+      const evento = pg.psqlComo(
+        'crm_migrator',
+        `SELECT count(*) FROM "oportunidade_eventos"
+         WHERE "oportunidade_id" = '${nova.id}' AND "tipo" = 'transicao_etapa'
+           AND "etapa_origem_id" = ${nova.etapaId} AND "etapa_destino_id" = ${ETAPA_ALTERNATIVA}`
+      );
+      expect(evento.status).toBe(0);
+      expect(evento.stdout.trim()).toBe('1');
+    });
+
+    test('conflito de versão é rejeitado sem sobrescrever etapa, dados ou version @spec:AC-086', async () => {
+      const contextoA = contextoDe(tenants.empresaA);
+      const nova = await criarOportunidade(db, contextoA, { leadId: tenants.leadA });
+      const versaoDesatualizada = nova.version + 1;
+
+      await expect(
+        moverOportunidade(db, contextoA, nova.id, {
+          version: versaoDesatualizada,
+          etapaDestinoId: ETAPA_ALTERNATIVA,
+          atorId: null,
+          atorTipo: 'sistema',
+          valor: '9999.00',
+        })
+      ).rejects.toThrow(ErroConflitoDeVersao);
+
+      const inalterada = await buscarOportunidadePorId(db, contextoA, nova.id);
+      expect(inalterada?.etapaId).toBe(nova.etapaId);
+      expect(inalterada?.version).toBe(nova.version);
+      expect(inalterada?.valor).toBeNull();
+
+      const evento = pg.psqlComo(
+        'crm_migrator',
+        `SELECT count(*) FROM "oportunidade_eventos" WHERE "oportunidade_id" = '${nova.id}'`
+      );
+      expect(evento.status).toBe(0);
+      expect(evento.stdout.trim()).toBe('0');
     });
   });
 });
