@@ -1,0 +1,97 @@
+{
+  "feature": "fase1-dominio-pipeline",
+  "timestamp": "2026-09-25T12:20:07.435Z",
+  "gitRev": "412dac6",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
+  "reporter": "vitest-json",
+  "exitCode": 0,
+  "testsParsed": 188,
+  "results": {
+    "AC-048": {
+      "status": "pass",
+      "testName": "grafo de transições AC-048: transição sem registro no grafo é rejeitada @spec:AC-048 AC-048: transição sem registro no grafo é rejeitada @spec:AC-048",
+      "method": "vitest-json"
+    },
+    "AC-049": {
+      "status": "pass",
+      "testName": "grafo de transições AC-049: transição registrada no grafo passa a checagem de existência @spec:AC-049 AC-049: transição registrada no grafo passa a checagem de existência @spec:AC-049",
+      "method": "vitest-json"
+    },
+    "AC-050": {
+      "status": "pass",
+      "testName": "papel do ator AC-050: papel fora da lista é rejeitado @spec:AC-050 AC-050: papel fora da lista é rejeitado @spec:AC-050",
+      "method": "vitest-json"
+    },
+    "AC-051": {
+      "status": "pass",
+      "testName": "papel do ator AC-051: papel presente na lista é aceito @spec:AC-051 AC-051: papel presente na lista é aceito @spec:AC-051",
+      "method": "vitest-json"
+    },
+    "AC-052": {
+      "status": "pass",
+      "testName": "papel do ator AC-052: super admin ignora papeis_permitidos @spec:AC-052 AC-052: super admin ignora papeis_permitidos @spec:AC-052",
+      "method": "vitest-json"
+    },
+    "AC-053": {
+      "status": "pass",
+      "testName": "guards de dados obrigatórios da etapa de destino AC-053: valor obrigatório ausente ou <= 0 é rejeitado @spec:AC-053 AC-053: valor obrigatório ausente ou <= 0 é rejeitado @spec:AC-053",
+      "method": "vitest-json"
+    },
+    "AC-054": {
+      "status": "pass",
+      "testName": "guards de dados obrigatórios da etapa de destino AC-054: valor positivo é aceito @spec:AC-054 AC-054: valor positivo é aceito @spec:AC-054",
+      "method": "vitest-json"
+    },
+    "AC-055": {
+      "status": "pass",
+      "testName": "guards de dados obrigatórios da etapa de destino AC-055: motivo de perda ausente é rejeitado @spec:AC-055 AC-055: motivo de perda ausente é rejeitado @spec:AC-055",
+      "method": "vitest-json"
+    },
+    "AC-056": {
+      "status": "pass",
+      "testName": "guards de dados obrigatórios da etapa de destino AC-056: motivo de perda presente é aceito @spec:AC-056 AC-056: motivo de perda presente é aceito @spec:AC-056",
+      "method": "vitest-json"
+    },
+    "AC-057": {
+      "status": "pass",
+      "testName": "guards de dados obrigatórios da etapa de destino AC-057: próxima ação ausente ou no passado é rejeitada @spec:AC-057 AC-057: próxima ação ausente ou no passado é rejeitada @spec:AC-057",
+      "method": "vitest-json"
+    },
+    "AC-058": {
+      "status": "pass",
+      "testName": "guards de dados obrigatórios da etapa de destino AC-058: próxima ação futura é aceita @spec:AC-058 AC-058: próxima ação futura é aceita @spec:AC-058",
+      "method": "vitest-json"
+    },
+    "AC-059": {
+      "status": "pass",
+      "testName": "guards de dados obrigatórios da etapa de destino AC-059: evidência obrigatória ausente é rejeitada @spec:AC-059 AC-059: evidência obrigatória ausente é rejeitada @spec:AC-059",
+      "method": "vitest-json"
+    },
+    "AC-060": {
+      "status": "pass",
+      "testName": "guards de dados obrigatórios da etapa de destino AC-060: evidência presente é aceita @spec:AC-060 AC-060: evidência presente é aceita @spec:AC-060",
+      "method": "vitest-json"
+    },
+    "AC-061": {
+      "status": "pass",
+      "testName": "justificativa de reabertura AC-061: reabertura sem justificativa é rejeitada @spec:AC-061 AC-061: reabertura sem justificativa é rejeitada @spec:AC-061",
+      "method": "vitest-json"
+    },
+    "AC-062": {
+      "status": "pass",
+      "testName": "justificativa de reabertura AC-062: reabertura com justificativa preenchida é aceita @spec:AC-062 AC-062: reabertura com justificativa preenchida é aceita @spec:AC-062",
+      "method": "vitest-json"
+    },
+    "AC-063": {
+      "status": "pass",
+      "testName": "ordem determinística de erro AC-063: só a primeira regra violada é reportada (grafo → papel → dados obrigatórios → justificativa) @spec:AC-063 AC-063: só a primeira regra violada é reportada (grafo → papel → dados obrigatórios → justificativa) @spec:AC-063",
+      "method": "vitest-json"
+    },
+    "AC-064": {
+      "status": "pass",
+      "testName": "ordem determinística de erro AC-064: quando todas as regras aplicáveis passam, retorna sucesso sem erro @spec:AC-064 AC-064: quando todas as regras aplicáveis passam, retorna sucesso sem erro @spec:AC-064",
+      "method": "vitest-json"
+    }
+  },
+  "principles": {}
+}
