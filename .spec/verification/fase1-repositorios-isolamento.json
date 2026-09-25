@@ -1,11 +1,11 @@
 {
   "feature": "fase1-repositorios-isolamento",
-  "timestamp": "2026-09-25T19:25:14.145Z",
-  "gitRev": "71faef0",
+  "timestamp": "2026-09-25T20:22:06.439Z",
+  "gitRev": "81ff424",
   "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
   "exitCode": 0,
-  "testsParsed": 228,
+  "testsParsed": 250,
   "results": {
     "AC-065": {
       "status": "pass",

@@ -1,11 +1,11 @@
 {
   "feature": "fase0-fundacao-ci-staging",
-  "timestamp": "2026-09-25T19:14:21.100Z",
-  "gitRev": "71faef0",
+  "timestamp": "2026-09-25T20:12:22.295Z",
+  "gitRev": "81ff424",
   "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
-  "exitCode": 1,
-  "testsParsed": 228,
+  "exitCode": 0,
+  "testsParsed": 250,
   "results": {
     "AC-001": {
       "status": "pass",
