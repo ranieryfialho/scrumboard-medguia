@@ -67,8 +67,7 @@
   de conflito de versão vira `409`; card de outro tenant (busca não encontra
   nada) vira `404` antes mesmo de validar a transição (AC-087).
 
-## T-048 — Rota `GET /api/oportunidades/:id` (detalhe) [pendente]
-
+## T-048 — Rota `GET /api/oportunidades/:id` (detalhe) [concluida]
 - Refs: US-033, AC-092, AC-093
 - Arquivos: src/app/api/oportunidades/[id]/route.ts, test/api/oportunidades-detalhe.test.ts
 - Esforço: baixo

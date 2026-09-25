@@ -1,11 +1,11 @@
 {
   "feature": "fase2-kanban",
-  "timestamp": "2026-09-25T19:44:48.082Z",
-  "gitRev": "47fe750",
+  "timestamp": "2026-09-25T19:49:42.356Z",
+  "gitRev": "ed1c040",
   "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
   "exitCode": 0,
-  "testsParsed": 234,
+  "testsParsed": 237,
   "results": {
     "AC-074": {
       "status": "pass",
@@ -80,6 +80,16 @@
     "AC-087": {
       "status": "pass",
       "testName": "T-047: rota POST /api/oportunidades/:id/transicao AC-087: card de outro tenant não é encontrado (fail closed) sessão da empresa B tentando mover card da empresa A: 404 @spec:AC-087 sessão da empresa B tentando mover card da empresa A: 404 @spec:AC-087",
+      "method": "vitest-json"
+    },
+    "AC-092": {
+      "status": "pass",
+      "testName": "T-048: rota GET /api/oportunidades/:id AC-092: detalhe traz os dados do card card com lead/responsável/valor/motivo/próxima ação: todos presentes na resposta @spec:AC-092 card com lead/responsável/valor/motivo/próxima ação: todos presentes na resposta @spec:AC-092",
+      "method": "vitest-json"
+    },
+    "AC-093": {
+      "status": "pass",
+      "testName": "T-048: rota GET /api/oportunidades/:id AC-093: detalhe de card de outro tenant não é acessível sessão da empresa B pedindo card da empresa A: 404 @spec:AC-093 sessão da empresa B pedindo card da empresa A: 404 @spec:AC-093",
       "method": "vitest-json"
     }
   },
