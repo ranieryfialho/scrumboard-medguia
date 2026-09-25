@@ -18,8 +18,7 @@
     (atalho: `onp-spec tarefa <feature> <T-xxx> <status>`)
 -->
 
-## T-043 — Migration: `mover_oportunidade` grava valor/motivo/próxima ação [pendente]
-
+## T-043 — Migration: `mover_oportunidade` grava valor/motivo/próxima ação [concluida]
 - Refs: AC-082
 - Arquivos: drizzle/0006_fn_mover_oportunidade_guards.sql, test/db/funcoes.test.ts
 - Esforço: medio
