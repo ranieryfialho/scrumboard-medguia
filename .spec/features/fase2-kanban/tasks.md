@@ -56,8 +56,7 @@
   `resolverContextoTenant`; sem sessão → 401 antes de qualquer query
   (AC-078).
 
-## T-047 — Rota `POST /api/oportunidades/:id/transicao` [pendente]
-
+## T-047 — Rota `POST /api/oportunidades/:id/transicao` [concluida]
 - Refs: US-031, AC-082, AC-083, AC-084, AC-085, AC-086, AC-087
 - Arquivos: src/app/api/oportunidades/[id]/transicao/route.ts, test/api/oportunidades-transicao.test.ts
 - Esforço: xalto

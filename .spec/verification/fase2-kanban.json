@@ -1,11 +1,11 @@
 {
   "feature": "fase2-kanban",
-  "timestamp": "2026-09-25T19:08:11.336Z",
-  "gitRev": "344b5f9",
+  "timestamp": "2026-09-25T19:44:48.082Z",
+  "gitRev": "47fe750",
   "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
   "exitCode": 0,
-  "testsParsed": 228,
+  "testsParsed": 234,
   "results": {
     "AC-074": {
       "status": "pass",
@@ -54,12 +54,32 @@
     },
     "AC-082": {
       "status": "pass",
-      "testName": "T-024: funções SQL transacionais AC-082: mover_oportunidade grava valor/motivo_perda/proxima_acao junto com a etapa, atomicamente valor e proxima_acao_em enviados na transição ficam gravados na mesma linha, junto com etapa/version/evento @spec:AC-082 valor e proxima_acao_em enviados na transição ficam gravados na mesma linha, junto com etapa/version/evento @spec:AC-082",
+      "testName": "T-047: rota POST /api/oportunidades/:id/transicao AC-082: transição permitida grava etapa, dados de guard e evento atomicamente move pra \"Perdido\" com motivo: 200, etapa/version/motivo atualizados @spec:AC-082 move pra \"Perdido\" com motivo: 200, etapa/version/motivo atualizados @spec:AC-082",
+      "method": "vitest-json"
+    },
+    "AC-083": {
+      "status": "pass",
+      "testName": "T-047: rota POST /api/oportunidades/:id/transicao AC-083: transição fora do grafo não move o card destino sem linha em pipeline_transicoes: 422 TRANSICAO_NAO_PERMITIDA, card inalterado @spec:AC-083 destino sem linha em pipeline_transicoes: 422 TRANSICAO_NAO_PERMITIDA, card inalterado @spec:AC-083",
+      "method": "vitest-json"
+    },
+    "AC-084": {
+      "status": "pass",
+      "testName": "T-047: rota POST /api/oportunidades/:id/transicao AC-084: transição com papel sem permissão não move o card papeisPermitidos não inclui o papel do ator: 422 PAPEL_NAO_PERMITIDO, card inalterado @spec:AC-084 papeisPermitidos não inclui o papel do ator: 422 PAPEL_NAO_PERMITIDO, card inalterado @spec:AC-084",
+      "method": "vitest-json"
+    },
+    "AC-085": {
+      "status": "pass",
+      "testName": "T-047: rota POST /api/oportunidades/:id/transicao AC-085: transição com dado obrigatório faltante não move o card etapa \"Perdido\" sem motivoPerdaId: 422 MOTIVO_PERDA_OBRIGATORIO, card inalterado @spec:AC-085 etapa \"Perdido\" sem motivoPerdaId: 422 MOTIVO_PERDA_OBRIGATORIO, card inalterado @spec:AC-085",
       "method": "vitest-json"
     },
     "AC-086": {
       "status": "pass",
-      "testName": "T-042: repositório de oportunidades T-045: moverOportunidade conflito de versão é rejeitado sem sobrescrever etapa, dados ou version @spec:AC-086 conflito de versão é rejeitado sem sobrescrever etapa, dados ou version @spec:AC-086",
+      "testName": "T-047: rota POST /api/oportunidades/:id/transicao AC-086: conflito de versão é rejeitado sem sobrescrever version desatualizada: 409 CONFLITO_DE_VERSAO, card permanece como estava @spec:AC-086 version desatualizada: 409 CONFLITO_DE_VERSAO, card permanece como estava @spec:AC-086",
+      "method": "vitest-json"
+    },
+    "AC-087": {
+      "status": "pass",
+      "testName": "T-047: rota POST /api/oportunidades/:id/transicao AC-087: card de outro tenant não é encontrado (fail closed) sessão da empresa B tentando mover card da empresa A: 404 @spec:AC-087 sessão da empresa B tentando mover card da empresa A: 404 @spec:AC-087",
       "method": "vitest-json"
     }
   },

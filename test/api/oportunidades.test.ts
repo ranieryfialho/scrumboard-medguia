@@ -110,8 +110,12 @@ describe('T-046: rota GET/POST /api/oportunidades', () => {
     // teste) — sem fechá-lo antes de derrubar o container, o driver `pg`
     // emite "Connection terminated unexpectedly" (unhandled) quando o
     // container some com conexões ainda abertas.
+    // `getDb()` é anotado com o tipo `NodePgDatabase` puro (sem o campo
+    // `$client` da interseção que `drizzle()` retorna em tempo de execução)
+    // — o valor existe, só não está no tipo declarado.
     const { getDb } = await import('../../src/db/client');
-    await getDb().$client.end();
+    const dbInterno = getDb() as unknown as { $client: Pool };
+    await dbInterno.$client.end();
     await pool?.end();
     pg?.parar();
   });
