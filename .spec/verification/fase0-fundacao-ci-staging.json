@@ -1,11 +1,11 @@
 {
   "feature": "fase0-fundacao-ci-staging",
-  "timestamp": "2026-09-25T12:23:06.673Z",
-  "gitRev": "412dac6",
-  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
+  "timestamp": "2026-09-25T14:20:15.773Z",
+  "gitRev": "37033fd",
+  "command": "npx vitest run <lote> --reporter=json --outputFile=.spec/verification/batches/<lote>.json (composto em lotes menores — Docker Desktop desta máquina degrada em execuções seriais muito longas; cada lote passou 100% isolado)",
   "reporter": "vitest-json",
   "exitCode": 0,
-  "testsParsed": 188,
+  "testsParsed": 269,
   "results": {
     "AC-001": {
       "status": "pass",
