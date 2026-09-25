@@ -1,0 +1,67 @@
+{
+  "feature": "fase2-kanban",
+  "timestamp": "2026-09-25T19:08:11.336Z",
+  "gitRev": "344b5f9",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
+  "reporter": "vitest-json",
+  "exitCode": 0,
+  "testsParsed": 228,
+  "results": {
+    "AC-074": {
+      "status": "pass",
+      "testName": "T-046: rota GET/POST /api/oportunidades AC-074: board só mostra cards do tenant da sessão empresa A não vê nenhum card da empresa B @spec:AC-074 empresa A não vê nenhum card da empresa B @spec:AC-074",
+      "method": "vitest-json"
+    },
+    "AC-075": {
+      "status": "pass",
+      "testName": "T-046: rota GET/POST /api/oportunidades AC-075: cada card traz nome do lead, do responsável e o valor card com lead/responsável/valor preenchidos traz os três @spec:AC-075 card com lead/responsável/valor preenchidos traz os três @spec:AC-075",
+      "method": "vitest-json"
+    },
+    "AC-076": {
+      "status": "pass",
+      "testName": "T-046: rota GET/POST /api/oportunidades AC-076: filtro por etapa restringe o resultado etapaId filtra só cards daquela etapa @spec:AC-076 etapaId filtra só cards daquela etapa @spec:AC-076",
+      "method": "vitest-json"
+    },
+    "AC-077": {
+      "status": "pass",
+      "testName": "T-046: rota GET/POST /api/oportunidades AC-077: filtro por responsável restringe o resultado responsavelId filtra só cards daquele responsável @spec:AC-077 responsavelId filtra só cards daquele responsável @spec:AC-077",
+      "method": "vitest-json"
+    },
+    "AC-078": {
+      "status": "pass",
+      "testName": "T-046: rota GET/POST /api/oportunidades AC-078: sem sessão válida, o board é recusado sem cookie: 401 @spec:AC-078 sem cookie: 401 @spec:AC-078",
+      "method": "vitest-json"
+    },
+    "AC-094": {
+      "status": "pass",
+      "testName": "T-046: rota GET/POST /api/oportunidades AC-094: board expõe as etapas de destino alcançáveis a partir de cada etapa grafo traz as 15 etapas, e etapa 1 alcança 2 e 14 @spec:AC-094 grafo traz as 15 etapas, e etapa 1 alcança 2 e 14 @spec:AC-094",
+      "method": "vitest-json"
+    },
+    "AC-079": {
+      "status": "pass",
+      "testName": "T-046: rota GET/POST /api/oportunidades T-044/AC-079/AC-080: POST cria card em \"Entrada de leads\" card novo nasce em \"Entrada de leads\" com version 1, no tenant da sessão @spec:AC-079 card novo nasce em \"Entrada de leads\" com version 1, no tenant da sessão @spec:AC-079",
+      "method": "vitest-json"
+    },
+    "AC-080": {
+      "status": "pass",
+      "testName": "T-046: rota GET/POST /api/oportunidades T-044/AC-079/AC-080: POST cria card em \"Entrada de leads\" empresaId do corpo é ignorado — card pertence ao tenant da sessão @spec:AC-080 empresaId do corpo é ignorado — card pertence ao tenant da sessão @spec:AC-080",
+      "method": "vitest-json"
+    },
+    "AC-081": {
+      "status": "pass",
+      "testName": "T-046: rota GET/POST /api/oportunidades AC-081: leadId inexistente ou de outro tenant é rejeitado leadId de outro tenant: 422 com codigo LEAD_NAO_ENCONTRADO, nenhum card criado @spec:AC-081 leadId de outro tenant: 422 com codigo LEAD_NAO_ENCONTRADO, nenhum card criado @spec:AC-081",
+      "method": "vitest-json"
+    },
+    "AC-082": {
+      "status": "pass",
+      "testName": "T-024: funções SQL transacionais AC-082: mover_oportunidade grava valor/motivo_perda/proxima_acao junto com a etapa, atomicamente valor e proxima_acao_em enviados na transição ficam gravados na mesma linha, junto com etapa/version/evento @spec:AC-082 valor e proxima_acao_em enviados na transição ficam gravados na mesma linha, junto com etapa/version/evento @spec:AC-082",
+      "method": "vitest-json"
+    },
+    "AC-086": {
+      "status": "pass",
+      "testName": "T-042: repositório de oportunidades T-045: moverOportunidade conflito de versão é rejeitado sem sobrescrever etapa, dados ou version @spec:AC-086 conflito de versão é rejeitado sem sobrescrever etapa, dados ou version @spec:AC-086",
+      "method": "vitest-json"
+    }
+  },
+  "principles": {}
+}

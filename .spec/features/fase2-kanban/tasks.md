@@ -45,8 +45,7 @@
   `ERRCODE`, ver design.md) e relança como erro tipado
   (`ErroConflitoDeVersao`) — quem decide o código HTTP é a rota (T-047).
 
-## T-046 — Rota `GET /api/oportunidades` (board) e `POST /api/oportunidades` (criar) [pendente]
-
+## T-046 — Rota `GET /api/oportunidades` (board) e `POST /api/oportunidades` (criar) [concluida]
 - Refs: US-029, US-030, AC-074, AC-075, AC-076, AC-077, AC-078, AC-079, AC-080, AC-081, AC-094
 - Arquivos: src/app/api/oportunidades/route.ts, test/api/oportunidades.test.ts
 - Esforço: alto
