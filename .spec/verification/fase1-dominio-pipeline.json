@@ -1,6 +1,6 @@
 {
   "feature": "fase1-dominio-pipeline",
-  "timestamp": "2026-09-25T14:46:13.991Z",
+  "timestamp": "2026-09-25T15:10:15.977Z",
   "gitRev": "3838967",
   "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
