@@ -1,20 +1,20 @@
 {
   "feature": "fase1-schema-drizzle",
-  "timestamp": "2026-09-25T12:25:30.862Z",
-  "gitRev": "412dac6",
-  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
+  "timestamp": "2026-09-25T14:20:15.875Z",
+  "gitRev": "37033fd",
+  "command": "npx vitest run <lote> --reporter=json --outputFile=.spec/verification/batches/<lote>.json (composto em lotes menores — Docker Desktop desta máquina degrada em execuções seriais muito longas; cada lote passou 100% isolado)",
   "reporter": "vitest-json",
   "exitCode": 0,
-  "testsParsed": 188,
+  "testsParsed": 269,
   "results": {
     "AC-015": {
       "status": "pass",
-      "testName": "T-013: tabelas de operação (@spec:AC-015) cron_execucoes existe com job, status e contagem obrigatórios cron_execucoes existe com job, status e contagem obrigatórios",
+      "testName": "T-021: schema completo aplicado num Postgres limpo AC-015: migrations aplicam o schema completo (todas as tabelas de negócio existem, exit 0) @spec:AC-015 AC-015: migrations aplicam o schema completo (todas as tabelas de negócio existem, exit 0) @spec:AC-015",
       "method": "vitest-json"
     },
     "AC-016": {
       "status": "pass",
-      "testName": "T-011: tabelas do adaptador Drizzle do Better Auth (@spec:AC-016) contas existe, vinculada a usuarios contas existe, vinculada a usuarios",
+      "testName": "T-021: schema completo aplicado num Postgres limpo AC-016: as tabelas do adaptador Drizzle do Better Auth existem @spec:AC-016 AC-016: as tabelas do adaptador Drizzle do Better Auth existem @spec:AC-016",
       "method": "vitest-json"
     },
     "AC-017": {
@@ -24,7 +24,7 @@
     },
     "AC-018": {
       "status": "pass",
-      "testName": "T-011: tabelas de identidade/tenant (@spec:AC-018) empresas existe com nome, slug e ativo obrigatórios empresas existe com nome, slug e ativo obrigatórios",
+      "testName": "T-021: schema completo aplicado num Postgres limpo AC-018: colunas de tenant são NOT NULL inserir em \"leads\" sem empresa_id é rejeitado por violação de NOT NULL @spec:AC-018 inserir em \"leads\" sem empresa_id é rejeitado por violação de NOT NULL @spec:AC-018",
       "method": "vitest-json"
     },
     "AC-019": {

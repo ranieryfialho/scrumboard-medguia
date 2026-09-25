@@ -1,0 +1,57 @@
+{
+  "feature": "fase1-repositorios-isolamento",
+  "timestamp": "2026-09-25T14:20:15.942Z",
+  "gitRev": "37033fd",
+  "command": "npx vitest run <lote> --reporter=json --outputFile=.spec/verification/batches/<lote>.json (composto em lotes menores — Docker Desktop desta máquina degrada em execuções seriais muito longas; cada lote passou 100% isolado)",
+  "reporter": "vitest-json",
+  "exitCode": 0,
+  "testsParsed": 269,
+  "results": {
+    "AC-065": {
+      "status": "pass",
+      "testName": "T-040: comTenant AC-065: contexto de tenant define app.empresa_id antes de qualquer query set_config aplicado é visível dentro da própria transação @spec:AC-065 set_config aplicado é visível dentro da própria transação @spec:AC-065",
+      "method": "vitest-json"
+    },
+    "AC-066": {
+      "status": "pass",
+      "testName": "T-040: comTenant AC-066: repositório sem contexto de tenant não executa nenhuma query contexto ausente (undefined) recusa antes de abrir transação @spec:AC-066 contexto ausente (undefined) recusa antes de abrir transação @spec:AC-066",
+      "method": "vitest-json"
+    },
+    "AC-067": {
+      "status": "pass",
+      "testName": "T-040: comTenant AC-067: conexão do repositório usa a role de aplicação, sem bypass de RLS current_user da conexão é crm_app @spec:AC-067 current_user da conexão é crm_app @spec:AC-067",
+      "method": "vitest-json"
+    },
+    "AC-068": {
+      "status": "pass",
+      "testName": "T-041: repositório de leads AC-068: listagem só retorna registros do tenant do contexto listarLeads da empresa A não traz o lead da empresa B @spec:AC-068 listarLeads da empresa A não traz o lead da empresa B @spec:AC-068",
+      "method": "vitest-json"
+    },
+    "AC-069": {
+      "status": "pass",
+      "testName": "T-041: repositório de leads AC-069: busca por id de outro tenant não retorna nada (fail closed) empresa A buscando o id do lead da empresa B recebe null @spec:AC-069 empresa A buscando o id do lead da empresa B recebe null @spec:AC-069",
+      "method": "vitest-json"
+    },
+    "AC-070": {
+      "status": "pass",
+      "testName": "T-042: repositório de oportunidades AC-070: atualização por id de outro tenant não altera nada empresa B tentando atualizar a oportunidade da empresa A: zero linhas afetadas @spec:AC-070 empresa B tentando atualizar a oportunidade da empresa A: zero linhas afetadas @spec:AC-070",
+      "method": "vitest-json"
+    },
+    "AC-071": {
+      "status": "pass",
+      "testName": "T-041: repositório de leads AC-071: criação ignora empresaId vindo do chamador e usa o do contexto empresaId malicioso no payload é ignorado @spec:AC-071 empresaId malicioso no payload é ignorado @spec:AC-071",
+      "method": "vitest-json"
+    },
+    "AC-072": {
+      "status": "pass",
+      "testName": "T-042: repositório de oportunidades AC-072: filtro por etapa e por responsável restringe o resultado filtro por etapaId retorna só oportunidades dessa etapa @spec:AC-072 filtro por etapaId retorna só oportunidades dessa etapa @spec:AC-072",
+      "method": "vitest-json"
+    },
+    "AC-073": {
+      "status": "pass",
+      "testName": "T-042: repositório de oportunidades AC-073: paginação limita o tamanho da página e permite avançar limite restringe o tamanho da página @spec:AC-073 limite restringe o tamanho da página @spec:AC-073",
+      "method": "vitest-json"
+    }
+  },
+  "principles": {}
+}
