@@ -1112,10 +1112,10 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "fase0-fundacao-ci-staging",
       "ref": "—",
-      "ocorrencias": 17,
+      "ocorrencias": 18,
       "primeiraVez": "2026-09-23T14:14:35.866Z",
-      "ultimaVez": "2026-09-25T11:58:40.272Z",
-      "gitRev": "337ae53"
+      "ultimaVez": "2026-09-25T12:20:21.370Z",
+      "gitRev": "412dac6"
     },
     "VERIFY_PULADO::fase0-fundacao-ci-staging::AC-005": {
       "codigo": "VERIFY_PULADO",
@@ -1886,10 +1886,10 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "fase1-schema-drizzle",
       "ref": "—",
-      "ocorrencias": 7,
+      "ocorrencias": 8,
       "primeiraVez": "2026-09-24T15:43:08.558Z",
-      "ultimaVez": "2026-09-25T11:58:40.273Z",
-      "gitRev": "337ae53"
+      "ultimaVez": "2026-09-25T12:20:21.371Z",
+      "gitRev": "412dac6"
     },
     "ASM_ABERTA::fase1-schema-drizzle::ASM-008": {
       "codigo": "ASM_ABERTA",
@@ -2615,10 +2615,10 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "fase1-auth-rbac",
       "ref": "—",
-      "ocorrencias": 1,
+      "ocorrencias": 2,
       "primeiraVez": "2026-09-25T11:58:40.273Z",
-      "ultimaVez": "2026-09-25T11:58:40.273Z",
-      "gitRev": "337ae53"
+      "ultimaVez": "2026-09-25T12:20:21.371Z",
+      "gitRev": "412dac6"
     },
     "VERIFY_PULADO::fase0-fundacao-ci-staging::AC-010": {
       "codigo": "VERIFY_PULADO",
@@ -2646,6 +2646,204 @@
       "primeiraVez": "2026-09-25T12:00:03.972Z",
       "ultimaVez": "2026-09-25T12:00:03.972Z",
       "gitRev": "337ae53"
+    },
+    "ARQUIVO_INEXISTENTE::fase1-dominio-pipeline::T-034": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "fase1-dominio-pipeline",
+      "ref": "T-034",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-09-25T12:15:27.440Z",
+      "ultimaVez": "2026-09-25T12:15:27.441Z",
+      "gitRev": "412dac6"
+    },
+    "ARQUIVO_INEXISTENTE::fase1-dominio-pipeline::T-035": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "fase1-dominio-pipeline",
+      "ref": "T-035",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T12:15:27.441Z",
+      "ultimaVez": "2026-09-25T12:15:27.441Z",
+      "gitRev": "412dac6"
+    },
+    "ARQUIVO_INEXISTENTE::fase1-dominio-pipeline::T-036": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "fase1-dominio-pipeline",
+      "ref": "T-036",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T12:15:27.441Z",
+      "ultimaVez": "2026-09-25T12:15:27.441Z",
+      "gitRev": "412dac6"
+    },
+    "ARQUIVO_INEXISTENTE::fase1-dominio-pipeline::T-037": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "fase1-dominio-pipeline",
+      "ref": "T-037",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T12:15:27.441Z",
+      "ultimaVez": "2026-09-25T12:15:27.441Z",
+      "gitRev": "412dac6"
+    },
+    "ARQUIVO_INEXISTENTE::fase1-dominio-pipeline::T-038": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "fase1-dominio-pipeline",
+      "ref": "T-038",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T12:15:27.441Z",
+      "ultimaVez": "2026-09-25T12:15:27.441Z",
+      "gitRev": "412dac6"
+    },
+    "AC_SEM_TESTE::fase1-dominio-pipeline::AC-048": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase1-dominio-pipeline",
+      "ref": "AC-048",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T12:15:27.441Z",
+      "ultimaVez": "2026-09-25T12:15:27.441Z",
+      "gitRev": "412dac6"
+    },
+    "AC_SEM_TESTE::fase1-dominio-pipeline::AC-049": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase1-dominio-pipeline",
+      "ref": "AC-049",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T12:15:27.441Z",
+      "ultimaVez": "2026-09-25T12:15:27.441Z",
+      "gitRev": "412dac6"
+    },
+    "AC_SEM_TESTE::fase1-dominio-pipeline::AC-050": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase1-dominio-pipeline",
+      "ref": "AC-050",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T12:15:27.441Z",
+      "ultimaVez": "2026-09-25T12:15:27.441Z",
+      "gitRev": "412dac6"
+    },
+    "AC_SEM_TESTE::fase1-dominio-pipeline::AC-051": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase1-dominio-pipeline",
+      "ref": "AC-051",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T12:15:27.441Z",
+      "ultimaVez": "2026-09-25T12:15:27.441Z",
+      "gitRev": "412dac6"
+    },
+    "AC_SEM_TESTE::fase1-dominio-pipeline::AC-052": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase1-dominio-pipeline",
+      "ref": "AC-052",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T12:15:27.441Z",
+      "ultimaVez": "2026-09-25T12:15:27.441Z",
+      "gitRev": "412dac6"
+    },
+    "AC_SEM_TESTE::fase1-dominio-pipeline::AC-053": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase1-dominio-pipeline",
+      "ref": "AC-053",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T12:15:27.441Z",
+      "ultimaVez": "2026-09-25T12:15:27.441Z",
+      "gitRev": "412dac6"
+    },
+    "AC_SEM_TESTE::fase1-dominio-pipeline::AC-054": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase1-dominio-pipeline",
+      "ref": "AC-054",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T12:15:27.441Z",
+      "ultimaVez": "2026-09-25T12:15:27.441Z",
+      "gitRev": "412dac6"
+    },
+    "AC_SEM_TESTE::fase1-dominio-pipeline::AC-055": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase1-dominio-pipeline",
+      "ref": "AC-055",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T12:15:27.441Z",
+      "ultimaVez": "2026-09-25T12:15:27.441Z",
+      "gitRev": "412dac6"
+    },
+    "AC_SEM_TESTE::fase1-dominio-pipeline::AC-056": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase1-dominio-pipeline",
+      "ref": "AC-056",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T12:15:27.441Z",
+      "ultimaVez": "2026-09-25T12:15:27.441Z",
+      "gitRev": "412dac6"
+    },
+    "AC_SEM_TESTE::fase1-dominio-pipeline::AC-057": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase1-dominio-pipeline",
+      "ref": "AC-057",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T12:15:27.441Z",
+      "ultimaVez": "2026-09-25T12:15:27.441Z",
+      "gitRev": "412dac6"
+    },
+    "AC_SEM_TESTE::fase1-dominio-pipeline::AC-058": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase1-dominio-pipeline",
+      "ref": "AC-058",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T12:15:27.441Z",
+      "ultimaVez": "2026-09-25T12:15:27.441Z",
+      "gitRev": "412dac6"
+    },
+    "AC_SEM_TESTE::fase1-dominio-pipeline::AC-059": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase1-dominio-pipeline",
+      "ref": "AC-059",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T12:15:27.441Z",
+      "ultimaVez": "2026-09-25T12:15:27.441Z",
+      "gitRev": "412dac6"
+    },
+    "AC_SEM_TESTE::fase1-dominio-pipeline::AC-060": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase1-dominio-pipeline",
+      "ref": "AC-060",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T12:15:27.441Z",
+      "ultimaVez": "2026-09-25T12:15:27.441Z",
+      "gitRev": "412dac6"
+    },
+    "AC_SEM_TESTE::fase1-dominio-pipeline::AC-061": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase1-dominio-pipeline",
+      "ref": "AC-061",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T12:15:27.441Z",
+      "ultimaVez": "2026-09-25T12:15:27.441Z",
+      "gitRev": "412dac6"
+    },
+    "AC_SEM_TESTE::fase1-dominio-pipeline::AC-062": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase1-dominio-pipeline",
+      "ref": "AC-062",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T12:15:27.441Z",
+      "ultimaVez": "2026-09-25T12:15:27.441Z",
+      "gitRev": "412dac6"
+    },
+    "AC_SEM_TESTE::fase1-dominio-pipeline::AC-063": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase1-dominio-pipeline",
+      "ref": "AC-063",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T12:15:27.441Z",
+      "ultimaVez": "2026-09-25T12:15:27.441Z",
+      "gitRev": "412dac6"
+    },
+    "AC_SEM_TESTE::fase1-dominio-pipeline::AC-064": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase1-dominio-pipeline",
+      "ref": "AC-064",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-25T12:15:27.441Z",
+      "ultimaVez": "2026-09-25T12:15:27.441Z",
+      "gitRev": "412dac6"
     }
   }
 }
