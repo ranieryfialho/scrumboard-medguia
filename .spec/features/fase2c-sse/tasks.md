@@ -48,7 +48,7 @@
 - Esforço: medio
 - Notas: abre `EventSource('/api/stream')`; após 3 erros seguidos liga polling de 30 s e volta ao SSE quando reconecta (ASM-031).
 
-## T-065 — Board aplica o evento sem recarregar [pendente]
+## T-065 — Board aplica o evento sem recarregar [concluida]
 - Refs: US-037, AC-112
 - Arquivos: src/components/pipeline/board-kanban.tsx, test/sse/board-evento.test.tsx
 - Esforço: medio
