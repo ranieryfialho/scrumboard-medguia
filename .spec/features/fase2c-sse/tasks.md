@@ -30,7 +30,7 @@
 - Esforço: alto
 - Notas: singleton com 1 `pg.Client` em `LISTEN oportunidade`; `inscrever(empresaId, ouvinte)` devolve função de cancelamento; filtra por `empresaId` antes de entregar (ASM-029/030); reconecta com backoff e emite `stream.reconectado` (AC-117).
 
-## T-062 — Rota GET /api/stream [pendente]
+## T-062 — Rota GET /api/stream [concluida]
 - Refs: US-038, AC-108, AC-113, AC-114, AC-116
 - Arquivos: src/app/api/stream/route.ts, test/sse/stream-route.test.ts
 - Esforço: alto
