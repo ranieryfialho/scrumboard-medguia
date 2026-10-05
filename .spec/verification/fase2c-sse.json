@@ -1,10 +1,10 @@
 {
   "feature": "fase2c-sse",
-  "timestamp": "2026-10-05T14:55:03.894Z",
-  "gitRev": "0b6171b",
+  "timestamp": "2026-10-05T16:01:11.674Z",
+  "gitRev": "21767ef",
   "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
-  "exitCode": 1,
+  "exitCode": 0,
   "testsParsed": 301,
   "results": {
     "AC-108": {
