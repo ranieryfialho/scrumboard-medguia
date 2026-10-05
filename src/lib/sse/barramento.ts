@@ -7,6 +7,16 @@
 // backoff exponencial e, ao voltar a escutar, avisa todo mundo com
 // `stream.reconectado` (AC-117) — eventos perdidos durante a queda não são
 // recuperados (fora de escopo: replay).
+//
+// T-070 (fase2c-whatsapp-entrada, US-042): o mesmo canal `oportunidade`
+// também carrega `mensagem.recebida` (migration 0008, ASM-038) — o `tipo`
+// do payload (presente em todo NOTIFY desde a 0008) decide qual evento
+// montar, mas o filtro por `empresaId` e o roteamento só-para-o-tenant
+// (AC-133) são os mesmos de `oportunidade.movida`. Quando o trigger de
+// INSERT não dispara — mensagem ignorada antes de chegar ao banco (AC-123)
+// ou retentativa absorvida pelo índice único (AC-124/AC-134) — nenhum
+// NOTIFY chega aqui, então nenhum ouvinte é chamado; não há nada a filtrar
+// nesse caso.
 import { Client } from 'pg';
 
 export interface EventoOportunidadeMovida {
@@ -19,11 +29,19 @@ export interface EventoOportunidadeMovida {
   ocorridoEm: string;
 }
 
+export interface EventoMensagemRecebida {
+  tipo: 'mensagem.recebida';
+  empresaId: string;
+  leadId: string | null;
+  mensagemId: string;
+  ocorridoEm: string;
+}
+
 export interface EventoStreamReconectado {
   tipo: 'stream.reconectado';
 }
 
-export type EventoBarramento = EventoOportunidadeMovida | EventoStreamReconectado;
+export type EventoBarramento = EventoOportunidadeMovida | EventoMensagemRecebida | EventoStreamReconectado;
 
 export type OuvinteBarramento = (evento: EventoBarramento) => void;
 
@@ -117,6 +135,16 @@ export function criarBarramento(opcoes: OpcoesBarramento): Barramento {
       try {
         const payload = JSON.parse(mensagem.payload) as Record<string, unknown>;
         const empresaId = String(payload.empresaId);
+        if (payload.tipo === 'mensagem.recebida') {
+          notificar(empresaId, {
+            tipo: 'mensagem.recebida',
+            empresaId,
+            leadId: payload.leadId == null ? null : String(payload.leadId),
+            mensagemId: String(payload.mensagemId),
+            ocorridoEm: String(payload.ocorridoEm),
+          });
+          return;
+        }
         notificar(empresaId, {
           tipo: 'oportunidade.movida',
           empresaId,
