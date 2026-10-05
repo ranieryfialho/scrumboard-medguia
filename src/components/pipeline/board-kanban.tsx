@@ -1,12 +1,17 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { DndContext, DragOverlay, PointerSensor, useSensor, useSensors, type DragEndEvent, type DragStartEvent } from "@dnd-kit/core";
 import { RefreshCcw } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import type { CodigoErroTransicao } from "@/domain/pipeline/tipos";
 import { exigeDadoFaltante } from "@/domain/pipeline/classificar-erro-transicao";
+import {
+  useStreamOportunidades,
+  type EventoOportunidadeMovidaCliente,
+  type EventoStreamCliente,
+} from "@/hooks/use-stream-oportunidades";
 import { CardOportunidade, type CardBoard } from "./card-oportunidade";
 import { ColunaEtapa } from "./coluna-etapa";
 import { ModalDadoFaltante } from "./modal-dado-faltante";
@@ -70,6 +75,52 @@ export function BoardKanban() {
   useEffect(() => {
     carregarBoard();
   }, [carregarBoard]);
+
+  // T-065 (fase2c-sse, US-037): ref com o estado atual pra checar, no
+  // momento em que o evento chega, se o card aparece no board — sem recriar
+  // o EventSource a cada atualização de `itens` (useStreamOportunidades só
+  // reabre a conexão se a identidade do callback mudar).
+  const itensRef = useRef(itens);
+  itensRef.current = itens;
+
+  const aplicarEventoMovido = useCallback(async (evento: EventoOportunidadeMovidaCliente) => {
+    // AC-112: card que o board não mostra (fora do filtro) é ignorado sem erro.
+    if (!itensRef.current.some((item) => item.id === evento.oportunidadeId)) return;
+
+    const resposta = await fetch(`/api/oportunidades/${evento.oportunidadeId}`);
+    if (!resposta.ok) return;
+    const card = await resposta.json();
+
+    setItens((atual) =>
+      atual.map((item) => {
+        if (item.id !== card.id) return item;
+        // Q-010: o próprio ator já recebeu essa versão via `carregarBoard`
+        // depois da transição — não há o que reposicionar.
+        if (card.version <= item.version) return item;
+        return {
+          ...item,
+          etapaId: card.etapaId,
+          responsavelId: card.responsavelId,
+          responsavelNome: card.responsavelNome,
+          valor: card.valor,
+          version: card.version,
+        };
+      })
+    );
+  }, []);
+
+  const aoReceberEventoStream = useCallback(
+    (evento: EventoStreamCliente) => {
+      if (evento.tipo === "stream.reconectado") {
+        void carregarBoard();
+        return;
+      }
+      void aplicarEventoMovido(evento);
+    },
+    [carregarBoard, aplicarEventoMovido]
+  );
+
+  useStreamOportunidades({ aoReceberEvento: aoReceberEventoStream, aoPolling: carregarBoard });
 
   useEffect(() => {
     if (!mensagem) return;
