@@ -1,0 +1,67 @@
+{
+  "feature": "fase2c-sse",
+  "timestamp": "2026-10-05T16:30:52.684Z",
+  "gitRev": "4918875",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
+  "reporter": "vitest-json",
+  "exitCode": 0,
+  "testsParsed": 301,
+  "results": {
+    "AC-108": {
+      "status": "pass",
+      "testName": "T-063: evento chega fim a fim e transição recusada não emite AC-108 e AC-109: mover um card emite o evento com o contrato do TDD, só para o tenant dele 200 na rota real: empresa A recebe oportunidade.movida com os valores reais; empresa B não recebe nada @spec:AC-108 @spec:AC-109 200 na rota real: empresa A recebe oportunidade.movida com os valores reais; empresa B não recebe nada @spec:AC-108 @spec:AC-109",
+      "method": "vitest-json"
+    },
+    "AC-109": {
+      "status": "pass",
+      "testName": "T-061: Barramento de eventos — um LISTEN por instância AC-109: evento só chega a quem é do mesmo tenant usuário da empresa A recebe o evento e o da empresa B não recebe nada @spec:AC-109 usuário da empresa A recebe o evento e o da empresa B não recebe nada @spec:AC-109",
+      "method": "vitest-json"
+    },
+    "AC-110": {
+      "status": "pass",
+      "testName": "T-063: evento chega fim a fim e transição recusada não emite AC-110: transição recusada não emite evento 422 de regra de domínio (fora do grafo) não gera oportunidade.movida @spec:AC-110 422 de regra de domínio (fora do grafo) não gera oportunidade.movida @spec:AC-110",
+      "method": "vitest-json"
+    },
+    "AC-111": {
+      "status": "pass",
+      "testName": "T-060: NOTIFY dentro de mover_oportunidade AC-111: o evento nasce na mesma transação da escrita rollback depois de chamar mover_oportunidade não entrega notificação; só o commit entrega @spec:AC-111 rollback depois de chamar mover_oportunidade não entrega notificação; só o commit entrega @spec:AC-111",
+      "method": "vitest-json"
+    },
+    "AC-112": {
+      "status": "pass",
+      "testName": "T-065: BoardKanban aplica oportunidade.movida sem recarregar @spec:AC-112 card se move de coluna sem recarregar a lista @spec:AC-112 card se move de coluna sem recarregar a lista",
+      "method": "vitest-json"
+    },
+    "AC-113": {
+      "status": "pass",
+      "testName": "T-062: rota GET /api/stream AC-113: sem login não há stream requisição sem sessão válida: 401 NAO_AUTENTICADO, nenhuma inscrição é aberta @spec:AC-113 requisição sem sessão válida: 401 NAO_AUTENTICADO, nenhuma inscrição é aberta @spec:AC-113",
+      "method": "vitest-json"
+    },
+    "AC-114": {
+      "status": "pass",
+      "testName": "T-062: rota GET /api/stream AC-114 e AC-108: stream autenticado com batimento e evento no contrato 200 text/event-stream sem cache, bate a cada INTERVALO_PING_MS e repassa oportunidade.movida @spec:AC-114 @spec:AC-108 200 text/event-stream sem cache, bate a cada INTERVALO_PING_MS e repassa oportunidade.movida @spec:AC-114 @spec:AC-108",
+      "method": "vitest-json"
+    },
+    "AC-115": {
+      "status": "pass",
+      "testName": "T-061: Barramento de eventos — um LISTEN por instância AC-115: todas as conexões compartilham um único LISTEN 50 inscrições na mesma instância resultam em exatamente 1 conexão de LISTEN no banco @spec:AC-115 50 inscrições na mesma instância resultam em exatamente 1 conexão de LISTEN no banco @spec:AC-115",
+      "method": "vitest-json"
+    },
+    "AC-116": {
+      "status": "pass",
+      "testName": "T-061: Barramento de eventos — um LISTEN por instância AC-116: cliente que fecha libera os recursos cancelar a inscrição remove o ouvinte e o número de inscrições ativas cai em 1 @spec:AC-116 cancelar a inscrição remove o ouvinte e o número de inscrições ativas cai em 1 @spec:AC-116",
+      "method": "vitest-json"
+    },
+    "AC-117": {
+      "status": "pass",
+      "testName": "T-061: Barramento de eventos — um LISTEN por instância AC-117: queda do LISTEN reconecta sozinha e avisa os clientes derrubar o backend da conexão de LISTEN faz o barramento reconectar e emitir stream.reconectado @spec:AC-117 derrubar o backend da conexão de LISTEN faz o barramento reconectar e emitir stream.reconectado @spec:AC-117",
+      "method": "vitest-json"
+    },
+    "AC-118": {
+      "status": "pass",
+      "testName": "useStreamOportunidades @spec:AC-118 sem SSE o board continua se atualizando por polling e volta ao SSE quando reconecta @spec:AC-118 sem SSE o board continua se atualizando por polling e volta ao SSE quando reconecta",
+      "method": "vitest-json"
+    }
+  },
+  "principles": {}
+}

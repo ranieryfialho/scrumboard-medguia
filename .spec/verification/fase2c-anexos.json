@@ -1,11 +1,11 @@
 {
   "feature": "fase2c-anexos",
-  "timestamp": "2026-10-05T12:04:43.539Z",
-  "gitRev": "e8afdc5",
+  "timestamp": "2026-10-05T15:54:31.479Z",
+  "gitRev": "21767ef",
   "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
   "exitCode": 1,
-  "testsParsed": 281,
+  "testsParsed": 301,
   "results": {
     "AC-095": {
       "status": "pass",

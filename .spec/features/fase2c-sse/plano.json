@@ -1,0 +1,111 @@
+{
+  "runId": "scrumboard-medguia-fase2c-sse-muvaqvl7",
+  "feature": "fase2c-sse",
+  "agent": "claude",
+  "modo": "sequencial",
+  "paralelizar": null,
+  "modeloForcado": null,
+  "esforcoForcado": null,
+  "geradoEm": "2026-10-05 13:39",
+  "branchTrabalho": "spec/fase2c-sse",
+  "baseDir": ".spec/features/fase2c-sse",
+  "specDir": ".spec",
+  "repoName": "scrumboard-medguia",
+  "logsDir": "../onp-worktrees/scrumboard-medguia-fase2c-sse-logs",
+  "ondas": [],
+  "faixas": [],
+  "sequenciais": [
+    {
+      "id": "T-060",
+      "titulo": "Migration 0007: NOTIFY dentro de mover_oportunidade",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "drizzle/0007_fn_mover_oportunidade_notify.sql",
+        "test/sse/notify-sql.test.ts"
+      ],
+      "refs": [
+        "AC-108",
+        "AC-110",
+        "AC-111"
+      ]
+    },
+    {
+      "id": "T-061",
+      "titulo": "Barramento de eventos: um LISTEN por instância",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "src/lib/sse/barramento.ts",
+        "test/sse/barramento.test.ts"
+      ],
+      "refs": [
+        "AC-109",
+        "AC-115",
+        "AC-116",
+        "AC-117"
+      ]
+    },
+    {
+      "id": "T-062",
+      "titulo": "Rota GET /api/stream",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "src/app/api/stream/route.ts",
+        "test/sse/stream-route.test.ts"
+      ],
+      "refs": [
+        "US-038",
+        "AC-108",
+        "AC-113",
+        "AC-114",
+        "AC-116"
+      ]
+    },
+    {
+      "id": "T-063",
+      "titulo": "Evento chega fim a fim e transição recusada não emite",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "test/sse/fim-a-fim.test.ts"
+      ],
+      "refs": [
+        "AC-108",
+        "AC-109",
+        "AC-110"
+      ]
+    },
+    {
+      "id": "T-064",
+      "titulo": "Hook do cliente: EventSource com fallback de polling",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/hooks/use-stream-oportunidades.ts",
+        "test/sse/use-stream.test.tsx"
+      ],
+      "refs": [
+        "US-038",
+        "AC-118"
+      ]
+    },
+    {
+      "id": "T-065",
+      "titulo": "Board aplica o evento sem recarregar",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/components/pipeline/board-kanban.tsx",
+        "test/sse/board-evento.test.tsx"
+      ],
+      "refs": [
+        "US-037",
+        "AC-112"
+      ]
+    }
+  ],
+  "concluidas": [],
+  "avisos": []
+}
