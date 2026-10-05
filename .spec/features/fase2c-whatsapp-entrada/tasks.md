@@ -18,7 +18,7 @@
     (atalho: `onp-spec tarefa <feature> <T-xxx> <status>`)
 -->
 
-## T-066 — Migration 0008: idempotência, conexão e NOTIFY de mensagem [pendente]
+## T-066 — Migration 0008: idempotência, conexão e NOTIFY de mensagem [concluida]
 - Refs: AC-124, AC-127, AC-128, AC-129, AC-130, AC-131, AC-132, AC-133
 - Arquivos: drizzle/0008_whatsapp_entrada.sql, test/whatsapp/conexao-sql.test.ts
 - Esforço: alto
