@@ -42,7 +42,7 @@
 - Esforço: medio
 - Notas: usa a rota de transição real contra Postgres: 200 emite; 422, 409 e 404 não emitem; dois tenants conectados. Depende de T-060 e T-062.
 
-## T-064 — Hook do cliente: EventSource com fallback de polling [pendente]
+## T-064 — Hook do cliente: EventSource com fallback de polling [concluida]
 - Refs: US-038, AC-118
 - Arquivos: src/hooks/use-stream-oportunidades.ts, test/sse/use-stream.test.tsx
 - Esforço: medio
