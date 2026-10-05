@@ -36,7 +36,7 @@
 - Esforço: alto
 - Notas: tudo por `comTenant` (ASM-034). Lê o segredo da empresa em `empresa_configuracoes` com comparação em tempo constante (ASM-033); casa o lead pelos dígitos do `telefone_e164` com a variação do nono dígito e desempate da ASM-039, sempre filtrando por `empresa_id`; grava a mensagem de forma idempotente e chama `registrar_conexao_whatsapp`. Devolve se a mensagem foi nova, para a rota decidir emitir evento. Depende de T-066 e T-067.
 
-## T-069 — Rota POST /api/whatsapp/webhook [pendente]
+## T-069 — Rota POST /api/whatsapp/webhook [concluida]
 - Refs: US-039, AC-119, AC-120, AC-121, AC-131
 - Arquivos: src/app/api/whatsapp/webhook/route.ts, test/api/whatsapp-webhook.test.ts
 - Esforço: alto
