@@ -24,7 +24,7 @@
 - Esforço: medio
 - Notas: recria a função mantendo a assinatura de 9 argumentos e acrescenta `pg_notify('oportunidade', json)` com `empresaId`, `oportunidadeId`, `etapaOrigemId`, `etapaDestinoId`, `atorId`, `ocorridoEm` (ASM-028/029). Só ids no payload. Prova com rollback e commit reais (testcontainers).
 
-## T-061 — Barramento de eventos: um LISTEN por instância [pendente]
+## T-061 — Barramento de eventos: um LISTEN por instância [concluida]
 - Refs: AC-109, AC-115, AC-116, AC-117
 - Arquivos: src/lib/sse/barramento.ts, test/sse/barramento.test.ts
 - Esforço: alto
