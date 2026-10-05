@@ -42,7 +42,7 @@
 - Esforço: alto
 - Notas: reescreve a rota legada em Supabase. Valida `empresa_id` (UUID) e o segredo antes de qualquer escrita; 401 uniforme para segredo ausente/errado/empresa inexistente (AC-119, AC-121); 400 para JSON inválido; processa cada item do array em transação própria (AC-131: falha no banco devolve 500). Remove o uso de `@supabase/supabase-js` desta rota. Depende de T-068.
 
-## T-070 — SSE: evento `mensagem.recebida` [pendente]
+## T-070 — SSE: evento `mensagem.recebida` [concluida]
 - Refs: US-042, AC-133, AC-134
 - Arquivos: src/lib/sse/barramento.ts, test/sse/mensagem-recebida.test.ts
 - Esforço: medio
