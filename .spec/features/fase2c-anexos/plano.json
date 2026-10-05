@@ -1,0 +1,147 @@
+{
+  "runId": "scrumboard-medguia-fase2c-anexos-murdd7es",
+  "feature": "fase2c-anexos",
+  "agent": "claude",
+  "modo": "sequencial",
+  "paralelizar": null,
+  "modeloForcado": null,
+  "esforcoForcado": null,
+  "geradoEm": "2026-10-02 19:41",
+  "branchTrabalho": "spec/fase2c-anexos",
+  "baseDir": ".spec/features/fase2c-anexos",
+  "specDir": ".spec",
+  "repoName": "scrumboard-medguia",
+  "logsDir": "../onp-worktrees/scrumboard-medguia-fase2c-anexos-logs",
+  "ondas": [],
+  "faixas": [],
+  "sequenciais": [
+    {
+      "id": "T-052",
+      "titulo": "Validação de conteúdo e armazenamento em volume",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/lib/anexos/conteudo.ts",
+        "src/lib/anexos/armazenamento.ts",
+        "test/anexos/conteudo.test.ts"
+      ],
+      "refs": [
+        "AC-096",
+        "AC-097",
+        "AC-098"
+      ]
+    },
+    {
+      "id": "T-053",
+      "titulo": "Assinatura HMAC de URL com expiração de 60 s",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/lib/anexos/assinatura.ts",
+        "test/anexos/assinatura.test.ts"
+      ],
+      "refs": [
+        "AC-101",
+        "AC-103",
+        "AC-104"
+      ]
+    },
+    {
+      "id": "T-054",
+      "titulo": "Repositório de anexos (isolado por tenant)",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/repositories/anexos.ts",
+        "test/repositories/anexos.test.ts"
+      ],
+      "refs": [
+        "AC-095",
+        "AC-099",
+        "AC-102",
+        "AC-106"
+      ]
+    },
+    {
+      "id": "T-055",
+      "titulo": "Rota POST /api/anexos",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "src/app/api/anexos/route.ts",
+        "test/api/anexos-upload.test.ts"
+      ],
+      "refs": [
+        "US-034",
+        "AC-095",
+        "AC-096",
+        "AC-097",
+        "AC-098",
+        "AC-099",
+        "AC-100"
+      ]
+    },
+    {
+      "id": "T-056",
+      "titulo": "Rotas GET /api/anexos/[id] e GET /api/anexos/arquivo/[id]",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "src/app/api/anexos/[id]/route.ts",
+        "src/app/api/anexos/arquivo/[id]/route.ts",
+        "test/api/anexos-acesso.test.ts"
+      ],
+      "refs": [
+        "US-035",
+        "AC-100",
+        "AC-101",
+        "AC-102",
+        "AC-103",
+        "AC-104"
+      ]
+    },
+    {
+      "id": "T-057",
+      "titulo": "Transição valida o anexo como evidência do próprio card",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/app/api/oportunidades/[id]/transicao/route.ts",
+        "test/api/oportunidades-transicao-anexo.test.ts"
+      ],
+      "refs": [
+        "US-036",
+        "AC-105",
+        "AC-106"
+      ]
+    },
+    {
+      "id": "T-058",
+      "titulo": "Modal: escolher ou colar o print",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "src/components/pipeline/modal-dado-faltante.tsx",
+        "test/components/pipeline/modal-anexo.test.tsx"
+      ],
+      "refs": [
+        "AC-107"
+      ]
+    },
+    {
+      "id": "T-059",
+      "titulo": "Volume `anexos` no docker-compose e variáveis de ambiente",
+      "modelo": "claude-sonnet-5",
+      "esforco": "low",
+      "arquivos": [
+        "docker-compose.yml",
+        ".env.example"
+      ],
+      "refs": [
+        "US-034"
+      ]
+    }
+  ],
+  "concluidas": [],
+  "avisos": []
+}

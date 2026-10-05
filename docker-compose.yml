@@ -6,6 +6,13 @@ services:
       - "3001:3000"
     env_file:
       - .env
+    # fase2c-anexos (ASM-025): prints/PDF de evidência ficam neste volume
+    # nomeado e são servidos só por URL assinada. `ANEXOS_SEGREDO` (segredo
+    # da assinatura) vem do `.env`, nunca daqui.
+    environment:
+      ANEXOS_DIR: /data/anexos
+    volumes:
+      - anexos:/data/anexos
     restart: unless-stopped
     deploy:
       resources:
@@ -38,6 +45,9 @@ services:
       - ./infra/postgres/init:/docker-entrypoint-initdb.d:ro
     networks:
       - wp-network
+
+volumes:
+  anexos:
 
 networks:
   wp-network:

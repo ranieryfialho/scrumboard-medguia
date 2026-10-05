@@ -34,7 +34,7 @@ export class ErroContextoTenantAusente extends Error {
  */
 export async function comTenant<T>(
   db: NodePgDatabase,
-  contexto: ContextoTenant,
+  contexto: Pick<ContextoTenant, 'empresaId'>,
   fn: (tx: TransacaoTenant) => Promise<T>
 ): Promise<T> {
   if (!contexto || !contexto.empresaId) {
