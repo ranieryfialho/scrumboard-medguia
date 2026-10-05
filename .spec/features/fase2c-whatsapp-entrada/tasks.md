@@ -30,7 +30,7 @@
 - Esforço: medio
 - Notas: módulo puro, sem I/O. Normaliza número (sem `@…`, sem `:device`, só dígitos, prefere `remoteJidAlt`), extrai texto/legenda, rótulos `[áudio]`/`[figurinha]`/`[mídia]`, e descarta `fromMe`, grupo `@g.us`, sem número e evento que não é de mensagem. Aceita `data` único ou array. Porta a lógica do webhook legado.
 
-## T-068 — Repositório do WhatsApp de entrada [pendente]
+## T-068 — Repositório do WhatsApp de entrada [concluida]
 - Refs: AC-124, AC-125, AC-126, AC-129
 - Arquivos: src/repositories/whatsapp.ts, test/repositories/whatsapp.test.ts
 - Esforço: alto
