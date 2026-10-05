@@ -36,7 +36,7 @@
 - Esforço: alto
 - Notas: sessão via `resolverContextoTenant` (401 antes de abrir qualquer coisa); `ReadableStream` com `text/event-stream`, `Cache-Control: no-cache, no-transform`, `: ping` a cada 25 s; limpa ouvinte e timer no `request.signal` abort (ASM-031). Depende de T-061.
 
-## T-063 — Evento chega fim a fim e transição recusada não emite [pendente]
+## T-063 — Evento chega fim a fim e transição recusada não emite [concluida]
 - Refs: AC-108, AC-109, AC-110
 - Arquivos: test/sse/fim-a-fim.test.ts
 - Esforço: medio
