@@ -24,7 +24,7 @@
 - Esforço: alto
 - Notas: índice único parcial `(empresa_id, evolution_message_id)` (ASM-037). Função `registrar_conexao_whatsapp` trava o card em cadência (etapas 2–4, `cadencia_encerrada_em` nulo, Q-012), chama `mover_oportunidade` para a etapa 5 com `ator_tipo = sistema`, grava o evento `conexao_whatsapp` com `evolution_message_id`, cancela atividades pendentes e preenche `cadencia_encerrada_em`, tudo numa transação (ASM-036); como relê e trava dentro da função, não há 409 (AC-132). `pg_notify` de `mensagem.recebida` só com ids (ASM-038, Q-011). GRANT EXECUTE para `crm_app`. Prova com testcontainers, incluindo rollback.
 
-## T-067 — Extrair mensagem do payload da Evolution [pendente]
+## T-067 — Extrair mensagem do payload da Evolution [concluida]
 - Refs: AC-122, AC-123
 - Arquivos: src/domain/whatsapp/extrair-mensagem.ts, test/whatsapp/extrair-mensagem.test.ts
 - Esforço: medio
