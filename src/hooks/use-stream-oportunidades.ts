@@ -68,9 +68,13 @@ export function useStreamOportunidades(
   // Callbacks em ref: evita recriar o EventSource a cada render por causa de
   // uma nova identidade de função vinda do chamador.
   const aoReceberEventoRef = useRef(aoReceberEvento);
-  aoReceberEventoRef.current = aoReceberEvento;
   const aoPollingRef = useRef(aoPolling);
-  aoPollingRef.current = aoPolling;
+  // Atualizado em efeito (não durante a renderização): `react-hooks/refs` proíbe
+  // escrever em ref no corpo do componente.
+  useEffect(() => {
+    aoReceberEventoRef.current = aoReceberEvento;
+    aoPollingRef.current = aoPolling;
+  });
 
   useEffect(() => {
     let errosConsecutivos = 0;

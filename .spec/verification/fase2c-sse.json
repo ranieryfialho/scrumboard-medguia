@@ -1,7 +1,7 @@
 {
   "feature": "fase2c-sse",
-  "timestamp": "2026-10-05T16:01:11.674Z",
-  "gitRev": "21767ef",
+  "timestamp": "2026-10-05T16:30:52.684Z",
+  "gitRev": "4918875",
   "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
   "exitCode": 0,
