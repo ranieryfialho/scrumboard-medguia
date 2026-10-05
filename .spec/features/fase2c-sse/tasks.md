@@ -18,7 +18,7 @@
     (atalho: `onp-spec tarefa <feature> <T-xxx> <status>`)
 -->
 
-## T-060 — Migration 0007: NOTIFY dentro de mover_oportunidade [pendente]
+## T-060 — Migration 0007: NOTIFY dentro de mover_oportunidade [concluida]
 - Refs: AC-108, AC-110, AC-111
 - Arquivos: drizzle/0007_fn_mover_oportunidade_notify.sql, test/sse/notify-sql.test.ts
 - Esforço: medio
