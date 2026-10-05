@@ -1,0 +1,103 @@
+{
+  "runId": "scrumboard-medguia-fase2c-whatsapp-entrada-muvjx6zi",
+  "feature": "fase2c-whatsapp-entrada",
+  "agent": "claude",
+  "modo": "sequencial",
+  "paralelizar": null,
+  "modeloForcado": null,
+  "esforcoForcado": null,
+  "geradoEm": "2026-10-05 17:56",
+  "branchTrabalho": "spec/fase2c-whatsapp-entrada",
+  "baseDir": ".spec/features/fase2c-whatsapp-entrada",
+  "specDir": ".spec",
+  "repoName": "scrumboard-medguia",
+  "logsDir": "../onp-worktrees/scrumboard-medguia-fase2c-whatsapp-entrada-logs",
+  "ondas": [],
+  "faixas": [],
+  "sequenciais": [
+    {
+      "id": "T-066",
+      "titulo": "Migration 0008: idempotência, conexão e NOTIFY de mensagem",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "drizzle/0008_whatsapp_entrada.sql",
+        "test/whatsapp/conexao-sql.test.ts"
+      ],
+      "refs": [
+        "AC-124",
+        "AC-127",
+        "AC-128",
+        "AC-129",
+        "AC-130",
+        "AC-131",
+        "AC-132",
+        "AC-133"
+      ]
+    },
+    {
+      "id": "T-067",
+      "titulo": "Extrair mensagem do payload da Evolution",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/domain/whatsapp/extrair-mensagem.ts",
+        "test/whatsapp/extrair-mensagem.test.ts"
+      ],
+      "refs": [
+        "AC-122",
+        "AC-123"
+      ]
+    },
+    {
+      "id": "T-068",
+      "titulo": "Repositório do WhatsApp de entrada",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "src/repositories/whatsapp.ts",
+        "test/repositories/whatsapp.test.ts"
+      ],
+      "refs": [
+        "AC-124",
+        "AC-125",
+        "AC-126",
+        "AC-129"
+      ]
+    },
+    {
+      "id": "T-069",
+      "titulo": "Rota POST /api/whatsapp/webhook",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "src/app/api/whatsapp/webhook/route.ts",
+        "test/api/whatsapp-webhook.test.ts"
+      ],
+      "refs": [
+        "US-039",
+        "AC-119",
+        "AC-120",
+        "AC-121",
+        "AC-131"
+      ]
+    },
+    {
+      "id": "T-070",
+      "titulo": "SSE: evento `mensagem.recebida`",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/lib/sse/barramento.ts",
+        "test/sse/mensagem-recebida.test.ts"
+      ],
+      "refs": [
+        "US-042",
+        "AC-133",
+        "AC-134"
+      ]
+    }
+  ],
+  "concluidas": [],
+  "avisos": []
+}
