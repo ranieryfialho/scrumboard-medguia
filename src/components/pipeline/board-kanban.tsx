@@ -179,6 +179,7 @@ export function BoardKanban() {
       {dadoFaltante && (
         <ModalDadoFaltante
           codigo={dadoFaltante.codigo}
+          oportunidadeId={dadoFaltante.oportunidadeId}
           aberto
           onCancelar={() => setDadoFaltante(null)}
           onConfirmar={(dado) =>

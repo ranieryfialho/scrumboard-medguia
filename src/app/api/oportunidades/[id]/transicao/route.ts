@@ -6,6 +6,10 @@
 // do domínio, sem tocar a escrita → se `ok`, `moverOportunidade` (fase2,
 // T-045), que grava tudo atomicamente; conflito de versão (lock otimista)
 // vira 409 (ASM-021).
+//
+// T-057 (fase2c-anexos, US-036): `anexoId` só conta como evidência se o anexo
+// existe no tenant E foi enviado para este mesmo card (AC-106); qualquer outro
+// valor é tratado como ausente, então o domínio responde EVIDENCIA_OBRIGATORIA.
 import { eq } from 'drizzle-orm';
 import { NextResponse, type NextRequest } from 'next/server';
 
@@ -15,6 +19,7 @@ import { getAuth } from '../../../../../lib/auth/instancia';
 import { ErroSessaoInvalida, resolverContextoTenant, type ContextoTenant } from '../../../../../lib/auth/tenant';
 import { validarTransicao } from '../../../../../domain/pipeline/validar-transicao';
 import type { DadosTransicao, PipelineTransicao } from '../../../../../domain/pipeline/tipos';
+import { anexoValidoParaOportunidade } from '../../../../../repositories/anexos';
 import {
   buscarOportunidadePorId,
   ErroConflitoDeVersao,
@@ -102,7 +107,11 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     valor: corpo.valor ?? null,
     motivoPerdaId: corpo.motivoPerdaId ?? null,
     proximaAcaoEm: corpo.proximaAcaoEm ? new Date(corpo.proximaAcaoEm) : null,
-    anexoId: corpo.anexoId ?? null,
+    anexoId:
+      typeof corpo.anexoId === 'string' &&
+      (await anexoValidoParaOportunidade(db, contexto, corpo.anexoId, oportunidade.id))
+        ? corpo.anexoId
+        : null,
     justificativa: corpo.justificativa ?? null,
   };
 

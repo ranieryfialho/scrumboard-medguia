@@ -1,0 +1,77 @@
+{
+  "feature": "fase2c-anexos",
+  "timestamp": "2026-10-05T12:04:43.539Z",
+  "gitRev": "e8afdc5",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
+  "reporter": "vitest-json",
+  "exitCode": 1,
+  "testsParsed": 281,
+  "results": {
+    "AC-095": {
+      "status": "pass",
+      "testName": "T-055: rota POST /api/anexos PNG válido: 201, registro completo e bytes no volume @spec:AC-095 PNG válido: 201, registro completo e bytes no volume @spec:AC-095",
+      "method": "vitest-json"
+    },
+    "AC-096": {
+      "status": "pass",
+      "testName": "T-052: tipo e tamanho do anexo reconhece PNG, JPEG, WebP e PDF pelos bytes @spec:AC-096 reconhece PNG, JPEG, WebP e PDF pelos bytes @spec:AC-096",
+      "method": "vitest-json"
+    },
+    "AC-097": {
+      "status": "pass",
+      "testName": "T-052: tipo e tamanho do anexo imagem: 5 MB cabe, 5 MB + 1 byte não @spec:AC-097 imagem: 5 MB cabe, 5 MB + 1 byte não @spec:AC-097",
+      "method": "vitest-json"
+    },
+    "AC-098": {
+      "status": "pass",
+      "testName": "T-052: armazenamento em volume o nome gravado é gerado pelo servidor e nada sai do volume @spec:AC-098 o nome gravado é gerado pelo servidor e nada sai do volume @spec:AC-098",
+      "method": "vitest-json"
+    },
+    "AC-099": {
+      "status": "pass",
+      "testName": "T-055: rota POST /api/anexos card de outro tenant ou inexistente: 404 e nada gravado @spec:AC-099 card de outro tenant ou inexistente: 404 e nada gravado @spec:AC-099",
+      "method": "vitest-json"
+    },
+    "AC-100": {
+      "status": "pass",
+      "testName": "T-056: rotas de acesso a anexos sem sessão: 401 e nenhuma URL emitida @spec:AC-100 sem sessão: 401 e nenhuma URL emitida @spec:AC-100",
+      "method": "vitest-json"
+    },
+    "AC-101": {
+      "status": "pass",
+      "testName": "T-053: assinatura de URL de anexo a URL aponta para o arquivo e expira em exatos 60 s @spec:AC-101 a URL aponta para o arquivo e expira em exatos 60 s @spec:AC-101",
+      "method": "vitest-json"
+    },
+    "AC-102": {
+      "status": "pass",
+      "testName": "T-056: rotas de acesso a anexos outro tenant ou id inexistente: 404 e nenhuma URL emitida @spec:AC-102 outro tenant ou id inexistente: 404 e nenhuma URL emitida @spec:AC-102",
+      "method": "vitest-json"
+    },
+    "AC-103": {
+      "status": "pass",
+      "testName": "T-053: assinatura de URL de anexo assinatura recém-emitida e ainda dentro dos 60 s é aceita @spec:AC-103 assinatura recém-emitida e ainda dentro dos 60 s é aceita @spec:AC-103",
+      "method": "vitest-json"
+    },
+    "AC-104": {
+      "status": "pass",
+      "testName": "T-053: assinatura de URL de anexo assinatura com mais de 60 s é recusada @spec:AC-104 assinatura com mais de 60 s é recusada @spec:AC-104",
+      "method": "vitest-json"
+    },
+    "AC-105": {
+      "status": "pass",
+      "testName": "T-057: anexo como evidência na transição anexo do próprio card: a transição para \"Reunião realizada\" é aceita @spec:AC-105 anexo do próprio card: a transição para \"Reunião realizada\" é aceita @spec:AC-105",
+      "method": "vitest-json"
+    },
+    "AC-106": {
+      "status": "pass",
+      "testName": "T-057: anexo como evidência na transição anexo de outro card, de outro tenant ou inexistente: 422 EVIDENCIA_OBRIGATORIA, card inalterado @spec:AC-106 anexo de outro card, de outro tenant ou inexistente: 422 EVIDENCIA_OBRIGATORIA, card inalterado @spec:AC-106",
+      "method": "vitest-json"
+    },
+    "AC-107": {
+      "status": "pass",
+      "testName": "T-058: modal de evidência escolher o arquivo envia ao servidor, mostra o nome e confirma com o anexoId @spec:AC-107 escolher o arquivo envia ao servidor, mostra o nome e confirma com o anexoId @spec:AC-107",
+      "method": "vitest-json"
+    }
+  },
+  "principles": {}
+}

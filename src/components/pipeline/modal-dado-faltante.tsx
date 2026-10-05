@@ -14,11 +14,14 @@ export interface DadoPreenchido {
   motivoPerdaId?: string;
   proximaAcaoEm?: string;
   justificativa?: string;
+  anexoId?: string;
 }
 
 interface ModalDadoFaltanteProps {
   codigo: CodigoErroTransicao;
   aberto: boolean;
+  /** Card que recebe o anexo de evidência (EVIDENCIA_OBRIGATORIA). */
+  oportunidadeId?: string;
   onCancelar: () => void;
   onConfirmar: (dado: DadoPreenchido) => void;
 }
@@ -30,13 +33,23 @@ const TITULOS: Partial<Record<CodigoErroTransicao, string>> = {
   JUSTIFICATIVA_OBRIGATORIA: "Informe a justificativa",
 };
 
+const ERROS_DE_ENVIO: Record<string, string> = {
+  TIPO_NAO_PERMITIDO: "Tipo de arquivo não permitido. Envie PNG, JPEG, WebP ou PDF.",
+  ARQUIVO_GRANDE_DEMAIS: "Arquivo grande demais. Imagens até 5 MB e PDF até 10 MB.",
+  OPORTUNIDADE_NAO_ENCONTRADA: "Esse card não foi encontrado.",
+  NAO_AUTENTICADO: "Sua sessão expirou. Entre novamente.",
+};
+
 /** AC-088/AC-089/AC-090: um campo por código — reenvia a transição ao confirmar; cancelar não chama nada. */
-export function ModalDadoFaltante({ codigo, aberto, onCancelar, onConfirmar }: ModalDadoFaltanteProps) {
+export function ModalDadoFaltante({ codigo, aberto, oportunidadeId, onCancelar, onConfirmar }: ModalDadoFaltanteProps) {
   const [valor, setValor] = useState("");
   const [motivoPerdaId, setMotivoPerdaId] = useState("");
   const [proximaAcaoEm, setProximaAcaoEm] = useState("");
   const [justificativa, setJustificativa] = useState("");
   const [motivos, setMotivos] = useState<{ id: string; nome: string }[]>([]);
+  const [anexo, setAnexo] = useState<{ id: string; nome: string } | null>(null);
+  const [enviando, setEnviando] = useState(false);
+  const [erroEnvio, setErroEnvio] = useState<string | null>(null);
 
   useEffect(() => {
     if (codigo !== "MOTIVO_PERDA_OBRIGATORIO" || !aberto) return;
@@ -45,6 +58,38 @@ export function ModalDadoFaltante({ codigo, aberto, onCancelar, onConfirmar }: M
       .then((corpo) => setMotivos(corpo.itens ?? []))
       .catch(() => setMotivos([]));
   }, [codigo, aberto]);
+
+  // AC-107: envia o arquivo escolhido ou colado; só um envio bem-sucedido libera o Confirmar.
+  const enviarArquivo = async (arquivo: File) => {
+    if (!oportunidadeId) return;
+    setEnviando(true);
+    setErroEnvio(null);
+    setAnexo(null);
+    try {
+      const formulario = new FormData();
+      formulario.set("oportunidadeId", oportunidadeId);
+      formulario.set("arquivo", arquivo);
+      const resposta = await fetch("/api/anexos", { method: "POST", body: formulario });
+      const corpo = await resposta.json().catch(() => ({}));
+      if (resposta.ok && corpo.anexoId) {
+        setAnexo({ id: corpo.anexoId, nome: arquivo.name });
+      } else {
+        setErroEnvio(ERROS_DE_ENVIO[corpo.codigo] ?? "Não foi possível enviar o arquivo. Tente novamente.");
+      }
+    } catch {
+      setErroEnvio("Não foi possível enviar o arquivo. Tente novamente.");
+    } finally {
+      setEnviando(false);
+    }
+  };
+
+  const aoColar = (evento: React.ClipboardEvent) => {
+    if (codigo !== "EVIDENCIA_OBRIGATORIA") return;
+    const imagem = Array.from(evento.clipboardData?.files ?? []).find((f) => f.type.startsWith("image/"));
+    if (!imagem) return;
+    evento.preventDefault();
+    void enviarArquivo(imagem);
+  };
 
   const confirmar = () => {
     if (codigo === "VALOR_OBRIGATORIO") {
@@ -60,12 +105,15 @@ export function ModalDadoFaltante({ codigo, aberto, onCancelar, onConfirmar }: M
     } else if (codigo === "JUSTIFICATIVA_OBRIGATORIA") {
       if (!justificativa.trim()) return;
       onConfirmar({ justificativa: justificativa.trim() });
+    } else if (codigo === "EVIDENCIA_OBRIGATORIA") {
+      if (!anexo) return;
+      onConfirmar({ anexoId: anexo.id });
     }
   };
 
   return (
     <Dialog open={aberto} onOpenChange={(open) => !open && onCancelar()}>
-      <DialogContent>
+      <DialogContent onPaste={aoColar}>
         <DialogHeader>
           <DialogTitle>{TITULOS[codigo] ?? "Informe o dado pedido"}</DialogTitle>
           <DialogDescription>Esse dado é obrigatório para mover o card pra essa etapa.</DialogDescription>
@@ -122,16 +170,34 @@ export function ModalDadoFaltante({ codigo, aberto, onCancelar, onConfirmar }: M
         )}
 
         {codigo === "EVIDENCIA_OBRIGATORIA" && (
-          <p className="text-sm text-slate-500">
-            Essa etapa exige envio de anexo, ainda não suportado nesta tela.
-          </p>
+          <div className="space-y-1.5">
+            <Label htmlFor="modal-anexo">Print ou PDF da evidência</Label>
+            <Input
+              id="modal-anexo"
+              type="file"
+              accept="image/png,image/jpeg,image/webp,application/pdf"
+              disabled={enviando}
+              onChange={(e) => {
+                const arquivo = e.target.files?.[0];
+                if (arquivo) void enviarArquivo(arquivo);
+              }}
+            />
+            <p className="text-xs text-slate-500">Escolha um arquivo ou cole um print (Ctrl+V). Imagens até 5 MB, PDF até 10 MB.</p>
+            {enviando && <p className="text-sm text-slate-500">Enviando...</p>}
+            {anexo && <p className="text-sm text-emerald-700">Anexado: {anexo.nome}</p>}
+            {erroEnvio && (
+              <p role="alert" className="text-sm text-red-600">
+                {erroEnvio}
+              </p>
+            )}
+          </div>
         )}
 
         <DialogFooter>
           <Button variant="outline" onClick={onCancelar}>
             Cancelar
           </Button>
-          <Button onClick={confirmar} disabled={codigo === "EVIDENCIA_OBRIGATORIA"}>
+          <Button onClick={confirmar} disabled={codigo === "EVIDENCIA_OBRIGATORIA" && (!anexo || enviando)}>
             Confirmar
           </Button>
         </DialogFooter>

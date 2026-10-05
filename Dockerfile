@@ -38,6 +38,10 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
+# fase2c-anexos: o diretório existe na imagem com dono `nextjs`, para o volume
+# nomeado `anexos` (docker-compose.yml) herdar essa permissão na 1ª montagem.
+RUN mkdir -p /data/anexos && chown nextjs:nodejs /data/anexos
+
 USER nextjs
 EXPOSE 3000
 ENV PORT 3000
