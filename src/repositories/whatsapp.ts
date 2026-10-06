@@ -11,7 +11,7 @@ import { and, desc, eq, inArray, isNull, or, sql } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
 import { empresaConfiguracoes, leadTelefones, leads, oportunidades, whatsappMensagens } from '../db/schema';
-import { variantesNumero } from '../domain/whatsapp/numero';
+import { normalizarNumero, variantesNumero } from '../domain/whatsapp/numero';
 import type { ContextoTenant } from '../lib/auth/tenant';
 import { comTenant, type TransacaoTenant } from './contexto';
 
@@ -162,5 +162,273 @@ export async function registrarMensagemRecebida(
     );
 
     return { nova: true, mensagemId: inserida.id, leadId };
+  });
+}
+
+export interface DadosMensagemEnviada {
+  numero: string;
+  texto: string;
+  evolutionMessageId: string | null;
+}
+
+export interface ResultadoMensagemEnviada {
+  mensagemId: string;
+  leadId: string | null;
+}
+
+/**
+ * Grava a mensagem enviada ligando-a ao lead dono de `numero` (principal ou
+ * extra, com a variação do nono dígito — AC-141/AC-142), no mesmo molde de
+ * `registrarMensagemRecebida`, mas sem idempotência (a Evolution não
+ * retentativa envio) e sem chamar `registrar_conexao_whatsapp` — enviar
+ * mensagem nunca move card nem encerra cadência (AC-146, provado na rota).
+ */
+export async function registrarMensagemEnviada(
+  db: NodePgDatabase,
+  contexto: Pick<ContextoTenant, 'empresaId'>,
+  dados: DadosMensagemEnviada
+): Promise<ResultadoMensagemEnviada> {
+  return comTenant(db, contexto, async (tx) => {
+    const lead = await localizarLeadPorNumero(tx, contexto.empresaId, dados.numero);
+    const leadId = lead?.id ?? null;
+
+    const [inserida] = await tx
+      .insert(whatsappMensagens)
+      .values({
+        empresaId: contexto.empresaId,
+        leadId,
+        numero: dados.numero,
+        mensagem: dados.texto,
+        direcao: 'enviada',
+        evolutionMessageId: dados.evolutionMessageId,
+      })
+      .returning({ id: whatsappMensagens.id });
+
+    return { mensagemId: inserida.id, leadId };
+  });
+}
+
+/** Linha do histórico de conversa com os nomes de campo do legado (ASM-042), para a UI atual continuar funcionando. */
+export interface MensagemConversa {
+  id: string;
+  mensagem: string;
+  direcao: 'enviada' | 'recebida';
+  created_at: Date;
+  numero: string;
+  status: string;
+}
+
+function mapearParaHistoricoLegado(linha: {
+  id: string;
+  mensagem: string;
+  direcao: 'enviada' | 'recebida';
+  criadoEm: Date;
+  numero: string;
+  status: string;
+}): MensagemConversa {
+  return {
+    id: linha.id,
+    mensagem: linha.mensagem,
+    direcao: linha.direcao,
+    created_at: linha.criadoEm,
+    numero: linha.numero,
+    status: linha.status,
+  };
+}
+
+const CAMPOS_HISTORICO = {
+  id: whatsappMensagens.id,
+  mensagem: whatsappMensagens.mensagem,
+  direcao: whatsappMensagens.direcao,
+  criadoEm: whatsappMensagens.criadoEm,
+  numero: whatsappMensagens.numero,
+  status: whatsappMensagens.status,
+};
+
+const LIMITE_HISTORICO = 200;
+
+/**
+ * Histórico de uma conversa por número — enviadas e recebidas, das duas
+ * grafias do nono dígito (AC-149), da mais antiga para a mais recente,
+ * limitado às 200 mais recentes (AC-148). `numero` já deve estar
+ * normalizado (ASM-046) — quem normaliza é a rota (T-079), mesmo contrato
+ * de `buscarLeadPorNumero`.
+ */
+export async function buscarHistoricoPorNumero(
+  db: NodePgDatabase,
+  contexto: Pick<ContextoTenant, 'empresaId'>,
+  numero: string
+): Promise<MensagemConversa[]> {
+  return comTenant(db, contexto, async (tx) => {
+    const linhas = await tx
+      .select(CAMPOS_HISTORICO)
+      .from(whatsappMensagens)
+      .where(
+        and(eq(whatsappMensagens.empresaId, contexto.empresaId), inArray(whatsappMensagens.numero, variantesNumero(numero)))
+      )
+      .orderBy(desc(whatsappMensagens.criadoEm))
+      .limit(LIMITE_HISTORICO);
+
+    return linhas.reverse().map(mapearParaHistoricoLegado);
+  });
+}
+
+/**
+ * Histórico de uma conversa por lead — mensagens de todos os telefones dele
+ * (principal e extras, com a variação do nono dígito) e as já ligadas pelo
+ * `lead_id` (AC-150), sem repetir nenhuma (é uma única consulta com `OR`),
+ * da mais antiga para a mais recente, limitado às 200 mais recentes
+ * (AC-148). Lead inexistente ou de outro tenant: lista vazia, sem acusar
+ * (AC-151) — o filtro por `empresa_id` do `comTenant`/RLS já cuida disso.
+ */
+export async function buscarHistoricoPorLead(
+  db: NodePgDatabase,
+  contexto: Pick<ContextoTenant, 'empresaId'>,
+  leadId: string
+): Promise<MensagemConversa[]> {
+  return comTenant(db, contexto, async (tx) => {
+    const [lead] = await tx
+      .select({ telefoneE164: leads.telefoneE164 })
+      .from(leads)
+      .where(and(eq(leads.id, leadId), eq(leads.empresaId, contexto.empresaId)))
+      .limit(1);
+    if (!lead) return [];
+
+    const extras = await tx
+      .select({ numero: leadTelefones.numero })
+      .from(leadTelefones)
+      .where(and(eq(leadTelefones.leadId, leadId), eq(leadTelefones.empresaId, contexto.empresaId)));
+
+    const principal = lead.telefoneE164 ? normalizarNumero(lead.telefoneE164) : null;
+    const telefones = [principal, ...extras.map((extra) => extra.numero)].filter(
+      (numero): numero is string => numero !== null
+    );
+    const variantes = telefones.flatMap((numero) => variantesNumero(numero));
+
+    const condicaoTelefoneOuLead =
+      variantes.length > 0
+        ? or(eq(whatsappMensagens.leadId, leadId), inArray(whatsappMensagens.numero, variantes))
+        : eq(whatsappMensagens.leadId, leadId);
+
+    const linhas = await tx
+      .select(CAMPOS_HISTORICO)
+      .from(whatsappMensagens)
+      .where(and(eq(whatsappMensagens.empresaId, contexto.empresaId), condicaoTelefoneOuLead))
+      .orderBy(desc(whatsappMensagens.criadoEm))
+      .limit(LIMITE_HISTORICO);
+
+    return linhas.reverse().map(mapearParaHistoricoLegado);
+  });
+}
+
+/** Escolhe, entre as variações do nono dígito de `numero`, a mais curta (sem o nono) como chave estável de agrupamento (AC-155). */
+function chaveCanonicaNumero(numero: string): string {
+  return [...variantesNumero(numero)].sort((a, b) => a.length - b.length)[0];
+}
+
+/** Uma conversa não lida, agrupada por lead (todos os telefones dele) ou por número normalizado (ASM-045), nos nomes do legado (ASM-042). */
+export interface ConversaNaoLida {
+  numero: string;
+  leadId: string | null;
+  lastMessage: string;
+  lastAt: Date;
+  count: number;
+}
+
+/**
+ * Lista as conversas com mensagens recebidas ainda não lidas (`lida_em`
+ * nula) da empresa do `contexto`, uma linha por conversa — por `lead_id`
+ * quando a mensagem está ligada a um lead (reunindo os telefones dele numa
+ * só, AC-155), senão pelo número canônico (as duas grafias do nono dígito
+ * contam como a mesma conversa, AC-155) — com a contagem só das não lidas
+ * (AC-154), da mais recente para a mais antiga.
+ */
+export async function listarConversasNaoLidas(
+  db: NodePgDatabase,
+  contexto: Pick<ContextoTenant, 'empresaId'>
+): Promise<ConversaNaoLida[]> {
+  return comTenant(db, contexto, async (tx) => {
+    const linhas = await tx
+      .select({
+        leadId: whatsappMensagens.leadId,
+        numero: whatsappMensagens.numero,
+        mensagem: whatsappMensagens.mensagem,
+        criadoEm: whatsappMensagens.criadoEm,
+      })
+      .from(whatsappMensagens)
+      .where(
+        and(
+          eq(whatsappMensagens.empresaId, contexto.empresaId),
+          eq(whatsappMensagens.direcao, 'recebida'),
+          isNull(whatsappMensagens.lidaEm)
+        )
+      )
+      .orderBy(desc(whatsappMensagens.criadoEm));
+
+    const conversas = new Map<string, ConversaNaoLida>();
+    for (const linha of linhas) {
+      const chave = linha.leadId ?? chaveCanonicaNumero(linha.numero);
+      const existente = conversas.get(chave);
+      if (existente) {
+        existente.count += 1;
+      } else {
+        conversas.set(chave, {
+          numero: linha.numero,
+          leadId: linha.leadId,
+          lastMessage: linha.mensagem,
+          lastAt: linha.criadoEm,
+          count: 1,
+        });
+      }
+    }
+
+    return [...conversas.values()].sort((a, b) => b.lastAt.getTime() - a.lastAt.getTime());
+  });
+}
+
+/** Conversa a marcar como lida: por `leadId` (reúne todos os telefones dele) ou por `numero` avulso (sem lead, com a variação do nono dígito). */
+export interface AlvoConversa {
+  leadId?: string;
+  numero?: string;
+}
+
+/**
+ * Marca como lidas (`lida_em = now()`) as mensagens recebidas ainda não
+ * lidas da conversa indicada por `alvo` — nunca mexe em outra conversa nem
+ * em outra empresa (AC-158, o filtro por `empresa_id` do `comTenant`/RLS e a
+ * condição exata do alvo garantem isso). Idempotente: devolve quantas foram
+ * marcadas agora (`0` se já estavam todas lidas, AC-158). Mensagem nova
+ * chegando depois (webhook) nasce com `lida_em` nula e volta a contar
+ * (AC-159, garantido por `registrarMensagemRecebida` não tocar nesta
+ * coluna).
+ */
+export async function marcarConversaComoLida(
+  db: NodePgDatabase,
+  contexto: Pick<ContextoTenant, 'empresaId'>,
+  alvo: AlvoConversa
+): Promise<number> {
+  return comTenant(db, contexto, async (tx) => {
+    const condicaoAlvo = alvo.leadId
+      ? eq(whatsappMensagens.leadId, alvo.leadId)
+      : alvo.numero
+        ? and(isNull(whatsappMensagens.leadId), inArray(whatsappMensagens.numero, variantesNumero(alvo.numero)))
+        : null;
+
+    if (!condicaoAlvo) return 0;
+
+    const atualizadas = await tx
+      .update(whatsappMensagens)
+      .set({ lidaEm: new Date() })
+      .where(
+        and(
+          eq(whatsappMensagens.empresaId, contexto.empresaId),
+          eq(whatsappMensagens.direcao, 'recebida'),
+          isNull(whatsappMensagens.lidaEm),
+          condicaoAlvo
+        )
+      )
+      .returning({ id: whatsappMensagens.id });
+
+    return atualizadas.length;
   });
 }
