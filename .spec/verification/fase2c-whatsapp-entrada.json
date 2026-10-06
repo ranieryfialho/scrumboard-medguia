@@ -1,7 +1,7 @@
 {
   "feature": "fase2c-whatsapp-entrada",
-  "timestamp": "2026-10-05T19:00:03.772Z",
-  "gitRev": "922e368",
+  "timestamp": "2026-10-06T11:33:49.986Z",
+  "gitRev": "af698a9",
   "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
   "exitCode": 1,
@@ -34,16 +34,16 @@
     },
     "AC-124": {
       "status": "pass",
-      "testName": "T-066: migration 0008 — idempotência, conexão e NOTIFY de mensagem AC-124: índice único parcial impede mensagem duplicada segunda linha com o mesmo (empresa_id, evolution_message_id) viola o índice único @spec:AC-124 segunda linha com o mesmo (empresa_id, evolution_message_id) viola o índice único @spec:AC-124",
+      "testName": "T-068: repositório do WhatsApp de entrada AC-124: mensagem repetida não duplica retentativa com o mesmo evolution_message_id não insere linha nova nem conecta de novo @spec:AC-124 retentativa com o mesmo evolution_message_id não insere linha nova nem conecta de novo @spec:AC-124",
       "method": "vitest-json"
     },
     "AC-125": {
-      "status": "skip",
+      "status": "pass",
       "testName": "T-068: repositório do WhatsApp de entrada AC-125: o telefone do lead é reconhecido, inclusive com a variação do nono dígito número sem o nono dígito casa com o lead cadastrado com o nono dígito @spec:AC-125 número sem o nono dígito casa com o lead cadastrado com o nono dígito @spec:AC-125",
       "method": "vitest-json"
     },
     "AC-126": {
-      "status": "skip",
+      "status": "pass",
       "testName": "T-068: repositório do WhatsApp de entrada AC-126: a mensagem só se liga a lead da mesma empresa mesmo telefone em A e B: mensagem pelo webhook de A liga só ao lead de A, nada muda em B @spec:AC-126 mesmo telefone em A e B: mensagem pelo webhook de A liga só ao lead de A, nada muda em B @spec:AC-126",
       "method": "vitest-json"
     },
@@ -59,7 +59,7 @@
     },
     "AC-129": {
       "status": "pass",
-      "testName": "T-066: migration 0008 — idempotência, conexão e NOTIFY de mensagem AC-129: fora da cadência, a mensagem não move card nenhum etapa 1 (Entrada de leads): registrar_conexao_whatsapp não altera nada @spec:AC-129 etapa 1 (Entrada de leads): registrar_conexao_whatsapp não altera nada @spec:AC-129",
+      "testName": "T-068: repositório do WhatsApp de entrada AC-129: fora da cadência, a mensagem não move card nenhum lead com oportunidade na etapa 1 (Entrada de leads): mensagem grava, card não se move @spec:AC-129 lead com oportunidade na etapa 1 (Entrada de leads): mensagem grava, card não se move @spec:AC-129",
       "method": "vitest-json"
     },
     "AC-130": {
