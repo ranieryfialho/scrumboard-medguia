@@ -66,7 +66,7 @@
 - Esforço: alto
 - Notas: reescreve a rota legada em Supabase. Ordem: sessão (401) → corpo (400) → destino (lead 404 / telefone 404 / sem telefone 422, ou número avulso) → instância (409) → Evolution fora da transação (502/422, ASM-041) → grava `enviada` ligada ao lead (AC-142 via T-075/T-076). Resposta `{ success, messageId, mensagemId }` (ASM-042). A Evolution nos testes é um servidor HTTP falso local (ASM-040); AC-146 prova que card, versão, cadência e eventos não mudam. Depende de T-076 e T-077.
 
-## T-079 — Rota GET /api/whatsapp/messages [pendente]
+## T-079 — Rota GET /api/whatsapp/messages [concluida]
 - Refs: US-045, AC-147, AC-148, AC-149, AC-150, AC-151, AC-152
 - Arquivos: src/app/api/whatsapp/messages/route.ts, test/api/whatsapp-messages.test.ts
 - Esforço: medio
