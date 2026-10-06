@@ -7,10 +7,11 @@
 // `empresa_id`, nunca confiando só num dos dois (AC-126).
 import { timingSafeEqual } from 'node:crypto';
 
-import { and, desc, eq, inArray, isNull, sql } from 'drizzle-orm';
+import { and, desc, eq, inArray, isNull, or, sql } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
-import { empresaConfiguracoes, leads, oportunidades, whatsappMensagens } from '../db/schema';
+import { empresaConfiguracoes, leadTelefones, leads, oportunidades, whatsappMensagens } from '../db/schema';
+import { variantesNumero } from '../domain/whatsapp/numero';
 import type { ContextoTenant } from '../lib/auth/tenant';
 import { comTenant, type TransacaoTenant } from './contexto';
 
@@ -51,34 +52,24 @@ export async function verificarSegredoWebhook(
 }
 
 /**
- * Gera, a partir dos dígitos de `numero` (já normalizado por
- * `extrairMensagens`, T-067), as variações do nono dígito do padrão
- * brasileiro (`55` + DDD de 2 dígitos + 8 ou 9 dígitos) — a Evolution às
- * vezes entrega sem ele, outras vezes com ele (ASM-039, AC-125). Números
- * fora desse padrão não geram variação: só o valor recebido é tentado.
- */
-function variantesNumero(numero: string): string[] {
-  const variantes = new Set([numero]);
-  if (/^55\d{10}$/.test(numero)) {
-    // 55 + DDD(2) + 8 dígitos (12 no total) → tenta também com o 9 inserido.
-    variantes.add(`${numero.slice(0, 4)}9${numero.slice(4)}`);
-  } else if (/^55\d{2}9\d{8}$/.test(numero)) {
-    // 55 + DDD(2) + 9 + 8 dígitos (13 no total) → tenta também sem o 9.
-    variantes.add(`${numero.slice(0, 4)}${numero.slice(5)}`);
-  }
-  return [...variantes];
-}
-
-/**
- * Casa `numero` com um lead da empresa `empresaId` pelos dígitos de
- * `telefone_e164`, tolerando a variação do nono dígito (AC-125). Sem lead
- * casando: `null`. Mais de um lead com o mesmo telefone na empresa:
- * desempate pela ASM-039 — primeiro o lead cuja oportunidade em cadência
- * (etapas 2-4, sem `cadencia_encerrada_em`) foi atualizada mais
- * recentemente, senão o lead mais recentemente criado.
+ * Casa `numero` com um lead da empresa `empresaId` pelos dígitos do
+ * telefone principal (`telefone_e164`) **ou** de um telefone extra dele
+ * (`lead_telefones`, T-073/US-047), tolerando a variação do nono dígito em
+ * ambos (AC-125, ASM-047). Sem lead casando: `null`. Mais de um lead com o
+ * mesmo telefone na empresa — seja porque é principal de um e extra de
+ * outro, seja porque é extra de dois (AC-166) — desempate pela ASM-039:
+ * primeiro o lead cuja oportunidade em cadência (etapas 2-4, sem
+ * `cadencia_encerrada_em`) foi atualizada mais recentemente, senão o lead
+ * mais recentemente criado.
  */
 async function localizarLeadPorNumero(tx: TransacaoTenant, empresaId: string, numero: string): Promise<Lead | null> {
   const digitosTelefone = sql`regexp_replace(coalesce(${leads.telefoneE164}, ''), '\\D', '', 'g')`;
+  const variantes = variantesNumero(numero);
+
+  const leadsComExtraCorrespondente = tx
+    .select({ leadId: leadTelefones.leadId })
+    .from(leadTelefones)
+    .where(and(eq(leadTelefones.empresaId, empresaId), inArray(leadTelefones.numero, variantes)));
 
   const resultado = await tx
     .select({ lead: leads })
@@ -92,7 +83,12 @@ async function localizarLeadPorNumero(tx: TransacaoTenant, empresaId: string, nu
         isNull(oportunidades.cadenciaEncerradaEm)
       )
     )
-    .where(and(eq(leads.empresaId, empresaId), inArray(digitosTelefone, variantesNumero(numero))))
+    .where(
+      and(
+        eq(leads.empresaId, empresaId),
+        or(inArray(digitosTelefone, variantes), inArray(leads.id, leadsComExtraCorrespondente))
+      )
+    )
     .orderBy(sql`${oportunidades.atualizadoEm} DESC NULLS LAST`, desc(leads.criadoEm))
     .limit(1);
 
