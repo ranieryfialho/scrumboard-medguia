@@ -1,51 +1,62 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
-import { createClient as createServerClient } from '@/lib/supabase/server';
-import { extractEmpresaId } from '@/lib/evolution-server';
+// T-079 (fase2c-whatsapp-conversa, US-045): rota GET /api/whatsapp/messages —
+// substitui a legada em Supabase. Ordem: sessão (401) → `numero` ou `leadId`
+// válidos (400) → repositório de T-076 (`buscarHistoricoPorNumero` /
+// `buscarHistoricoPorLead`). `leadId` de outra empresa devolve lista vazia,
+// sem 404 (AC-151) — o próprio repositório já filtra por `empresa_id`.
+import { NextResponse, type NextRequest } from 'next/server';
+
+import { getDb } from '../../../../db/client';
+import { normalizarNumero } from '../../../../domain/whatsapp/numero';
+import { getAuth } from '../../../../lib/auth/instancia';
+import { ErroSessaoInvalida, resolverContextoTenant, type ContextoTenant } from '../../../../lib/auth/tenant';
+import { buscarHistoricoPorLead, buscarHistoricoPorNumero } from '../../../../repositories/whatsapp';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(request: NextRequest) {
-  const supabase = await createServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-  const empresaId = extractEmpresaId(
-    user.user_metadata,
-    request.headers.get('cookie') || ''
-  );
-  if (!empresaId) return NextResponse.json({ error: 'empresa_id não encontrado' }, { status: 400 });
+async function resolverContexto(request: NextRequest): Promise<ContextoTenant | null> {
+  const sessao = await getAuth().api.getSession({ headers: request.headers });
+  if (!sessao) return null;
+
+  try {
+    return await resolverContextoTenant(getDb(), { token: sessao.session.token });
+  } catch (erro) {
+    if (erro instanceof ErroSessaoInvalida) return null;
+    throw erro;
+  }
+}
+
+function semSessao() {
+  return NextResponse.json({ codigo: 'NAO_AUTENTICADO' }, { status: 401 });
+}
+
+function requisicaoInvalida() {
+  return NextResponse.json({ codigo: 'REQUISICAO_INVALIDA' }, { status: 400 });
+}
+
+export async function GET(request: NextRequest) {
+  const contexto = await resolverContexto(request);
+  if (!contexto) return semSessao();
 
   const { searchParams } = new URL(request.url);
-  const rawNumero = searchParams.get('numero')?.replace(/\D/g, '') || '';
+  const leadIdBruto = searchParams.get('leadId');
+  const numeroBruto = searchParams.get('numero');
 
-  if (!rawNumero) return NextResponse.json({ mensagens: [] });
+  const db = getDb();
 
-  // Gera variantes do número para cobrir todos os formatos possíveis no banco
-  const comPrefixo = rawNumero.startsWith('55') && rawNumero.length >= 12
-    ? rawNumero
-    : `55${rawNumero}`;
-  const semPrefixo = rawNumero.startsWith('55') && rawNumero.length > 12
-    ? rawNumero.slice(2)
-    : rawNumero;
+  if (leadIdBruto) {
+    if (!UUID.test(leadIdBruto)) return requisicaoInvalida();
+    const mensagens = await buscarHistoricoPorLead(db, contexto, leadIdBruto);
+    return NextResponse.json({ mensagens });
+  }
 
-  const variantesUnicas = [...new Set([rawNumero, comPrefixo, semPrefixo])];
-  const filtroOr = variantesUnicas.map(n => `numero.eq.${n}`).join(',');
+  if (numeroBruto) {
+    const numeroNormalizado = normalizarNumero(numeroBruto);
+    if (!numeroNormalizado) return requisicaoInvalida();
+    const mensagens = await buscarHistoricoPorNumero(db, contexto, numeroNormalizado);
+    return NextResponse.json({ mensagens });
+  }
 
-  const admin = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
-
-  const { data, error } = await admin
-    .from('whatsapp_mensagens')
-    .select('id, mensagem, direcao, created_at, numero, status')
-    .eq('empresa_id', empresaId)
-    .or(filtroOr)
-    .order('created_at', { ascending: true })
-    .limit(200);
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-
-  return NextResponse.json({ mensagens: data || [] });
+  return requisicaoInvalida();
 }
