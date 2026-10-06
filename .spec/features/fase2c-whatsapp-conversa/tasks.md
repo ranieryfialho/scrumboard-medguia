@@ -18,7 +18,7 @@
     (atalho: `onp-spec tarefa <feature> <T-xxx> <status>`)
 -->
 
-## T-071 — Migration 0009: telefones do lead e estado de leitura [pendente]
+## T-071 — Migration 0009: telefones do lead e estado de leitura [concluida]
 - Refs: AC-153, AC-164
 - Arquivos: drizzle/0009_whatsapp_conversa.sql, drizzle/meta/_journal.json, src/db/schema/pipeline.ts, src/db/schema/legado.ts, test/whatsapp/conversa-sql.test.ts
 - Esforço: alto
