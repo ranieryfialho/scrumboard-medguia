@@ -271,25 +271,25 @@ describe('T-079: GET /api/whatsapp/messages', () => {
   });
 
   describe('AC-152: consulta sem número nem lead é recusada', () => {
-    test('sem numero e sem leadId: 400', async () => {
+    test('sem numero e sem leadId: 400 @spec:AC-152', async () => {
       const resposta = await getHistorico(cookieA, '');
       expect(resposta.status).toBe(400);
       expect((await resposta.json()).codigo).toBe('REQUISICAO_INVALIDA');
     });
 
-    test('numero sem dígitos: 400', async () => {
+    test('numero sem dígitos: 400 @spec:AC-152', async () => {
       const resposta = await getHistorico(cookieA, '?numero=abc');
       expect(resposta.status).toBe(400);
       expect((await resposta.json()).codigo).toBe('REQUISICAO_INVALIDA');
     });
 
-    test('leadId que não é UUID: 400', async () => {
+    test('leadId que não é UUID: 400 @spec:AC-152', async () => {
       const resposta = await getHistorico(cookieA, '?leadId=nao-e-um-uuid');
       expect(resposta.status).toBe(400);
       expect((await resposta.json()).codigo).toBe('REQUISICAO_INVALIDA');
     });
 
-    test('leadId inexistente, mas UUID válido: lista vazia, não 400', async () => {
+    test('leadId inexistente, mas UUID válido: lista vazia, não 400 @spec:AC-152', async () => {
       const resposta = await getHistorico(cookieA, `?leadId=${INEXISTENTE}`);
       expect(resposta.status).toBe(200);
       expect((await resposta.json()).mensagens).toEqual([]);

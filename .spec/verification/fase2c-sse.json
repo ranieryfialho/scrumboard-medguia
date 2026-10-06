@@ -1,11 +1,11 @@
 {
   "feature": "fase2c-sse",
-  "timestamp": "2026-10-06T12:24:22.932Z",
-  "gitRev": "af698a9",
+  "timestamp": "2026-10-06T18:07:36.568Z",
+  "gitRev": "38475d5",
   "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
-  "exitCode": 0,
-  "testsParsed": 358,
+  "exitCode": 1,
+  "testsParsed": 447,
   "results": {
     "AC-108": {
       "status": "pass",

@@ -356,7 +356,7 @@ describe('T-078: POST /api/whatsapp/send', () => {
   });
 
   describe('AC-145: falha na Evolution não deixa mensagem fantasma', () => {
-    test('Evolution responde erro: 502, nada gravado', async () => {
+    test('Evolution responde erro: 502, nada gravado @spec:AC-145', async () => {
       evolution.definirComportamento({ tipo: 'erro', status: 500 });
       const antesMensagens = contarMensagens(EMPRESA_A);
 
@@ -367,7 +367,7 @@ describe('T-078: POST /api/whatsapp/send', () => {
       expect(contarMensagens(EMPRESA_A)).toBe(antesMensagens);
     });
 
-    test('Evolution fora do ar: 502, nada gravado', async () => {
+    test('Evolution fora do ar: 502, nada gravado @spec:AC-145', async () => {
       process.env.EVOLUTION_API_URL = 'http://127.0.0.1:1';
       const antesMensagens = contarMensagens(EMPRESA_A);
 
@@ -378,7 +378,7 @@ describe('T-078: POST /api/whatsapp/send', () => {
       expect(contarMensagens(EMPRESA_A)).toBe(antesMensagens);
     });
 
-    test('número sem WhatsApp: 422, nada gravado', async () => {
+    test('número sem WhatsApp: 422, nada gravado @spec:AC-145', async () => {
       evolution.definirComportamento({ tipo: 'numero_sem_whatsapp' });
       const antesMensagens = contarMensagens(EMPRESA_A);
 

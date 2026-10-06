@@ -1,10 +1,10 @@
 {
   "feature": "fase2c-whatsapp-conversa",
-  "timestamp": "2026-10-06T15:17:13.337Z",
-  "gitRev": "662b504",
+  "timestamp": "2026-10-06T16:38:37.355Z",
+  "gitRev": "38475d5",
   "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
-  "exitCode": 1,
+  "exitCode": 0,
   "testsParsed": 447,
   "results": {
     "AC-135": {
@@ -57,34 +57,44 @@
       "testName": "T-078: POST /api/whatsapp/send empresa sem instância configurada: 409, sem enviar nem gravar @spec:AC-144 empresa sem instância configurada: 409, sem enviar nem gravar @spec:AC-144",
       "method": "vitest-json"
     },
+    "AC-145": {
+      "status": "pass",
+      "testName": "T-078: POST /api/whatsapp/send AC-145: falha na Evolution não deixa mensagem fantasma Evolution responde erro: 502, nada gravado @spec:AC-145 Evolution responde erro: 502, nada gravado @spec:AC-145",
+      "method": "vitest-json"
+    },
     "AC-146": {
       "status": "pass",
       "testName": "T-078: POST /api/whatsapp/send enviar mensagem não move o card nem toca a cadência @spec:AC-146 enviar mensagem não move o card nem toca a cadência @spec:AC-146",
       "method": "vitest-json"
     },
     "AC-147": {
-      "status": "skip",
+      "status": "pass",
       "testName": "T-079: GET /api/whatsapp/messages sem sessão: 401, nenhuma mensagem é lida @spec:AC-147 sem sessão: 401, nenhuma mensagem é lida @spec:AC-147",
       "method": "vitest-json"
     },
     "AC-148": {
       "status": "pass",
-      "testName": "T-076: histórico, não lidas, marcar como lida e registrar enviada AC-148: histórico por número traz enviadas e recebidas em ordem enviadas e recebidas do mesmo número aparecem da mais antiga para a mais recente, com os campos do legado @spec:AC-148 enviadas e recebidas do mesmo número aparecem da mais antiga para a mais recente, com os campos do legado @spec:AC-148",
+      "testName": "T-079: GET /api/whatsapp/messages histórico por número traz enviadas e recebidas em ordem cronológica @spec:AC-148 histórico por número traz enviadas e recebidas em ordem cronológica @spec:AC-148",
       "method": "vitest-json"
     },
     "AC-149": {
       "status": "pass",
-      "testName": "T-072: normalizarNumero número com 11 dígitos (DDD + nono dígito) recebe DDI 55 @spec:AC-149 número com 11 dígitos (DDD + nono dígito) recebe DDI 55 @spec:AC-149",
+      "testName": "T-079: GET /api/whatsapp/messages número é reconhecido com DDI e com a variação do nono dígito @spec:AC-149 número é reconhecido com DDI e com a variação do nono dígito @spec:AC-149",
       "method": "vitest-json"
     },
     "AC-150": {
       "status": "pass",
-      "testName": "T-076: histórico, não lidas, marcar como lida e registrar enviada AC-150: histórico por lead reúne todos os telefones do lead mensagens do principal e do extra aparecem juntas, em ordem, sem repetir @spec:AC-150 mensagens do principal e do extra aparecem juntas, em ordem, sem repetir @spec:AC-150",
+      "testName": "T-079: GET /api/whatsapp/messages histórico por lead reúne todos os telefones do lead sem repetir @spec:AC-150 histórico por lead reúne todos os telefones do lead sem repetir @spec:AC-150",
       "method": "vitest-json"
     },
     "AC-151": {
       "status": "pass",
       "testName": "T-076: histórico, não lidas, marcar como lida e registrar enviada AC-151: histórico nunca mostra mensagens de outra empresa mesmo número em A e B: cada empresa só vê as suas, por número e por leadId @spec:AC-151 mesmo número em A e B: cada empresa só vê as suas, por número e por leadId @spec:AC-151",
+      "method": "vitest-json"
+    },
+    "AC-152": {
+      "status": "pass",
+      "testName": "T-079: GET /api/whatsapp/messages AC-152: consulta sem número nem lead é recusada sem numero e sem leadId: 400 @spec:AC-152 sem numero e sem leadId: 400 @spec:AC-152",
       "method": "vitest-json"
     },
     "AC-153": {

@@ -1,11 +1,11 @@
 {
   "feature": "fase1-dominio-pipeline",
-  "timestamp": "2026-10-06T11:52:44.092Z",
-  "gitRev": "af698a9",
+  "timestamp": "2026-10-06T17:20:46.176Z",
+  "gitRev": "38475d5",
   "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
   "exitCode": 0,
-  "testsParsed": 358,
+  "testsParsed": 447,
   "results": {
     "AC-048": {
       "status": "pass",
