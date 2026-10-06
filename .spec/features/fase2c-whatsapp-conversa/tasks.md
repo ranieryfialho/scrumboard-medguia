@@ -24,7 +24,7 @@
 - Esforço: alto
 - Notas: tabela `lead_telefones` (id, empresa_id, lead_id, numero só dígitos, rotulo, criado_em; único por lead+numero; garantir que lead e empresa batem) com RLS por `app.empresa_id` e GRANT para `crm_app` (ASM-043). Coluna `lida_em` em `whatsapp_mensagens` com backfill `lida_em = criado_em` das recebidas existentes e índice parcial das não lidas (ASM-044). Espelhar no schema Drizzle. Prova com testcontainers: backfill e isolamento por RLS.
 
-## T-072 — Normalização e variações de número (módulo puro) [pendente]
+## T-072 — Normalização e variações de número (módulo puro) [concluida]
 - Refs: AC-143, AC-149, AC-161, AC-162
 - Arquivos: src/domain/whatsapp/numero.ts, test/whatsapp/numero.test.ts
 - Esforço: medio
