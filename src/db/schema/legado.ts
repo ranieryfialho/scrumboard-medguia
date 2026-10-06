@@ -19,6 +19,8 @@ export const whatsappMensagens = pgTable('whatsapp_mensagens', {
   direcao: whatsappDirecaoEnum('direcao').notNull(),
   status: text('status').notNull().default('entregue'),
   evolutionMessageId: text('evolution_message_id'),
+  // Nula = não lida; só tem sentido para `direcao = 'recebida'` (ASM-044).
+  lidaEm: timestamp('lida_em', { withTimezone: true }),
   criadoEm: timestamp('criado_em', { withTimezone: true }).notNull().defaultNow(),
 });
 

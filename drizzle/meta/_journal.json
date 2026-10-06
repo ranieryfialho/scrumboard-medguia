@@ -15,6 +15,13 @@
       "when": 1790276917812,
       "tag": "0006_adiciona_email_verificado_e_imagem_usuarios",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791293159066,
+      "tag": "0009_whatsapp_conversa",
+      "breakpoints": true
     }
   ]
 }
