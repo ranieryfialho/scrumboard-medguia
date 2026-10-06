@@ -1,0 +1,204 @@
+{
+  "runId": "scrumboard-medguia-fase2c-whatsapp-conversa-muwpijcs",
+  "feature": "fase2c-whatsapp-conversa",
+  "agent": "claude",
+  "modo": "sequencial",
+  "paralelizar": null,
+  "modeloForcado": null,
+  "esforcoForcado": null,
+  "geradoEm": "2026-10-06 13:20",
+  "branchTrabalho": "spec/fase2c-whatsapp-conversa",
+  "baseDir": ".spec/features/fase2c-whatsapp-conversa",
+  "specDir": ".spec",
+  "repoName": "scrumboard-medguia",
+  "logsDir": "../onp-worktrees/scrumboard-medguia-fase2c-whatsapp-conversa-logs",
+  "ondas": [],
+  "faixas": [],
+  "sequenciais": [
+    {
+      "id": "T-071",
+      "titulo": "Migration 0009: telefones do lead e estado de leitura",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "drizzle/0009_whatsapp_conversa.sql",
+        "drizzle/meta/_journal.json",
+        "src/db/schema/pipeline.ts",
+        "src/db/schema/legado.ts",
+        "test/whatsapp/conversa-sql.test.ts"
+      ],
+      "refs": [
+        "AC-153",
+        "AC-164"
+      ]
+    },
+    {
+      "id": "T-072",
+      "titulo": "Normalização e variações de número (módulo puro)",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/domain/whatsapp/numero.ts",
+        "test/whatsapp/numero.test.ts"
+      ],
+      "refs": [
+        "AC-143",
+        "AC-149",
+        "AC-161",
+        "AC-162"
+      ]
+    },
+    {
+      "id": "T-073",
+      "titulo": "Repositório dos telefones do lead",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "src/repositories/lead-telefones.ts",
+        "test/repositories/lead-telefones.test.ts"
+      ],
+      "refs": [
+        "AC-160",
+        "AC-161",
+        "AC-163",
+        "AC-164"
+      ]
+    },
+    {
+      "id": "T-074",
+      "titulo": "Rotas de telefones do lead",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "src/app/api/leads/[id]/telefones/route.ts",
+        "src/app/api/leads/[id]/telefones/[telefoneId]/route.ts",
+        "test/api/lead-telefones.test.ts"
+      ],
+      "refs": [
+        "US-047",
+        "AC-160",
+        "AC-161",
+        "AC-162",
+        "AC-163",
+        "AC-164"
+      ]
+    },
+    {
+      "id": "T-075",
+      "titulo": "Busca de lead por qualquer telefone (principal e extras)",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "src/repositories/whatsapp.ts",
+        "test/repositories/whatsapp-telefones.test.ts"
+      ],
+      "refs": [
+        "AC-142",
+        "AC-165",
+        "AC-166"
+      ]
+    },
+    {
+      "id": "T-076",
+      "titulo": "Repositório: histórico, não lidas, marcar como lida e registrar enviada",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "src/repositories/whatsapp.ts",
+        "test/repositories/whatsapp-conversa.test.ts"
+      ],
+      "refs": [
+        "AC-148",
+        "AC-149",
+        "AC-150",
+        "AC-151",
+        "AC-154",
+        "AC-155",
+        "AC-157",
+        "AC-158",
+        "AC-159"
+      ]
+    },
+    {
+      "id": "T-077",
+      "titulo": "Instância WhatsApp da empresa lida do Postgres novo",
+      "modelo": "claude-sonnet-5",
+      "esforco": "low",
+      "arquivos": [
+        "src/repositories/whatsapp-instancia.ts",
+        "test/repositories/whatsapp-instancia.test.ts"
+      ],
+      "refs": [
+        "AC-144"
+      ]
+    },
+    {
+      "id": "T-078",
+      "titulo": "Rota POST /api/whatsapp/send",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "src/app/api/whatsapp/send/route.ts",
+        "test/support/evolution-falsa.ts",
+        "test/api/whatsapp-send.test.ts"
+      ],
+      "refs": [
+        "US-043",
+        "US-044",
+        "AC-135",
+        "AC-136",
+        "AC-137",
+        "AC-138",
+        "AC-139",
+        "AC-140",
+        "AC-141",
+        "AC-143",
+        "AC-144",
+        "AC-145",
+        "AC-146"
+      ]
+    },
+    {
+      "id": "T-079",
+      "titulo": "Rota GET /api/whatsapp/messages",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/app/api/whatsapp/messages/route.ts",
+        "test/api/whatsapp-messages.test.ts"
+      ],
+      "refs": [
+        "US-045",
+        "AC-147",
+        "AC-148",
+        "AC-149",
+        "AC-150",
+        "AC-151",
+        "AC-152"
+      ]
+    },
+    {
+      "id": "T-080",
+      "titulo": "Rotas GET /api/whatsapp/unread e POST /api/whatsapp/lidas",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/app/api/whatsapp/unread/route.ts",
+        "src/app/api/whatsapp/lidas/route.ts",
+        "test/api/whatsapp-nao-lidas.test.ts"
+      ],
+      "refs": [
+        "US-046",
+        "AC-153",
+        "AC-154",
+        "AC-155",
+        "AC-156",
+        "AC-157",
+        "AC-158",
+        "AC-159"
+      ]
+    }
+  ],
+  "concluidas": [],
+  "avisos": []
+}
