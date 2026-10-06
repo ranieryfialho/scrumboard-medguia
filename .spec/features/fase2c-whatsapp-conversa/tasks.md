@@ -72,7 +72,7 @@
 - Esforço: medio
 - Notas: reescreve a rota legada. Sessão (401) → `numero` ou `leadId` válidos (400) → repositório de T-076. `leadId` de outra empresa devolve lista vazia, sem 404. Remove o uso de Supabase desta rota. Depende de T-076.
 
-## T-080 — Rotas GET /api/whatsapp/unread e POST /api/whatsapp/lidas [pendente]
+## T-080 — Rotas GET /api/whatsapp/unread e POST /api/whatsapp/lidas [concluida]
 - Refs: US-046, AC-153, AC-154, AC-155, AC-156, AC-157, AC-158, AC-159
 - Arquivos: src/app/api/whatsapp/unread/route.ts, src/app/api/whatsapp/lidas/route.ts, test/api/whatsapp-nao-lidas.test.ts
 - Esforço: medio

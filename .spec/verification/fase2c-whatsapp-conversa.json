@@ -1,0 +1,162 @@
+{
+  "feature": "fase2c-whatsapp-conversa",
+  "timestamp": "2026-10-06T15:17:13.337Z",
+  "gitRev": "662b504",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
+  "reporter": "vitest-json",
+  "exitCode": 1,
+  "testsParsed": 447,
+  "results": {
+    "AC-135": {
+      "status": "pass",
+      "testName": "T-078: POST /api/whatsapp/send sem sessão: 401, Evolution não é chamada e nada é gravado @spec:AC-135 sem sessão: 401, Evolution não é chamada e nada é gravado @spec:AC-135",
+      "method": "vitest-json"
+    },
+    "AC-136": {
+      "status": "pass",
+      "testName": "T-078: POST /api/whatsapp/send envia ao telefone principal do lead e registra enviada @spec:AC-136 envia ao telefone principal do lead e registra enviada @spec:AC-136",
+      "method": "vitest-json"
+    },
+    "AC-137": {
+      "status": "pass",
+      "testName": "T-078: POST /api/whatsapp/send leadId de outra empresa, inexistente ou que não é UUID: 404 idêntico, sem enviar nem gravar @spec:AC-137 leadId de outra empresa, inexistente ou que não é UUID: 404 idêntico, sem enviar nem gravar @spec:AC-137",
+      "method": "vitest-json"
+    },
+    "AC-138": {
+      "status": "pass",
+      "testName": "T-078: POST /api/whatsapp/send lead sem telefone principal nem extra: 422, sem enviar nem gravar @spec:AC-138 lead sem telefone principal nem extra: 422, sem enviar nem gravar @spec:AC-138",
+      "method": "vitest-json"
+    },
+    "AC-139": {
+      "status": "pass",
+      "testName": "T-078: POST /api/whatsapp/send escolhe o telefone extra pelo telefoneId; telefoneId alheio devolve 404 sem enviar @spec:AC-139 escolhe o telefone extra pelo telefoneId; telefoneId alheio devolve 404 sem enviar @spec:AC-139",
+      "method": "vitest-json"
+    },
+    "AC-140": {
+      "status": "pass",
+      "testName": "T-078: POST /api/whatsapp/send sem telefoneId usa o telefone principal, mesmo havendo extras @spec:AC-140 sem telefoneId usa o telefone principal, mesmo havendo extras @spec:AC-140",
+      "method": "vitest-json"
+    },
+    "AC-141": {
+      "status": "pass",
+      "testName": "T-078: POST /api/whatsapp/send número avulso sem lead correspondente: enviado e gravado com lead_id nulo @spec:AC-141 número avulso sem lead correspondente: enviado e gravado com lead_id nulo @spec:AC-141",
+      "method": "vitest-json"
+    },
+    "AC-142": {
+      "status": "pass",
+      "testName": "T-075: localização de lead por telefone principal ou extra AC-142: número avulso que é telefone (principal ou extra) de um lead da empresa liga a ele variação do nono dígito do telefone principal liga ao lead dono @spec:AC-142 variação do nono dígito do telefone principal liga ao lead dono @spec:AC-142",
+      "method": "vitest-json"
+    },
+    "AC-143": {
+      "status": "pass",
+      "testName": "T-078: POST /api/whatsapp/send pedido mal formado: 400, sem chamar a Evolution nem gravar @spec:AC-143 pedido mal formado: 400, sem chamar a Evolution nem gravar @spec:AC-143",
+      "method": "vitest-json"
+    },
+    "AC-144": {
+      "status": "pass",
+      "testName": "T-078: POST /api/whatsapp/send empresa sem instância configurada: 409, sem enviar nem gravar @spec:AC-144 empresa sem instância configurada: 409, sem enviar nem gravar @spec:AC-144",
+      "method": "vitest-json"
+    },
+    "AC-146": {
+      "status": "pass",
+      "testName": "T-078: POST /api/whatsapp/send enviar mensagem não move o card nem toca a cadência @spec:AC-146 enviar mensagem não move o card nem toca a cadência @spec:AC-146",
+      "method": "vitest-json"
+    },
+    "AC-147": {
+      "status": "skip",
+      "testName": "T-079: GET /api/whatsapp/messages sem sessão: 401, nenhuma mensagem é lida @spec:AC-147 sem sessão: 401, nenhuma mensagem é lida @spec:AC-147",
+      "method": "vitest-json"
+    },
+    "AC-148": {
+      "status": "pass",
+      "testName": "T-076: histórico, não lidas, marcar como lida e registrar enviada AC-148: histórico por número traz enviadas e recebidas em ordem enviadas e recebidas do mesmo número aparecem da mais antiga para a mais recente, com os campos do legado @spec:AC-148 enviadas e recebidas do mesmo número aparecem da mais antiga para a mais recente, com os campos do legado @spec:AC-148",
+      "method": "vitest-json"
+    },
+    "AC-149": {
+      "status": "pass",
+      "testName": "T-072: normalizarNumero número com 11 dígitos (DDD + nono dígito) recebe DDI 55 @spec:AC-149 número com 11 dígitos (DDD + nono dígito) recebe DDI 55 @spec:AC-149",
+      "method": "vitest-json"
+    },
+    "AC-150": {
+      "status": "pass",
+      "testName": "T-076: histórico, não lidas, marcar como lida e registrar enviada AC-150: histórico por lead reúne todos os telefones do lead mensagens do principal e do extra aparecem juntas, em ordem, sem repetir @spec:AC-150 mensagens do principal e do extra aparecem juntas, em ordem, sem repetir @spec:AC-150",
+      "method": "vitest-json"
+    },
+    "AC-151": {
+      "status": "pass",
+      "testName": "T-076: histórico, não lidas, marcar como lida e registrar enviada AC-151: histórico nunca mostra mensagens de outra empresa mesmo número em A e B: cada empresa só vê as suas, por número e por leadId @spec:AC-151 mesmo número em A e B: cada empresa só vê as suas, por número e por leadId @spec:AC-151",
+      "method": "vitest-json"
+    },
+    "AC-153": {
+      "status": "pass",
+      "testName": "T-080: GET /api/whatsapp/unread e POST /api/whatsapp/lidas mensagens antigas (backfill) não entram em /unread @spec:AC-153 mensagens antigas (backfill) não entram em /unread @spec:AC-153",
+      "method": "vitest-json"
+    },
+    "AC-154": {
+      "status": "pass",
+      "testName": "T-080: GET /api/whatsapp/unread e POST /api/whatsapp/lidas /unread lista só recebidas não lidas, por conversa @spec:AC-154 /unread lista só recebidas não lidas, por conversa @spec:AC-154",
+      "method": "vitest-json"
+    },
+    "AC-155": {
+      "status": "pass",
+      "testName": "T-080: GET /api/whatsapp/unread e POST /api/whatsapp/lidas telefones diferentes do mesmo lead contam como uma conversa só @spec:AC-155 telefones diferentes do mesmo lead contam como uma conversa só @spec:AC-155",
+      "method": "vitest-json"
+    },
+    "AC-156": {
+      "status": "pass",
+      "testName": "T-080: GET /api/whatsapp/unread e POST /api/whatsapp/lidas sem sessão: GET /unread devolve 401 @spec:AC-156 sem sessão: GET /unread devolve 401 @spec:AC-156",
+      "method": "vitest-json"
+    },
+    "AC-157": {
+      "status": "pass",
+      "testName": "T-080: GET /api/whatsapp/unread e POST /api/whatsapp/lidas abrir a conversa por leadId marca as recebidas como lidas e some de /unread @spec:AC-157 abrir a conversa por leadId marca as recebidas como lidas e some de /unread @spec:AC-157",
+      "method": "vitest-json"
+    },
+    "AC-158": {
+      "status": "pass",
+      "testName": "T-076: histórico, não lidas, marcar como lida e registrar enviada AC-157, AC-158 e AC-159: marcar como lida marca como lida por número avulso sem tocar em conversa de lead com o mesmo número como extra @spec:AC-158 marca como lida por número avulso sem tocar em conversa de lead com o mesmo número como extra @spec:AC-158",
+      "method": "vitest-json"
+    },
+    "AC-159": {
+      "status": "pass",
+      "testName": "T-080: GET /api/whatsapp/unread e POST /api/whatsapp/lidas mensagem nova depois de lida volta a contar @spec:AC-159 mensagem nova depois de lida volta a contar @spec:AC-159",
+      "method": "vitest-json"
+    },
+    "AC-160": {
+      "status": "pass",
+      "testName": "T-074: rotas de telefones do lead cadastra telefone extra com DDI 55, dígitos só, rótulo e id @spec:AC-160 cadastra telefone extra com DDI 55, dígitos só, rótulo e id @spec:AC-160",
+      "method": "vitest-json"
+    },
+    "AC-161": {
+      "status": "pass",
+      "testName": "T-074: rotas de telefones do lead recusa telefone repetido contra o principal e contra outro extra, inclusive com a variação do nono dígito @spec:AC-161 recusa telefone repetido contra o principal e contra outro extra, inclusive com a variação do nono dígito @spec:AC-161",
+      "method": "vitest-json"
+    },
+    "AC-162": {
+      "status": "pass",
+      "testName": "T-074: rotas de telefones do lead número inválido, rótulo grande demais, lead alheio, inexistente ou sem sessão: nada é gravado @spec:AC-162 número inválido, rótulo grande demais, lead alheio, inexistente ou sem sessão: nada é gravado @spec:AC-162",
+      "method": "vitest-json"
+    },
+    "AC-163": {
+      "status": "pass",
+      "testName": "T-074: rotas de telefones do lead lista o principal e os extras, remove só o extra do próprio lead @spec:AC-163 lista o principal e os extras, remove só o extra do próprio lead @spec:AC-163",
+      "method": "vitest-json"
+    },
+    "AC-164": {
+      "status": "pass",
+      "testName": "T-074: rotas de telefones do lead telefones de uma empresa não aparecem, não cadastram duplicidade nem são removíveis pela outra @spec:AC-164 telefones de uma empresa não aparecem, não cadastram duplicidade nem são removíveis pela outra @spec:AC-164",
+      "method": "vitest-json"
+    },
+    "AC-165": {
+      "status": "pass",
+      "testName": "T-075: localização de lead por telefone principal ou extra AC-165: resposta pelo telefone extra liga ao lead e encerra a cadência mensagem recebida do telefone extra grava com o lead_id e move o card para Qualificando @spec:AC-165 mensagem recebida do telefone extra grava com o lead_id e move o card para Qualificando @spec:AC-165",
+      "method": "vitest-json"
+    },
+    "AC-166": {
+      "status": "pass",
+      "testName": "T-075: localização de lead por telefone principal ou extra AC-166: desempate quando o mesmo número aparece em mais de um lead da empresa principal de um lead sem cadência vs. extra de outro em cadência: vence a cadência @spec:AC-166 principal de um lead sem cadência vs. extra de outro em cadência: vence a cadência @spec:AC-166",
+      "method": "vitest-json"
+    }
+  },
+  "principles": {}
+}
