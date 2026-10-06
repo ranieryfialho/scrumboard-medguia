@@ -54,7 +54,7 @@
 - Esforço: alto
 - Notas: histórico por número (duas grafias) ou por lead (todos os telefones + `lead_id`), 200 mais recentes devolvidas em ordem cronológica, campos legados (ASM-042); não lidas agrupadas por lead ou número normalizado (ASM-045), só recebidas com `lida_em` nula; marcar como lida idempotente devolvendo a contagem; `registrarMensagemEnviada` grava a linha `enviada` ligando ao lead pelo número. Mensagem nova do webhook nasce com `lida_em` nula (AC-159). Depende de T-075 (mesmo arquivo).
 
-## T-077 — Instância WhatsApp da empresa lida do Postgres novo [pendente]
+## T-077 — Instância WhatsApp da empresa lida do Postgres novo [concluida]
 - Refs: AC-144
 - Arquivos: src/repositories/whatsapp-instancia.ts, test/repositories/whatsapp-instancia.test.ts
 - Esforço: baixo
