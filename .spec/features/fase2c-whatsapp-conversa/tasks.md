@@ -48,7 +48,7 @@
 - Esforço: alto
 - Notas: `localizarLeadPorNumero` passa a considerar `leads.telefone_e164` **e** `lead_telefones`, com a tolerância ao nono dígito, mantendo o desempate da ASM-039 (ASM-047) e o filtro por `empresa_id`. Os testes de whatsapp-entrada (AC-125/126) continuam passando. Prova AC-165 de ponta a ponta pelo repositório (conexão e cadência). Depende de T-071 e T-072.
 
-## T-076 — Repositório: histórico, não lidas, marcar como lida e registrar enviada [pendente]
+## T-076 — Repositório: histórico, não lidas, marcar como lida e registrar enviada [concluida]
 - Refs: AC-148, AC-149, AC-150, AC-151, AC-154, AC-155, AC-157, AC-158, AC-159
 - Arquivos: src/repositories/whatsapp.ts, test/repositories/whatsapp-conversa.test.ts
 - Esforço: alto
