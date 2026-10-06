@@ -42,7 +42,7 @@
 - Esforço: alto
 - Notas: GET/POST em `/api/leads/{id}/telefones` e DELETE em `/api/leads/{id}/telefones/{telefoneId}`, mesmo padrão de sessão das rotas de anexos (401 antes de qualquer tabela). Códigos: 400 `REQUISICAO_INVALIDA`, 404 `LEAD_NAO_ENCONTRADO`, 409 `TELEFONE_DUPLICADO`, 201/204. Depende de T-073.
 
-## T-075 — Busca de lead por qualquer telefone (principal e extras) [pendente]
+## T-075 — Busca de lead por qualquer telefone (principal e extras) [concluida]
 - Refs: AC-142, AC-165, AC-166
 - Arquivos: src/repositories/whatsapp.ts, test/repositories/whatsapp-telefones.test.ts
 - Esforço: alto
