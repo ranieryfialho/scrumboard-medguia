@@ -30,7 +30,7 @@
 - Esforço: medio
 - Notas: sem I/O (ASM-046). Funções: normalizar (só dígitos, DDI 55 com 10/11 dígitos, válido entre 10 e 15), variações do nono dígito (hoje privada em src/repositories/whatsapp.ts, que passa a importar daqui) e comparação de equivalência. Cobre as grafias de AC-149 e a duplicidade de AC-161.
 
-## T-073 — Repositório dos telefones do lead [pendente]
+## T-073 — Repositório dos telefones do lead [concluida]
 - Refs: AC-160, AC-161, AC-163, AC-164
 - Arquivos: src/repositories/lead-telefones.ts, test/repositories/lead-telefones.test.ts
 - Esforço: alto
