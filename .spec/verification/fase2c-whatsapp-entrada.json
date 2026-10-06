@@ -1,0 +1,92 @@
+{
+  "feature": "fase2c-whatsapp-entrada",
+  "timestamp": "2026-10-06T11:33:49.986Z",
+  "gitRev": "af698a9",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
+  "reporter": "vitest-json",
+  "exitCode": 1,
+  "testsParsed": 358,
+  "results": {
+    "AC-119": {
+      "status": "pass",
+      "testName": "T-069: rota POST /api/whatsapp/webhook AC-119: sem segredo cadastrado ou segredo errado, o webhook recusa empresa sem nenhum segredo cadastrado: 401, nada gravado @spec:AC-119 empresa sem nenhum segredo cadastrado: 401, nada gravado @spec:AC-119",
+      "method": "vitest-json"
+    },
+    "AC-120": {
+      "status": "pass",
+      "testName": "T-069: rota POST /api/whatsapp/webhook AC-120: segredo correto é aceito secret correto com evento de mensagem válido: 200 e a mensagem é processada @spec:AC-120 secret correto com evento de mensagem válido: 200 e a mensagem é processada @spec:AC-120",
+      "method": "vitest-json"
+    },
+    "AC-121": {
+      "status": "pass",
+      "testName": "T-069: rota POST /api/whatsapp/webhook AC-121: parâmetros e corpo inválidos são recusados com erro claro sem empresa_id: 400, nada gravado @spec:AC-121 sem empresa_id: 400, nada gravado @spec:AC-121",
+      "method": "vitest-json"
+    },
+    "AC-122": {
+      "status": "pass",
+      "testName": "T-067: extrairMensagens texto de conversa simples é extraído com número normalizado @spec:AC-122 texto de conversa simples é extraído com número normalizado @spec:AC-122",
+      "method": "vitest-json"
+    },
+    "AC-123": {
+      "status": "pass",
+      "testName": "T-067: extrairMensagens mensagem enviada por nós (fromMe) é ignorada @spec:AC-123 mensagem enviada por nós (fromMe) é ignorada @spec:AC-123",
+      "method": "vitest-json"
+    },
+    "AC-124": {
+      "status": "pass",
+      "testName": "T-068: repositório do WhatsApp de entrada AC-124: mensagem repetida não duplica retentativa com o mesmo evolution_message_id não insere linha nova nem conecta de novo @spec:AC-124 retentativa com o mesmo evolution_message_id não insere linha nova nem conecta de novo @spec:AC-124",
+      "method": "vitest-json"
+    },
+    "AC-125": {
+      "status": "pass",
+      "testName": "T-068: repositório do WhatsApp de entrada AC-125: o telefone do lead é reconhecido, inclusive com a variação do nono dígito número sem o nono dígito casa com o lead cadastrado com o nono dígito @spec:AC-125 número sem o nono dígito casa com o lead cadastrado com o nono dígito @spec:AC-125",
+      "method": "vitest-json"
+    },
+    "AC-126": {
+      "status": "pass",
+      "testName": "T-068: repositório do WhatsApp de entrada AC-126: a mensagem só se liga a lead da mesma empresa mesmo telefone em A e B: mensagem pelo webhook de A liga só ao lead de A, nada muda em B @spec:AC-126 mesmo telefone em A e B: mensagem pelo webhook de A liga só ao lead de A, nada muda em B @spec:AC-126",
+      "method": "vitest-json"
+    },
+    "AC-127": {
+      "status": "pass",
+      "testName": "T-066: migration 0008 — idempotência, conexão e NOTIFY de mensagem AC-127: mensagem de lead em cadência move o card para Qualificando etapa 1º dia de contato move para Qualificando (5), ator_tipo sistema, version incrementada @spec:AC-127 etapa 1º dia de contato move para Qualificando (5), ator_tipo sistema, version incrementada @spec:AC-127",
+      "method": "vitest-json"
+    },
+    "AC-128": {
+      "status": "pass",
+      "testName": "T-066: migration 0008 — idempotência, conexão e NOTIFY de mensagem AC-128: a conexão é registrada no log e a cadência é encerrada grava o evento conexao_whatsapp append-only com ator_tipo sistema e o evolution_message_id no payload @spec:AC-128 grava o evento conexao_whatsapp append-only com ator_tipo sistema e o evolution_message_id no payload @spec:AC-128",
+      "method": "vitest-json"
+    },
+    "AC-129": {
+      "status": "pass",
+      "testName": "T-068: repositório do WhatsApp de entrada AC-129: fora da cadência, a mensagem não move card nenhum lead com oportunidade na etapa 1 (Entrada de leads): mensagem grava, card não se move @spec:AC-129 lead com oportunidade na etapa 1 (Entrada de leads): mensagem grava, card não se move @spec:AC-129",
+      "method": "vitest-json"
+    },
+    "AC-130": {
+      "status": "pass",
+      "testName": "T-066: migration 0008 — idempotência, conexão e NOTIFY de mensagem AC-130: segunda mensagem não repete a conexão chamar registrar_conexao_whatsapp de novo depois de já ter conectado não gera novo evento nem nova version @spec:AC-130 chamar registrar_conexao_whatsapp de novo depois de já ter conectado não gera novo evento nem nova version @spec:AC-130",
+      "method": "vitest-json"
+    },
+    "AC-131": {
+      "status": "pass",
+      "testName": "T-069: rota POST /api/whatsapp/webhook AC-131: mensagem e conexão são atômicas falha de banco simulada no 2º item do array: 500; o 1º item (transação própria, já concluída) permanece gravado, o 2º não @spec:AC-131 falha de banco simulada no 2º item do array: 500; o 1º item (transação própria, já concluída) permanece gravado, o 2º não @spec:AC-131",
+      "method": "vitest-json"
+    },
+    "AC-132": {
+      "status": "pass",
+      "testName": "T-066: migration 0008 — idempotência, conexão e NOTIFY de mensagem AC-132: card com versão conflitante não derruba o webhook outro operador já tirou o card de 2–4 entre a leitura e a chegada da mensagem: só relê, sem 409 @spec:AC-132 outro operador já tirou o card de 2–4 entre a leitura e a chegada da mensagem: só relê, sem 409 @spec:AC-132",
+      "method": "vitest-json"
+    },
+    "AC-133": {
+      "status": "pass",
+      "testName": "T-070: Barramento de eventos — mensagem.recebida AC-133: mensagem recebida emite mensagem.recebida só para o tenant usuário da empresa A recebe empresaId, leadId, mensagemId e ocorridoEm; o da B não recebe nada @spec:AC-133 usuário da empresa A recebe empresaId, leadId, mensagemId e ocorridoEm; o da B não recebe nada @spec:AC-133",
+      "method": "vitest-json"
+    },
+    "AC-134": {
+      "status": "pass",
+      "testName": "T-070: Barramento de eventos — mensagem.recebida AC-134: mensagem ignorada ou duplicada não emite evento retentativa com o mesmo evolution_message_id não dispara um segundo mensagem.recebida @spec:AC-134 retentativa com o mesmo evolution_message_id não dispara um segundo mensagem.recebida @spec:AC-134",
+      "method": "vitest-json"
+    }
+  },
+  "principles": {}
+}
