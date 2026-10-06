@@ -60,7 +60,7 @@
 - Esforço: baixo
 - Notas: lê `evolution_instance_name` de `empresa_configuracoes` via `comTenant` (ASM-040), sem Supabase; devolve `null` quando não cadastrada. `evolution-server.ts` legado fica para config/qrcode/status.
 
-## T-078 — Rota POST /api/whatsapp/send [pendente]
+## T-078 — Rota POST /api/whatsapp/send [concluida]
 - Refs: US-043, US-044, AC-135, AC-136, AC-137, AC-138, AC-139, AC-140, AC-141, AC-143, AC-144, AC-145, AC-146
 - Arquivos: src/app/api/whatsapp/send/route.ts, test/support/evolution-falsa.ts, test/api/whatsapp-send.test.ts
 - Esforço: alto
