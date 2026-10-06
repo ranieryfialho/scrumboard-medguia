@@ -36,7 +36,7 @@
 - Esforço: alto
 - Notas: tudo por `comTenant`. Cadastrar (recusa duplicado contra o principal e os extras, com variação do nono dígito, dentro do mesmo lead), listar (principal marcado `principal: true` + extras) e remover só extra do próprio lead e tenant. Lead alheio ou inexistente → mesmo resultado nulo. Depende de T-071 e T-072.
 
-## T-074 — Rotas de telefones do lead [pendente]
+## T-074 — Rotas de telefones do lead [concluida]
 - Refs: US-047, AC-160, AC-161, AC-162, AC-163, AC-164
 - Arquivos: src/app/api/leads/[id]/telefones/route.ts, src/app/api/leads/[id]/telefones/[telefoneId]/route.ts, test/api/lead-telefones.test.ts
 - Esforço: alto
