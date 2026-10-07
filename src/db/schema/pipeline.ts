@@ -85,6 +85,26 @@ export const leads = pgTable('leads', {
   atualizadoEm: timestamp('atualizado_em', { withTimezone: true }).notNull().defaultNow(),
 });
 
+// Telefones extras do lead (US-047) — o principal continua em
+// `leads.telefone_e164` (ASM-043); aqui só recepção/sócio/financeiro etc.,
+// sempre ligados ao mesmo lead e à mesma empresa dele.
+export const leadTelefones = pgTable(
+  'lead_telefones',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    empresaId: uuid('empresa_id')
+      .notNull()
+      .references(() => empresas.id, { onDelete: 'cascade' }),
+    leadId: uuid('lead_id')
+      .notNull()
+      .references(() => leads.id, { onDelete: 'cascade' }),
+    numero: text('numero').notNull(),
+    rotulo: text('rotulo'),
+    criadoEm: timestamp('criado_em', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex('lead_telefones_lead_numero_unica').on(t.leadId, t.numero)]
+);
+
 // O card do pipeline. `version` sustenta o lock otimista de `mover_oportunidade`
 // (AC-026/AC-027) — incrementada só dentro dessa função transacional.
 export const oportunidades = pgTable('oportunidades', {
