@@ -1,0 +1,154 @@
+{
+  "runId": "scrumboard-medguia-fase2c-whatsapp-conexao-muybsdw7",
+  "feature": "fase2c-whatsapp-conexao",
+  "agent": "claude",
+  "modo": "sequencial",
+  "paralelizar": null,
+  "modeloForcado": null,
+  "esforcoForcado": null,
+  "geradoEm": "2026-10-07 16:32",
+  "branchTrabalho": "spec/fase2c-whatsapp-conexao",
+  "baseDir": ".spec/features/fase2c-whatsapp-conexao",
+  "specDir": ".spec",
+  "repoName": "scrumboard-medguia",
+  "logsDir": "../onp-worktrees/scrumboard-medguia-fase2c-whatsapp-conexao-logs",
+  "ondas": [],
+  "faixas": [],
+  "sequenciais": [
+    {
+      "id": "T-081",
+      "titulo": "Migration 0010: nome de instância único entre empresas",
+      "modelo": "claude-sonnet-5",
+      "esforco": "low",
+      "arquivos": [
+        "drizzle/0010_whatsapp_conexao.sql",
+        "drizzle/meta/_journal.json",
+        "src/db/schema/identidade.ts",
+        "test/db/whatsapp-conexao-migration.test.ts"
+      ],
+      "refs": [
+        "AC-173"
+      ]
+    },
+    {
+      "id": "T-082",
+      "titulo": "Servidor HTTP falso da Evolution cobre criar, webhook, conectar e estado",
+      "modelo": "claude-sonnet-5",
+      "esforco": "low",
+      "arquivos": [
+        "test/support/evolution-falsa.ts"
+      ],
+      "refs": [
+        "AC-176",
+        "AC-180",
+        "AC-184",
+        "AC-185",
+        "AC-186"
+      ]
+    },
+    {
+      "id": "T-083",
+      "titulo": "Validação da configuração e cliente Evolution que reporta falha do webhook",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/domain/whatsapp/config.ts",
+        "src/lib/evolution-api.ts",
+        "test/domain/whatsapp-config.test.ts"
+      ],
+      "refs": [
+        "AC-174",
+        "AC-177",
+        "AC-185",
+        "AC-186"
+      ]
+    },
+    {
+      "id": "T-084",
+      "titulo": "Repositório da configuração e do segredo do webhook",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "src/repositories/whatsapp-config.ts",
+        "test/repositories/whatsapp-config.test.ts"
+      ],
+      "refs": [
+        "AC-168",
+        "AC-169",
+        "AC-170",
+        "AC-172",
+        "AC-173",
+        "AC-182"
+      ]
+    },
+    {
+      "id": "T-085",
+      "titulo": "Rota GET e POST /api/whatsapp/config",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "src/app/api/whatsapp/config/route.ts",
+        "test/api/whatsapp-config.test.ts"
+      ],
+      "refs": [
+        "US-048",
+        "US-049",
+        "AC-167",
+        "AC-168",
+        "AC-169",
+        "AC-170",
+        "AC-171",
+        "AC-172",
+        "AC-173",
+        "AC-174",
+        "AC-183"
+      ]
+    },
+    {
+      "id": "T-086",
+      "titulo": "Rota GET /api/whatsapp/status",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/app/api/whatsapp/status/route.ts",
+        "test/api/whatsapp-status.test.ts"
+      ],
+      "refs": [
+        "US-050",
+        "AC-167",
+        "AC-175",
+        "AC-176",
+        "AC-177",
+        "AC-183"
+      ]
+    },
+    {
+      "id": "T-087",
+      "titulo": "Rota GET /api/whatsapp/qrcode (conectar e status) e fim do legado em Supabase",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "src/app/api/whatsapp/qrcode/route.ts",
+        "src/lib/evolution-server.ts",
+        "test/api/whatsapp-qrcode.test.ts"
+      ],
+      "refs": [
+        "US-051",
+        "AC-167",
+        "AC-175",
+        "AC-176",
+        "AC-178",
+        "AC-179",
+        "AC-180",
+        "AC-181",
+        "AC-182",
+        "AC-183",
+        "AC-184",
+        "AC-185",
+        "AC-186"
+      ]
+    }
+  ],
+  "concluidas": [],
+  "avisos": []
+}
