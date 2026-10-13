@@ -8,7 +8,7 @@
 - Esforço: baixo
 - Notas: índice único parcial sobre `valor` onde `chave = 'evolution_instance_name'` (ASM-051). A RLS esconde as outras empresas, então a unicidade só é garantida pelo banco; o teste prova que duas empresas não gravam o mesmo nome e que a mesma empresa regrava o seu.
 
-## T-082 — Servidor HTTP falso da Evolution cobre criar, webhook, conectar e estado [pendente]
+## T-082 — Servidor HTTP falso da Evolution cobre criar, webhook, conectar e estado [concluida]
 - Refs: AC-176, AC-180, AC-184, AC-185, AC-186
 - Arquivos: test/support/evolution-falsa.ts
 - Esforço: baixo
