@@ -26,7 +26,7 @@
 - Esforço: alto
 - Notas: tudo por `comTenant`. `lerConfiguracao` devolve só as chaves permitidas; `salvarConfiguracao` faz upsert numa transação e traduz 23505 em erro de domínio `INSTANCIA_EM_USO` (ASM-056); `obterOuCriarSegredoWebhook` gera ≥32 bytes aleatórios se faltar, reutiliza se existir e é seguro sob duas chamadas simultâneas. Depende de T-081 e T-083.
 
-## T-085 — Rota GET e POST /api/whatsapp/config [pendente]
+## T-085 — Rota GET e POST /api/whatsapp/config [concluida]
 - Refs: US-048, US-049, AC-167, AC-168, AC-169, AC-170, AC-171, AC-172, AC-173, AC-174, AC-183
 - Arquivos: src/app/api/whatsapp/config/route.ts, test/api/whatsapp-config.test.ts
 - Esforço: alto
