@@ -11,7 +11,7 @@
 // configurável e registro em ordem (`ordemChamadas`) para provar que a rota
 // de QR code cria a instância, registra o webhook e só então pede a conexão
 // (AC-180).
-import { createServer, type Server } from 'node:http';
+import { createServer, type IncomingMessage, type Server } from 'node:http';
 import type { AddressInfo } from 'node:net';
 
 export interface ChamadaEvolutionFalsa {
@@ -103,7 +103,7 @@ export async function subirEvolutionFalsa(): Promise<EvolutionFalsa> {
   let comportamentoEstado: ComportamentoEstado = { tipo: 'estado', state: 'close' };
   let contadorMensagem = 0;
 
-  function lerCorpo(req: Parameters<NonNullable<Parameters<typeof createServer>[0]>>[0]): Promise<string> {
+  function lerCorpo(req: IncomingMessage): Promise<string> {
     return new Promise((resolve) => {
       const pedaços: Buffer[] = [];
       req.on('data', (pedaco: Buffer) => pedaços.push(pedaco));
