@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# executar-tarefas.sh — gerado por `onp-spec plano fase2c-whatsapp-conexao` em 2026-10-07 16:32
+# executar-tarefas.sh — gerado por `onp-spec plano fase2c-whatsapp-conexao` em 2026-10-13 11:53
 # NÃO edite à mão: mudou tasks.md ou a config, regenere o plano.
 #
 # uso:
@@ -14,7 +14,7 @@
 set -u
 set -o pipefail
 
-RUN_ID='scrumboard-medguia-fase2c-whatsapp-conexao-muybsdw7'
+RUN_ID='scrumboard-medguia-fase2c-whatsapp-conexao-mv6mgscf'
 FEATURE='fase2c-whatsapp-conexao'
 BASE_BRANCH='spec/fase2c-whatsapp-conexao'
 ENGINE='.claude/skills/onp-spec-driven/scripts/onp-spec.mjs'
@@ -164,38 +164,6 @@ iniciar_resumos() {
   RESUMO_PID=$!
   # ao sair: para o loop e grava um último resumo (o estado final, do motor)
   trap 'parar_resumos; node "$ENGINE" resumo "$FEATURE" --gravar >/dev/null 2>&1 || true' EXIT
-}
-
-# ── sequencial T-081 (ordem do tasks.md) ──
-executar_seq_T_081() {
-  info 'sequencial T-081 — Migration 0010: nome de instância único entre empresas'
-  if rodar_tarefa seq 'T-081' 'Você executa UMA tarefa da feature "fase2c-whatsapp-conexao" (fluxo onp-spec, spec-anchored).
-Leia primeiro: .spec/features/fase2c-whatsapp-conexao/spec.md, .spec/features/fase2c-whatsapp-conexao/tasks.md e .spec/constituicao.md.
-
-Sua tarefa (somente ela):
-T-081 — "Migration 0010: nome de instância único entre empresas"
-  critérios/refs: AC-173 (Nome de instância já usado por outra empresa é recusado)
-  arquivos permitidos (e seus testes): drizzle/0010_whatsapp_conexao.sql, drizzle/meta/_journal.json, src/db/schema/identidade.ts, test/db/whatsapp-conexao-migration.test.ts
-  mensagem de commit: "T-081 fase2c-whatsapp-conexao: Migration 0010: nome de instância único entre empresas"
-
-Regras inegociáveis:
-- Todo critério de aceite referenciado vira teste com @spec:AC-xxx no título.
-- NUNCA enfraqueça, pule (skip/todo) ou apague um teste para passar — teste pulado não é prova e o audit acusa.
-- Rode os testes localmente com `npx vitest run --reporter=json --outputFile=.spec/verification/raw.json` até passarem.
-- NÃO edite tasks.md, NÃO rode onp-spec verify/audit e NÃO toque em outras tarefas — o orquestrador cuida disso.
-- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' low >> "$LOG_DIR/seq.log" 2>&1; then
-    # commit de segurança se o agente esqueceu (rastreabilidade > perfeição)
-    if [ -n "$(git status --porcelain)" ]; then
-      git add -A && git commit -q -m 'T-081 fase2c-whatsapp-conexao: Migration 0010: nome de instância único entre empresas (auto-commit do plano)'
-    fi
-    marcar_concluidas T-081
-    verde "✔ T-081 concluída"
-    return 0
-  fi
-  vermelho "✘ T-081 falhou (log: $LOG_DIR/seq.log)"
-  amarelo "  reexecute só ela: bash .spec/features/fase2c-whatsapp-conexao/executar-tarefas.sh --seq T-081"
-  FALHAS="$FALHAS T-081"
-  return 1
 }
 
 # ── sequencial T-082 (ordem do tasks.md) ──
@@ -443,7 +411,6 @@ executar_tudo() {
   iniciar_resumos
   info "logs em: $LOG_DIR"
   info "resumo geral de andamento: a cada 1 min aqui no terminal (e via: onp-spec resumo)"
-  executar_seq_T_081 || true
   executar_seq_T_082 || true
   executar_seq_T_083 || true
   executar_seq_T_084 || true
@@ -455,7 +422,6 @@ executar_tudo() {
 
 listar() {
   echo "execução: $RUN_ID (feature $FEATURE, branch $BASE_BRANCH)"
-  echo "  seq       T-081 (sequencial)"
   echo "  seq       T-082 (sequencial)"
   echo "  seq       T-083 (sequencial)"
   echo "  seq       T-084 (sequencial)"
@@ -496,7 +462,6 @@ case "$MODO" in
     esac ;;
   seq)
     case "$ALVO" in
-      T-081) evento --tipo inicio --escopo "seq:T-081"; iniciar_resumos; executar_seq_T_081 || true; encerrar "seq:T-081" ;;
       T-082) evento --tipo inicio --escopo "seq:T-082"; iniciar_resumos; executar_seq_T_082 || true; encerrar "seq:T-082" ;;
       T-083) evento --tipo inicio --escopo "seq:T-083"; iniciar_resumos; executar_seq_T_083 || true; encerrar "seq:T-083" ;;
       T-084) evento --tipo inicio --escopo "seq:T-084"; iniciar_resumos; executar_seq_T_084 || true; encerrar "seq:T-084" ;;

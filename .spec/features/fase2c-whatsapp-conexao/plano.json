@@ -1,12 +1,12 @@
 {
-  "runId": "scrumboard-medguia-fase2c-whatsapp-conexao-muybsdw7",
+  "runId": "scrumboard-medguia-fase2c-whatsapp-conexao-mv6mgscf",
   "feature": "fase2c-whatsapp-conexao",
   "agent": "claude",
   "modo": "sequencial",
   "paralelizar": null,
   "modeloForcado": null,
   "esforcoForcado": null,
-  "geradoEm": "2026-10-07 16:32",
+  "geradoEm": "2026-10-13 11:53",
   "branchTrabalho": "spec/fase2c-whatsapp-conexao",
   "baseDir": ".spec/features/fase2c-whatsapp-conexao",
   "specDir": ".spec",
@@ -15,21 +15,6 @@
   "ondas": [],
   "faixas": [],
   "sequenciais": [
-    {
-      "id": "T-081",
-      "titulo": "Migration 0010: nome de instância único entre empresas",
-      "modelo": "claude-sonnet-5",
-      "esforco": "low",
-      "arquivos": [
-        "drizzle/0010_whatsapp_conexao.sql",
-        "drizzle/meta/_journal.json",
-        "src/db/schema/identidade.ts",
-        "test/db/whatsapp-conexao-migration.test.ts"
-      ],
-      "refs": [
-        "AC-173"
-      ]
-    },
     {
       "id": "T-082",
       "titulo": "Servidor HTTP falso da Evolution cobre criar, webhook, conectar e estado",
@@ -149,6 +134,8 @@
       ]
     }
   ],
-  "concluidas": [],
+  "concluidas": [
+    "T-081"
+  ],
   "avisos": []
 }

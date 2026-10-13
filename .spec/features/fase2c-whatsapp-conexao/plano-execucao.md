@@ -1,11 +1,11 @@
 # Plano de execução — fase2c-whatsapp-conexao
 
-> gerado por `onp-spec plano` em 2026-10-07 16:32 — NÃO edite à mão;
+> gerado por `onp-spec plano` em 2026-10-13 11:53 — NÃO edite à mão;
 > mudou tasks.md ou a config? Regenere: `onp-spec plano fase2c-whatsapp-conexao --sequencial`
 
 ## Resumo — o que vai acontecer
 
-- **modo SEQUENCIAL (escolha do usuário)**: 7 tarefa(s) pendente(s), UMA APÓS A OUTRA, na árvore principal
+- **modo SEQUENCIAL (escolha do usuário)**: 6 tarefa(s) pendente(s), UMA APÓS A OUTRA, na árvore principal (1 já concluída(s): T-081)
 - sem worktrees e sem paralelismo — cada tarefa roda numa janela de contexto limpa, na ordem do tasks.md
 - tudo acontece na branch de trabalho `spec/fase2c-whatsapp-conexao`; levar para a main é decisão sua
 
@@ -13,7 +13,6 @@
 
 | tarefa | título | modelo | esforço |
 |---|---|---|---|
-| T-081 | Migration 0010: nome de instância único entre empresas | `claude-sonnet-5` | low |
 | T-082 | Servidor HTTP falso da Evolution cobre criar, webhook, conectar e estado | `claude-sonnet-5` | low |
 | T-083 | Validação da configuração e cliente Evolution que reporta falha do webhook | `claude-sonnet-5` | medium |
 | T-084 | Repositório da configuração e do segredo do webhook | `claude-sonnet-5` | high |

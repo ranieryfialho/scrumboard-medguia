@@ -2,7 +2,7 @@
 
 > feature: fase2c-whatsapp-conexao
 
-## T-081 — Migration 0010: nome de instância único entre empresas [pendente]
+## T-081 — Migration 0010: nome de instância único entre empresas [concluida]
 - Refs: AC-173
 - Arquivos: drizzle/0010_whatsapp_conexao.sql, drizzle/meta/_journal.json, src/db/schema/identidade.ts, test/db/whatsapp-conexao-migration.test.ts
 - Esforço: baixo
