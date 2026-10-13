@@ -38,7 +38,7 @@
 - Esforço: medio
 - Notas: reescreve a rota legada com `buscarNomeInstancia` (já existe) e `comTenant`; qualquer papel consulta. Erro da Evolution vira `state: "close"` (ASM-055). Depende de T-082.
 
-## T-087 — Rota GET /api/whatsapp/qrcode (conectar e status) e fim do legado em Supabase [pendente]
+## T-087 — Rota GET /api/whatsapp/qrcode (conectar e status) e fim do legado em Supabase [concluida]
 - Refs: US-051, AC-167, AC-175, AC-176, AC-178, AC-179, AC-180, AC-181, AC-182, AC-183, AC-184, AC-185, AC-186
 - Arquivos: src/app/api/whatsapp/qrcode/route.ts, src/lib/evolution-server.ts, test/api/whatsapp-qrcode.test.ts
 - Esforço: alto
