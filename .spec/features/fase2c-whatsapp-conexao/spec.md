@@ -1,7 +1,7 @@
 # Spec: Fase 2c — WhatsApp conexão (config, QR code e status)
 
 > feature: fase2c-whatsapp-conexao
-> status: rascunho
+> status: auditada
 
 ## Contexto
 
@@ -162,12 +162,12 @@ Como gerente, quero gerar o QR code da minha instância, para conectar o celular
 | ASM-048 | Permissão: MASTER, GERENTE e super admin alteram a configuração e geram o QR code; ATENDENTE só consulta configuração e status. | confirmada | Decidido pelo usuário em 2026-10-07. |
 | ASM-049 | O segredo do webhook é gerado pelo servidor na primeira conexão (≥32 bytes aleatórios, hex) e gravado em `empresa_configuracoes` com `chave = 'evolution_webhook_secret'`; depois é reaproveitado, nunca rotacionado por esta feature. | confirmada | Decidido pelo usuário em 2026-10-07. |
 | ASM-050 | As seis chaves `evolution_instance_name` e `evolution_auto_msg_*` do legado são as únicas gravadas por `config`; as mensagens automáticas só são guardadas e devolvidas. | confirmada | Decidido pelo usuário em 2026-10-07. |
-| ASM-051 | A unicidade do nome da instância entre empresas vem de um índice único parcial no banco (migration `0010`, sobre `valor` onde `chave = 'evolution_instance_name'`); como a RLS esconde as outras empresas, a rota não consegue checar por SELECT, e traduz a violação 23505 em 409. | aberta | — |
-| ASM-052 | Nome de instância válido: 1 a 64 caracteres entre letras, números, `-` e `_` (vira parte da URL da Evolution, então espaço, `/` e `?` são recusados). | aberta | — |
-| ASM-053 | A URL pública do webhook vem de `NEXT_PUBLIC_APP_URL`; sem ela, usa o host da requisição, como no legado. | aberta | — |
-| ASM-054 | Nos testes a Evolution é o servidor HTTP falso local já usado em `fase2c-whatsapp-conversa`, estendido com criar instância, registrar webhook, conectar e estado da conexão. | aberta | — |
-| ASM-055 | Erro ou indisponibilidade da Evolution na consulta de status vira `state: "close"`, como no legado, em vez de um erro HTTP. | aberta | — |
-| ASM-056 | Salvar a configuração roda tudo numa transação: se uma chave falha (por exemplo nome em uso), nenhuma é gravada. | aberta | — |
+| ASM-051 | A unicidade do nome da instância entre empresas vem de um índice único parcial no banco (migration `0010`, sobre `valor` onde `chave = 'evolution_instance_name'`); como a RLS esconde as outras empresas, a rota não consegue checar por SELECT, e traduz a violação 23505 em 409. | confirmada | Confirmada pelo usuário em 2026-10-13, conforme implementado. |
+| ASM-052 | Nome de instância válido: 1 a 64 caracteres entre letras, números, `-` e `_` (vira parte da URL da Evolution, então espaço, `/` e `?` são recusados). | confirmada | Confirmada pelo usuário em 2026-10-13, conforme implementado. |
+| ASM-053 | A URL pública do webhook vem de `NEXT_PUBLIC_APP_URL`; sem ela, usa o host da requisição, como no legado. | confirmada | Confirmada pelo usuário em 2026-10-13, conforme implementado. |
+| ASM-054 | Nos testes a Evolution é o servidor HTTP falso local já usado em `fase2c-whatsapp-conversa`, estendido com criar instância, registrar webhook, conectar e estado da conexão. | confirmada | Confirmada pelo usuário em 2026-10-13, conforme implementado. |
+| ASM-055 | Erro ou indisponibilidade da Evolution na consulta de status vira `state: "close"`, como no legado, em vez de um erro HTTP. | confirmada | Confirmada pelo usuário em 2026-10-13, conforme implementado. |
+| ASM-056 | Salvar a configuração roda tudo numa transação: se uma chave falha (por exemplo nome em uso), nenhuma é gravada. | confirmada | Confirmada pelo usuário em 2026-10-13, conforme implementado. |
 
 ## Perguntas em aberto
 

@@ -1,7 +1,7 @@
 # Spec: Fase 2c — Anexos (upload, URL assinada e evidência de etapa)
 
 > feature: fase2c-anexos
-> status: rascunho
+> status: auditada
 
 ## Contexto
 

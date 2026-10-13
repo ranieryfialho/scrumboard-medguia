@@ -1,7 +1,7 @@
 {
   "feature": "fase2-kanban",
-  "timestamp": "2026-10-13T16:46:36.313Z",
-  "gitRev": "5fd7c83",
+  "timestamp": "2026-10-13T18:39:25.060Z",
+  "gitRev": "2f6f187",
   "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
   "exitCode": 1,

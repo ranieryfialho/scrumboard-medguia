@@ -1,7 +1,7 @@
 # Spec: Fase 2 — Kanban de 15 etapas
 
 > feature: fase2-kanban
-> status: rascunho
+> status: auditada
 
 <!--
   Como ler este arquivo (o formato é verificado por `onp-spec audit`):

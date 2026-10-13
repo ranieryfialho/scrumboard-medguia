@@ -1,7 +1,7 @@
 {
   "feature": "fase1-repositorios-isolamento",
-  "timestamp": "2026-10-13T14:38:23.459Z",
-  "gitRev": "5fd7c83",
+  "timestamp": "2026-10-13T18:28:33.087Z",
+  "gitRev": "2f6f187",
   "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
   "exitCode": 1,
