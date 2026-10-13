@@ -75,13 +75,20 @@ export async function sendTextMessage(
 export async function getInstanceStatus(
   config: EvolutionConfig
 ): Promise<{ state?: string; instance?: { state?: string }; error?: string }> {
-  const res = await fetch(
-    `${base(config)}/instance/connectionState/${config.instance}`,
-    { headers: { apikey: config.apiKey } }
-  );
+  try {
+    const res = await fetch(
+      `${base(config)}/instance/connectionState/${config.instance}`,
+      { headers: { apikey: config.apiKey } }
+    );
 
-  if (!res.ok) return { error: `Erro ${res.status}` };
-  return await res.json();
+    if (!res.ok) return { error: `Erro ${res.status}` };
+    return await res.json();
+  } catch (err) {
+    // Evolution fora do ar (conexão recusada, timeout etc.) — AC-177: quem
+    // chama trata como desconectado, em vez de devolver um erro HTTP.
+    const message = err instanceof Error ? err.message : String(err);
+    return { error: message };
+  }
 }
 
 /** Cria a instância se ainda não existir. Ignora erro 409 (já existe). */
@@ -103,21 +110,32 @@ export async function createInstance(config: EvolutionConfig): Promise<void> {
   }
 }
 
-/** Configura o webhook da instância para receber mensagens. */
-export async function setWebhook(config: EvolutionConfig, webhookUrl: string): Promise<void> {
-  await fetch(`${base(config)}/webhook/set/${config.instance}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', apikey: config.apiKey },
-    body: JSON.stringify({
-      webhook: {
-        enabled: true,
-        url: webhookUrl,
-        webhookByEvents: false,
-        webhookBase64: false,
-        events: ['MESSAGES_UPSERT'],
-      },
-    }),
-  });
+/**
+ * Configura o webhook da instância para receber mensagens. Devolve `true`
+ * quando a Evolution aceitou o registro e `false` caso contrário (recusa ou
+ * indisponibilidade) — quem chama decide o que fazer com a falha (AC-185:
+ * não esconder o QR code, só avisar que a entrada não está ativa).
+ */
+export async function setWebhook(config: EvolutionConfig, webhookUrl: string): Promise<boolean> {
+  try {
+    const res = await fetch(`${base(config)}/webhook/set/${config.instance}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', apikey: config.apiKey },
+      body: JSON.stringify({
+        webhook: {
+          enabled: true,
+          url: webhookUrl,
+          webhookByEvents: false,
+          webhookBase64: false,
+          events: ['MESSAGES_UPSERT'],
+        },
+      }),
+    });
+
+    return res.ok;
+  } catch {
+    return false;
+  }
 }
 
 /** Retorna o QR code em base64 ou { state: 'open' } se já conectado. */

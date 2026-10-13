@@ -1,11 +1,11 @@
 {
   "feature": "fase2c-whatsapp-conversa",
-  "timestamp": "2026-10-06T16:38:37.355Z",
-  "gitRev": "38475d5",
+  "timestamp": "2026-10-13T15:06:38.479Z",
+  "gitRev": "5fd7c83",
   "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
-  "exitCode": 0,
-  "testsParsed": 447,
+  "exitCode": 1,
+  "testsParsed": 504,
   "results": {
     "AC-135": {
       "status": "pass",

@@ -1,0 +1,112 @@
+{
+  "feature": "fase2c-whatsapp-conexao",
+  "timestamp": "2026-10-13T13:16:48.711Z",
+  "gitRev": "61b7a1a",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
+  "reporter": "vitest-json",
+  "exitCode": 1,
+  "testsParsed": 504,
+  "results": {
+    "AC-167": {
+      "status": "pass",
+      "testName": "T-085: GET e POST /api/whatsapp/config sem sessão: GET e POST em /api/whatsapp/config são recusados com 401 @spec:AC-167 sem sessão: GET e POST em /api/whatsapp/config são recusados com 401 @spec:AC-167",
+      "method": "vitest-json"
+    },
+    "AC-168": {
+      "status": "pass",
+      "testName": "T-085: GET e POST /api/whatsapp/config a configuração devolvida (inclusive para o atendente) traz só as chaves permitidas, nunca o segredo @spec:AC-168 a configuração devolvida (inclusive para o atendente) traz só as chaves permitidas, nunca o segredo @spec:AC-168",
+      "method": "vitest-json"
+    },
+    "AC-169": {
+      "status": "pass",
+      "testName": "T-085: GET e POST /api/whatsapp/config a configuração de outra empresa não aparece @spec:AC-169 a configuração de outra empresa não aparece @spec:AC-169",
+      "method": "vitest-json"
+    },
+    "AC-170": {
+      "status": "pass",
+      "testName": "T-085: GET e POST /api/whatsapp/config MASTER e GERENTE salvam a configuração; um GET seguinte devolve os valores salvos @spec:AC-170 MASTER e GERENTE salvam a configuração; um GET seguinte devolve os valores salvos @spec:AC-170",
+      "method": "vitest-json"
+    },
+    "AC-171": {
+      "status": "pass",
+      "testName": "T-085: GET e POST /api/whatsapp/config atendente não altera a configuração: 403, nada é gravado @spec:AC-171 atendente não altera a configuração: 403, nada é gravado @spec:AC-171",
+      "method": "vitest-json"
+    },
+    "AC-172": {
+      "status": "pass",
+      "testName": "T-085: GET e POST /api/whatsapp/config só as chaves permitidas são gravadas: segredo, chave qualquer e empresa_id do corpo são ignorados @spec:AC-172 só as chaves permitidas são gravadas: segredo, chave qualquer e empresa_id do corpo são ignorados @spec:AC-172",
+      "method": "vitest-json"
+    },
+    "AC-173": {
+      "status": "pass",
+      "testName": "T-085: GET e POST /api/whatsapp/config nome de instância já usado por outra empresa é recusado (409); o próprio nome continua salvável @spec:AC-173 nome de instância já usado por outra empresa é recusado (409); o próprio nome continua salvável @spec:AC-173",
+      "method": "vitest-json"
+    },
+    "AC-174": {
+      "status": "pass",
+      "testName": "T-085: GET e POST /api/whatsapp/config corpo ou nome de instância inválido: 400, nada é gravado (nem as outras chaves do pedido) @spec:AC-174 corpo ou nome de instância inválido: 400, nada é gravado (nem as outras chaves do pedido) @spec:AC-174",
+      "method": "vitest-json"
+    },
+    "AC-175": {
+      "status": "pass",
+      "testName": "T-087: GET /api/whatsapp/qrcode ?action=status sem instância cadastrada: not_configured, a Evolution não é chamada @spec:AC-175 ?action=status sem instância cadastrada: not_configured, a Evolution não é chamada @spec:AC-175",
+      "method": "vitest-json"
+    },
+    "AC-176": {
+      "status": "pass",
+      "testName": "T-087: GET /api/whatsapp/qrcode ?action=status com instância, inclusive para o atendente: estado vem da Evolution @spec:AC-176 ?action=status com instância, inclusive para o atendente: estado vem da Evolution @spec:AC-176",
+      "method": "vitest-json"
+    },
+    "AC-177": {
+      "status": "pass",
+      "testName": "T-086: GET /api/whatsapp/status Evolution fora do ar: state \"close\", nada quebra @spec:AC-177 Evolution fora do ar: state \"close\", nada quebra @spec:AC-177",
+      "method": "vitest-json"
+    },
+    "AC-178": {
+      "status": "pass",
+      "testName": "T-087: GET /api/whatsapp/qrcode atendente não gera QR code: 403, a Evolution não é chamada (a consulta ?action=status continua permitida) @spec:AC-178 atendente não gera QR code: 403, a Evolution não é chamada (a consulta ?action=status continua permitida) @spec:AC-178",
+      "method": "vitest-json"
+    },
+    "AC-179": {
+      "status": "pass",
+      "testName": "T-087: GET /api/whatsapp/qrcode sem instância cadastrada, o GERENTE não tem o que conectar: 409, a Evolution não é chamada @spec:AC-179 sem instância cadastrada, o GERENTE não tem o que conectar: 409, a Evolution não é chamada @spec:AC-179",
+      "method": "vitest-json"
+    },
+    "AC-180": {
+      "status": "pass",
+      "testName": "T-087: GET /api/whatsapp/qrcode fluxo completo: a Evolution recebe criar, webhook e conectar nesta ordem; 200 com base64 e webhookRegistrado true @spec:AC-180 fluxo completo: a Evolution recebe criar, webhook e conectar nesta ordem; 200 com base64 e webhookRegistrado true @spec:AC-180",
+      "method": "vitest-json"
+    },
+    "AC-181": {
+      "status": "pass",
+      "testName": "T-087: GET /api/whatsapp/qrcode o webhook registrado leva a empresa e o segredo cadastrado; o mesmo segredo continua valendo @spec:AC-181 o webhook registrado leva a empresa e o segredo cadastrado; o mesmo segredo continua valendo @spec:AC-181",
+      "method": "vitest-json"
+    },
+    "AC-182": {
+      "status": "pass",
+      "testName": "T-087: GET /api/whatsapp/qrcode empresa sem segredo recebe um gerado pelo servidor (>=32 bytes), reaproveitado num pedido seguinte @spec:AC-182 empresa sem segredo recebe um gerado pelo servidor (>=32 bytes), reaproveitado num pedido seguinte @spec:AC-182",
+      "method": "vitest-json"
+    },
+    "AC-183": {
+      "status": "pass",
+      "testName": "T-085: GET e POST /api/whatsapp/config o segredo do webhook nunca sai nas respostas, mesmo em erro @spec:AC-183 o segredo do webhook nunca sai nas respostas, mesmo em erro @spec:AC-183",
+      "method": "vitest-json"
+    },
+    "AC-184": {
+      "status": "pass",
+      "testName": "T-087: GET /api/whatsapp/qrcode instância já conectada: 200 { state: \"open\" }, sem QR code @spec:AC-184 instância já conectada: 200 { state: \"open\" }, sem QR code @spec:AC-184",
+      "method": "vitest-json"
+    },
+    "AC-185": {
+      "status": "pass",
+      "testName": "T-087: GET /api/whatsapp/qrcode falha ao registrar o webhook não esconde o QR, mas avisa @spec:AC-185 falha ao registrar o webhook não esconde o QR, mas avisa @spec:AC-185",
+      "method": "vitest-json"
+    },
+    "AC-186": {
+      "status": "pass",
+      "testName": "T-087: GET /api/whatsapp/qrcode falha ao criar a instância: 502, o webhook não é registrado e nenhum segredo fica gravado sem uso @spec:AC-186 falha ao criar a instância: 502, o webhook não é registrado e nenhum segredo fica gravado sem uso @spec:AC-186",
+      "method": "vitest-json"
+    }
+  },
+  "principles": {}
+}
