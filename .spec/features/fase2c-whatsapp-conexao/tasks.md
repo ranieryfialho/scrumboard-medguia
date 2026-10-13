@@ -14,7 +14,7 @@
 - Esforço: baixo
 - Notas: acrescenta `/instance/create`, `/webhook/set/:instancia`, `/instance/connect/:instancia` e `/instance/connectionState/:instancia` ao servidor existente (ASM-054), gravando cada chamada em ordem (inclusive o corpo do webhook) e permitindo comportamentos de falha por endpoint. Não pode quebrar `whatsapp-send.test.ts`.
 
-## T-083 — Validação da configuração e cliente Evolution que reporta falha do webhook [pendente]
+## T-083 — Validação da configuração e cliente Evolution que reporta falha do webhook [concluida]
 - Refs: AC-174, AC-177, AC-185, AC-186
 - Arquivos: src/domain/whatsapp/config.ts, src/lib/evolution-api.ts, test/domain/whatsapp-config.test.ts
 - Esforço: medio
