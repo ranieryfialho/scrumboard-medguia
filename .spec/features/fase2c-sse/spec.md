@@ -1,7 +1,7 @@
 # Spec: Fase 2c — Tempo real (SSE de card movido)
 
 > feature: fase2c-sse
-> status: rascunho
+> status: auditada
 
 ## Contexto
 

@@ -1,7 +1,7 @@
 {
   "feature": "fase2c-whatsapp-conversa",
-  "timestamp": "2026-10-13T15:06:38.479Z",
-  "gitRev": "5fd7c83",
+  "timestamp": "2026-10-13T19:00:47.371Z",
+  "gitRev": "2f6f187",
   "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
   "exitCode": 1,

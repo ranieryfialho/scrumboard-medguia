@@ -1,7 +1,7 @@
 # Spec: Fase 2c — WhatsApp de entrada (webhook + conexão)
 
 > feature: fase2c-whatsapp-entrada
-> status: rascunho
+> status: auditada
 
 ## Contexto
 
@@ -135,13 +135,13 @@ Como operador comercial, quero ser avisado em tempo real quando um lead da minha
 
 | ID | Suposição | Status | Resolução |
 |---|---|---|---|
-| ASM-033 | O segredo da empresa fica em `empresa_configuracoes` com `chave = 'evolution_webhook_secret'` e `valor` JSON string, mesma chave do legado. A comparação é em tempo constante. | aberta | — |
-| ASM-034 | O webhook não tem sessão: resolve a empresa pelo `empresa_id` da URL e roda dentro de `comTenant` (RLS ligada) usando a role `crm_app`, nunca uma role que ignora RLS. | aberta | — |
-| ASM-035 | A conexão só dispara nas etapas 2, 3 e 4, as únicas origens com transição permitida para Qualificando (5) no grafo semeado; a etapa 1 não tem cadência iniciada. | aberta | — |
-| ASM-036 | A conexão roda numa função SQL nova (`registrar_conexao_whatsapp`, migration `0008`) que trava o card, chama `mover_oportunidade`, grava `conexao_whatsapp`, cancela atividades pendentes e preenche `cadencia_encerrada_em` numa transação só; a decisão de etapa vem do banco, não de um SELECT prévio da rota. | aberta | — |
-| ASM-037 | Idempotência por índice único parcial em `(empresa_id, evolution_message_id)` onde o id não é nulo; mensagem sem `evolution_message_id` é gravada sempre. | aberta | — |
-| ASM-038 | O `mensagem.recebida` sai por `pg_notify` no mesmo canal `oportunidade`, com `tipo` distinguindo os eventos, e o barramento passa a repassar os dois tipos; só ids e o instante, nunca o texto nem o número. | aberta | — |
-| ASM-039 | Lead é casado pelos dígitos de `telefone_e164`; se houver mais de um lead com o mesmo telefone na empresa, vale o de oportunidade mais recente em cadência, senão o mais recente criado. | aberta | — |
+| ASM-033 | O segredo da empresa fica em `empresa_configuracoes` com `chave = 'evolution_webhook_secret'` e `valor` JSON string, mesma chave do legado. A comparação é em tempo constante. | confirmada | Confirmada pelo usuário em 2026-10-13, conforme implementado. |
+| ASM-034 | O webhook não tem sessão: resolve a empresa pelo `empresa_id` da URL e roda dentro de `comTenant` (RLS ligada) usando a role `crm_app`, nunca uma role que ignora RLS. | confirmada | Confirmada pelo usuário em 2026-10-13, conforme implementado. |
+| ASM-035 | A conexão só dispara nas etapas 2, 3 e 4, as únicas origens com transição permitida para Qualificando (5) no grafo semeado; a etapa 1 não tem cadência iniciada. | confirmada | Confirmada pelo usuário em 2026-10-13, conforme implementado. |
+| ASM-036 | A conexão roda numa função SQL nova (`registrar_conexao_whatsapp`, migration `0008`) que trava o card, chama `mover_oportunidade`, grava `conexao_whatsapp`, cancela atividades pendentes e preenche `cadencia_encerrada_em` numa transação só; a decisão de etapa vem do banco, não de um SELECT prévio da rota. | confirmada | Confirmada pelo usuário em 2026-10-13, conforme implementado. |
+| ASM-037 | Idempotência por índice único parcial em `(empresa_id, evolution_message_id)` onde o id não é nulo; mensagem sem `evolution_message_id` é gravada sempre. | confirmada | Confirmada pelo usuário em 2026-10-13, conforme implementado. |
+| ASM-038 | O `mensagem.recebida` sai por `pg_notify` no mesmo canal `oportunidade`, com `tipo` distinguindo os eventos, e o barramento passa a repassar os dois tipos; só ids e o instante, nunca o texto nem o número. | confirmada | Confirmada pelo usuário em 2026-10-13, conforme implementado. |
+| ASM-039 | Lead é casado pelos dígitos de `telefone_e164`; se houver mais de um lead com o mesmo telefone na empresa, vale o de oportunidade mais recente em cadência, senão o mais recente criado. | confirmada | Confirmada pelo usuário em 2026-10-13, conforme implementado. |
 
 ## Perguntas em aberto
 

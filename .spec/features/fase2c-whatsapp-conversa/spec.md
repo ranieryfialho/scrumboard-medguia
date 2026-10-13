@@ -1,7 +1,7 @@
 # Spec: Fase 2c — WhatsApp conversa (envio, histórico, não lidas e telefones do lead)
 
 > feature: fase2c-whatsapp-conversa
-> status: rascunho
+> status: auditada
 
 ## Contexto
 
@@ -237,14 +237,14 @@ Como operador comercial, quero cadastrar outros telefones do mesmo lead (recepç
 
 | ID | Suposição | Status | Resolução |
 |---|---|---|---|
-| ASM-040 | O nome da instância vem de `empresa_configuracoes` (`chave = 'evolution_instance_name'`, valor string, como no legado); URL e chave da Evolution vêm das variáveis `EVOLUTION_API_URL` e `EVOLUTION_API_KEY`. Nos testes a Evolution é um servidor HTTP falso local. | aberta | — |
-| ASM-041 | O envio chama a Evolution **fora** da transação do banco e só grava a linha `enviada` depois do aceite; se a Evolution aceitou e a gravação falha, a resposta é 500 (`ENVIADO_SEM_REGISTRO`) e a mensagem já foi entregue — risco aceito, sem desfazer. | aberta | — |
-| ASM-042 | As respostas mantêm os nomes do legado (`mensagens[].mensagem/direcao/created_at/numero/status`, `conversas[].numero/lastMessage/lastAt/count`, `{ success, messageId }` no envio) com campos novos só acrescentados (`leadId`, `mensagemId`), para a UI atual não quebrar. | aberta | — |
-| ASM-043 | O telefone principal continua em `leads.telefone_e164`; os extras ficam numa tabela nova `lead_telefones` (migration 0009, RLS por `empresa_id`, `numero` só dígitos, `rotulo` opcional, único por lead + número); nada é migrado do principal para a tabela nova. | aberta | — |
-| ASM-044 | O estado de leitura é uma coluna `lida_em` (nula = não lida) em `whatsapp_mensagens`, relevante só para `direcao = recebida`; a migration marca todas as recebidas já existentes como lidas (`lida_em = criado_em`). | aberta | — |
-| ASM-045 | "Conversa" é o lead quando a mensagem tem `lead_id`; sem lead, é o número normalizado com as duas grafias do nono dígito tratadas como o mesmo contato. | aberta | — |
-| ASM-046 | Normalização de número: só dígitos; 10 ou 11 dígitos recebem DDI 55; 12 a 15 dígitos ficam como estão; fora de 10–15 é inválido. O limite de 4096 caracteres vem do limite do WhatsApp para texto. | aberta | — |
-| ASM-047 | A busca de lead por telefone (webhook, envio por número avulso, histórico, não lidas) passa a considerar o principal **e** os extras, com a mesma tolerância ao nono dígito, num único ponto do repositório. | aberta | — |
+| ASM-040 | O nome da instância vem de `empresa_configuracoes` (`chave = 'evolution_instance_name'`, valor string, como no legado); URL e chave da Evolution vêm das variáveis `EVOLUTION_API_URL` e `EVOLUTION_API_KEY`. Nos testes a Evolution é um servidor HTTP falso local. | confirmada | Confirmada pelo usuário em 2026-10-13, conforme implementado. |
+| ASM-041 | O envio chama a Evolution **fora** da transação do banco e só grava a linha `enviada` depois do aceite; se a Evolution aceitou e a gravação falha, a resposta é 500 (`ENVIADO_SEM_REGISTRO`) e a mensagem já foi entregue — risco aceito, sem desfazer. | confirmada | Confirmada pelo usuário em 2026-10-13, conforme implementado. |
+| ASM-042 | As respostas mantêm os nomes do legado (`mensagens[].mensagem/direcao/created_at/numero/status`, `conversas[].numero/lastMessage/lastAt/count`, `{ success, messageId }` no envio) com campos novos só acrescentados (`leadId`, `mensagemId`), para a UI atual não quebrar. | confirmada | Confirmada pelo usuário em 2026-10-13, conforme implementado. |
+| ASM-043 | O telefone principal continua em `leads.telefone_e164`; os extras ficam numa tabela nova `lead_telefones` (migration 0009, RLS por `empresa_id`, `numero` só dígitos, `rotulo` opcional, único por lead + número); nada é migrado do principal para a tabela nova. | confirmada | Confirmada pelo usuário em 2026-10-13, conforme implementado. |
+| ASM-044 | O estado de leitura é uma coluna `lida_em` (nula = não lida) em `whatsapp_mensagens`, relevante só para `direcao = recebida`; a migration marca todas as recebidas já existentes como lidas (`lida_em = criado_em`). | confirmada | Confirmada pelo usuário em 2026-10-13, conforme implementado. |
+| ASM-045 | "Conversa" é o lead quando a mensagem tem `lead_id`; sem lead, é o número normalizado com as duas grafias do nono dígito tratadas como o mesmo contato. | confirmada | Confirmada pelo usuário em 2026-10-13, conforme implementado. |
+| ASM-046 | Normalização de número: só dígitos; 10 ou 11 dígitos recebem DDI 55; 12 a 15 dígitos ficam como estão; fora de 10–15 é inválido. O limite de 4096 caracteres vem do limite do WhatsApp para texto. | confirmada | Confirmada pelo usuário em 2026-10-13, conforme implementado. |
+| ASM-047 | A busca de lead por telefone (webhook, envio por número avulso, histórico, não lidas) passa a considerar o principal **e** os extras, com a mesma tolerância ao nono dígito, num único ponto do repositório. | confirmada | Confirmada pelo usuário em 2026-10-13, conforme implementado. |
 
 ## Perguntas em aberto
 
