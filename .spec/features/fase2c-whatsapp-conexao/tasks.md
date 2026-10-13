@@ -20,7 +20,7 @@
 - Esforço: medio
 - Notas: função pura que valida o corpo (objeto, valores texto, nome 1–64 `[A-Za-z0-9_-]`, ASM-052) e filtra as seis chaves permitidas (ASM-050). Em `evolution-api.ts`, `setWebhook` passa a devolver `true/false` conforme a Evolution aceitou (hoje engole a resposta) sem mudar `sendTextMessage`; `getInstanceStatus` e `createInstance` continuam compatíveis com `send`.
 
-## T-084 — Repositório da configuração e do segredo do webhook [pendente]
+## T-084 — Repositório da configuração e do segredo do webhook [concluida]
 - Refs: AC-168, AC-169, AC-170, AC-172, AC-173, AC-182
 - Arquivos: src/repositories/whatsapp-config.ts, test/repositories/whatsapp-config.test.ts
 - Esforço: alto
