@@ -40,6 +40,6 @@
 
 ## T-087 — Rota GET /api/whatsapp/qrcode (conectar e status) e fim do legado em Supabase [concluida]
 - Refs: US-051, AC-167, AC-175, AC-176, AC-178, AC-179, AC-180, AC-181, AC-182, AC-183, AC-184, AC-185, AC-186
-- Arquivos: src/app/api/whatsapp/qrcode/route.ts, src/lib/evolution-server.ts, test/api/whatsapp-qrcode.test.ts
+- Arquivos: src/app/api/whatsapp/qrcode/route.ts, test/api/whatsapp-qrcode.test.ts
 - Esforço: alto
-- Notas: `?action=status` igual ao status (qualquer papel); o fluxo completo exige MASTER/GERENTE/super admin (403), instância (409), cria instância (502 se falhar sem 409), grava o segredo só depois que a criação deu certo (AC-186), registra o webhook com `empresa_id` e `secret` (ASM-053) e devolve o QR com `webhookRegistrado`. Apaga `src/lib/evolution-server.ts` (último uso de Supabase nas rotas de WhatsApp). Depende de T-082, T-083 e T-084.
+- Notas: `?action=status` igual ao status (qualquer papel); o fluxo completo exige MASTER/GERENTE/super admin (403), instância (409), cria instância (502 se falhar sem 409), grava o segredo só depois que a criação deu certo (AC-186), registra o webhook com `empresa_id` e `secret` (ASM-053) e devolve o QR com `webhookRegistrado`. Apagou `src/lib/evolution-server.ts` (último uso de Supabase nas rotas de WhatsApp). Depende de T-082, T-083 e T-084.
