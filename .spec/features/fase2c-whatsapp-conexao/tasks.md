@@ -32,7 +32,7 @@
 - Esforço: alto
 - Notas: reescreve a rota legada. Sessão (401) → papel no POST (403, ASM-048) → corpo (400) → repositório (409). Resposta `{ empresaId, config }` e `{ success: true }` (nomes do legado). Depende de T-083 e T-084.
 
-## T-086 — Rota GET /api/whatsapp/status [pendente]
+## T-086 — Rota GET /api/whatsapp/status [concluida]
 - Refs: US-050, AC-167, AC-175, AC-176, AC-177, AC-183
 - Arquivos: src/app/api/whatsapp/status/route.ts, test/api/whatsapp-status.test.ts
 - Esforço: medio
