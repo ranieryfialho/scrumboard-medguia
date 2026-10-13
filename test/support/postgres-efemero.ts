@@ -36,6 +36,19 @@ export interface PostgresEfemero {
   parar(): void;
 }
 
+// Containers desta thread/processo ainda não parados: se o worker sair sem
+// o `afterAll` (timeout, erro no `beforeAll`), o hook de saída os remove.
+const containersAtivos = new Set<string>();
+let hookDeSaidaRegistrado = false;
+
+function registrarHookDeSaida() {
+  if (hookDeSaidaRegistrado) return;
+  hookDeSaidaRegistrado = true;
+  process.on('exit', () => {
+    for (const nome of containersAtivos) spawnSync('docker', ['rm', '-f', '-v', nome]);
+  });
+}
+
 function runDocker(args: string[]) {
   return spawnSync('docker', args, { encoding: 'utf8' });
 }
@@ -71,6 +84,8 @@ export async function subirPostgresEfemero(
     '-d',
     '--name',
     containerName,
+    '--label',
+    `crm-test-run=${process.env.CRM_TEST_RUN_ID ?? 'avulso'}`,
     '-p',
     '127.0.0.1::5432',
     '-e',
@@ -86,6 +101,8 @@ export async function subirPostgresEfemero(
   if (run.status !== 0) {
     throw new Error(`Falha ao subir container de Postgres efêmero: ${run.stderr}`);
   }
+  containersAtivos.add(containerName);
+  registrarHookDeSaida();
 
   function psqlComo(
     role: 'postgres' | 'crm_migrator' | 'crm_app',
@@ -118,6 +135,7 @@ export async function subirPostgresEfemero(
     // falhas espúrias de "database system is shutting down" em containers
     // concorrentes).
     runDocker(['rm', '-f', '-v', containerName]);
+    containersAtivos.delete(containerName);
   }
 
   const deadline = Date.now() + READY_TIMEOUT_MS;
