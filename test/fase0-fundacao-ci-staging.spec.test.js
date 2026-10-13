@@ -310,6 +310,7 @@ describe('T-005 — integração com Postgres real (crm_prod/crm_staging, crm_ap
 
     const run = runDocker([
       'run', '-d', '--name', containerName,
+      '--label', `crm-test-run=${process.env.CRM_TEST_RUN_ID ?? 'avulso'}`,
       '-e', `POSTGRES_PASSWORD=${ADMIN_PASSWORD}`,
       '-e', `CRM_APP_PASSWORD=${CRM_APP_PASSWORD}`,
       '-e', `CRM_MIGRATOR_PASSWORD=${CRM_MIGRATOR_PASSWORD}`,
@@ -539,6 +540,7 @@ describe('T-007 — integração do backup-crm.sh contra um Postgres real', () =
 
     const run = runDocker([
       'run', '-d', '--name', containerName,
+      '--label', `crm-test-run=${process.env.CRM_TEST_RUN_ID ?? 'avulso'}`,
       '-e', `POSTGRES_PASSWORD=${ADMIN_PASSWORD}`,
       '-e', `CRM_APP_PASSWORD=${CRM_APP_PASSWORD}`,
       '-e', `CRM_MIGRATOR_PASSWORD=${CRM_MIGRATOR_PASSWORD}`,
@@ -721,6 +723,7 @@ describe('T-008 — integração do restore-crm.sh contra um Postgres real', () 
 
     const run = runDocker([
       'run', '-d', '--name', containerName,
+      '--label', `crm-test-run=${process.env.CRM_TEST_RUN_ID ?? 'avulso'}`,
       '-e', `POSTGRES_PASSWORD=${ADMIN_PASSWORD}`,
       '-e', `CRM_APP_PASSWORD=${CRM_APP_PASSWORD}`,
       '-e', `CRM_MIGRATOR_PASSWORD=${CRM_MIGRATOR_PASSWORD}`,

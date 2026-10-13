@@ -28,5 +28,7 @@ export default defineConfig({
     // shutting down") — falso negativo. Arquivos em série evita isso, tanto
     // localmente quanto no runner do CI.
     fileParallelism: false,
+    // Varre containers Postgres órfãos de rodadas que morreram (ver o arquivo).
+    globalSetup: ['./test/support/global-setup.ts'],
   },
 });
