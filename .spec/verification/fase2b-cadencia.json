@@ -1,10 +1,10 @@
 {
   "feature": "fase2b-cadencia",
-  "timestamp": "2026-10-14T19:56:34.612Z",
-  "gitRev": "078e6c8",
-  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
+  "timestamp": "2026-10-14T20:18:58.146Z",
+  "gitRev": "4e6dc08",
+  "command": "echo reaproveitado: suite completa 2026-10-14 17:11-17:17 + 3 arquivos instaveis reexecutados isolados (raw.json)",
   "reporter": "vitest-json",
-  "exitCode": 1,
+  "exitCode": 2,
   "testsParsed": 583,
   "results": {
     "AC-187": {
@@ -34,7 +34,7 @@
     },
     "AC-192": {
       "status": "pass",
-      "testName": "T-090: repositório de cadência AC-192: fila \"Minhas tarefas\" lista só o turno liberado mostra só os toques pendentes do turno vigente, do responsável e do tenant; vazia fora de turno, dia não útil @spec:AC-192 mostra só os toques pendentes do turno vigente, do responsável e do tenant; vazia fora de turno, dia não útil @spec:AC-192",
+      "testName": "T-092: rota GET /api/atividades AC-192: fila \"Minhas tarefas\" lista só o turno liberado ATENDENTE vê só os toques pendentes do próprio responsável, no turno vigente @spec:AC-192 ATENDENTE vê só os toques pendentes do próprio responsável, no turno vigente @spec:AC-192",
       "method": "vitest-json"
     },
     "AC-193": {

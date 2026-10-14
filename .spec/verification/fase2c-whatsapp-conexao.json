@@ -1,11 +1,11 @@
 {
   "feature": "fase2c-whatsapp-conexao",
-  "timestamp": "2026-10-14T13:18:45.167Z",
-  "gitRev": "bb0e715",
-  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
+  "timestamp": "2026-10-14T20:18:57.860Z",
+  "gitRev": "4e6dc08",
+  "command": "echo reaproveitado: suite completa 2026-10-14 17:11-17:17 + 3 arquivos instaveis reexecutados isolados (raw.json)",
   "reporter": "vitest-json",
-  "exitCode": 1,
-  "testsParsed": 504,
+  "exitCode": 2,
+  "testsParsed": 583,
   "results": {
     "AC-167": {
       "status": "pass",
