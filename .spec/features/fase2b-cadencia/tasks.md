@@ -30,7 +30,7 @@
 - Esforço: xalto
 - Notas: funções `iniciar_cadencia`, `concluir_atividade_cadencia` e `virar_dia_cadencia`, todas `GRANT EXECUTE` a `crm_app`, chamando `mover_oportunidade` (ator sistema na virada e no esgotamento) para não duplicar a escrita de etapa. Concluir trava o card (`FOR UPDATE`), valida versão, ordem/turno e resultado `pendente`; `conectou` cancela pendentes e preenche `cadencia_encerrada_em` na mesma transação. Gera eventos `cadencia_iniciada`, `atividade_concluida`, `cadencia_dia_avancado`, `cadencia_esgotada` (ASM-060). Prova com Postgres efêmero (`test/support/postgres-efemero.ts`), incluindo dois tenants. Depende de T-088 só pela matriz (replicada em SQL, com teste de paridade).
 
-## T-090 — Repositório de cadência [pendente]
+## T-090 — Repositório de cadência [concluida]
 - Refs: AC-190, AC-192, AC-193, AC-195, AC-203
 - Arquivos: src/repositories/cadencia.ts, test/repositories/cadencia.test.ts
 - Esforço: alto
