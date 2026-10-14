@@ -1,0 +1,97 @@
+{
+  "feature": "fase2b-cadencia",
+  "timestamp": "2026-10-14T20:18:58.146Z",
+  "gitRev": "4e6dc08",
+  "command": "echo reaproveitado: suite completa 2026-10-14 17:11-17:17 + 3 arquivos instaveis reexecutados isolados (raw.json)",
+  "reporter": "vitest-json",
+  "exitCode": 2,
+  "testsParsed": 583,
+  "results": {
+    "AC-187": {
+      "status": "pass",
+      "testName": "T-088: blocoDe AC-187: matriz canônica de 18 toques dia 1 / turno 'manha': 3 toques, sequências contíguas a partir da 1ª @spec:AC-187 dia 1 / turno 'manha': 3 toques, sequências contíguas a partir da 1ª @spec:AC-187",
+      "method": "vitest-json"
+    },
+    "AC-188": {
+      "status": "pass",
+      "testName": "T-088: turnoVigente AC-188: turno vigente por horário de São Paulo 2026-06-10T08:00:00-03:00 @spec:AC-188 2026-06-10T08:00:00-03:00 @spec:AC-188",
+      "method": "vitest-json"
+    },
+    "AC-189": {
+      "status": "pass",
+      "testName": "T-088: podeLiberar AC-189: fim de semana e feriado nacional pausam sábado: não libera @spec:AC-189 sábado: não libera @spec:AC-189",
+      "method": "vitest-json"
+    },
+    "AC-190": {
+      "status": "pass",
+      "testName": "T-091: rota POST /api/oportunidades/:id/cadencia/iniciar AC-190: iniciar gera só o primeiro bloco card vai para \"1º dia de contato\" com exatamente 3 toques pendentes (1-3); resposta traz card e toques @spec:AC-190 card vai para \"1º dia de contato\" com exatamente 3 toques pendentes (1-3); resposta traz card e toques @spec:AC-190",
+      "method": "vitest-json"
+    },
+    "AC-191": {
+      "status": "pass",
+      "testName": "T-091: rota POST /api/oportunidades/:id/cadencia/iniciar AC-191: iniciar respeita versão, tenant e sessão version desatualizada: 409 CONFLITO_DE_VERSAO e nenhum toque criado @spec:AC-191 version desatualizada: 409 CONFLITO_DE_VERSAO e nenhum toque criado @spec:AC-191",
+      "method": "vitest-json"
+    },
+    "AC-192": {
+      "status": "pass",
+      "testName": "T-092: rota GET /api/atividades AC-192: fila \"Minhas tarefas\" lista só o turno liberado ATENDENTE vê só os toques pendentes do próprio responsável, no turno vigente @spec:AC-192 ATENDENTE vê só os toques pendentes do próprio responsável, no turno vigente @spec:AC-192",
+      "method": "vitest-json"
+    },
+    "AC-193": {
+      "status": "pass",
+      "testName": "T-092: rota POST /api/atividades/:id/concluir AC-193: concluir com sem_resposta registra o fato toque fica sem_resposta, com realizada_em e realizada_por preenchidos @spec:AC-193 toque fica sem_resposta, com realizada_em e realizada_por preenchidos @spec:AC-193",
+      "method": "vitest-json"
+    },
+    "AC-194": {
+      "status": "pass",
+      "testName": "T-092: rota POST /api/atividades/:id/concluir AC-194: terceiro sem_resposta do bloco libera o seguinte ao concluir o terceiro toque sem_resposta da manhã, os 3 toques da tarde (4-6) nascem pendentes @spec:AC-194 ao concluir o terceiro toque sem_resposta da manhã, os 3 toques da tarde (4-6) nascem pendentes @spec:AC-194",
+      "method": "vitest-json"
+    },
+    "AC-195": {
+      "status": "pass",
+      "testName": "T-092: rota POST /api/atividades/:id/concluir AC-195: conectou interrompe a cadência na hora cancela as demais pendentes, encerra a cadência e move para Qualificando, na mesma transação @spec:AC-195 cancela as demais pendentes, encerra a cadência e move para Qualificando, na mesma transação @spec:AC-195",
+      "method": "vitest-json"
+    },
+    "AC-196": {
+      "status": "pass",
+      "testName": "T-092: rota POST /api/atividades/:id/concluir AC-196: toque fora de ordem ou fora do turno é recusado toque da tarde antes das 13h: 422 TURNO_NAO_LIBERADO e continua pendente @spec:AC-196 toque da tarde antes das 13h: 422 TURNO_NAO_LIBERADO e continua pendente @spec:AC-196",
+      "method": "vitest-json"
+    },
+    "AC-197": {
+      "status": "pass",
+      "testName": "T-092: rota POST /api/atividades/:id/concluir AC-197: toque já concluído, cancelado ou de cadência encerrada não conclui de novo concluir de novo um toque que já não está pendente: 422 CADENCIA_ENCERRADA @spec:AC-197 concluir de novo um toque que já não está pendente: 422 CADENCIA_ENCERRADA @spec:AC-197",
+      "method": "vitest-json"
+    },
+    "AC-198": {
+      "status": "pass",
+      "testName": "T-092: rota POST /api/atividades/:id/concluir AC-198: concluir exige sessão, tenant e versão version desatualizada: 409 CONFLITO_DE_VERSAO e o toque não muda @spec:AC-198 version desatualizada: 409 CONFLITO_DE_VERSAO e o toque não muda @spec:AC-198",
+      "method": "vitest-json"
+    },
+    "AC-199": {
+      "status": "pass",
+      "testName": "T-093: rota POST /api/cron/cadencia AC-199: virada de dia avança só quem concluiu o dia inteiro card com os dois blocos do dia concluídos avança; card com toque pendente fica atrasado @spec:AC-199 card com os dois blocos do dia concluídos avança; card com toque pendente fica atrasado @spec:AC-199",
+      "method": "vitest-json"
+    },
+    "AC-200": {
+      "status": "pass",
+      "testName": "T-093: rota POST /api/cron/cadencia AC-200: fim de semana e feriado não viram o dia sábado: 0 itens processados, nenhum card muda @spec:AC-200 sábado: 0 itens processados, nenhum card muda @spec:AC-200",
+      "method": "vitest-json"
+    },
+    "AC-201": {
+      "status": "pass",
+      "testName": "T-093: rota POST /api/cron/cadencia AC-201: esgotar os 18 toques manda para Perdido depois de duas viradas de dia pelo job, o toque 18 (breakup) concluído sem_resposta encerra a cadência em Perdido @spec:AC-201 depois de duas viradas de dia pelo job, o toque 18 (breakup) concluído sem_resposta encerra a cadência em Perdido @spec:AC-201",
+      "method": "vitest-json"
+    },
+    "AC-202": {
+      "status": "pass",
+      "testName": "T-093: rota POST /api/cron/cadencia AC-202: job idempotente, protegido por segredo e auditável sem o segredo (ausente ou errado): 401, nada é tocado @spec:AC-202 sem o segredo (ausente ou errado): 401, nada é tocado @spec:AC-202",
+      "method": "vitest-json"
+    },
+    "AC-203": {
+      "status": "pass",
+      "testName": "T-093: rota POST /api/cron/cadencia AC-203: cada empresa só vê e vira os próprios cards uma única chamada avança os cards prontos das duas empresas, sem misturar toque ou card entre tenants @spec:AC-203 uma única chamada avança os cards prontos das duas empresas, sem misturar toque ou card entre tenants @spec:AC-203",
+      "method": "vitest-json"
+    }
+  },
+  "principles": {}
+}

@@ -1,0 +1,52 @@
+// T-092 (fase2b-cadencia, US-053/US-054): fila "Minhas tarefas" — só os
+// toques pendentes do turno vigente (AC-192). Mesmo padrão de sessão/tenant
+// das demais rotas da feature: 401 sem sessão, `empresaId` resolvido
+// exclusivamente pela sessão (nunca da querystring). ASM-061: ATENDENTE só
+// vê os cards dos quais é responsável; MASTER, GERENTE e super admin veem o
+// tenant inteiro (mesmo bypass de src/domain/pipeline/papel.ts e
+// src/app/api/whatsapp/config/route.ts). O filtro de turno/dia útil em si é
+// todo do repositório (`listarFilaDoTurno`, T-090) — esta rota só decide o
+// `responsavelId` e lê o relógio real (ASM-062: os testes injetam o relógio
+// via `vi.setSystemTime`, nunca dependem de `Date.now()` sem controle).
+import { NextResponse, type NextRequest } from 'next/server';
+
+import { getDb } from '../../../db/client';
+import { getAuth } from '../../../lib/auth/instancia';
+import { ErroSessaoInvalida, resolverContextoTenant, type ContextoTenant } from '../../../lib/auth/tenant';
+import { listarFilaDoTurno } from '../../../repositories/cadencia';
+
+export const dynamic = 'force-dynamic';
+
+async function resolverContexto(request: NextRequest): Promise<ContextoTenant | null> {
+  const sessao = await getAuth().api.getSession({ headers: request.headers });
+  if (!sessao) return null;
+
+  try {
+    return await resolverContextoTenant(getDb(), { token: sessao.session.token });
+  } catch (erro) {
+    if (erro instanceof ErroSessaoInvalida) return null;
+    throw erro;
+  }
+}
+
+function semSessao() {
+  return NextResponse.json({ codigo: 'NAO_AUTENTICADO' }, { status: 401 });
+}
+
+/** ASM-061: MASTER, GERENTE e super admin veem o tenant inteiro; ATENDENTE só os próprios cards. */
+function podeVerTodoTenant(contexto: ContextoTenant): boolean {
+  return contexto.isSuperAdmin || contexto.papel === 'MASTER' || contexto.papel === 'GERENTE';
+}
+
+/** AC-192: lista os toques pendentes do turno vigente, dos cards do responsável (ou do tenant inteiro, ASM-061). */
+export async function GET(request: NextRequest) {
+  const contexto = await resolverContexto(request);
+  if (!contexto) return semSessao();
+
+  const itens = await listarFilaDoTurno(getDb(), contexto, {
+    responsavelId: podeVerTodoTenant(contexto) ? undefined : contexto.usuarioId,
+    agora: new Date(),
+  });
+
+  return NextResponse.json({ itens });
+}

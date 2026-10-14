@@ -18,6 +18,17 @@ function readPositiveIntEnv(name: string, fallback: number): number {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
 }
 
+// T-093 (fase2b-cadencia, AC-202): segredo que protege a rota interna do
+// job diário de virada (`POST /api/cron/cadencia`, ASM-058). Este, sim, é
+// credencial — por isso não tem default: sem `CRON_SEGREDO` configurada, a
+// rota deve falhar fechada (nenhuma chamada autoriza por acidente), nunca
+// aceitar silenciosamente.
+export function getCronSegredo(): string {
+  const valor = process.env.CRON_SEGREDO;
+  if (!valor) throw new Error('CRON_SEGREDO não definida — necessária para a rota interna do job diário de cadência.');
+  return valor;
+}
+
 export function getHealthEnvConfig(): HealthEnvConfig {
   const backupDir = process.env.BACKUP_DIR || '/root/backups/crm';
   return {

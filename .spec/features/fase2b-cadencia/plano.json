@@ -1,0 +1,135 @@
+{
+  "runId": "scrumboard-medguia-fase2b-cadencia-mv8dkxhp",
+  "feature": "fase2b-cadencia",
+  "agent": "claude",
+  "modo": "sequencial",
+  "paralelizar": null,
+  "modeloForcado": null,
+  "esforcoForcado": null,
+  "geradoEm": "2026-10-14 17:20",
+  "branchTrabalho": "spec/fase2b-cadencia",
+  "baseDir": ".spec/features/fase2b-cadencia",
+  "specDir": ".spec",
+  "repoName": "scrumboard-medguia",
+  "logsDir": "../onp-worktrees/scrumboard-medguia-fase2b-cadencia-logs",
+  "ondas": [],
+  "faixas": [],
+  "sequenciais": [
+    {
+      "id": "T-088",
+      "titulo": "Domínio puro: matriz, turnos e feriados",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/domain/cadencia/matriz.ts",
+        "src/domain/cadencia/turno.ts",
+        "src/domain/cadencia/feriados.ts",
+        "test/domain/cadencia.test.ts"
+      ],
+      "refs": [
+        "US-052",
+        "AC-187",
+        "AC-188",
+        "AC-189"
+      ]
+    },
+    {
+      "id": "T-089",
+      "titulo": "Migration 0011: funções SQL da cadência",
+      "modelo": "claude-sonnet-5",
+      "esforco": "xhigh",
+      "arquivos": [
+        "drizzle/0011_cadencia_funcoes.sql",
+        "test/db/cadencia-funcoes.test.ts"
+      ],
+      "refs": [
+        "AC-190",
+        "AC-193",
+        "AC-194",
+        "AC-195",
+        "AC-196",
+        "AC-197",
+        "AC-199",
+        "AC-200",
+        "AC-201",
+        "AC-203"
+      ]
+    },
+    {
+      "id": "T-090",
+      "titulo": "Repositório de cadência",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "src/repositories/cadencia.ts",
+        "test/repositories/cadencia.test.ts"
+      ],
+      "refs": [
+        "AC-190",
+        "AC-192",
+        "AC-193",
+        "AC-195",
+        "AC-203"
+      ]
+    },
+    {
+      "id": "T-091",
+      "titulo": "Rota POST /api/oportunidades/:id/cadencia/iniciar",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/app/api/oportunidades/[id]/cadencia/iniciar/route.ts",
+        "test/api/cadencia-iniciar.test.ts"
+      ],
+      "refs": [
+        "US-053",
+        "AC-190",
+        "AC-191"
+      ]
+    },
+    {
+      "id": "T-092",
+      "titulo": "Rotas GET /api/atividades e POST /api/atividades/:id/concluir",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "src/app/api/atividades/route.ts",
+        "src/app/api/atividades/[id]/concluir/route.ts",
+        "test/api/atividades.test.ts",
+        "test/api/atividades-concluir.test.ts"
+      ],
+      "refs": [
+        "US-053",
+        "US-054",
+        "AC-192",
+        "AC-193",
+        "AC-194",
+        "AC-195",
+        "AC-196",
+        "AC-197",
+        "AC-198"
+      ]
+    },
+    {
+      "id": "T-093",
+      "titulo": "Job diário: rota interna de virada de dia",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "src/app/api/cron/cadencia/route.ts",
+        "src/lib/env.ts",
+        "test/api/cron-cadencia.test.ts"
+      ],
+      "refs": [
+        "US-055",
+        "AC-199",
+        "AC-200",
+        "AC-201",
+        "AC-202",
+        "AC-203"
+      ]
+    }
+  ],
+  "concluidas": [],
+  "avisos": []
+}
