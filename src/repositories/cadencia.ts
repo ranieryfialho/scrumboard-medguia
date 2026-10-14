@@ -82,9 +82,13 @@ const ERRCODE_REGRA_DE_CADENCIA = 'P0001';
 function erroPostgres(erro: unknown): { code?: string; message?: string } {
   if (!erro || typeof erro !== 'object') return {};
   const comCodigo = erro as { code?: string; message?: string; cause?: { code?: string; message?: string } };
+  // O Drizzle (node-postgres) embrulha o erro original do `pg` num
+  // `DrizzleQueryError` cuja própria `.message` é sempre "Failed query: ..."
+  // (nunca o texto do `RAISE EXCEPTION`) — por isso a causa tem prioridade
+  // aqui; só cai pro erro externo se não houver `cause` nenhuma.
   return {
-    code: comCodigo.code ?? comCodigo.cause?.code,
-    message: comCodigo.message ?? comCodigo.cause?.message,
+    code: comCodigo.cause?.code ?? comCodigo.code,
+    message: comCodigo.cause?.message ?? comCodigo.message,
   };
 }
 
