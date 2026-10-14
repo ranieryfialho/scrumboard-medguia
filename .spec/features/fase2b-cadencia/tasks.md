@@ -48,7 +48,7 @@
 - Esforço: alto
 - Notas: erros de domínio com o envelope do TDD §4.6 (`TURNO_NAO_LIBERADO`, `BLOCO_ANTERIOR_PENDENTE`, `CADENCIA_ENCERRADA`, `CONFLITO_DE_VERSAO`). Papel conforme ASM-061. Depende de T-090. Pode rodar em paralelo com T-091 (arquivos disjuntos).
 
-## T-093 — Job diário: rota interna de virada de dia [pendente]
+## T-093 — Job diário: rota interna de virada de dia [concluida]
 - Refs: US-055, AC-199, AC-200, AC-201, AC-202, AC-203
 - Arquivos: src/app/api/cron/cadencia/route.ts, src/lib/env.ts, test/api/cron-cadencia.test.ts
 - Esforço: alto
