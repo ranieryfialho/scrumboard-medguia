@@ -18,7 +18,7 @@
     (atalho: `onp-spec tarefa <feature> <T-xxx> <status>`)
 -->
 
-## T-088 — Domínio puro: matriz, turnos e feriados [pendente]
+## T-088 — Domínio puro: matriz, turnos e feriados [concluida]
 - Refs: US-052, AC-187, AC-188, AC-189
 - Arquivos: src/domain/cadencia/matriz.ts, src/domain/cadencia/turno.ts, src/domain/cadencia/feriados.ts, test/domain/cadencia.test.ts
 - Esforço: medio
