@@ -24,7 +24,7 @@
 - Esforço: medio
 - Notas: módulo sem I/O e sem `Date.now()` (relógio injetado, ASM-062). `blocoDe(dia, turno)` devolve 3 toques com sequência 1–18, canal/tipo e `breakup` no 18. `turnoVigente(instante)` em `America/Sao_Paulo` (8–12h manhã, 13–18h tarde, resto nulo). `podeLiberar(data)` falso em sábado, domingo e feriado da lista fixa 2026–2027 (ASM-057), usando a data local, não UTC.
 
-## T-089 — Migration 0011: funções SQL da cadência [pendente]
+## T-089 — Migration 0011: funções SQL da cadência [concluida]
 - Refs: AC-190, AC-193, AC-194, AC-195, AC-196, AC-197, AC-199, AC-200, AC-201, AC-203
 - Arquivos: drizzle/0011_cadencia_funcoes.sql, test/db/cadencia-funcoes.test.ts
 - Esforço: xalto
