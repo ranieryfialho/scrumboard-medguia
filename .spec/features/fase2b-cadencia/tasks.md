@@ -42,7 +42,7 @@
 - Esforço: medio
 - Notas: mesmo padrão de sessão/tenant da rota de transição (401 → 404 → 409). Corpo `{ version }`. Depende de T-090.
 
-## T-092 — Rotas GET /api/atividades e POST /api/atividades/:id/concluir [pendente]
+## T-092 — Rotas GET /api/atividades e POST /api/atividades/:id/concluir [concluida]
 - Refs: US-053, US-054, AC-192, AC-193, AC-194, AC-195, AC-196, AC-197, AC-198
 - Arquivos: src/app/api/atividades/route.ts, src/app/api/atividades/[id]/concluir/route.ts, test/api/atividades.test.ts, test/api/atividades-concluir.test.ts
 - Esforço: alto
