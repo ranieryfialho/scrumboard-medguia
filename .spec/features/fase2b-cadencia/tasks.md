@@ -36,7 +36,7 @@
 - Esforço: alto
 - Notas: `iniciarCadencia`, `listarFilaDoTurno`, `concluirAtividade`, `virarDiaDeTodasAsEmpresas`, sempre via `comTenant` (RLS) — a virada percorre as empresas ativas, cada uma na própria transação. Fila filtra por responsável, turno vigente, dia útil e manhã concluída (AC-192). Depende de T-088 e T-089.
 
-## T-091 — Rota POST /api/oportunidades/:id/cadencia/iniciar [pendente]
+## T-091 — Rota POST /api/oportunidades/:id/cadencia/iniciar [concluida]
 - Refs: US-053, AC-190, AC-191
 - Arquivos: src/app/api/oportunidades/[id]/cadencia/iniciar/route.ts, test/api/cadencia-iniciar.test.ts
 - Esforço: medio
