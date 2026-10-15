@@ -37,7 +37,7 @@
 - Esforço: alto
 - Notas: depende de T-097 (o item é renderizado pela lista). Envia a `version` do card; mapeia 409/422 para mensagens em português; desabilita os botões durante o envio.
 
-## T-099 — Botão "Iniciar cadência" no card e no detalhe [pendente]
+## T-099 — Botão "Iniciar cadência" no card e no detalhe [concluida]
 - Refs: AC-214, AC-215, AC-216
 - Arquivos: src/components/pipeline/card-oportunidade.tsx, src/app/pipeline/[id]/page.tsx, src/components/pipeline/botao-iniciar-cadencia.tsx, test/components/pipeline/iniciar-cadencia.test.tsx
 - Esforço: medio
