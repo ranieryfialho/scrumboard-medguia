@@ -56,6 +56,7 @@ export function BoardKanban() {
   const [mensagem, setMensagem] = useState<string | null>(null);
   const [cardAtivo, setCardAtivo] = useState<CardBoard | null>(null);
   const [dadoFaltante, setDadoFaltante] = useState<DadoFaltantePendente | null>(null);
+  const [oportunidadesAtrasadas, setOportunidadesAtrasadas] = useState<Set<string>>(new Set());
 
   const carregarBoard = useCallback(async () => {
     setErroCarga(null);
@@ -75,6 +76,27 @@ export function BoardKanban() {
   useEffect(() => {
     carregarBoard();
   }, [carregarBoard]);
+
+  // AC-220: cruza o board com `?atrasados=1` (T-095) pra saber quais cards
+  // mostram o selo "Atrasado" — mesma rota que a fila (T-097), só que aqui
+  // só importa o conjunto de `oportunidadeId` com `atrasado: true`.
+  const carregarAtrasados = useCallback(async () => {
+    try {
+      const resposta = await fetch("/api/atividades?atrasados=1");
+      if (!resposta.ok) return;
+      const corpo = await resposta.json();
+      const itensFila = (corpo.itens ?? []) as { oportunidade: { id: string }; atrasado: boolean }[];
+      setOportunidadesAtrasadas(
+        new Set(itensFila.filter((item) => item.atrasado).map((item) => item.oportunidade.id))
+      );
+    } catch {
+      // Sem conectividade: mantém o selo como estava até a próxima tentativa.
+    }
+  }, []);
+
+  useEffect(() => {
+    carregarAtrasados();
+  }, [carregarAtrasados]);
 
   // T-065 (fase2c-sse, US-037): ref com o estado atual pra checar, no
   // momento em que o evento chega, se o card aparece no board — sem recriar
@@ -113,15 +135,27 @@ export function BoardKanban() {
     (evento: EventoStreamCliente) => {
       if (evento.tipo === "stream.reconectado") {
         void carregarBoard();
+        void carregarAtrasados();
+        return;
+      }
+      // AC-220: o selo some sem recarregar a página — qualquer alteração na
+      // fila (concluir o toque, por exemplo) refaz só o conjunto de atrasados.
+      if (evento.tipo === "cadencia.fila_alterada") {
+        void carregarAtrasados();
         return;
       }
       if (evento.tipo !== "oportunidade.movida") return;
       void aplicarEventoMovido(evento);
     },
-    [carregarBoard, aplicarEventoMovido]
+    [carregarBoard, carregarAtrasados, aplicarEventoMovido]
   );
 
-  useStreamOportunidades({ aoReceberEvento: aoReceberEventoStream, aoPolling: carregarBoard });
+  const aoPolling = useCallback(() => {
+    void carregarBoard();
+    void carregarAtrasados();
+  }, [carregarBoard, carregarAtrasados]);
+
+  useStreamOportunidades({ aoReceberEvento: aoReceberEventoStream, aoPolling });
 
   useEffect(() => {
     if (!mensagem) return;
@@ -221,6 +255,7 @@ export function BoardKanban() {
               cards={itens.filter((item) => item.etapaId === etapa.id)}
               podeReceberDrop={cardAtivo ? (alcancaveisDoAtivo?.has(etapa.id) ?? false) : true}
               arrastando={cardAtivo !== null}
+              oportunidadesAtrasadas={oportunidadesAtrasadas}
             />
           ))}
         </div>
