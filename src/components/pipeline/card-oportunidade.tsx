@@ -1,10 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import { useDraggable } from "@dnd-kit/core";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 
 import { Card, CardContent } from "@/components/ui/card";
+import { BotaoIniciarCadencia } from "./botao-iniciar-cadencia";
 
 export interface CardBoard {
   id: string;
@@ -35,6 +37,26 @@ export function CardOportunidade({ oportunidade, isOverlay }: CardOportunidadePr
     data: { etapaId: oportunidade.etapaId, version: oportunidade.version },
     disabled: isOverlay,
   });
+
+  const [dadosCadencia, setDadosCadencia] = useState<{ etapaId: number; version: number } | null>(null);
+  const [cadenciaIniciada, setCadenciaIniciada] = useState(false);
+  const [erroCadencia, setErroCadencia] = useState<string | null>(null);
+
+  // AC-216: em erro, recarrega o card (etapa/version atuais) antes de deixar
+  // o operador tentar de novo — nunca reusa a version que já se provou velha.
+  const recarregarCard = async () => {
+    try {
+      const resposta = await fetch(`/api/oportunidades/${oportunidade.id}`);
+      if (!resposta.ok) return;
+      const corpo = await resposta.json();
+      setDadosCadencia({ etapaId: corpo.etapaId, version: corpo.version });
+    } catch {
+      // Sem conectividade: mantém os dados locais, a mensagem de erro já foi mostrada.
+    }
+  };
+
+  const etapaId = dadosCadencia?.etapaId ?? oportunidade.etapaId;
+  const version = dadosCadencia?.version ?? oportunidade.version;
 
   const valorFormatado = formatarValor(oportunidade.valor);
   const style = transform
@@ -68,6 +90,32 @@ export function CardOportunidade({ oportunidade, isOverlay }: CardOportunidadePr
           <span>{oportunidade.responsavelNome ?? "Sem responsável"}</span>
           {valorFormatado && <span className="font-semibold text-emerald-700">{valorFormatado}</span>}
         </div>
+
+        {!isOverlay && (
+          <div onPointerDown={(evento) => evento.stopPropagation()}>
+            <BotaoIniciarCadencia
+              oportunidadeId={oportunidade.id}
+              etapaId={etapaId}
+              version={version}
+              onIniciado={(resultado) => {
+                setDadosCadencia(resultado);
+                setCadenciaIniciada(true);
+                setErroCadencia(null);
+              }}
+              onErro={(mensagem) => {
+                setErroCadencia(mensagem);
+                void recarregarCard();
+              }}
+            />
+          </div>
+        )}
+
+        {cadenciaIniciada && (
+          <p className="text-xs text-emerald-700">
+            Cadência iniciada — os 3 primeiros toques estão em Minhas tarefas.
+          </p>
+        )}
+        {erroCadencia && <p className="text-xs text-rose-600">{erroCadencia}</p>}
       </CardContent>
     </Card>
   );

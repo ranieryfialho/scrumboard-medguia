@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { BotaoIniciarCadencia } from "@/components/pipeline/botao-iniciar-cadencia";
 
 interface DetalheOportunidade {
   id: string;
@@ -35,6 +36,8 @@ export default function DetalheOportunidadePage({ params }: { params: Promise<{ 
   const [dados, setDados] = useState<DetalheOportunidade | null>(null);
   const [naoEncontrado, setNaoEncontrado] = useState(false);
   const [carregando, setCarregando] = useState(true);
+  const [cadenciaIniciada, setCadenciaIniciada] = useState(false);
+  const [erroCadencia, setErroCadencia] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelado = false;
@@ -54,6 +57,22 @@ export default function DetalheOportunidadePage({ params }: { params: Promise<{ 
       cancelado = true;
     };
   }, [id]);
+
+  // AC-216: em erro, recarrega o card (etapa/version atuais) antes de deixar
+  // o operador tentar de novo.
+  const recarregarCard = async () => {
+    try {
+      const resposta = await fetch(`/api/oportunidades/${id}`);
+      if (resposta.status === 404) {
+        setNaoEncontrado(true);
+        return;
+      }
+      if (!resposta.ok) return;
+      setDados(await resposta.json());
+    } catch {
+      // Sem conectividade: mantém os dados locais, a mensagem de erro já foi mostrada.
+    }
+  };
 
   return (
     <main className="p-4 max-w-lg mx-auto">
@@ -96,6 +115,27 @@ export default function DetalheOportunidadePage({ params }: { params: Promise<{ 
               <span className="text-slate-500">Próxima ação: </span>
               {formatarData(dados.proximaAcaoEm) ?? "—"}
             </p>
+
+            <BotaoIniciarCadencia
+              oportunidadeId={dados.id}
+              etapaId={dados.etapaId}
+              version={dados.version}
+              onIniciado={(resultado) => {
+                setDados({ ...dados, etapaId: resultado.etapaId, version: resultado.version });
+                setCadenciaIniciada(true);
+                setErroCadencia(null);
+              }}
+              onErro={(mensagem) => {
+                setErroCadencia(mensagem);
+                void recarregarCard();
+              }}
+            />
+            {cadenciaIniciada && (
+              <p className="text-sm text-emerald-700">
+                Cadência iniciada — os 3 primeiros toques estão em Minhas tarefas.
+              </p>
+            )}
+            {erroCadencia && <p className="text-sm text-rose-600">{erroCadencia}</p>}
           </CardContent>
         </Card>
       )}
