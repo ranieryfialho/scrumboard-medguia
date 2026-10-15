@@ -1,10 +1,10 @@
 {
   "feature": "fase2b-cadencia",
-  "timestamp": "2026-10-14T20:18:58.146Z",
-  "gitRev": "4e6dc08",
-  "command": "echo reaproveitado: suite completa 2026-10-14 17:11-17:17 + 3 arquivos instaveis reexecutados isolados (raw.json)",
+  "timestamp": "2026-10-15T14:09:30.805Z",
+  "gitRev": "34879a6",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
-  "exitCode": 2,
+  "exitCode": 0,
   "testsParsed": 583,
   "results": {
     "AC-187": {
