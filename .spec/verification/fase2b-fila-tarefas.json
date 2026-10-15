@@ -1,0 +1,57 @@
+{
+  "feature": "fase2b-fila-tarefas",
+  "timestamp": "2026-10-15T18:09:50.622Z",
+  "gitRev": "ce48e7f",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
+  "reporter": "vitest-json",
+  "exitCode": 1,
+  "testsParsed": 611,
+  "results": {
+    "AC-204": {
+      "status": "pass",
+      "testName": "T-097: FilaTarefas e menu de /tarefas AC-204: a página exige login e tem um item no menu lateral o menu lateral mostra \"Minhas tarefas\" levando a /tarefas @spec:AC-204 o menu lateral mostra \"Minhas tarefas\" levando a /tarefas @spec:AC-204",
+      "method": "vitest-json"
+    },
+    "AC-205": {
+      "status": "pass",
+      "testName": "T-095: rota GET /api/atividades — atrasados e dados do lead AC-205: cada toque mostra o lead, o canal e a posição na cadência o item traz nome e telefone do lead, canal, tipo e sequência (toque N de 18) @spec:AC-205 o item traz nome e telefone do lead, canal, tipo e sequência (toque N de 18) @spec:AC-205",
+      "method": "vitest-json"
+    },
+    "AC-206": {
+      "status": "pass",
+      "testName": "T-097: FilaTarefas e menu de /tarefas AC-206: fila vazia explica o motivo dentro do turno, sem toques pendentes, explica \"sem toques neste turno\" @spec:AC-206 dentro do turno, sem toques pendentes, explica \"sem toques neste turno\" @spec:AC-206",
+      "method": "vitest-json"
+    },
+    "AC-207": {
+      "status": "pass",
+      "testName": "T-097: FilaTarefas e menu de /tarefas AC-207: cada toque leva ao card e, se for WhatsApp, à conversa clicar no lead leva ao detalhe do card (/pipeline/:id) @spec:AC-207 clicar no lead leva ao detalhe do card (/pipeline/:id) @spec:AC-207",
+      "method": "vitest-json"
+    },
+    "AC-212": {
+      "status": "pass",
+      "testName": "T-095: rota GET /api/atividades — atrasados e dados do lead AC-212: a rota devolve os atrasados quando pedidos sem o parâmetro, a resposta é a de AC-192 — sem o campo atrasado:true @spec:AC-212 sem o parâmetro, a resposta é a de AC-192 — sem o campo atrasado:true @spec:AC-212",
+      "method": "vitest-json"
+    },
+    "AC-213": {
+      "status": "pass",
+      "testName": "T-097: FilaTarefas e menu de /tarefas AC-213: a tela destaca os atrasados em uma seção própria atrasados aparecem numa seção \"Atrasadas\" acima do turno vigente, com o selo \"Atrasado\" @spec:AC-213 atrasados aparecem numa seção \"Atrasadas\" acima do turno vigente, com o selo \"Atrasado\" @spec:AC-213",
+      "method": "vitest-json"
+    },
+    "AC-217": {
+      "status": "pass",
+      "testName": "T-094: liberada_em e NOTIFY da fila AC-217: trigger emite cadencia.fila_alterada em INSERT/UPDATE iniciar a cadência (3 INSERTs do bloco, mesmo payload) emite cadencia.fila_alterada com empresaId/oportunidadeId corretos @spec:AC-217 iniciar a cadência (3 INSERTs do bloco, mesmo payload) emite cadencia.fila_alterada com empresaId/oportunidadeId corretos @spec:AC-217",
+      "method": "vitest-json"
+    },
+    "AC-218": {
+      "status": "pass",
+      "testName": "T-096: AC-218 — barramento entrega cadencia.fila_alterada só ao tenant dono só a empresa A recebe cadencia.fila_alterada quando um card da empresa A inicia cadência; a B não recebe nada @spec:AC-218 só a empresa A recebe cadencia.fila_alterada quando um card da empresa A inicia cadência; a B não recebe nada @spec:AC-218",
+      "method": "vitest-json"
+    },
+    "AC-219": {
+      "status": "pass",
+      "testName": "T-096: AC-219 — useStreamOportunidades repassa cadencia.fila_alterada repassa cadencia.fila_alterada com empresaId e oportunidadeId para quem usa o hook @spec:AC-219 repassa cadencia.fila_alterada com empresaId e oportunidadeId para quem usa o hook @spec:AC-219",
+      "method": "vitest-json"
+    }
+  },
+  "principles": {}
+}

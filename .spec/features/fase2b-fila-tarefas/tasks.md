@@ -19,13 +19,13 @@
 - Esforço: alto
 - Notas: depende de T-094 (`liberada_em`). `?atrasados=1` inclui pendentes de turno/dia anterior com `atrasado: true`; sem o parâmetro, comportamento da AC-192 inalterado (teste de regressão). A resposta passa a trazer o nome do lead e o telefone para a tela (AC-205). Relógio injetado (ASM-062).
 
-## T-096 — Stream: evento cadencia.fila_alterada [pendente]
+## T-096 — Stream: evento cadencia.fila_alterada [concluida]
 - Refs: AC-218, AC-219
 - Arquivos: src/lib/sse/barramento.ts, src/app/api/stream/route.ts, src/hooks/use-stream-oportunidades.ts, test/sse/fila-alterada.test.ts
 - Esforço: medio
 - Notas: depende de T-094 só pelo formato do payload. Novo tipo no barramento, roteado por `empresaId` como `oportunidade.movida` (AC-109/AC-133); o hook repassa o evento e mantém o fallback de polling (ASM-031).
 
-## T-097 — Página /tarefas, menu e lista da fila [pendente]
+## T-097 — Página /tarefas, menu e lista da fila [concluida]
 - Refs: AC-204, AC-205, AC-206, AC-207, AC-213, AC-219
 - Arquivos: src/app/tarefas/page.tsx, src/components/tarefas/fila-tarefas.tsx, src/components/layout/sidebar.tsx, test/components/tarefas/fila-tarefas.test.tsx
 - Esforço: alto
