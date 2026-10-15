@@ -7,7 +7,7 @@
     (atalho: `onp-spec tarefa <feature> <T-xxx> <status>`)
 -->
 
-## T-094 — Migration 0012: liberada_em e NOTIFY da fila [pendente]
+## T-094 — Migration 0012: liberada_em e NOTIFY da fila [concluida]
 - Refs: AC-217, AC-212
 - Arquivos: drizzle/0012_cadencia_fila.sql, test/db/cadencia-fila.test.ts
 - Esforço: alto
