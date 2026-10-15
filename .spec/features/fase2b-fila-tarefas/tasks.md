@@ -13,7 +13,7 @@
 - Esforço: alto
 - Notas: coluna `liberada_em timestamptz not null default now()` em `cadencia_atividades` (backfill com `realizada_em` ou horário da migration) e trigger AFTER INSERT/UPDATE que dá `pg_notify('oportunidade', ...)` com `tipo: 'cadencia.fila_alterada'`, `empresaId`, `oportunidadeId` — mesmo padrão da 0007/0008. Prova com Postgres efêmero (`test/support/postgres-efemero.ts`), dois tenants.
 
-## T-095 — Rota GET /api/atividades: atrasados e dados do lead [pendente]
+## T-095 — Rota GET /api/atividades: atrasados e dados do lead [concluida]
 - Refs: AC-205, AC-212
 - Arquivos: src/repositories/cadencia.ts, src/app/api/atividades/route.ts, test/api/atividades-atrasadas.test.ts
 - Esforço: alto
