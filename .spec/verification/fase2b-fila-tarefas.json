@@ -1,11 +1,11 @@
 {
   "feature": "fase2b-fila-tarefas",
-  "timestamp": "2026-10-15T18:09:50.622Z",
-  "gitRev": "ce48e7f",
+  "timestamp": "2026-10-15T20:13:08.093Z",
+  "gitRev": "2e3e33e",
   "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
   "exitCode": 1,
-  "testsParsed": 611,
+  "testsParsed": 629,
   "results": {
     "AC-204": {
       "status": "pass",
@@ -27,6 +27,26 @@
       "testName": "T-097: FilaTarefas e menu de /tarefas AC-207: cada toque leva ao card e, se for WhatsApp, à conversa clicar no lead leva ao detalhe do card (/pipeline/:id) @spec:AC-207 clicar no lead leva ao detalhe do card (/pipeline/:id) @spec:AC-207",
       "method": "vitest-json"
     },
+    "AC-208": {
+      "status": "pass",
+      "testName": "T-098: ToqueItem — botões de conclusão AC-208: \"Sem resposta\" conclui o toque e a fila se atualiza chama a rota de concluir com a version do card e recarrega a fila @spec:AC-208 chama a rota de concluir com a version do card e recarrega a fila @spec:AC-208",
+      "method": "vitest-json"
+    },
+    "AC-209": {
+      "status": "pass",
+      "testName": "T-098: ToqueItem — botões de conclusão AC-209: \"Conectou\" encerra a cadência e avisa para onde o card foi ao clicar em Conectou, avisa que o card foi para Qualificando e recarrega a fila @spec:AC-209 ao clicar em Conectou, avisa que o card foi para Qualificando e recarrega a fila @spec:AC-209",
+      "method": "vitest-json"
+    },
+    "AC-210": {
+      "status": "pass",
+      "testName": "T-098: ToqueItem — botões de conclusão AC-210: erros de conclusão são explicados e a fila é recarregada 409 CONFLITO_DE_VERSAO mostra mensagem específica e recarrega a fila @spec:AC-210 409 CONFLITO_DE_VERSAO mostra mensagem específica e recarrega a fila @spec:AC-210",
+      "method": "vitest-json"
+    },
+    "AC-211": {
+      "status": "pass",
+      "testName": "T-098: ToqueItem — botões de conclusão AC-211: o botão não permite clique duplo dois cliques antes da resposta disparam só uma requisição e desabilitam os botões @spec:AC-211 dois cliques antes da resposta disparam só uma requisição e desabilitam os botões @spec:AC-211",
+      "method": "vitest-json"
+    },
     "AC-212": {
       "status": "pass",
       "testName": "T-095: rota GET /api/atividades — atrasados e dados do lead AC-212: a rota devolve os atrasados quando pedidos sem o parâmetro, a resposta é a de AC-192 — sem o campo atrasado:true @spec:AC-212 sem o parâmetro, a resposta é a de AC-192 — sem o campo atrasado:true @spec:AC-212",
@@ -37,13 +57,33 @@
       "testName": "T-097: FilaTarefas e menu de /tarefas AC-213: a tela destaca os atrasados em uma seção própria atrasados aparecem numa seção \"Atrasadas\" acima do turno vigente, com o selo \"Atrasado\" @spec:AC-213 atrasados aparecem numa seção \"Atrasadas\" acima do turno vigente, com o selo \"Atrasado\" @spec:AC-213",
       "method": "vitest-json"
     },
+    "AC-220": {
+      "status": "pass",
+      "testName": "T-100: selo Atrasado no card do board @spec:AC-220 só o card com toque atrasado mostra o selo @spec:AC-220 só o card com toque atrasado mostra o selo",
+      "method": "vitest-json"
+    },
+    "AC-214": {
+      "status": "pass",
+      "testName": "T-099: botão Iniciar cadência AC-214: só aparece em card de Entrada de leads card do board: etapaId 1 mostra o botão @spec:AC-214 card do board: etapaId 1 mostra o botão @spec:AC-214",
+      "method": "vitest-json"
+    },
+    "AC-215": {
+      "status": "pass",
+      "testName": "T-099: botão Iniciar cadência AC-215: iniciar chama a rota e mostra o primeiro bloco BotaoIniciarCadencia: chama a rota com a version atual e confirma o bloco @spec:AC-215 BotaoIniciarCadencia: chama a rota com a version atual e confirma o bloco @spec:AC-215",
+      "method": "vitest-json"
+    },
+    "AC-216": {
+      "status": "pass",
+      "testName": "T-099: botão Iniciar cadência AC-216: erros ao iniciar são explicados 409 CONFLITO_DE_VERSAO: explica o motivo e não trava em carregando @spec:AC-216 409 CONFLITO_DE_VERSAO: explica o motivo e não trava em carregando @spec:AC-216",
+      "method": "vitest-json"
+    },
     "AC-217": {
       "status": "pass",
       "testName": "T-094: liberada_em e NOTIFY da fila AC-217: trigger emite cadencia.fila_alterada em INSERT/UPDATE iniciar a cadência (3 INSERTs do bloco, mesmo payload) emite cadencia.fila_alterada com empresaId/oportunidadeId corretos @spec:AC-217 iniciar a cadência (3 INSERTs do bloco, mesmo payload) emite cadencia.fila_alterada com empresaId/oportunidadeId corretos @spec:AC-217",
       "method": "vitest-json"
     },
     "AC-218": {
-      "status": "pass",
+      "status": "skip",
       "testName": "T-096: AC-218 — barramento entrega cadencia.fila_alterada só ao tenant dono só a empresa A recebe cadencia.fila_alterada quando um card da empresa A inicia cadência; a B não recebe nada @spec:AC-218 só a empresa A recebe cadencia.fila_alterada quando um card da empresa A inicia cadência; a B não recebe nada @spec:AC-218",
       "method": "vitest-json"
     },

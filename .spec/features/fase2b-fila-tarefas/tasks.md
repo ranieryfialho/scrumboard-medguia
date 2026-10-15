@@ -43,7 +43,7 @@
 - Esforço: medio
 - Notas: independe da fila (arquivos disjuntos); roda em paralelo com T-094/T-096. Só em "Entrada de leads"; move o card sem recarregar e mostra o erro devolvido pela rota.
 
-## T-100 — Selo "Atrasado" no card do board [pendente]
+## T-100 — Selo "Atrasado" no card do board [concluida]
 - Refs: AC-220
 - Arquivos: src/components/pipeline/board-kanban.tsx, src/components/pipeline/coluna-etapa.tsx, test/components/pipeline/selo-atrasado.test.tsx
 - Esforço: medio
