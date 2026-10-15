@@ -1,7 +1,7 @@
 # Spec: Fase 2b — Motor de cadência
 
 > feature: fase2b-cadencia
-> status: rascunho
+> status: auditada
 
 ## Contexto
 
