@@ -23,13 +23,13 @@
 // `virar_dia_cadencia` uma vez por tenant, cada uma na própria transação
 // (`comTenant` abre uma por chamada) — uma falha numa empresa não derruba a
 // virada das demais.
-import { and, asc, eq, inArray, isNull } from 'drizzle-orm';
+import { and, asc, eq, inArray, isNull, or, type SQL } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { sql } from 'drizzle-orm';
 
-import { cadenciaAtividades, empresas, oportunidades } from '../db/schema';
+import { cadenciaAtividades, empresas, leads, oportunidades } from '../db/schema';
 import { podeLiberar } from '../domain/cadencia/feriados';
-import { turnoVigente, type Turno } from '../domain/cadencia/turno';
+import { dataLocalEmSaoPaulo, turnoVigente, type Turno } from '../domain/cadencia/turno';
 import type { ContextoTenant } from '../lib/auth/tenant';
 import { comTenant } from './contexto';
 
@@ -222,37 +222,111 @@ export interface FiltroFilaDoTurno {
   responsavelId?: string;
   /** Relógio injetado (ASM-062) — nunca `Date.now()` real. */
   agora: Date;
+  /**
+   * AC-212: também inclui os toques `pendente` liberados em turno ou dia
+   * anterior ao vigente (ASM-065), marcados `atrasado: true`. Omitido ou
+   * `false`, a resposta é a de AC-192, inalterada.
+   */
+  incluirAtrasados?: boolean;
 }
 
 export interface ItemFilaCadencia {
   atividade: AtividadeCadencia;
   oportunidade: Oportunidade;
+  /** AC-205: dados do lead exibidos em cada toque da fila. */
+  lead: { id: string; nome: string; telefoneE164: string | null };
+  /** AC-212: `true` só para os toques trazidos por `incluirAtrasados`. */
+  atrasado: boolean;
+}
+
+/**
+ * ASM-065: início do turno/dia "de referência" de `agora`, usado como corte
+ * entre pendente "do turno vigente" e "atrasado" — ao contrário de
+ * `turnoVigente` (T-088), não exige que `agora` esteja dentro da janela de
+ * um turno (12h-13h, antes das 8h, a partir das 18h, fim de semana ou
+ * feriado também precisam de um corte, para a seção "Atrasadas" continuar
+ * funcionando fora do horário de atendimento). Antes das 13h o corte é
+ * 08h00 do próprio dia (equivalente a "turno da manhã"), de 13h em diante é
+ * 13h00 (equivalente a "turno da tarde") — `America/Sao_Paulo` não observa
+ * horário de verão desde 2019, então hora local + 3h é sempre a hora UTC do
+ * mesmo dia-calendário.
+ */
+function inicioDoTurnoDeReferencia(agora: Date): Date {
+  const local = dataLocalEmSaoPaulo(agora);
+  const horaReferenciaLocal = local.hora < 13 ? 8 : 13;
+  return new Date(Date.UTC(local.ano, local.mes - 1, local.dia, horaReferenciaLocal + 3));
 }
 
 /**
  * Fila "Minhas tarefas" do turno vigente (AC-192): só os toques `pendente`
  * do turno corrente, dos cards do tenant do `contexto` (e, se informado, do
  * `responsavelId`). Fora de turno (12h-13h, antes das 8h, a partir das 18h),
- * fim de semana ou feriado nacional (T-088), a lista vem vazia sem nem
- * consultar o banco. O bloco da tarde só aparece porque só existe no banco a
- * partir do terceiro `sem_resposta` da manhã (AC-194) — a conclusão da
- * manhã já é pré-condição para a atividade da tarde existir.
+ * fim de semana ou feriado nacional (T-088), a parte "vigente" vem vazia
+ * sem nem consultar o banco — mas `incluirAtrasados` (AC-212) ainda pode
+ * trazer toques atrasados mesmo fora do horário de atendimento (ex.: sábado,
+ * revendo o que ficou pendente de sexta). O bloco da tarde só aparece
+ * porque só existe no banco a partir do terceiro `sem_resposta` da manhã
+ * (AC-194) — a conclusão da manhã já é pré-condição para a atividade da
+ * tarde existir.
  */
 export async function listarFilaDoTurno(
   db: NodePgDatabase,
   contexto: ContextoTenant,
   filtro: FiltroFilaDoTurno
 ): Promise<ItemFilaCadencia[]> {
-  if (!podeLiberar(filtro.agora)) return [];
+  const turno: Turno | null = podeLiberar(filtro.agora) ? turnoVigente(filtro.agora) : null;
 
-  const turno: Turno | null = turnoVigente(filtro.agora);
-  if (!turno) return [];
+  if (!filtro.incluirAtrasados) {
+    if (!turno) return [];
+
+    return comTenant(db, contexto, async (tx) => {
+      const condicoes: SQL[] = [
+        eq(cadenciaAtividades.empresaId, contexto.empresaId),
+        eq(cadenciaAtividades.resultado, 'pendente'),
+        eq(cadenciaAtividades.turno, turno),
+        eq(oportunidades.empresaId, contexto.empresaId),
+        isNull(oportunidades.cadenciaEncerradaEm),
+      ];
+      if (filtro.responsavelId !== undefined) {
+        condicoes.push(eq(oportunidades.responsavelId, filtro.responsavelId));
+      }
+
+      const linhas = await tx
+        .select({
+          atividade: cadenciaAtividades,
+          oportunidade: oportunidades,
+          leadId: leads.id,
+          leadNome: leads.nome,
+          leadTelefoneE164: leads.telefoneE164,
+        })
+        .from(cadenciaAtividades)
+        .innerJoin(oportunidades, eq(cadenciaAtividades.oportunidadeId, oportunidades.id))
+        .innerJoin(leads, eq(oportunidades.leadId, leads.id))
+        .where(and(...condicoes))
+        .orderBy(asc(cadenciaAtividades.sequencia));
+
+      return linhas.map((linha) => ({
+        atividade: linha.atividade,
+        oportunidade: linha.oportunidade,
+        lead: { id: linha.leadId, nome: linha.leadNome, telefoneE164: linha.leadTelefoneE164 },
+        atrasado: false,
+      }));
+    });
+  }
+
+  // AC-212/ASM-065: com `incluirAtrasados`, o corte deixa de ser só o
+  // `turno` do toque — um toque `pendente` cujo `turno` ainda "bate" com o
+  // vigente (ex.: ficou parado desde o dia anterior, e `virar_dia_cadencia`
+  // não avança cards com pendente — comentário de T-089) também precisa
+  // virar atrasado se foi liberado antes do corte. Por isso aqui cada linha
+  // é classificada pelo próprio `liberada_em`, não só pela igualdade de
+  // `turno` usada no ramo acima (que fica inalterado, AC-192).
+  const corte = inicioDoTurnoDeReferencia(filtro.agora);
 
   return comTenant(db, contexto, async (tx) => {
-    const condicoes = [
+    const condicoes: SQL[] = [
       eq(cadenciaAtividades.empresaId, contexto.empresaId),
       eq(cadenciaAtividades.resultado, 'pendente'),
-      eq(cadenciaAtividades.turno, turno),
       eq(oportunidades.empresaId, contexto.empresaId),
       isNull(oportunidades.cadenciaEncerradaEm),
     ];
@@ -260,14 +334,35 @@ export async function listarFilaDoTurno(
       condicoes.push(eq(oportunidades.responsavelId, filtro.responsavelId));
     }
 
+    const condicaoAtraso = sql`"cadencia_atividades"."liberada_em" < ${corte.toISOString()}::timestamptz`;
+    condicoes.push(turno ? or(eq(cadenciaAtividades.turno, turno), condicaoAtraso)! : condicaoAtraso);
+
     const linhas = await tx
-      .select({ atividade: cadenciaAtividades, oportunidade: oportunidades })
+      .select({
+        atividade: cadenciaAtividades,
+        oportunidade: oportunidades,
+        leadId: leads.id,
+        leadNome: leads.nome,
+        leadTelefoneE164: leads.telefoneE164,
+        liberadaEm: sql<string>`"cadencia_atividades"."liberada_em"`,
+      })
       .from(cadenciaAtividades)
       .innerJoin(oportunidades, eq(cadenciaAtividades.oportunidadeId, oportunidades.id))
+      .innerJoin(leads, eq(oportunidades.leadId, leads.id))
       .where(and(...condicoes))
       .orderBy(asc(cadenciaAtividades.sequencia));
 
-    return linhas;
+    const itens = linhas.map((linha) => ({
+      atividade: linha.atividade,
+      oportunidade: linha.oportunidade,
+      lead: { id: linha.leadId, nome: linha.leadNome, telefoneE164: linha.leadTelefoneE164 },
+      atrasado: new Date(linha.liberadaEm).getTime() < corte.getTime(),
+    }));
+
+    // Atrasados primeiro (AC-213: a seção "Atrasadas" fica acima do turno
+    // vigente); `sort` é estável, então a ordem por sequência de cada grupo
+    // (já vinda do `orderBy` acima) se preserva.
+    return itens.sort((a, b) => Number(b.atrasado) - Number(a.atrasado));
   });
 }
 
