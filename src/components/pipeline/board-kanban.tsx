@@ -115,6 +115,7 @@ export function BoardKanban() {
         void carregarBoard();
         return;
       }
+      if (evento.tipo !== "oportunidade.movida") return;
       void aplicarEventoMovido(evento);
     },
     [carregarBoard, aplicarEventoMovido]
