@@ -1,12 +1,12 @@
 {
-  "runId": "scrumboard-medguia-fase2b-fila-tarefas-mv9oefva",
+  "runId": "scrumboard-medguia-fase2b-fila-tarefas-mv9v9y1v",
   "feature": "fase2b-fila-tarefas",
   "agent": "claude",
   "modo": "sequencial",
   "paralelizar": null,
   "modeloForcado": null,
   "esforcoForcado": null,
-  "geradoEm": "2026-10-15 15:10",
+  "geradoEm": "2026-10-15 18:23",
   "branchTrabalho": "spec/fase2b-fila-tarefas",
   "baseDir": ".spec/features/fase2b-fila-tarefas",
   "specDir": ".spec",
@@ -15,71 +15,6 @@
   "ondas": [],
   "faixas": [],
   "sequenciais": [
-    {
-      "id": "T-094",
-      "titulo": "Migration 0012: liberada_em e NOTIFY da fila",
-      "modelo": "claude-sonnet-5",
-      "esforco": "high",
-      "arquivos": [
-        "drizzle/0012_cadencia_fila.sql",
-        "test/db/cadencia-fila.test.ts"
-      ],
-      "refs": [
-        "AC-217",
-        "AC-212"
-      ]
-    },
-    {
-      "id": "T-095",
-      "titulo": "Rota GET /api/atividades: atrasados e dados do lead",
-      "modelo": "claude-sonnet-5",
-      "esforco": "high",
-      "arquivos": [
-        "src/repositories/cadencia.ts",
-        "src/app/api/atividades/route.ts",
-        "test/api/atividades-atrasadas.test.ts"
-      ],
-      "refs": [
-        "AC-205",
-        "AC-212"
-      ]
-    },
-    {
-      "id": "T-096",
-      "titulo": "Stream: evento cadencia.fila_alterada",
-      "modelo": "claude-sonnet-5",
-      "esforco": "medium",
-      "arquivos": [
-        "src/lib/sse/barramento.ts",
-        "src/app/api/stream/route.ts",
-        "src/hooks/use-stream-oportunidades.ts",
-        "test/sse/fila-alterada.test.ts"
-      ],
-      "refs": [
-        "AC-218",
-        "AC-219"
-      ]
-    },
-    {
-      "id": "T-097",
-      "titulo": "Página /tarefas, menu e lista da fila",
-      "modelo": "claude-sonnet-5",
-      "esforco": "high",
-      "arquivos": [
-        "src/app/tarefas/page.tsx",
-        "src/components/tarefas/fila-tarefas.tsx",
-        "src/components/layout/sidebar.tsx",
-        "test/components/tarefas/fila-tarefas.test.tsx"
-      ],
-      "refs": [
-        "AC-204",
-        "AC-205",
-        "AC-206",
-        "AC-207",
-        "AC-213",
-        "AC-219"
-      ]
-    },
     {
       "id": "T-098",
       "titulo": "Botões de conclusão do toque",
@@ -128,6 +63,11 @@
       ]
     }
   ],
-  "concluidas": [],
+  "concluidas": [
+    "T-094",
+    "T-095",
+    "T-096",
+    "T-097"
+  ],
   "avisos": []
 }

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# executar-tarefas.sh — gerado por `onp-spec plano fase2b-fila-tarefas` em 2026-10-15 15:10
+# executar-tarefas.sh — gerado por `onp-spec plano fase2b-fila-tarefas` em 2026-10-15 18:23
 # NÃO edite à mão: mudou tasks.md ou a config, regenere o plano.
 #
 # uso:
@@ -14,7 +14,7 @@
 set -u
 set -o pipefail
 
-RUN_ID='scrumboard-medguia-fase2b-fila-tarefas-mv9oefva'
+RUN_ID='scrumboard-medguia-fase2b-fila-tarefas-mv9v9y1v'
 FEATURE='fase2b-fila-tarefas'
 BASE_BRANCH='spec/fase2b-fila-tarefas'
 ENGINE='.claude/skills/onp-spec-driven/scripts/onp-spec.mjs'
@@ -166,134 +166,6 @@ iniciar_resumos() {
   trap 'parar_resumos; node "$ENGINE" resumo "$FEATURE" --gravar >/dev/null 2>&1 || true' EXIT
 }
 
-# ── sequencial T-094 (ordem do tasks.md) ──
-executar_seq_T_094() {
-  info 'sequencial T-094 — Migration 0012: liberada_em e NOTIFY da fila'
-  if rodar_tarefa seq 'T-094' 'Você executa UMA tarefa da feature "fase2b-fila-tarefas" (fluxo onp-spec, spec-anchored).
-Leia primeiro: .spec/features/fase2b-fila-tarefas/spec.md, .spec/features/fase2b-fila-tarefas/tasks.md e .spec/constituicao.md.
-
-Sua tarefa (somente ela):
-T-094 — "Migration 0012: liberada_em e NOTIFY da fila"
-  critérios/refs: AC-217 (O banco avisa a mudança da fila), AC-212 (A rota devolve os atrasados quando pedidos)
-  arquivos permitidos (e seus testes): drizzle/0012_cadencia_fila.sql, test/db/cadencia-fila.test.ts
-  mensagem de commit: "T-094 fase2b-fila-tarefas: Migration 0012: liberada_em e NOTIFY da fila"
-
-Regras inegociáveis:
-- Todo critério de aceite referenciado vira teste com @spec:AC-xxx no título.
-- NUNCA enfraqueça, pule (skip/todo) ou apague um teste para passar — teste pulado não é prova e o audit acusa.
-- Rode os testes localmente com `npx vitest run --reporter=json --outputFile=.spec/verification/raw.json` até passarem.
-- NÃO edite tasks.md, NÃO rode onp-spec verify/audit e NÃO toque em outras tarefas — o orquestrador cuida disso.
-- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' high >> "$LOG_DIR/seq.log" 2>&1; then
-    # commit de segurança se o agente esqueceu (rastreabilidade > perfeição)
-    if [ -n "$(git status --porcelain)" ]; then
-      git add -A && git commit -q -m 'T-094 fase2b-fila-tarefas: Migration 0012: liberada_em e NOTIFY da fila (auto-commit do plano)'
-    fi
-    marcar_concluidas T-094
-    verde "✔ T-094 concluída"
-    return 0
-  fi
-  vermelho "✘ T-094 falhou (log: $LOG_DIR/seq.log)"
-  amarelo "  reexecute só ela: bash .spec/features/fase2b-fila-tarefas/executar-tarefas.sh --seq T-094"
-  FALHAS="$FALHAS T-094"
-  return 1
-}
-
-# ── sequencial T-095 (ordem do tasks.md) ──
-executar_seq_T_095() {
-  info 'sequencial T-095 — Rota GET /api/atividades: atrasados e dados do lead'
-  if rodar_tarefa seq 'T-095' 'Você executa UMA tarefa da feature "fase2b-fila-tarefas" (fluxo onp-spec, spec-anchored).
-Leia primeiro: .spec/features/fase2b-fila-tarefas/spec.md, .spec/features/fase2b-fila-tarefas/tasks.md e .spec/constituicao.md.
-
-Sua tarefa (somente ela):
-T-095 — "Rota GET /api/atividades: atrasados e dados do lead"
-  critérios/refs: AC-205 (Cada toque mostra o lead, o canal e a posição na cadência), AC-212 (A rota devolve os atrasados quando pedidos)
-  arquivos permitidos (e seus testes): src/repositories/cadencia.ts, src/app/api/atividades/route.ts, test/api/atividades-atrasadas.test.ts
-  mensagem de commit: "T-095 fase2b-fila-tarefas: Rota GET /api/atividades: atrasados e dados do lead"
-
-Regras inegociáveis:
-- Todo critério de aceite referenciado vira teste com @spec:AC-xxx no título.
-- NUNCA enfraqueça, pule (skip/todo) ou apague um teste para passar — teste pulado não é prova e o audit acusa.
-- Rode os testes localmente com `npx vitest run --reporter=json --outputFile=.spec/verification/raw.json` até passarem.
-- NÃO edite tasks.md, NÃO rode onp-spec verify/audit e NÃO toque em outras tarefas — o orquestrador cuida disso.
-- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' high >> "$LOG_DIR/seq.log" 2>&1; then
-    # commit de segurança se o agente esqueceu (rastreabilidade > perfeição)
-    if [ -n "$(git status --porcelain)" ]; then
-      git add -A && git commit -q -m 'T-095 fase2b-fila-tarefas: Rota GET /api/atividades: atrasados e dados do lead (auto-commit do plano)'
-    fi
-    marcar_concluidas T-095
-    verde "✔ T-095 concluída"
-    return 0
-  fi
-  vermelho "✘ T-095 falhou (log: $LOG_DIR/seq.log)"
-  amarelo "  reexecute só ela: bash .spec/features/fase2b-fila-tarefas/executar-tarefas.sh --seq T-095"
-  FALHAS="$FALHAS T-095"
-  return 1
-}
-
-# ── sequencial T-096 (ordem do tasks.md) ──
-executar_seq_T_096() {
-  info 'sequencial T-096 — Stream: evento cadencia.fila_alterada'
-  if rodar_tarefa seq 'T-096' 'Você executa UMA tarefa da feature "fase2b-fila-tarefas" (fluxo onp-spec, spec-anchored).
-Leia primeiro: .spec/features/fase2b-fila-tarefas/spec.md, .spec/features/fase2b-fila-tarefas/tasks.md e .spec/constituicao.md.
-
-Sua tarefa (somente ela):
-T-096 — "Stream: evento cadencia.fila_alterada"
-  critérios/refs: AC-218 (O stream só entrega o evento ao tenant dono), AC-219 (A página recarrega a fila ao receber o evento, com fallback)
-  arquivos permitidos (e seus testes): src/lib/sse/barramento.ts, src/app/api/stream/route.ts, src/hooks/use-stream-oportunidades.ts, test/sse/fila-alterada.test.ts
-  mensagem de commit: "T-096 fase2b-fila-tarefas: Stream: evento cadencia.fila_alterada"
-
-Regras inegociáveis:
-- Todo critério de aceite referenciado vira teste com @spec:AC-xxx no título.
-- NUNCA enfraqueça, pule (skip/todo) ou apague um teste para passar — teste pulado não é prova e o audit acusa.
-- Rode os testes localmente com `npx vitest run --reporter=json --outputFile=.spec/verification/raw.json` até passarem.
-- NÃO edite tasks.md, NÃO rode onp-spec verify/audit e NÃO toque em outras tarefas — o orquestrador cuida disso.
-- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' medium >> "$LOG_DIR/seq.log" 2>&1; then
-    # commit de segurança se o agente esqueceu (rastreabilidade > perfeição)
-    if [ -n "$(git status --porcelain)" ]; then
-      git add -A && git commit -q -m 'T-096 fase2b-fila-tarefas: Stream: evento cadencia.fila_alterada (auto-commit do plano)'
-    fi
-    marcar_concluidas T-096
-    verde "✔ T-096 concluída"
-    return 0
-  fi
-  vermelho "✘ T-096 falhou (log: $LOG_DIR/seq.log)"
-  amarelo "  reexecute só ela: bash .spec/features/fase2b-fila-tarefas/executar-tarefas.sh --seq T-096"
-  FALHAS="$FALHAS T-096"
-  return 1
-}
-
-# ── sequencial T-097 (ordem do tasks.md) ──
-executar_seq_T_097() {
-  info 'sequencial T-097 — Página /tarefas, menu e lista da fila'
-  if rodar_tarefa seq 'T-097' 'Você executa UMA tarefa da feature "fase2b-fila-tarefas" (fluxo onp-spec, spec-anchored).
-Leia primeiro: .spec/features/fase2b-fila-tarefas/spec.md, .spec/features/fase2b-fila-tarefas/tasks.md e .spec/constituicao.md.
-
-Sua tarefa (somente ela):
-T-097 — "Página /tarefas, menu e lista da fila"
-  critérios/refs: AC-204 (A página exige login e tem um item no menu lateral), AC-205 (Cada toque mostra o lead, o canal e a posição na cadência), AC-206 (Fila vazia explica o motivo), AC-207 (Cada toque leva ao card e, se for WhatsApp, à conversa), AC-213 (A tela destaca os atrasados em uma seção própria), AC-219 (A página recarrega a fila ao receber o evento, com fallback)
-  arquivos permitidos (e seus testes): src/app/tarefas/page.tsx, src/components/tarefas/fila-tarefas.tsx, src/components/layout/sidebar.tsx, test/components/tarefas/fila-tarefas.test.tsx
-  mensagem de commit: "T-097 fase2b-fila-tarefas: Página /tarefas, menu e lista da fila"
-
-Regras inegociáveis:
-- Todo critério de aceite referenciado vira teste com @spec:AC-xxx no título.
-- NUNCA enfraqueça, pule (skip/todo) ou apague um teste para passar — teste pulado não é prova e o audit acusa.
-- Rode os testes localmente com `npx vitest run --reporter=json --outputFile=.spec/verification/raw.json` até passarem.
-- NÃO edite tasks.md, NÃO rode onp-spec verify/audit e NÃO toque em outras tarefas — o orquestrador cuida disso.
-- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' high >> "$LOG_DIR/seq.log" 2>&1; then
-    # commit de segurança se o agente esqueceu (rastreabilidade > perfeição)
-    if [ -n "$(git status --porcelain)" ]; then
-      git add -A && git commit -q -m 'T-097 fase2b-fila-tarefas: Página /tarefas, menu e lista da fila (auto-commit do plano)'
-    fi
-    marcar_concluidas T-097
-    verde "✔ T-097 concluída"
-    return 0
-  fi
-  vermelho "✘ T-097 falhou (log: $LOG_DIR/seq.log)"
-  amarelo "  reexecute só ela: bash .spec/features/fase2b-fila-tarefas/executar-tarefas.sh --seq T-097"
-  FALHAS="$FALHAS T-097"
-  return 1
-}
-
 # ── sequencial T-098 (ordem do tasks.md) ──
 executar_seq_T_098() {
   info 'sequencial T-098 — Botões de conclusão do toque'
@@ -443,10 +315,6 @@ executar_tudo() {
   iniciar_resumos
   info "logs em: $LOG_DIR"
   info "resumo geral de andamento: a cada 1 min aqui no terminal (e via: onp-spec resumo)"
-  executar_seq_T_094 || true
-  executar_seq_T_095 || true
-  executar_seq_T_096 || true
-  executar_seq_T_097 || true
   executar_seq_T_098 || true
   executar_seq_T_099 || true
   executar_seq_T_100 || true
@@ -455,10 +323,6 @@ executar_tudo() {
 
 listar() {
   echo "execução: $RUN_ID (feature $FEATURE, branch $BASE_BRANCH)"
-  echo "  seq       T-094 (sequencial)"
-  echo "  seq       T-095 (sequencial)"
-  echo "  seq       T-096 (sequencial)"
-  echo "  seq       T-097 (sequencial)"
   echo "  seq       T-098 (sequencial)"
   echo "  seq       T-099 (sequencial)"
   echo "  seq       T-100 (sequencial)"
@@ -496,10 +360,6 @@ case "$MODO" in
     esac ;;
   seq)
     case "$ALVO" in
-      T-094) evento --tipo inicio --escopo "seq:T-094"; iniciar_resumos; executar_seq_T_094 || true; encerrar "seq:T-094" ;;
-      T-095) evento --tipo inicio --escopo "seq:T-095"; iniciar_resumos; executar_seq_T_095 || true; encerrar "seq:T-095" ;;
-      T-096) evento --tipo inicio --escopo "seq:T-096"; iniciar_resumos; executar_seq_T_096 || true; encerrar "seq:T-096" ;;
-      T-097) evento --tipo inicio --escopo "seq:T-097"; iniciar_resumos; executar_seq_T_097 || true; encerrar "seq:T-097" ;;
       T-098) evento --tipo inicio --escopo "seq:T-098"; iniciar_resumos; executar_seq_T_098 || true; encerrar "seq:T-098" ;;
       T-099) evento --tipo inicio --escopo "seq:T-099"; iniciar_resumos; executar_seq_T_099 || true; encerrar "seq:T-099" ;;
       T-100) evento --tipo inicio --escopo "seq:T-100"; iniciar_resumos; executar_seq_T_100 || true; encerrar "seq:T-100" ;;

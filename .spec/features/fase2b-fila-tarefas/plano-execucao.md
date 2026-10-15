@@ -1,11 +1,11 @@
 # Plano de execução — fase2b-fila-tarefas
 
-> gerado por `onp-spec plano` em 2026-10-15 15:10 — NÃO edite à mão;
+> gerado por `onp-spec plano` em 2026-10-15 18:23 — NÃO edite à mão;
 > mudou tasks.md ou a config? Regenere: `onp-spec plano fase2b-fila-tarefas --sequencial`
 
 ## Resumo — o que vai acontecer
 
-- **modo SEQUENCIAL (escolha do usuário)**: 7 tarefa(s) pendente(s), UMA APÓS A OUTRA, na árvore principal
+- **modo SEQUENCIAL (escolha do usuário)**: 3 tarefa(s) pendente(s), UMA APÓS A OUTRA, na árvore principal (4 já concluída(s): T-094, T-095, T-096, T-097)
 - sem worktrees e sem paralelismo — cada tarefa roda numa janela de contexto limpa, na ordem do tasks.md
 - tudo acontece na branch de trabalho `spec/fase2b-fila-tarefas`; levar para a main é decisão sua
 
@@ -13,10 +13,6 @@
 
 | tarefa | título | modelo | esforço |
 |---|---|---|---|
-| T-094 | Migration 0012: liberada_em e NOTIFY da fila | `claude-sonnet-5` | high |
-| T-095 | Rota GET /api/atividades: atrasados e dados do lead | `claude-sonnet-5` | high |
-| T-096 | Stream: evento cadencia.fila_alterada | `claude-sonnet-5` | medium |
-| T-097 | Página /tarefas, menu e lista da fila | `claude-sonnet-5` | high |
 | T-098 | Botões de conclusão do toque | `claude-sonnet-5` | high |
 | T-099 | Botão "Iniciar cadência" no card e no detalhe | `claude-sonnet-5` | medium |
 | T-100 | Selo "Atrasado" no card do board | `claude-sonnet-5` | medium |
