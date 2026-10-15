@@ -31,7 +31,7 @@
 - Esforço: alto
 - Notas: depende de T-095 e T-096. jsdom, `fetch` e `EventSource` falsos, como em `test/components/pipeline`. Seção "Atrasadas" acima do turno vigente; estados vazios distintos (sem toques vs fora do horário).
 
-## T-098 — Botões de conclusão do toque [pendente]
+## T-098 — Botões de conclusão do toque [concluida]
 - Refs: AC-208, AC-209, AC-210, AC-211
 - Arquivos: src/components/tarefas/toque-item.tsx, test/components/tarefas/toque-item.test.tsx
 - Esforço: alto
