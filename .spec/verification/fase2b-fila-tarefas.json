@@ -1,10 +1,10 @@
 {
   "feature": "fase2b-fila-tarefas",
-  "timestamp": "2026-10-15T20:13:08.093Z",
-  "gitRev": "2e3e33e",
+  "timestamp": "2026-10-16T17:05:37.658Z",
+  "gitRev": "8d7b65f",
   "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
-  "exitCode": 1,
+  "exitCode": 0,
   "testsParsed": 629,
   "results": {
     "AC-204": {
@@ -83,7 +83,7 @@
       "method": "vitest-json"
     },
     "AC-218": {
-      "status": "skip",
+      "status": "pass",
       "testName": "T-096: AC-218 — barramento entrega cadencia.fila_alterada só ao tenant dono só a empresa A recebe cadencia.fila_alterada quando um card da empresa A inicia cadência; a B não recebe nada @spec:AC-218 só a empresa A recebe cadencia.fila_alterada quando um card da empresa A inicia cadência; a B não recebe nada @spec:AC-218",
       "method": "vitest-json"
     },
