@@ -1,7 +1,7 @@
 # Spec: Fase 2b — Fila "Minhas tarefas" (tela da cadência)
 
 > feature: fase2b-fila-tarefas
-> status: rascunho
+> status: auditada
 
 ## Contexto
 

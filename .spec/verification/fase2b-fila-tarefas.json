@@ -1,7 +1,7 @@
 {
   "feature": "fase2b-fila-tarefas",
-  "timestamp": "2026-10-16T17:05:37.658Z",
-  "gitRev": "8d7b65f",
+  "timestamp": "2026-10-16T18:32:45.661Z",
+  "gitRev": "a2ef9fd",
   "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
   "exitCode": 0,
