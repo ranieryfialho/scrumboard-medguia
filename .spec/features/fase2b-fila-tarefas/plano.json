@@ -1,0 +1,73 @@
+{
+  "runId": "scrumboard-medguia-fase2b-fila-tarefas-mv9v9y1v",
+  "feature": "fase2b-fila-tarefas",
+  "agent": "claude",
+  "modo": "sequencial",
+  "paralelizar": null,
+  "modeloForcado": null,
+  "esforcoForcado": null,
+  "geradoEm": "2026-10-15 18:23",
+  "branchTrabalho": "spec/fase2b-fila-tarefas",
+  "baseDir": ".spec/features/fase2b-fila-tarefas",
+  "specDir": ".spec",
+  "repoName": "scrumboard-medguia",
+  "logsDir": "../onp-worktrees/scrumboard-medguia-fase2b-fila-tarefas-logs",
+  "ondas": [],
+  "faixas": [],
+  "sequenciais": [
+    {
+      "id": "T-098",
+      "titulo": "Botões de conclusão do toque",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "src/components/tarefas/toque-item.tsx",
+        "test/components/tarefas/toque-item.test.tsx"
+      ],
+      "refs": [
+        "AC-208",
+        "AC-209",
+        "AC-210",
+        "AC-211"
+      ]
+    },
+    {
+      "id": "T-099",
+      "titulo": "Botão \"Iniciar cadência\" no card e no detalhe",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/components/pipeline/card-oportunidade.tsx",
+        "src/app/pipeline/[id]/page.tsx",
+        "src/components/pipeline/botao-iniciar-cadencia.tsx",
+        "test/components/pipeline/iniciar-cadencia.test.tsx"
+      ],
+      "refs": [
+        "AC-214",
+        "AC-215",
+        "AC-216"
+      ]
+    },
+    {
+      "id": "T-100",
+      "titulo": "Selo \"Atrasado\" no card do board",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/components/pipeline/board-kanban.tsx",
+        "src/components/pipeline/coluna-etapa.tsx",
+        "test/components/pipeline/selo-atrasado.test.tsx"
+      ],
+      "refs": [
+        "AC-220"
+      ]
+    }
+  ],
+  "concluidas": [
+    "T-094",
+    "T-095",
+    "T-096",
+    "T-097"
+  ],
+  "avisos": []
+}

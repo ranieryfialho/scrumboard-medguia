@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { LayoutDashboard, KanbanSquare, Archive, LogOut, ChevronLeft, ChevronRight, Mail, Users, Trophy, Target, X, Building2, ShieldCheck, MessageCircle } from "lucide-react";
+import { LayoutDashboard, KanbanSquare, Archive, LogOut, ChevronLeft, ChevronRight, Mail, Users, Trophy, Target, X, Building2, ShieldCheck, MessageCircle, ListChecks } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useWhatsappUnread } from "@/contexts/whatsapp-unread-context";
@@ -161,6 +162,22 @@ export function Sidebar({ abaAtiva, setAbaAtiva, mobileOpen = false, onMobileClo
             <ChevronRight className="w-4 h-4 text-zinc-400 group-hover:text-white transition-colors" />
           )}
         </button>
+      </div>
+
+      {/* AC-204 (fase2b-fila-tarefas): "Minhas tarefas" é a fila da cadência
+          (/tarefas) — fica fora do sistema de módulos acima (não gira em
+          torno de `modulosPermitidos`), visível a qualquer usuário
+          autenticado que chegue a ver o menu (a própria tela só renderiza
+          depois do gate de login, via src/middleware.ts). */}
+      <div className="px-3 pt-1 pb-2">
+        <Link
+          href="/tarefas"
+          className="w-full flex items-center px-4 py-3 rounded-xl transition-all duration-200 group hover:bg-white/5 hover:text-white"
+          title={!isExpanded ? "Minhas tarefas" : ""}
+        >
+          <ListChecks className="w-5 h-5 shrink-0 text-zinc-500 group-hover:text-zinc-300 transition-colors" />
+          {isExpanded && <span className="ml-3 text-sm font-medium">Minhas tarefas</span>}
+        </Link>
       </div>
 
       <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent">

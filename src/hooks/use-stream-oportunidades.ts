@@ -4,6 +4,12 @@
 // falhar 3 vezes seguidas (ASM-031), liga um polling de 30 s (AC-118) — o
 // `EventSource` nativo continua tentando reconectar sozinho em paralelo; ao
 // disparar `open` de novo, o polling para e o hook volta para o modo 'sse'.
+//
+// T-096 (fase2b-fila-tarefas, US-060, AC-219): também repassa
+// `cadencia.fila_alterada` — a página `/tarefas` (T-097) usa esse evento
+// (e `stream.reconectado`, e o próprio `aoPolling` do fallback) como os três
+// gatilhos para recarregar a fila; este hook não decide o que recarregar,
+// só entrega o evento.
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
@@ -20,11 +26,20 @@ export interface EventoOportunidadeMovidaCliente {
   ocorridoEm: string;
 }
 
+export interface EventoCadenciaFilaAlteradaCliente {
+  tipo: 'cadencia.fila_alterada';
+  empresaId: string;
+  oportunidadeId: string;
+}
+
 export interface EventoStreamReconectadoCliente {
   tipo: 'stream.reconectado';
 }
 
-export type EventoStreamCliente = EventoOportunidadeMovidaCliente | EventoStreamReconectadoCliente;
+export type EventoStreamCliente =
+  | EventoOportunidadeMovidaCliente
+  | EventoCadenciaFilaAlteradaCliente
+  | EventoStreamReconectadoCliente;
 
 export interface UseStreamOportunidadesOpcoes {
   /** URL do canal SSE. Default: '/api/stream'. */
@@ -50,6 +65,11 @@ const INTERVALO_POLLING_PADRAO_MS = 30_000;
 function parseEventoOportunidadeMovida(data: string): EventoOportunidadeMovidaCliente {
   const payload = JSON.parse(data) as Omit<EventoOportunidadeMovidaCliente, 'tipo'>;
   return { tipo: 'oportunidade.movida', ...payload };
+}
+
+function parseEventoCadenciaFilaAlterada(data: string): EventoCadenciaFilaAlteradaCliente {
+  const payload = JSON.parse(data) as Omit<EventoCadenciaFilaAlteradaCliente, 'tipo'>;
+  return { tipo: 'cadencia.fila_alterada', ...payload };
 }
 
 export function useStreamOportunidades(
@@ -118,6 +138,11 @@ export function useStreamOportunidades(
     origem.addEventListener('oportunidade.movida', (evento) => {
       const mensagem = evento as MessageEvent<string>;
       aoReceberEventoRef.current?.(parseEventoOportunidadeMovida(mensagem.data));
+    });
+
+    origem.addEventListener('cadencia.fila_alterada', (evento) => {
+      const mensagem = evento as MessageEvent<string>;
+      aoReceberEventoRef.current?.(parseEventoCadenciaFilaAlterada(mensagem.data));
     });
 
     origem.addEventListener('stream.reconectado', () => {

@@ -17,6 +17,12 @@
 // ou retentativa absorvida pelo índice único (AC-124/AC-134) — nenhum
 // NOTIFY chega aqui, então nenhum ouvinte é chamado; não há nada a filtrar
 // nesse caso.
+//
+// T-096 (fase2b-fila-tarefas, US-060): mesmo canal, mesmo filtro por
+// `empresaId` (AC-218), agora também para `cadencia.fila_alterada`
+// (migration 0012) — o payload do trigger só traz `empresaId` e
+// `oportunidadeId` (sem dado de negócio), então o evento aqui é só esses
+// dois campos.
 import { Client } from 'pg';
 
 export interface EventoOportunidadeMovida {
@@ -37,11 +43,21 @@ export interface EventoMensagemRecebida {
   ocorridoEm: string;
 }
 
+export interface EventoCadenciaFilaAlterada {
+  tipo: 'cadencia.fila_alterada';
+  empresaId: string;
+  oportunidadeId: string;
+}
+
 export interface EventoStreamReconectado {
   tipo: 'stream.reconectado';
 }
 
-export type EventoBarramento = EventoOportunidadeMovida | EventoMensagemRecebida | EventoStreamReconectado;
+export type EventoBarramento =
+  | EventoOportunidadeMovida
+  | EventoMensagemRecebida
+  | EventoCadenciaFilaAlterada
+  | EventoStreamReconectado;
 
 export type OuvinteBarramento = (evento: EventoBarramento) => void;
 
@@ -142,6 +158,14 @@ export function criarBarramento(opcoes: OpcoesBarramento): Barramento {
             leadId: payload.leadId == null ? null : String(payload.leadId),
             mensagemId: String(payload.mensagemId),
             ocorridoEm: String(payload.ocorridoEm),
+          });
+          return;
+        }
+        if (payload.tipo === 'cadencia.fila_alterada') {
+          notificar(empresaId, {
+            tipo: 'cadencia.fila_alterada',
+            empresaId,
+            oportunidadeId: String(payload.oportunidadeId),
           });
           return;
         }

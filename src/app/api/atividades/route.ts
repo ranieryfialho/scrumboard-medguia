@@ -38,7 +38,13 @@ function podeVerTodoTenant(contexto: ContextoTenant): boolean {
   return contexto.isSuperAdmin || contexto.papel === 'MASTER' || contexto.papel === 'GERENTE';
 }
 
-/** AC-192: lista os toques pendentes do turno vigente, dos cards do responsável (ou do tenant inteiro, ASM-061). */
+/**
+ * AC-192: lista os toques pendentes do turno vigente, dos cards do
+ * responsável (ou do tenant inteiro, ASM-061). AC-212: com
+ * `?atrasados=1`, a resposta também traz os toques pendentes liberados em
+ * turno ou dia anterior ao vigente (`atrasado: true`); sem o parâmetro, o
+ * comportamento é exatamente o de AC-192.
+ */
 export async function GET(request: NextRequest) {
   const contexto = await resolverContexto(request);
   if (!contexto) return semSessao();
@@ -46,6 +52,7 @@ export async function GET(request: NextRequest) {
   const itens = await listarFilaDoTurno(getDb(), contexto, {
     responsavelId: podeVerTodoTenant(contexto) ? undefined : contexto.usuarioId,
     agora: new Date(),
+    incluirAtrasados: request.nextUrl.searchParams.get('atrasados') === '1',
   });
 
   return NextResponse.json({ itens });

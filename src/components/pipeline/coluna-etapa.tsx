@@ -1,6 +1,7 @@
 "use client";
 
 import { useDroppable } from "@dnd-kit/core";
+import { AlarmClock } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { CardOportunidade, type CardBoard } from "./card-oportunidade";
@@ -13,9 +14,18 @@ interface ColunaEtapaProps {
   podeReceberDrop: boolean;
   /** Alguma etapa está sendo arrastada agora (independente de ser esta a permitida) — usado só pro estilo "esmaecida". */
   arrastando: boolean;
+  /** AC-220: ids de oportunidade com toque de cadência atrasado — mostram o selo "Atrasado" sobre o card. */
+  oportunidadesAtrasadas: Set<string>;
 }
 
-export function ColunaEtapa({ etapaId, nome, cards, podeReceberDrop, arrastando }: ColunaEtapaProps) {
+export function ColunaEtapa({
+  etapaId,
+  nome,
+  cards,
+  podeReceberDrop,
+  arrastando,
+  oportunidadesAtrasadas,
+}: ColunaEtapaProps) {
   const { isOver, setNodeRef } = useDroppable({
     id: String(etapaId),
     disabled: !podeReceberDrop,
@@ -39,7 +49,15 @@ export function ColunaEtapa({ etapaId, nome, cards, podeReceberDrop, arrastando 
 
       <div className="flex-1 overflow-y-auto space-y-2 pr-1 min-h-[80px]">
         {cards.map((card) => (
-          <CardOportunidade key={card.id} oportunidade={card} />
+          <div key={card.id} className="relative">
+            {oportunidadesAtrasadas.has(card.id) && (
+              <span className="absolute -top-1.5 -right-1.5 z-10 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-amber-700 bg-amber-100 rounded-full px-2 py-0.5 shadow-sm">
+                <AlarmClock className="size-3" />
+                Atrasado
+              </span>
+            )}
+            <CardOportunidade oportunidade={card} />
+          </div>
         ))}
         {cards.length === 0 && (
           <div className="h-16 border-2 border-dashed border-slate-200 rounded-lg flex items-center justify-center text-slate-400 text-xs">

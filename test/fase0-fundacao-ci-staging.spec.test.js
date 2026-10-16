@@ -735,7 +735,13 @@ describe('T-008 — integração do restore-crm.sh contra um Postgres real', () 
     const deadline = Date.now() + READY_TIMEOUT_MS;
     let ready = false;
     while (Date.now() < deadline) {
-      const isReady = runDocker(['exec', containerName, 'pg_isready', '-U', 'postgres']);
+      // A imagem sobe um servidor temporário para os init scripts e o desliga;
+      // só depois do "init process complete" o servidor definitivo está de pé.
+      const logs = runDocker(['logs', containerName]);
+      const initTerminou = `${logs.stdout}${logs.stderr}`.includes('PostgreSQL init process complete');
+      const isReady = initTerminou
+        ? runDocker(['exec', containerName, 'pg_isready', '-U', 'postgres'])
+        : { status: 1 };
       if (isReady.status === 0) {
         const dbsExist = psqlAs('postgres', 'postgres', "SELECT count(*) FROM pg_database WHERE datname IN ('crm_prod','crm_staging')");
         if (dbsExist.status === 0 && dbsExist.stdout.trim() === '2') {

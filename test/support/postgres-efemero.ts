@@ -141,7 +141,15 @@ export async function subirPostgresEfemero(
   const deadline = Date.now() + READY_TIMEOUT_MS;
   let ready = false;
   while (Date.now() < deadline) {
-    const isReady = runDocker(['exec', containerName, 'pg_isready', '-U', 'postgres']);
+    // A imagem oficial sobe um servidor TEMPORÁRIO para rodar os init scripts
+    // (os roles já existem nele), desliga-o e só então sobe o definitivo.
+    // Sem esperar essa mensagem, pg_isready + roles passam no temporário e a
+    // migration cai em "database system is shutting down".
+    const logs = runDocker(['logs', containerName]);
+    const initTerminou = `${logs.stdout}${logs.stderr}`.includes('PostgreSQL init process complete');
+    const isReady = initTerminou
+      ? runDocker(['exec', containerName, 'pg_isready', '-U', 'postgres'])
+      : { status: 1 };
     if (isReady.status === 0) {
       const rolesExist = psqlComo(
         'postgres',
