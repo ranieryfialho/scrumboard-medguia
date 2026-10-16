@@ -18,7 +18,7 @@
     (atalho: `onp-spec tarefa <feature> <T-xxx> <status>`)
 -->
 
-## T-101 — Repositório de KPIs sobre o log de eventos [pendente]
+## T-101 — Repositório de KPIs sobre o log de eventos [concluida]
 - Refs: US-061, AC-221, AC-222, AC-223, AC-224, AC-225, AC-226, AC-227, AC-228
 - Arquivos: src/repositories/kpis.ts, test/db/kpis.test.ts
 - Esforço: alto
