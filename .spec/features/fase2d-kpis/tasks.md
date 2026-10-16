@@ -30,7 +30,7 @@
 - Esforço: medio
 - Notas: depende de T-101. Mesmo padrão de sessão/tenant de src/app/api/atividades/route.ts; só MASTER, GERENTE e super admin (ASM-074); valida `de`/`ate`/`responsavelId` antes de tocar o banco; padrão = mês corrente.
 
-## T-103 — Página /indicadores e item no menu [pendente]
+## T-103 — Página /indicadores e item no menu [concluida]
 - Refs: US-063, AC-231, AC-232, AC-233
 - Arquivos: src/app/indicadores/page.tsx, src/components/indicadores/painel-kpis.tsx, src/components/layout/sidebar.tsx, test/components/indicadores/painel-kpis.test.tsx
 - Esforço: alto
