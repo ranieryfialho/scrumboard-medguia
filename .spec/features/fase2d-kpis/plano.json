@@ -1,0 +1,77 @@
+{
+  "runId": "scrumboard-medguia-fase2d-kpis-mvbdf4k9",
+  "feature": "fase2d-kpis",
+  "agent": "claude",
+  "modo": "sequencial",
+  "paralelizar": null,
+  "modeloForcado": null,
+  "esforcoForcado": null,
+  "geradoEm": "2026-10-16 19:38",
+  "branchTrabalho": "spec/fase2d-kpis",
+  "baseDir": ".spec/features/fase2d-kpis",
+  "specDir": ".spec",
+  "repoName": "scrumboard-medguia",
+  "logsDir": "../onp-worktrees/scrumboard-medguia-fase2d-kpis-logs",
+  "ondas": [],
+  "faixas": [],
+  "sequenciais": [
+    {
+      "id": "T-101",
+      "titulo": "Repositório de KPIs sobre o log de eventos",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "src/repositories/kpis.ts",
+        "test/db/kpis.test.ts"
+      ],
+      "refs": [
+        "US-061",
+        "AC-221",
+        "AC-222",
+        "AC-223",
+        "AC-224",
+        "AC-225",
+        "AC-226",
+        "AC-227",
+        "AC-228"
+      ]
+    },
+    {
+      "id": "T-102",
+      "titulo": "Rota GET /api/relatorios/kpis",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/app/api/relatorios/kpis/route.ts",
+        "test/api/relatorios-kpis.test.ts"
+      ],
+      "refs": [
+        "AC-226",
+        "AC-227",
+        "AC-228",
+        "AC-229",
+        "AC-230"
+      ]
+    },
+    {
+      "id": "T-103",
+      "titulo": "Página /indicadores e item no menu",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "src/app/indicadores/page.tsx",
+        "src/components/indicadores/painel-kpis.tsx",
+        "src/components/layout/sidebar.tsx",
+        "test/components/indicadores/painel-kpis.test.tsx"
+      ],
+      "refs": [
+        "US-063",
+        "AC-231",
+        "AC-232",
+        "AC-233"
+      ]
+    }
+  ],
+  "concluidas": [],
+  "avisos": []
+}
