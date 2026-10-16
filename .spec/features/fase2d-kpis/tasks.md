@@ -24,7 +24,7 @@
 - Esforço: alto
 - Notas: uma consulta SQL por tenant (RLS), coorte por `oportunidades.criado_em` no fuso America/Sao_Paulo (ASM-069), `count(distinct oportunidade_id)` por evento (ASM-070/071). Ativação do trial devolve `valor: null` (Q-023). Teste em Postgres efêmero, como test/db/cadencia-fila.test.ts.
 
-## T-102 — Rota GET /api/relatorios/kpis [pendente]
+## T-102 — Rota GET /api/relatorios/kpis [concluida]
 - Refs: AC-226, AC-227, AC-228, AC-229, AC-230
 - Arquivos: src/app/api/relatorios/kpis/route.ts, test/api/relatorios-kpis.test.ts
 - Esforço: medio
