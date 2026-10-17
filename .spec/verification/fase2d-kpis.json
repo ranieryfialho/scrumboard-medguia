@@ -1,0 +1,77 @@
+{
+  "feature": "fase2d-kpis",
+  "timestamp": "2026-10-16T20:10:12.360Z",
+  "gitRev": "a4f2775",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
+  "reporter": "vitest-json",
+  "exitCode": 1,
+  "testsParsed": 661,
+  "results": {
+    "AC-221": {
+      "status": "pass",
+      "testName": "T-101: repositório de KPIs sobre o log de eventos AC-221: taxa de conexão (reach rate) 10 cards criados no período, 4 conectados (uma conexão dupla não conta duas vezes) -> conexão 40% @spec:AC-221 10 cards criados no período, 4 conectados (uma conexão dupla não conta duas vezes) -> conexão 40% @spec:AC-221",
+      "method": "vitest-json"
+    },
+    "AC-222": {
+      "status": "pass",
+      "testName": "T-101: repositório de KPIs sobre o log de eventos AC-222: cumprimento da régua de 18 toques 5 cards iniciaram a cadência no período, 2 esgotaram -> cumprimento 40% @spec:AC-222 5 cards iniciaram a cadência no período, 2 esgotaram -> cumprimento 40% @spec:AC-222",
+      "method": "vitest-json"
+    },
+    "AC-223": {
+      "status": "pass",
+      "testName": "T-101: repositório de KPIs sobre o log de eventos AC-223: agendamento, no-show, proposta e conversão cada taxa divide pelo denominador certo do funil @spec:AC-223 cada taxa divide pelo denominador certo do funil @spec:AC-223",
+      "method": "vitest-json"
+    },
+    "AC-224": {
+      "status": "pass",
+      "testName": "T-101: repositório de KPIs sobre o log de eventos AC-224: divisão por zero não vira número falso sem nenhuma \"Reunião agendada\" no período: no-show vem null, mas os demais indicadores calculam normal @spec:AC-224 sem nenhuma \"Reunião agendada\" no período: no-show vem null, mas os demais indicadores calculam normal @spec:AC-224",
+      "method": "vitest-json"
+    },
+    "AC-225": {
+      "status": "pass",
+      "testName": "T-101: repositório de KPIs sobre o log de eventos AC-225: cada indicador traz numerador e denominador toda consulta bem-sucedida devolve os 7 indicadores, cada um com valor/numerador/denominador @spec:AC-225 toda consulta bem-sucedida devolve os 7 indicadores, cada um com valor/numerador/denominador @spec:AC-225",
+      "method": "vitest-json"
+    },
+    "AC-226": {
+      "status": "pass",
+      "testName": "T-102: GET /api/relatorios/kpis filtro de período: só os cards criados no intervalo entram na conta @spec:AC-226 filtro de período: só os cards criados no intervalo entram na conta @spec:AC-226",
+      "method": "vitest-json"
+    },
+    "AC-227": {
+      "status": "pass",
+      "testName": "T-102: GET /api/relatorios/kpis filtro por responsável restringe a conta a esse responsável @spec:AC-227 filtro por responsável restringe a conta a esse responsável @spec:AC-227",
+      "method": "vitest-json"
+    },
+    "AC-228": {
+      "status": "pass",
+      "testName": "T-102: GET /api/relatorios/kpis isolamento entre empresas: cards da empresa B nunca entram, mesmo passando empresaId=B na query @spec:AC-228 isolamento entre empresas: cards da empresa B nunca entram, mesmo passando empresaId=B na query @spec:AC-228",
+      "method": "vitest-json"
+    },
+    "AC-229": {
+      "status": "pass",
+      "testName": "T-102: GET /api/relatorios/kpis sem sessão: 401 NAO_AUTENTICADO @spec:AC-229 sem sessão: 401 NAO_AUTENTICADO @spec:AC-229",
+      "method": "vitest-json"
+    },
+    "AC-230": {
+      "status": "pass",
+      "testName": "T-102: GET /api/relatorios/kpis de maior que ate: 400 PARAMETRO_INVALIDO, sem consultar o banco @spec:AC-230 de maior que ate: 400 PARAMETRO_INVALIDO, sem consultar o banco @spec:AC-230",
+      "method": "vitest-json"
+    },
+    "AC-231": {
+      "status": "pass",
+      "testName": "T-103: Sidebar (item \"Indicadores\") e PainelKpis AC-231: a página exige login e tem item no menu MASTER vê \"Indicadores\" no menu levando a /indicadores @spec:AC-231 MASTER vê \"Indicadores\" no menu levando a /indicadores @spec:AC-231",
+      "method": "vitest-json"
+    },
+    "AC-232": {
+      "status": "pass",
+      "testName": "T-103: Sidebar (item \"Indicadores\") e PainelKpis AC-232: a página mostra cada indicador com a conta cada indicador aparece com percentual, nome por extenso e \"N de M\" @spec:AC-232 cada indicador aparece com percentual, nome por extenso e \"N de M\" @spec:AC-232",
+      "method": "vitest-json"
+    },
+    "AC-233": {
+      "status": "pass",
+      "testName": "T-103: Sidebar (item \"Indicadores\") e PainelKpis AC-233: filtros da página recarregam os números mudar o período chama a rota com os novos filtros e substitui os números @spec:AC-233 mudar o período chama a rota com os novos filtros e substitui os números @spec:AC-233",
+      "method": "vitest-json"
+    }
+  },
+  "principles": {}
+}
