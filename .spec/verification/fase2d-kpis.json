@@ -1,11 +1,11 @@
 {
   "feature": "fase2d-kpis",
-  "timestamp": "2026-10-16T20:10:12.360Z",
-  "gitRev": "a4f2775",
+  "timestamp": "2026-10-19T14:24:00.268Z",
+  "gitRev": "a8c8b40",
   "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
-  "exitCode": 1,
-  "testsParsed": 661,
+  "exitCode": 0,
+  "testsParsed": 714,
   "results": {
     "AC-221": {
       "status": "pass",
