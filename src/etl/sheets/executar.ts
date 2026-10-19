@@ -1,0 +1,198 @@
+// T-120 (fase3-etl-sheets, US-081): orquestrador do ETL do Sheets — junta
+// T-114 a T-119 (leitura por aba, dedupe entre abas, status→etapa, import de
+// lead+card, agenda e vínculo de mensagens) numa única transação, pelo mesmo
+// contrato de `comum.ts` usado por `fase3-etl-supabase` (T-108).
+//
+// AC-289: cada etapa já é idempotente por conta própria (`migracao_registros`
+// em T-118, `lead_id is null` em T-119) — rodar tudo de novo sobre as mesmas
+// planilhas apenas soma `ignoradas`.
+// AC-290: em simulação, `executarEtl` roda a função inteira e desfaz a
+// transação ao final (nenhuma escrita sobrevive) — o relatório sai igual ao
+// de uma execução real.
+// AC-292: o relatório por aba confere `linhasLidas = criadas + fundidas +
+// ignoradas + emRevisao`. `fundidas` conta as ocorrências do mesmo lead
+// (ASM-090) que perderam a deduplicação entre abas (T-116) para outra aba —
+// a ocorrência vencedora é que de fato vira lead/card ou vai para revisão.
+// `ignoradas` soma o que a leitura já descartou (lead de teste/linha em
+// branco, T-114) com o que já tinha sido migrado numa execução anterior.
+import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
+
+import { buscarIdDestino, executarEtl, type ContextoExecucao, type TransacaoEtl } from '../comum';
+import { lerAba, type ChaveAbaConhecida } from './leitor';
+import { deduplicarLeads, type ConflitoDedupe, type LeadComOrigem, type OrigemLead } from './dedupe';
+import { mapearStatusParaEtapa } from './status';
+import { importarLeadsSheets, type ItemRevisaoLead, type LeadParaImportar } from './leads';
+import {
+  gerarCsvAgenda,
+  lerAgenda,
+  vincularMensagensPorTelefone,
+  type ResultadoVinculoMensagens,
+} from './agenda-mensagens';
+
+/** Uma aba a ler, identificada pela mesma chave `planilha/aba` de `leitor.ts`. */
+export interface AbaParaLer {
+  chave: ChaveAbaConhecida;
+  linhas: string[][];
+}
+
+export interface LinhaRelatorioAba {
+  aba: string;
+  linhasLidas: number;
+  criadas: number;
+  /** Ocorrências deste lead nesta aba que perderam a deduplicação para outra aba (AC-275/AC-292). */
+  fundidas: number;
+  ignoradas: number;
+  emRevisao: number;
+}
+
+export interface RelatorioEtlSheets {
+  simulacao: boolean;
+  linhas: LinhaRelatorioAba[];
+  /** Conflitos de status resolvidos na deduplicação (AC-276), reportados mesmo já decididos. */
+  conflitos: ConflitoDedupe[];
+  /** Fila de revisão manual desta execução (AC-282, AC-283). */
+  revisao: ItemRevisaoLead[];
+  /** CSV da aba `Agenda` (AC-286) — nada daqui é gravado no banco. */
+  csvAgenda: string;
+  vinculoMensagens: ResultadoVinculoMensagens;
+}
+
+/** O relatório não fechou a conta (`linhasLidas != criadas + fundidas + ignoradas + emRevisao`) para uma aba (AC-292). */
+export class ErroRelatorioInconsistente extends Error {
+  constructor(linha: LinhaRelatorioAba) {
+    super(
+      `Relatório não confere para a aba "${linha.aba}": linhasLidas=${linha.linhasLidas}, ` +
+        `criadas=${linha.criadas}, fundidas=${linha.fundidas}, ignoradas=${linha.ignoradas}, ` +
+        `emRevisao=${linha.emRevisao}.`
+    );
+    this.name = 'ErroRelatorioInconsistente';
+  }
+}
+
+function origemDaChave(chave: ChaveAbaConhecida): OrigemLead {
+  const [planilha, aba] = chave.split('/');
+  return { planilha, aba };
+}
+
+function chaveDaOrigem(origem: OrigemLead): string {
+  return `${origem.planilha}/${origem.aba}`;
+}
+
+function origensIguais(a: OrigemLead, b: OrigemLead): boolean {
+  return a.planilha === b.planilha && a.aba === b.aba;
+}
+
+interface ContadorAba {
+  linhasLidas: number;
+  criadas: number;
+  fundidas: number;
+  ignoradas: number;
+  emRevisao: number;
+}
+
+async function rodarEtapas(
+  tx: TransacaoEtl,
+  contexto: ContextoExecucao,
+  empresaId: string,
+  abas: AbaParaLer[],
+  agendaLinhas: string[][]
+): Promise<RelatorioEtlSheets> {
+  const leituras = abas.map((aba) => ({
+    origem: origemDaChave(aba.chave),
+    resultado: lerAba(aba.chave, aba.linhas),
+  }));
+
+  const contadores = new Map<string, ContadorAba>();
+  for (const { origem, resultado } of leituras) {
+    contadores.set(chaveDaOrigem(origem), {
+      linhasLidas: resultado.linhasLidas,
+      criadas: 0,
+      fundidas: 0,
+      ignoradas: resultado.ignoradas.length,
+      emRevisao: 0,
+    });
+  }
+
+  const entradas: LeadComOrigem[] = [];
+  for (const { origem, resultado } of leituras) {
+    for (const lead of resultado.leads) {
+      entradas.push({ origem, lead });
+    }
+  }
+
+  const { leads: deduplicados, conflitos } = deduplicarLeads(entradas);
+
+  // Entre as ocorrências do mesmo lead (AC-275), só a vencedora conta como
+  // criada/em revisão nesta aba — as demais perderam a deduplicação e
+  // contam como "fundidas" na aba de onde vieram (AC-292).
+  for (const deduplicado of deduplicados) {
+    let vencedoraEncontrada = false;
+    for (const origemOcorrencia of deduplicado.origens) {
+      if (!vencedoraEncontrada && origensIguais(origemOcorrencia, deduplicado.origem)) {
+        vencedoraEncontrada = true;
+        continue;
+      }
+      contadores.get(chaveDaOrigem(origemOcorrencia))!.fundidas += 1;
+    }
+  }
+
+  const entradasParaImportar: LeadParaImportar[] = deduplicados.map((deduplicado) => {
+    const decisao = mapearStatusParaEtapa(deduplicado.lead.situacaoBruta, {
+      dataFechamento: deduplicado.lead.camposExtras['data_fechamento'],
+      dataProximaAcao: deduplicado.lead.camposExtras['data_proxima_acao'],
+    });
+    return { lead: deduplicado.lead, origem: deduplicado.origem, decisao };
+  });
+
+  for (const entrada of entradasParaImportar) {
+    const contador = contadores.get(chaveDaOrigem(entrada.origem))!;
+    const jaMigrado = await buscarIdDestino(tx, contexto.origem, entrada.lead.metaId);
+    if (jaMigrado) {
+      contador.ignoradas += 1;
+    } else if (entrada.decisao.tipo === 'revisao') {
+      contador.emRevisao += 1;
+    } else {
+      contador.criadas += 1;
+    }
+  }
+
+  const resultadoImportacao = await importarLeadsSheets(tx, contexto, empresaId, entradasParaImportar);
+
+  const linhas: LinhaRelatorioAba[] = Array.from(contadores.entries()).map(([aba, contador]) => {
+    const linha: LinhaRelatorioAba = { aba, ...contador };
+    if (linha.linhasLidas !== linha.criadas + linha.fundidas + linha.ignoradas + linha.emRevisao) {
+      throw new ErroRelatorioInconsistente(linha);
+    }
+    return linha;
+  });
+
+  const csvAgenda = gerarCsvAgenda(lerAgenda(agendaLinhas));
+  const vinculoMensagens = await vincularMensagensPorTelefone(tx, empresaId);
+
+  return {
+    simulacao: contexto.simulacao,
+    linhas,
+    conflitos,
+    revisao: resultadoImportacao.revisao,
+    csvAgenda,
+    vinculoMensagens,
+  };
+}
+
+/**
+ * Roda o ETL completo do Sheets (US-081): lê as abas já baixadas, deduplica
+ * entre elas, traduz status, importa lead+card e vincula mensagens — tudo
+ * numa única transação (AC-270, via `executarEtl`) que é desfeita ao final
+ * em modo simulação (AC-290). Nenhuma chamada daqui escreve na planilha
+ * (AC-291 é responsabilidade de `leitor.ts`/`agenda-mensagens.ts`, que só
+ * expõem leitura).
+ */
+export async function executarMigracaoSheets(
+  db: NodePgDatabase,
+  contexto: ContextoExecucao,
+  empresaId: string,
+  abas: AbaParaLer[],
+  agendaLinhas: string[][]
+): Promise<RelatorioEtlSheets> {
+  return executarEtl(db, contexto, (tx, ctx) => rodarEtapas(tx, ctx, empresaId, abas, agendaLinhas));
+}
