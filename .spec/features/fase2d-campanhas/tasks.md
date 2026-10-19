@@ -38,7 +38,7 @@
 - Esforço: medio
 - Notas: independe das demais (arquivos disjuntos). Remove o uso de `@supabase/supabase-js` e da service role; verifica assinatura Svix (ASM-079); atualização por UPDATE condicional (ENVIADO→ABERTO, ENVIADO/ABERTO→CLICADO). Acesso ao banco sem sessão de usuário: seguir o padrão do webhook da Evolution em src/app/api/whatsapp/webhook.
 
-## T-107 — Telas de Mala Direta nas rotas novas [pendente]
+## T-107 — Telas de Mala Direta nas rotas novas [concluida]
 - Refs: AC-249, AC-250, AC-251
 - Arquivos: src/components/campanhas/campanhas-tab.tsx, src/components/campanhas/campanha-detalhes.tsx, src/components/campanhas/nova-campanha-modal.tsx, src/hooks/use-campanhas.ts, test/components/campanhas/campanhas-telas.test.tsx
 - Esforço: alto

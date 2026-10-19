@@ -1,0 +1,102 @@
+{
+  "feature": "fase2d-campanhas",
+  "timestamp": "2026-10-19T13:18:10.162Z",
+  "gitRev": "a2682e6",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
+  "reporter": "vitest-json",
+  "exitCode": 1,
+  "testsParsed": 682,
+  "results": {
+    "AC-234": {
+      "status": "pass",
+      "testName": "T-105: rotas /api/campanhas AC-234: criar campanha em rascunho com destinatários de uma planilha POST /api/campanhas cria a campanha RASCUNHO com um destinatário por contato e devolve id e total @spec:AC-234 POST /api/campanhas cria a campanha RASCUNHO com um destinatário por contato e devolve id e total @spec:AC-234",
+      "method": "vitest-json"
+    },
+    "AC-235": {
+      "status": "pass",
+      "testName": "T-105: rotas /api/campanhas AC-235: criar campanha com os cards de uma etapa do pipeline POST /api/campanhas com origem etapa só traz leads com e-mail da etapa e empresa certas @spec:AC-235 POST /api/campanhas com origem etapa só traz leads com e-mail da etapa e empresa certas @spec:AC-235",
+      "method": "vitest-json"
+    },
+    "AC-236": {
+      "status": "pass",
+      "testName": "T-104: repositório de campanhas e envios AC-236: e-mails inválidos e repetidos são descartados e contados função pura: inválidos e repetidos (sem diferenciar maiúsculas) são descartados e contados separadamente @spec:AC-236 função pura: inválidos e repetidos (sem diferenciar maiúsculas) são descartados e contados separadamente @spec:AC-236",
+      "method": "vitest-json"
+    },
+    "AC-237": {
+      "status": "pass",
+      "testName": "T-105: rotas /api/campanhas AC-237: editar nome, assunto e corpo só enquanto é rascunho PATCH grava a edição numa campanha RASCUNHO; numa PROCESSANDO ou FINALIZADA volta 409 sem mudar nada @spec:AC-237 PATCH grava a edição numa campanha RASCUNHO; numa PROCESSANDO ou FINALIZADA volta 409 sem mudar nada @spec:AC-237",
+      "method": "vitest-json"
+    },
+    "AC-238": {
+      "status": "pass",
+      "testName": "T-105: rotas /api/campanhas AC-238: campos obrigatórios e permissão faltando nome/assunto/corpo: 400 PARAMETRO_INVALIDO com mensagem em português e nada é gravado @spec:AC-238 faltando nome/assunto/corpo: 400 PARAMETRO_INVALIDO com mensagem em português e nada é gravado @spec:AC-238",
+      "method": "vitest-json"
+    },
+    "AC-239": {
+      "status": "pass",
+      "testName": "T-105: rotas /api/campanhas AC-239: Play libera a fila para o motor POST .../iniciar move a campanha para PROCESSANDO e os destinatários RASCUNHO para PENDENTE @spec:AC-239 POST .../iniciar move a campanha para PROCESSANDO e os destinatários RASCUNHO para PENDENTE @spec:AC-239",
+      "method": "vitest-json"
+    },
+    "AC-240": {
+      "status": "pass",
+      "testName": "T-105: rotas /api/campanhas AC-240: Play recusado quando não há o que enviar ou já foi iniciada sem destinatários: 422 SEM_DESTINATARIOS; já iniciada: 409 CAMPANHA_JA_INICIADA; nada muda @spec:AC-240 sem destinatários: 422 SEM_DESTINATARIOS; já iniciada: 409 CAMPANHA_JA_INICIADA; nada muda @spec:AC-240",
+      "method": "vitest-json"
+    },
+    "AC-241": {
+      "status": "pass",
+      "testName": "T-105: rotas /api/campanhas AC-241: reenviar falhas devolve os erros para a fila POST .../reenviar-falhas devolve só os ERRO para PENDENTE e a campanha volta a PROCESSANDO @spec:AC-241 POST .../reenviar-falhas devolve só os ERRO para PENDENTE e a campanha volta a PROCESSANDO @spec:AC-241",
+      "method": "vitest-json"
+    },
+    "AC-242": {
+      "status": "pass",
+      "testName": "T-104: repositório de campanhas e envios AC-242: a campanha finaliza quando a fila acaba PROCESSANDO sem nenhum PENDENTE nem RASCUNHO vira FINALIZADA ao consultar o detalhe @spec:AC-242 PROCESSANDO sem nenhum PENDENTE nem RASCUNHO vira FINALIZADA ao consultar o detalhe @spec:AC-242",
+      "method": "vitest-json"
+    },
+    "AC-243": {
+      "status": "pass",
+      "testName": "T-105: rotas /api/campanhas AC-243: listar as campanhas da empresa GET /api/campanhas traz só as da própria empresa, da mais nova para a mais antiga @spec:AC-243 GET /api/campanhas traz só as da própria empresa, da mais nova para a mais antiga @spec:AC-243",
+      "method": "vitest-json"
+    },
+    "AC-244": {
+      "status": "pass",
+      "testName": "T-105: rotas /api/campanhas AC-244: detalhe com destinatários e contagem por status GET /api/campanhas/:id traz destinatários ordenados por nome e a contagem por status @spec:AC-244 GET /api/campanhas/:id traz destinatários ordenados por nome e a contagem por status @spec:AC-244",
+      "method": "vitest-json"
+    },
+    "AC-245": {
+      "status": "pass",
+      "testName": "T-105: rotas /api/campanhas AC-245: excluir a campanha apaga os envios DELETE remove a campanha e todos os destinatários @spec:AC-245 DELETE remove a campanha e todos os destinatários @spec:AC-245",
+      "method": "vitest-json"
+    },
+    "AC-246": {
+      "status": "pass",
+      "testName": "T-106: rota POST /api/webhooks/resend AC-246: abertura e clique atualizam o destinatário email.opened leva ENVIADO a ABERTO @spec:AC-246 email.opened leva ENVIADO a ABERTO @spec:AC-246",
+      "method": "vitest-json"
+    },
+    "AC-247": {
+      "status": "pass",
+      "testName": "T-106: rota POST /api/webhooks/resend AC-247: webhook sem assinatura válida é recusado sem nenhum cabeçalho de assinatura: 401, nada alterado @spec:AC-247 sem nenhum cabeçalho de assinatura: 401, nada alterado @spec:AC-247",
+      "method": "vitest-json"
+    },
+    "AC-248": {
+      "status": "pass",
+      "testName": "T-106: rota POST /api/webhooks/resend AC-248: eventos desconhecidos ou sem envio são ignorados com 200 tipo de evento não tratado: 200, nada alterado @spec:AC-248 tipo de evento não tratado: 200, nada alterado @spec:AC-248",
+      "method": "vitest-json"
+    },
+    "AC-249": {
+      "status": "pass",
+      "testName": "T-107: telas de Mala Direta nas rotas novas AC-249: a lista de campanhas usa a rota nova busca GET /api/campanhas e mostra nome, status, destinatários e ações @spec:AC-249 busca GET /api/campanhas e mostra nome, status, destinatários e ações @spec:AC-249",
+      "method": "vitest-json"
+    },
+    "AC-250": {
+      "status": "pass",
+      "testName": "T-107: telas de Mala Direta nas rotas novas AC-250: nova campanha pela tela grava pela rota salvar chama POST /api/campanhas com a origem escolhida e mostra o resultado @spec:AC-250 salvar chama POST /api/campanhas com a origem escolhida e mostra o resultado @spec:AC-250",
+      "method": "vitest-json"
+    },
+    "AC-251": {
+      "status": "pass",
+      "testName": "T-107: telas de Mala Direta nas rotas novas AC-251: Play, reenviar e acompanhamento usam as rotas novas Play chama POST .../iniciar @spec:AC-251 Play chama POST .../iniciar @spec:AC-251",
+      "method": "vitest-json"
+    }
+  },
+  "principles": {}
+}
