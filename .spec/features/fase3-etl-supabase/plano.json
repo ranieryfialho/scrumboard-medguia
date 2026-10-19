@@ -1,0 +1,125 @@
+{
+  "runId": "scrumboard-medguia-fase3-etl-supabase-mvfhmwlx",
+  "feature": "fase3-etl-supabase",
+  "agent": "claude",
+  "modo": "sequencial",
+  "paralelizar": null,
+  "modeloForcado": null,
+  "esforcoForcado": null,
+  "geradoEm": "2026-10-19 16:47",
+  "branchTrabalho": "spec/fase3-etl-supabase",
+  "baseDir": ".spec/features/fase3-etl-supabase",
+  "specDir": ".spec",
+  "repoName": "scrumboard-medguia",
+  "logsDir": "../onp-worktrees/scrumboard-medguia-fase3-etl-supabase-logs",
+  "ondas": [],
+  "faixas": [],
+  "sequenciais": [
+    {
+      "id": "T-108",
+      "titulo": "Base do ETL: leitor da origem, mascaramento de segredos e contexto de execução",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/etl/supabase/origem.ts",
+        "src/etl/comum.ts",
+        "test/etl/comum.test.ts"
+      ],
+      "refs": [
+        "AC-266",
+        "AC-267",
+        "AC-268",
+        "AC-270"
+      ]
+    },
+    {
+      "id": "T-109",
+      "titulo": "Migrar empresas e usuários",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/etl/supabase/identidade.ts",
+        "test/etl/identidade.test.ts"
+      ],
+      "refs": [
+        "US-069",
+        "AC-252",
+        "AC-253",
+        "AC-254",
+        "AC-255",
+        "AC-271"
+      ]
+    },
+    {
+      "id": "T-110",
+      "titulo": "Migrar leads como lead + card",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/etl/supabase/leads.ts",
+        "test/etl/leads.test.ts"
+      ],
+      "refs": [
+        "US-070",
+        "AC-256",
+        "AC-257",
+        "AC-258",
+        "AC-259",
+        "AC-260",
+        "AC-272"
+      ]
+    },
+    {
+      "id": "T-111",
+      "titulo": "Migrar campanhas e envios",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/etl/supabase/campanhas.ts",
+        "test/etl/campanhas.test.ts"
+      ],
+      "refs": [
+        "US-071",
+        "AC-261",
+        "AC-262"
+      ]
+    },
+    {
+      "id": "T-112",
+      "titulo": "Migrar mensagens de WhatsApp e configurações das empresas",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/etl/supabase/mensagens-config.ts",
+        "test/etl/mensagens-config.test.ts"
+      ],
+      "refs": [
+        "US-072",
+        "US-073",
+        "AC-263",
+        "AC-264",
+        "AC-265"
+      ]
+    },
+    {
+      "id": "T-113",
+      "titulo": "Orquestrador e comando do ETL com simulação e relatório",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/etl/supabase/executar.ts",
+        "scripts/etl-supabase.ts",
+        "test/etl/executar.test.ts"
+      ],
+      "refs": [
+        "US-074",
+        "AC-267",
+        "AC-268",
+        "AC-269",
+        "AC-270"
+      ]
+    }
+  ],
+  "concluidas": [],
+  "avisos": []
+}
