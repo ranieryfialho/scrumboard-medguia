@@ -9,8 +9,7 @@
   Status: pendente | em-andamento | concluida
 -->
 
-## T-108 — Base do ETL: leitor da origem, mascaramento de segredos e contexto de execução [pendente]
-
+## T-108 — Base do ETL: leitor da origem, mascaramento de segredos e contexto de execução [concluida]
 - Refs: AC-266, AC-267, AC-268, AC-270
 - Arquivos: src/etl/supabase/origem.ts, src/etl/comum.ts, test/etl/comum.test.ts
 - Notas: define o contrato que as tarefas seguintes usam (ler origem, registrar em `migracao_registros`, dry-run, transação única). Leitura por conexão direta somente leitura (Q-027).
