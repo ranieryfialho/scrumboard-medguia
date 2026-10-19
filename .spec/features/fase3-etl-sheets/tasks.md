@@ -14,8 +14,7 @@
 - Arquivos: src/etl/sheets/leitor.ts, test/etl/sheets-leitor.test.ts
 - Notas: reproduz as regras de `src/app/api/sheets/route.ts`; escopo somente leitura (`spreadsheets.readonly`).
 
-## T-115 — Normalização de telefone e datas [pendente]
-
+## T-115 — Normalização de telefone e datas [concluida]
 - Refs: US-076, AC-277, AC-278
 - Arquivos: src/etl/sheets/normalizar.ts, test/etl/sheets-normalizar.test.ts
 - Notas: E.164 com +55 padrão (ASM-089); data com fuso ISO e `dd/mm/aaaa` (ASM-088).
