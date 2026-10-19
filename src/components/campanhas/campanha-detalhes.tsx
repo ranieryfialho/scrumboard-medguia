@@ -1,142 +1,140 @@
 "use client";
 
+// T-107 (fase2d-campanhas, US-068): detalhe, Play e reenviar falhas falam só
+// com as rotas novas (src/hooks/use-campanhas.ts) — nada aqui consulta o
+// Supabase direto (AC-251). A finalização automática (AC-242) já acontece
+// no servidor (GET /api/campanhas/:id); esta tela só reflete o status que a
+// rota devolve.
 import { useState, useEffect, useCallback } from "react";
-import { ArrowLeft, Users, MailOpen, MousePointerClick, Send, AlertCircle, Clock, Calendar, Eye, CheckCircle2, XCircle, Play, Loader2, RefreshCw, RefreshCcw } from "lucide-react";
+import { ArrowLeft, Users, MailOpen, MousePointerClick, Send, AlertCircle, Clock, Eye, CheckCircle2, XCircle, Play, Loader2, RefreshCw, RefreshCcw } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { createClient } from "@/lib/supabase/client";
-import { Campanha, Destinatario } from "@/types/campanha";
+import { getErrorMessage } from "@/lib/utils";
+import { useCampanhas, type DetalheCampanha } from "@/hooks/use-campanhas";
 
 interface CampanhaDetalhesProps {
-  campanha: Campanha;
+  campanhaId: string;
   onBack: () => void;
   onRefresh: () => void;
 }
 
-export function CampanhaDetalhes({ campanha, onBack, onRefresh }: CampanhaDetalhesProps) {
-  const [destinatarios, setDestinatarios] = useState<Destinatario[]>([]);
+const INTERVALO_POLLING_MS = 5000;
+
+export function CampanhaDetalhes({ campanhaId, onBack, onRefresh }: CampanhaDetalhesProps) {
+  const { buscarDetalhe, iniciarCampanha, reenviarFalhas } = useCampanhas();
+
+  const [detalhe, setDetalhe] = useState<DetalheCampanha | null>(null);
   const [loading, setLoading] = useState(true);
+  const [erroCarregar, setErroCarregar] = useState<string | null>(null);
   const [isStarting, setIsStarting] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
-  const [isRefreshingLocal, setIsRefreshingLocal] = useState(false); 
-  const [isResending, setIsResending] = useState(false); 
-  
-  const supabase = createClient();
+  const [isRefreshingLocal, setIsRefreshingLocal] = useState(false);
+  const [isResending, setIsResending] = useState(false);
+  const [mensagemAcao, setMensagemAcao] = useState<string | null>(null);
 
-  const fetchDestinatarios = useCallback(async (tipoBusca: 'inicial' | 'silenciosa' | 'manual' = 'inicial') => {
+  const carregarDetalhe = useCallback(async (tipoBusca: 'inicial' | 'silenciosa' | 'manual' = 'inicial') => {
     if (tipoBusca === 'manual') setIsRefreshingLocal(true);
-    
+
     try {
-      const { data, error } = await supabase
-        .from('envios_campanha')
-        .select('*')
-        .eq('campanha_id', campanha.id)
-        .order('nome_destinatario', { ascending: true });
-
-      if (error) throw error;
-      setDestinatarios(data || []);
-
-      // =========================================================
-      // AUTO-HEALING: VERIFICAÇÃO AUTOMÁTICA DE TÉRMINO
-      // Se a campanha consta como PROCESSANDO mas a fila de envios acabou,
-      // alteramos o status dela para FINALIZADA.
-      // =========================================================
-      if (campanha.status === 'PROCESSANDO' && data && data.length > 0) {
-        const aindaTemFila = data.some((d: Destinatario) => d.status === 'PENDENTE' || d.status === 'RASCUNHO');
-        
-        if (!aindaTemFila) {
-          // 1. Atualiza no Supabase
-          await supabase.from('campanhas').update({ status: 'FINALIZADA' }).eq('id', campanha.id);
-          // 2. Atualiza localmente para refletir os badges na mesma hora
-          campanha.status = 'FINALIZADA';
-          // 3. Pede para a tabela da tela anterior atualizar os dados
+      const novoDetalhe = await buscarDetalhe(campanhaId);
+      // AC-242: o servidor finaliza a campanha quando a fila acaba; aqui só
+      // avisamos a lista para ela também atualizar o badge de status. Usa a
+      // forma funcional do setState (não `detalhe` do closure, que ficaria
+      // preso no valor de quando `carregarDetalhe` foi criado) para comparar
+      // com o status anterior de verdade.
+      setDetalhe((anterior) => {
+        if (anterior?.campanha.status === 'PROCESSANDO' && novoDetalhe.campanha.status === 'FINALIZADA') {
           onRefresh();
         }
-      }
-
+        return novoDetalhe;
+      });
+      setErroCarregar(null);
     } catch (error) {
-      console.error("Erro ao buscar destinatários:", error);
+      setErroCarregar(getErrorMessage(error));
     } finally {
       setLoading(false);
       setIsRefreshingLocal(false);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [campanha.id, supabase]);
+  }, [campanhaId, buscarDetalhe, onRefresh]);
 
-  // Busca inicial (Ao abrir a tela)
+  // Busca inicial (ao abrir a tela)
   useEffect(() => {
-    fetchDestinatarios('inicial');
-  }, [fetchDestinatarios]);
+    carregarDetalhe('inicial');
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [campanhaId]);
 
-  // Busca silenciosa (A cada 5 segundos enquanto estiver processando)
+  // AC-251: busca silenciosa a cada 5s enquanto a campanha está PROCESSANDO.
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (campanha.status === 'PROCESSANDO') {
-      interval = setInterval(() => {
-        fetchDestinatarios('silenciosa');
-      }, 5000);
-    }
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [campanha.status, fetchDestinatarios]);
+    if (detalhe?.campanha.status !== 'PROCESSANDO') return;
+
+    const interval = setInterval(() => {
+      carregarDetalhe('silenciosa');
+    }, INTERVALO_POLLING_MS);
+
+    return () => clearInterval(interval);
+  }, [detalhe?.campanha.status, carregarDetalhe]);
 
   const handlePlay = async () => {
-    if(!confirm("Deseja iniciar os disparos em massa agora? O motor começará a enviar e-mails para todos na lista.")) return;
+    if (!confirm("Deseja iniciar os disparos em massa agora? O motor começará a enviar e-mails para todos na lista.")) return;
     setIsStarting(true);
+    setMensagemAcao(null);
     try {
-      await supabase.from('campanhas').update({status: 'PROCESSANDO'}).eq('id', campanha.id);
-      await supabase.from('envios_campanha').update({status: 'PENDENTE'}).eq('campanha_id', campanha.id).eq('status', 'RASCUNHO');
-      
-      campanha.status = 'PROCESSANDO';
-      onRefresh(); 
-      fetchDestinatarios('silenciosa'); 
-      
-      alert("Sucesso! Os envios foram liberados para a fila. O seu motor em Python já pode assumir.");
-    } catch (e) {
-      console.error(e);
-      alert("Erro ao iniciar a campanha.");
+      await iniciarCampanha(campanhaId);
+      onRefresh();
+      await carregarDetalhe('silenciosa');
+      setMensagemAcao("Sucesso! Os envios foram liberados para a fila. O motor de envio já pode assumir.");
+    } catch (error) {
+      setMensagemAcao(getErrorMessage(error));
     } finally {
       setIsStarting(false);
     }
   };
 
-  const reenviarFalhas = async () => {
+  const handleReenviarFalhas = async () => {
     setIsResending(true);
+    setMensagemAcao(null);
     try {
-      const { error } = await supabase
-        .from('envios_campanha')
-        .update({ status: 'PENDENTE' })
-        .eq('campanha_id', campanha.id)
-        .eq('status', 'ERRO');
-
-      if (error) throw error;
-
-      // Se a campanha estava finalizada, voltamos ela para PROCESSANDO
-      if (campanha.status !== 'PROCESSANDO') {
-        await supabase.from('campanhas').update({ status: 'PROCESSANDO' }).eq('id', campanha.id);
-        campanha.status = 'PROCESSANDO';
-        onRefresh();
-      }
-
-      alert("As falhas foram devolvidas para a fila! O motor começará a processá-las em breve.");
-      fetchDestinatarios('manual'); 
+      await reenviarFalhas(campanhaId);
+      onRefresh();
+      await carregarDetalhe('manual');
+      setMensagemAcao("As falhas foram devolvidas para a fila! O motor começará a processá-las em breve.");
     } catch (error) {
-      console.error("Erro ao reenviar falhas:", error);
-      alert("Erro ao tentar reenviar as falhas. Verifique sua conexão.");
+      setMensagemAcao(getErrorMessage(error));
     } finally {
       setIsResending(false);
     }
   };
 
+  if (loading) {
+    return (
+      <div className="h-48 flex items-center justify-center text-slate-400">
+        <Clock className="w-5 h-5 animate-spin mr-2" /> Carregando campanha...
+      </div>
+    );
+  }
+
+  if (erroCarregar || !detalhe) {
+    return (
+      <div className="flex h-48 flex-col items-center justify-center gap-4 text-center">
+        <p className="text-sm text-red-600">{erroCarregar ?? "Não foi possível carregar a campanha."}</p>
+        <Button variant="outline" onClick={() => carregarDetalhe('manual')} className="bg-white">
+          <RefreshCw className="w-4 h-4 mr-2" /> Tentar de novo
+        </Button>
+      </div>
+    );
+  }
+
+  const { campanha, destinatarios, contagemPorStatus } = detalhe;
+
   const total = destinatarios.length;
-  const pendentes = destinatarios.filter(d => ['PENDENTE', 'RASCUNHO'].includes(d.status)).length;
-  const enviados = destinatarios.filter(d => ['ENVIADO', 'ABERTO', 'CLICADO'].includes(d.status)).length;
-  const abertos = destinatarios.filter(d => ['ABERTO', 'CLICADO'].includes(d.status)).length;
-  const clicados = destinatarios.filter(d => d.status === 'CLICADO').length;
-  const erros = destinatarios.filter(d => d.status === 'ERRO').length;
+  const pendentes = (contagemPorStatus['PENDENTE'] ?? 0) + (contagemPorStatus['RASCUNHO'] ?? 0);
+  const enviados = (contagemPorStatus['ENVIADO'] ?? 0) + (contagemPorStatus['ABERTO'] ?? 0) + (contagemPorStatus['CLICADO'] ?? 0);
+  const abertos = (contagemPorStatus['ABERTO'] ?? 0) + (contagemPorStatus['CLICADO'] ?? 0);
+  const clicados = contagemPorStatus['CLICADO'] ?? 0;
+  const erros = contagemPorStatus['ERRO'] ?? 0;
 
   const taxaAbertura = enviados > 0 ? ((abertos / enviados) * 100).toFixed(1) : "0.0";
   const taxaClique = enviados > 0 ? ((clicados / enviados) * 100).toFixed(1) : "0.0";
@@ -167,7 +165,7 @@ export function CampanhaDetalhes({ campanha, onBack, onRefresh }: CampanhaDetalh
 
   return (
     <div className="flex-1 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 ease-out">
-      
+
       <div className="flex items-start justify-between gap-4 shrink-0">
         <div className="flex items-start gap-4">
           <Button variant="outline" size="icon" onClick={onBack} className="mt-1 shrink-0 bg-white hover:bg-slate-100 transition-colors shadow-sm">
@@ -176,37 +174,38 @@ export function CampanhaDetalhes({ campanha, onBack, onRefresh }: CampanhaDetalh
           <div>
             <div className="flex items-center gap-3 flex-wrap">
               <h2 className="text-3xl font-bold tracking-tight text-slate-800">{campanha.nome}</h2>
-              
+
               <Button variant="secondary" size="sm" onClick={() => setShowPreview(true)} className="bg-slate-100 hover:bg-slate-200 text-slate-700 h-8 mt-1">
                 <Eye className="w-4 h-4 mr-2" /> Ver E-mail
               </Button>
-              
-              <Button variant="outline" size="sm" onClick={() => fetchDestinatarios('manual')} disabled={isRefreshingLocal} className="h-8 mt-1 bg-white hover:bg-slate-50 shadow-sm border-slate-200 text-slate-600">
+
+              <Button variant="outline" size="sm" onClick={() => carregarDetalhe('manual')} disabled={isRefreshingLocal} className="h-8 mt-1 bg-white hover:bg-slate-50 shadow-sm border-slate-200 text-slate-600">
                 <RefreshCw className={`w-3.5 h-3.5 mr-2 ${isRefreshingLocal ? 'animate-spin' : ''}`} /> Atualizar
               </Button>
 
               {erros > 0 && (
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={reenviarFalhas} 
-                  disabled={isResending} 
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleReenviarFalhas}
+                  disabled={isResending}
                   className="h-8 mt-1 bg-white hover:bg-red-50 border-red-200 text-red-600 shadow-sm transition-colors"
                 >
-                  <RefreshCcw className={`w-3.5 h-3.5 mr-2 ${isResending ? 'animate-spin' : ''}`} /> 
+                  <RefreshCcw className={`w-3.5 h-3.5 mr-2 ${isResending ? 'animate-spin' : ''}`} />
                   Reenviar Falhas ({erros})
                 </Button>
               )}
             </div>
             <div className="flex items-center gap-3 text-sm text-slate-500 mt-2 font-medium">
-              <span className="flex items-center gap-1.5"><Calendar className="w-4 h-4" /> {new Date(campanha.criado_em).toLocaleDateString('pt-BR')}</span>
-              <span>•</span>
               <span className="flex items-center gap-1.5 text-indigo-600"><MailOpen className="w-4 h-4" /> Assunto: {campanha.assunto}</span>
             </div>
+            {mensagemAcao && (
+              <p className="text-sm text-slate-600 mt-2" role="status">{mensagemAcao}</p>
+            )}
           </div>
         </div>
 
-        {(campanha.status === 'RASCUNHO' || (campanha.status === 'PROCESSANDO' && pendentes > 0 && isStarting)) && (
+        {campanha.status === 'RASCUNHO' && (
           <Button onClick={handlePlay} disabled={isStarting} className="bg-emerald-500 hover:bg-emerald-600 text-white shadow-md px-6 py-6 text-base font-bold transition-all shrink-0">
             {isStarting ? <Loader2 className="w-5 h-5 mr-2 animate-spin"/> : <Play className="w-5 h-5 mr-2 fill-current" />}
             Iniciar Disparos
@@ -229,10 +228,10 @@ export function CampanhaDetalhes({ campanha, onBack, onRefresh }: CampanhaDetalh
                 <div className="w-2.5 h-2.5 rounded-full bg-slate-300"></div>
                 <div className="w-2.5 h-2.5 rounded-full bg-slate-300"></div>
               </div>
-              <iframe 
-                srcDoc={campanha.corpo_html} 
-                className="w-full flex-1 border-0" 
-                title="Preview do E-mail Final" 
+              <iframe
+                srcDoc={campanha.corpoHtml}
+                className="w-full flex-1 border-0"
+                title="Preview do E-mail Final"
               />
             </div>
           </div>
@@ -288,11 +287,7 @@ export function CampanhaDetalhes({ campanha, onBack, onRefresh }: CampanhaDetalh
           <CardDescription>Acompanhe o engajamento individual de cada lead.</CardDescription>
         </CardHeader>
         <CardContent className="p-0">
-          {loading ? (
-            <div className="h-48 flex items-center justify-center text-slate-400">
-              <Clock className="w-5 h-5 animate-spin mr-2" /> Carregando lista...
-            </div>
-          ) : destinatarios.length === 0 ? (
+          {destinatarios.length === 0 ? (
             <div className="h-48 flex flex-col items-center justify-center text-slate-400">
               <AlertCircle className="w-8 h-8 mb-2 opacity-50" />
               <p>Nenhum destinatário encontrado nesta campanha.</p>
@@ -314,8 +309,8 @@ export function CampanhaDetalhes({ campanha, onBack, onRefresh }: CampanhaDetalh
                     const StatusIcon = statusObj.icon;
                     return (
                       <tr key={dest.id} className="hover:bg-slate-50 transition-colors">
-                        <td className="px-6 py-4 font-semibold text-slate-700">{dest.nome_destinatario}</td>
-                        <td className="px-6 py-4 text-slate-500">{dest.email_destinatario}</td>
+                        <td className="px-6 py-4 font-semibold text-slate-700">{dest.nome}</td>
+                        <td className="px-6 py-4 text-slate-500">{dest.email}</td>
                         <td className="px-6 py-4">
                           <Badge variant="outline" className={`font-medium ${getBadgeVisual(dest.status)}`}>
                             {dest.status}

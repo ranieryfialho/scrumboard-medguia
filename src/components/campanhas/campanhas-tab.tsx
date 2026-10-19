@@ -1,28 +1,51 @@
 "use client";
 
-import { useState } from "react";
+// T-107 (fase2d-campanhas, US-068): a lista de campanhas agora vem de
+// GET /api/campanhas (T-105), via src/hooks/use-campanhas.ts — nada aqui
+// consulta o Supabase direto (AC-249/AC-251). `leads` continua vindo do
+// quadro Kanban (fora do escopo desta feature) só para alimentar a origem
+// "etapa" do modal "Nova campanha".
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { MailOpen, Send, Calendar, BarChart3, CheckCircle2, Clock, Trash2, MousePointerClick, Edit3, Settings } from "lucide-react"
+import { MailOpen, Send, Calendar, BarChart3, CheckCircle2, Clock, Trash2, Edit3, Settings, RefreshCw } from "lucide-react"
 import { NovaCampanhaModal } from "./nova-campanha-modal"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { CampanhaDetalhes } from "./campanha-detalhes"
-import { Campanha } from "@/types/campanha"
+import { getErrorMessage } from "@/lib/utils"
+import { useCampanhas, type CampanhaResumo } from "@/hooks/use-campanhas"
 import { Lead } from "@/types/lead"
 
 interface CampanhasTabProps {
   leads: Lead[];
-  campanhas: Campanha[];
-  onRefresh: () => void;
+  /** Props legadas (fluxo antigo via Supabase, src/hooks/use-leads.ts); não são mais usadas aqui. */
+  campanhas?: unknown[];
+  onRefresh?: () => void;
   onDelete?: (id: string) => Promise<void>;
 }
 
-export function CampanhasTab({ leads, campanhas, onRefresh, onDelete }: CampanhasTabProps) {
-  const [campanhaSelecionada, setCampanhaSelecionada] = useState<Campanha | null>(null);
-  
+export function CampanhasTab({ leads }: CampanhasTabProps) {
+  const {
+    campanhas,
+    carregando,
+    erro,
+    carregarCampanhas,
+    excluirCampanha,
+  } = useCampanhas();
+  const [campanhaSelecionadaId, setCampanhaSelecionadaId] = useState<string | null>(null);
+  const [erroExclusao, setErroExclusao] = useState<string | null>(null);
+
+  useEffect(() => {
+    carregarCampanhas();
+  }, [carregarCampanhas]);
+
   const handleExcluir = async (id: string) => {
-    if (confirm("Tem certeza que deseja excluir esta campanha? Os dados de envio também serão apagados.")) {
-      if (onDelete) await onDelete(id);
+    if (!confirm("Tem certeza que deseja excluir esta campanha? Os dados de envio também serão apagados.")) return;
+    setErroExclusao(null);
+    try {
+      await excluirCampanha(id);
+    } catch (error) {
+      setErroExclusao(getErrorMessage(error));
     }
   };
 
@@ -36,14 +59,28 @@ export function CampanhasTab({ leads, campanhas, onRefresh, onDelete }: Campanha
   };
 
   // Se houver uma campanha selecionada, mostra a tela de detalhes
-  if (campanhaSelecionada) {
+  if (campanhaSelecionadaId) {
     return (
       <div className="p-8 pt-6">
-        <CampanhaDetalhes 
-          campanha={campanhaSelecionada} 
-          onBack={() => setCampanhaSelecionada(null)} 
-          onRefresh={onRefresh} 
+        <CampanhaDetalhes
+          campanhaId={campanhaSelecionadaId}
+          onBack={() => setCampanhaSelecionadaId(null)}
+          onRefresh={carregarCampanhas}
         />
+      </div>
+    );
+  }
+
+  // AC-249: falha ao buscar a lista mostra mensagem com "Tentar de novo".
+  if (erro) {
+    return (
+      <div className="flex-1 p-8 pt-6">
+        <div className="flex h-[300px] flex-col items-center justify-center gap-4 rounded-xl border border-dashed border-red-200 bg-red-50/40 text-center">
+          <p className="text-sm text-red-600">{erro}</p>
+          <Button variant="outline" onClick={() => carregarCampanhas()} className="bg-white">
+            <RefreshCw className="w-4 h-4 mr-2" /> Tentar de novo
+          </Button>
+        </div>
       </div>
     );
   }
@@ -57,9 +94,13 @@ export function CampanhasTab({ leads, campanhas, onRefresh, onDelete }: Campanha
           <p className="text-muted-foreground text-sm">Gerencie disparos de e-mail e acompanhe o engajamento.</p>
         </div>
         <div className="flex items-center space-x-2">
-          <NovaCampanhaModal leads={leads} onSuccess={onRefresh} />
+          <NovaCampanhaModal leads={leads} onSuccess={carregarCampanhas} />
         </div>
       </div>
+
+      {erroExclusao && (
+        <p className="text-sm text-red-600" role="alert">{erroExclusao}</p>
+      )}
 
       <div className="grid gap-4 md:grid-cols-3">
         <Card className="shadow-sm border-slate-200">
@@ -80,7 +121,11 @@ export function CampanhasTab({ leads, campanhas, onRefresh, onDelete }: Campanha
           <CardDescription>Lista de disparos agendados e realizados.</CardDescription>
         </CardHeader>
         <CardContent className="p-0">
-          {campanhas.length === 0 ? (
+          {carregando && campanhas.length === 0 ? (
+            <div className="flex h-[200px] items-center justify-center text-slate-400">
+              <Clock className="w-5 h-5 animate-spin mr-2" /> Carregando campanhas...
+            </div>
+          ) : campanhas.length === 0 ? (
             <div className="flex h-[350px] items-center justify-center bg-slate-50/30">
               <div className="mx-auto flex max-w-[420px] flex-col items-center justify-center text-center">
                 <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mb-4">
@@ -90,7 +135,7 @@ export function CampanhasTab({ leads, campanhas, onRefresh, onDelete }: Campanha
                 <p className="mb-6 mt-2 text-sm text-slate-500">
                   Comece agora criando sua primeira campanha para se comunicar com seus leads.
                 </p>
-                <NovaCampanhaModal leads={leads} onSuccess={onRefresh} />
+                <NovaCampanhaModal leads={leads} onSuccess={carregarCampanhas} />
               </div>
             </div>
           ) : (
@@ -100,12 +145,12 @@ export function CampanhasTab({ leads, campanhas, onRefresh, onDelete }: Campanha
                   <tr className="bg-slate-50 border-b border-slate-100 text-slate-500 text-left">
                     <th className="h-12 px-6 font-medium">Nome / Assunto</th>
                     <th className="h-12 px-6 font-medium">Status</th>
-                    <th className="h-12 px-6 font-medium">Criação</th>
+                    <th className="h-12 px-6 font-medium">Destinatários</th>
                     <th className="h-12 px-6 text-right font-medium pr-8">Ações</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {campanhas.map((camp) => (
+                  {campanhas.map((camp: CampanhaResumo) => (
                     <tr key={camp.id} className="hover:bg-slate-50/50 transition-colors group">
                       <td className="px-6 py-4">
                         <div className="flex flex-col">
@@ -119,25 +164,25 @@ export function CampanhasTab({ leads, campanhas, onRefresh, onDelete }: Campanha
                       <td className="px-6 py-4 text-slate-500">
                         <div className="flex items-center gap-2">
                           <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                          {new Date(camp.criado_em).toLocaleDateString('pt-BR')}
+                          {camp.totalDestinatarios}
                         </div>
                       </td>
                       <td className="px-6 py-4 text-right pr-8 flex items-center justify-end gap-1">
-                        
+
                         {/* Botão que seleciona a campanha para ver os detalhes */}
-                        <button 
-                          onClick={() => setCampanhaSelecionada(camp)}
+                        <button
+                          onClick={() => setCampanhaSelecionadaId(camp.id)}
                           className="inline-flex items-center gap-1.5 text-indigo-600 hover:text-indigo-800 font-semibold transition-colors mr-2 bg-indigo-50 px-3 py-1.5 rounded-md"
                         >
                           {camp.status === 'RASCUNHO' ? <Edit3 className="w-4 h-4" /> : <BarChart3 className="w-4 h-4" />}
                           {camp.status === 'RASCUNHO' ? 'Ver e Iniciar' : 'Ver Relatório'}
                         </button>
-                        
-                        <NovaCampanhaModal leads={leads} onSuccess={onRefresh} campanhaExistente={camp} />
-                        
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
+
+                        <NovaCampanhaModal leads={leads} onSuccess={carregarCampanhas} campanhaExistente={camp} />
+
+                        <Button
+                          variant="ghost"
+                          size="icon"
                           className="h-8 w-8 text-slate-400 hover:text-red-600"
                           onClick={() => handleExcluir(camp.id)}
                         >
