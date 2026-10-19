@@ -1,0 +1,256 @@
+#!/usr/bin/env -S npx tsx
+// T-113 (fase3-etl-supabase, US-074): comando de linha de comando do ETL.
+// Lê a origem Supabase legada (conexão direta somente leitura, ASM-087) e o
+// destino (`DATABASE_URL`, mesmo client de `src/db/client.ts`), roda o
+// orquestrador de `src/etl/supabase/executar.ts` dentro de uma única
+// transação e imprime o relatório.
+//
+// Uso:
+//   npx tsx scripts/etl-supabase.ts [--dry-run] [--decisoes <arquivo.json>]
+//
+// --dry-run       roda em modo simulação (AC-268): nada é gravado no destino.
+// --decisoes      arquivo JSON com as decisões da fila de revisão (AC-272),
+//                 formato: [{ "idExterno": "...", "etapaId": 1 }, ...].
+//
+// As tabelas legadas (`empresas`, `leads`, `campanhas`, `envios_campanha`,
+// `whatsapp_mensagens`, `empresa_configuracoes`) e os usuários (Supabase
+// Auth, papel em `raw_user_meta_data`) estão documentados em RFC-001 §3 e
+// TDD-001 — este script só lê, nunca grava na origem (`conectarOrigem` abre
+// a conexão com `default_transaction_read_only=on`).
+import { getDb } from '../src/db/client';
+import type { ContextoExecucao } from '../src/etl/comum';
+import { conectarOrigem, encerrarOrigem } from '../src/etl/supabase/origem';
+import {
+  executarMigracaoSupabase,
+  type DadosOrigemEtl,
+  type RelatorioEtl,
+} from '../src/etl/supabase/executar';
+import type { EmpresaLegado, PapelLegado, UsuarioLegado } from '../src/etl/supabase/identidade';
+import type { DecisaoRevisao, LeadLegado } from '../src/etl/supabase/leads';
+import type { CampanhaLegado, EnvioLegado } from '../src/etl/supabase/campanhas';
+import type { ConfiguracaoLegado, MensagemLegado } from '../src/etl/supabase/mensagens-config';
+
+import fs from 'node:fs';
+import type { Pool } from 'pg';
+
+const ORIGEM_ETL = 'supabase-legado-crm';
+
+interface Argumentos {
+  dryRun: boolean;
+  caminhoDecisoes: string | undefined;
+}
+
+function lerArgumentos(argv: string[]): Argumentos {
+  const dryRun = argv.includes('--dry-run');
+  const indiceDecisoes = argv.indexOf('--decisoes');
+  const caminhoDecisoes = indiceDecisoes >= 0 ? argv[indiceDecisoes + 1] : undefined;
+  return { dryRun, caminhoDecisoes };
+}
+
+function lerDecisoes(caminho: string | undefined): DecisaoRevisao[] {
+  if (!caminho) return [];
+  const conteudo = fs.readFileSync(caminho, 'utf8');
+  return JSON.parse(conteudo) as DecisaoRevisao[];
+}
+
+async function lerEmpresas(pool: Pool): Promise<EmpresaLegado[]> {
+  const { rows } = await pool.query<EmpresaLegado>('SELECT id, nome, slug FROM empresas');
+  return rows;
+}
+
+async function lerUsuarios(pool: Pool): Promise<UsuarioLegado[]> {
+  const { rows } = await pool.query<{
+    id: string;
+    email: string;
+    nome: string;
+    perfil: PapelLegado;
+    ativo: boolean;
+    empresa_id: string;
+    is_super_admin: boolean;
+  }>(
+    `SELECT
+       id,
+       email,
+       coalesce(raw_user_meta_data ->> 'nome', email) AS nome,
+       (raw_user_meta_data ->> 'perfil') AS perfil,
+       coalesce((raw_user_meta_data ->> 'ativo')::boolean, true) AS ativo,
+       (raw_user_meta_data ->> 'empresa_id') AS empresa_id,
+       coalesce((raw_user_meta_data ->> 'is_super_admin')::boolean, false) AS is_super_admin
+     FROM auth.users`
+  );
+  return rows.map((linha) => ({
+    id: linha.id,
+    email: linha.email,
+    nome: linha.nome,
+    perfil: linha.perfil,
+    ativo: linha.ativo,
+    empresaId: linha.empresa_id,
+    isSuperAdmin: linha.is_super_admin,
+  }));
+}
+
+async function lerLeads(pool: Pool): Promise<LeadLegado[]> {
+  const { rows } = await pool.query<{
+    id: string;
+    empresa_id: string;
+    nome: string;
+    email: string | null;
+    situacao: string | null;
+    origem: string | null;
+    observacoes: string | null;
+    whatsapp: string | null;
+  }>(
+    'SELECT id, empresa_id, nome, email, situacao, origem, observacoes, whatsapp FROM leads'
+  );
+  return rows.map((linha) => ({
+    id: linha.id,
+    empresaId: linha.empresa_id,
+    nome: linha.nome,
+    email: linha.email,
+    situacao: linha.situacao,
+    origem: linha.origem,
+    observacoes: linha.observacoes,
+    whatsapp: linha.whatsapp,
+  }));
+}
+
+async function lerCampanhas(pool: Pool): Promise<CampanhaLegado[]> {
+  const { rows } = await pool.query<{
+    id: string;
+    empresa_id: string;
+    nome: string;
+    assunto: string;
+    corpo_html: string;
+    status: string;
+    criado_por: string | null;
+  }>('SELECT id, empresa_id, nome, assunto, corpo_html, status, criado_por FROM campanhas');
+  return rows.map((linha) => ({
+    id: linha.id,
+    empresaId: linha.empresa_id,
+    nome: linha.nome,
+    assunto: linha.assunto,
+    corpoHtml: linha.corpo_html,
+    status: linha.status,
+    criadoPor: linha.criado_por,
+  }));
+}
+
+async function lerEnvios(pool: Pool): Promise<EnvioLegado[]> {
+  const { rows } = await pool.query<{
+    id: string;
+    empresa_id: string;
+    campanha_id: string;
+    nome_destinatario: string;
+    email_destinatario: string;
+    status: string;
+    tentativas: number;
+  }>(
+    'SELECT id, empresa_id, campanha_id, nome_destinatario, email_destinatario, status, tentativas FROM envios_campanha'
+  );
+  return rows.map((linha) => ({
+    id: linha.id,
+    empresaId: linha.empresa_id,
+    campanhaId: linha.campanha_id,
+    nomeDestinatario: linha.nome_destinatario,
+    emailDestinatario: linha.email_destinatario,
+    status: linha.status,
+    tentativas: linha.tentativas,
+  }));
+}
+
+async function lerMensagens(pool: Pool): Promise<MensagemLegado[]> {
+  const { rows } = await pool.query<{
+    id: string;
+    empresa_id: string;
+    lead_id: string | null;
+    numero: string;
+    mensagem: string;
+    direcao: 'enviada' | 'recebida';
+    status: string;
+    evolution_message_id: string | null;
+    lida_em: Date | null;
+    criado_em: Date;
+  }>(
+    'SELECT id, empresa_id, lead_id, numero, mensagem, direcao, status, evolution_message_id, lida_em, criado_em FROM whatsapp_mensagens'
+  );
+  return rows.map((linha) => ({
+    id: linha.id,
+    empresaId: linha.empresa_id,
+    leadId: linha.lead_id,
+    numero: linha.numero,
+    mensagem: linha.mensagem,
+    direcao: linha.direcao,
+    status: linha.status,
+    evolutionMessageId: linha.evolution_message_id,
+    lidaEm: linha.lida_em,
+    criadoEm: linha.criado_em,
+  }));
+}
+
+async function lerConfiguracoes(pool: Pool): Promise<ConfiguracaoLegado[]> {
+  const { rows } = await pool.query<{ id: string; empresa_id: string; chave: string; valor: string }>(
+    'SELECT id, empresa_id, chave, valor FROM empresa_configuracoes'
+  );
+  return rows.map((linha) => ({
+    id: linha.id,
+    empresaId: linha.empresa_id,
+    chave: linha.chave,
+    valor: linha.valor,
+  }));
+}
+
+async function lerDadosOrigem(pool: Pool, decisoesRevisao: DecisaoRevisao[]): Promise<DadosOrigemEtl> {
+  return {
+    empresas: await lerEmpresas(pool),
+    usuarios: await lerUsuarios(pool),
+    leads: await lerLeads(pool),
+    decisoesRevisao,
+    campanhas: await lerCampanhas(pool),
+    envios: await lerEnvios(pool),
+    mensagens: await lerMensagens(pool),
+    configuracoes: await lerConfiguracoes(pool),
+  };
+}
+
+function imprimirRelatorio(relatorio: RelatorioEtl): void {
+  console.log(`\nETL Supabase legado — modo ${relatorio.simulacao ? 'SIMULAÇÃO (nada foi gravado)' : 'real'}\n`);
+  console.log('entidade'.padEnd(22), 'lidas'.padStart(8), 'criadas'.padStart(8), 'ignoradas'.padStart(10), 'em revisão'.padStart(11));
+  for (const linha of relatorio.linhas) {
+    console.log(
+      linha.entidade.padEnd(22),
+      String(linha.lidas).padStart(8),
+      String(linha.criadas).padStart(8),
+      String(linha.ignoradas).padStart(10),
+      String(linha.emRevisao).padStart(11)
+    );
+  }
+  if (relatorio.revisao.length > 0) {
+    console.log(`\nFila de revisão manual (${relatorio.revisao.length} item(ns)):`);
+    for (const item of relatorio.revisao) {
+      console.log(`  - ${item.idExterno} [${item.tipo}]: ${item.motivo}`);
+    }
+  }
+}
+
+async function main(): Promise<void> {
+  const { dryRun, caminhoDecisoes } = lerArgumentos(process.argv.slice(2));
+  const decisoesRevisao = lerDecisoes(caminhoDecisoes);
+
+  const poolOrigem = conectarOrigem();
+  try {
+    const dados = await lerDadosOrigem(poolOrigem, decisoesRevisao);
+    const db = getDb();
+    const contexto: ContextoExecucao = { origem: ORIGEM_ETL, simulacao: dryRun };
+
+    const relatorio = await executarMigracaoSupabase(db, contexto, dados);
+    imprimirRelatorio(relatorio);
+  } finally {
+    await encerrarOrigem(poolOrigem);
+  }
+}
+
+main().catch((erro) => {
+  console.error('ETL Supabase legado falhou — nada desta execução foi gravado no destino.');
+  console.error(erro);
+  process.exitCode = 1;
+});
