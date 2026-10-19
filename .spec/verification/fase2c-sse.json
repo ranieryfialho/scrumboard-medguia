@@ -1,11 +1,11 @@
 {
   "feature": "fase2c-sse",
-  "timestamp": "2026-10-14T20:18:57.773Z",
-  "gitRev": "4e6dc08",
-  "command": "echo reaproveitado: suite completa 2026-10-14 17:11-17:17 + 3 arquivos instaveis reexecutados isolados (raw.json)",
+  "timestamp": "2026-10-19T13:29:45.613Z",
+  "gitRev": "22ad235",
+  "command": "echo reaproveitando a suite completa unica de raw.json (opcao 2, 2026-10-19)",
   "reporter": "vitest-json",
   "exitCode": 2,
-  "testsParsed": 583,
+  "testsParsed": 682,
   "results": {
     "AC-108": {
       "status": "pass",
