@@ -34,8 +34,7 @@
 - Arquivos: src/etl/sheets/leads.ts, test/etl/sheets-leads.test.ts
 - Notas: depende de T-114 a T-117; grava em `migracao_registros` com origem `sheets`.
 
-## T-119 — Exportar a Agenda em CSV e ligar mensagens aos leads pelo telefone [pendente]
-
+## T-119 — Exportar a Agenda em CSV e ligar mensagens aos leads pelo telefone [concluida]
 - Refs: US-079, US-080, AC-286, AC-287, AC-288
 - Arquivos: src/etl/sheets/agenda-mensagens.ts, test/etl/sheets-agenda-mensagens.test.ts
 - Notas: nada é criado a partir da Agenda; vínculo só quando o telefone tem um único lead.
