@@ -14,8 +14,7 @@
 - Arquivos: src/etl/supabase/origem.ts, src/etl/comum.ts, test/etl/comum.test.ts
 - Notas: define o contrato que as tarefas seguintes usam (ler origem, registrar em `migracao_registros`, dry-run, transação única). Leitura por conexão direta somente leitura (Q-027).
 
-## T-109 — Migrar empresas e usuários [pendente]
-
+## T-109 — Migrar empresas e usuários [concluida]
 - Refs: US-069, AC-252, AC-253, AC-254, AC-255, AC-271
 - Arquivos: src/etl/supabase/identidade.ts, test/etl/identidade.test.ts
 - Notas: preserva UUID; papel conforme ASM-081; sem credencial de senha.
