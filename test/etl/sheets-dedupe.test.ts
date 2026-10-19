@@ -9,7 +9,6 @@ import type { LeadBruto } from '../../src/etl/sheets/leitor';
 function leadBruto(sobrescritas: Partial<LeadBruto> & { metaId: string }): LeadBruto {
   return {
     linha: 0,
-    metaId: sobrescritas.metaId,
     nome: 'Lead Teste',
     especialidade: 'Cardiologia',
     telefone: '+5511999998888',
