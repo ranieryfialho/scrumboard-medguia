@@ -1,0 +1,117 @@
+{
+  "feature": "fase3-etl-supabase",
+  "timestamp": "2026-10-19T19:21:41.135Z",
+  "gitRev": "748692a",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
+  "reporter": "vitest-json",
+  "exitCode": 1,
+  "testsParsed": 758,
+  "results": {
+    "AC-252": {
+      "status": "pass",
+      "testName": "T-109: migração de empresas e usuários contra Postgres real empresas migram com o mesmo id e o mesmo slug (@spec:AC-252) empresas migram com o mesmo id e o mesmo slug (@spec:AC-252)",
+      "method": "vitest-json"
+    },
+    "AC-253": {
+      "status": "pass",
+      "testName": "T-109: traduzirPapel (@spec:AC-253) ADMIN vira GERENTE; COMERCIAL e MARKETING viram ATENDENTE ADMIN vira GERENTE; COMERCIAL e MARKETING viram ATENDENTE",
+      "method": "vitest-json"
+    },
+    "AC-254": {
+      "status": "pass",
+      "testName": "T-109: migração de empresas e usuários contra Postgres real usuário inativo no legado migra desativado, tanto em `usuarios` quanto no vínculo (@spec:AC-254) usuário inativo no legado migra desativado, tanto em `usuarios` quanto no vínculo (@spec:AC-254)",
+      "method": "vitest-json"
+    },
+    "AC-255": {
+      "status": "pass",
+      "testName": "T-109: migração de empresas e usuários contra Postgres real nenhum usuário migrado tem credencial de senha (@spec:AC-255) nenhum usuário migrado tem credencial de senha (@spec:AC-255)",
+      "method": "vitest-json"
+    },
+    "AC-256": {
+      "status": "pass",
+      "testName": "T-110: migração de leads contra Postgres real lead com situação \"Novos Leads\" vira lead e card em \"Entrada de leads\", com nome/email/origem/observações preservados (@spec:AC-256) lead com situação \"Novos Leads\" vira lead e card em \"Entrada de leads\", com nome/email/origem/observações preservados (@spec:AC-256)",
+      "method": "vitest-json"
+    },
+    "AC-257": {
+      "status": "pass",
+      "testName": "T-110: migração de leads contra Postgres real leads \"Desqualificado\" ficam em \"Perdido\" com o motivo \"Desqualificado (migração)\", que existe como motivo de sistema (@spec:AC-257) leads \"Desqualificado\" ficam em \"Perdido\" com o motivo \"Desqualificado (migração)\", que existe como motivo de sistema (@spec:AC-257)",
+      "method": "vitest-json"
+    },
+    "AC-258": {
+      "status": "pass",
+      "testName": "T-110: migração de leads contra Postgres real cada card migrado guarda o evento `migrado_de` e o registro de migração liga o id do legado ao id novo (@spec:AC-258) cada card migrado guarda o evento `migrado_de` e o registro de migração liga o id do legado ao id novo (@spec:AC-258)",
+      "method": "vitest-json"
+    },
+    "AC-259": {
+      "status": "pass",
+      "testName": "T-110: migração de leads contra Postgres real situação \"Em contato\" ou desconhecida não migra nem é descartada em silêncio — vai para a fila de revisão com o motivo (@spec:AC-259) situação \"Em contato\" ou desconhecida não migra nem é descartada em silêncio — vai para a fila de revisão com o motivo (@spec:AC-259)",
+      "method": "vitest-json"
+    },
+    "AC-272": {
+      "status": "pass",
+      "testName": "T-110: migração de leads contra Postgres real decisão da operação cria o lead e o card na etapa escolhida, e o lead sai da fila sem duplicar (@spec:AC-272) decisão da operação cria o lead e o card na etapa escolhida, e o lead sai da fila sem duplicar (@spec:AC-272)",
+      "method": "vitest-json"
+    },
+    "AC-260": {
+      "status": "pass",
+      "testName": "T-110: migração de leads contra Postgres real WhatsApp inválido não bloqueia a migração — lead migra sem telefone e entra na fila de revisão (@spec:AC-260) WhatsApp inválido não bloqueia a migração — lead migra sem telefone e entra na fila de revisão (@spec:AC-260)",
+      "method": "vitest-json"
+    },
+    "AC-261": {
+      "status": "pass",
+      "testName": "T-111: migração de campanhas e envios contra Postgres real envios migram ligados à campanha, com nome/e-mail/status preservados, e a quantidade bate com a origem (@spec:AC-261) envios migram ligados à campanha, com nome/e-mail/status preservados, e a quantidade bate com a origem (@spec:AC-261)",
+      "method": "vitest-json"
+    },
+    "AC-262": {
+      "status": "pass",
+      "testName": "T-111: migração de campanhas e envios contra Postgres real campanha PROCESSANDO no legado migra FINALIZADA e nenhum envio fica PENDENTE ou RASCUNHO (@spec:AC-262) campanha PROCESSANDO no legado migra FINALIZADA e nenhum envio fica PENDENTE ou RASCUNHO (@spec:AC-262)",
+      "method": "vitest-json"
+    },
+    "AC-263": {
+      "status": "pass",
+      "testName": "T-112: migração de mensagens de WhatsApp e configurações contra Postgres real mensagens migram com direção, número, texto, status e horário originais (@spec:AC-263) mensagens migram com direção, número, texto, status e horário originais (@spec:AC-263)",
+      "method": "vitest-json"
+    },
+    "AC-264": {
+      "status": "pass",
+      "testName": "T-112: migração de mensagens de WhatsApp e configurações contra Postgres real mensagem sem lead_id ou com lead_id inexistente migra sem vínculo e é contada no relatório (@spec:AC-264) mensagem sem lead_id ou com lead_id inexistente migra sem vínculo e é contada no relatório (@spec:AC-264)",
+      "method": "vitest-json"
+    },
+    "AC-265": {
+      "status": "pass",
+      "testName": "T-112: migração de mensagens de WhatsApp e configurações contra Postgres real configurações migram para a mesma empresa, mesma chave, com o valor convertido para jsonb (@spec:AC-265) configurações migram para a mesma empresa, mesma chave, com o valor convertido para jsonb (@spec:AC-265)",
+      "method": "vitest-json"
+    },
+    "AC-266": {
+      "status": "pass",
+      "testName": "T-108: mascarar segredos (@spec:AC-266) segredo nunca aparece por inteiro — só as pontas ficam visíveis segredo nunca aparece por inteiro — só as pontas ficam visíveis",
+      "method": "vitest-json"
+    },
+    "AC-267": {
+      "status": "pass",
+      "testName": "T-108: contrato comum contra Postgres real (AC-267, AC-268, AC-270) executarEtl roda a etapa de verdade e commita quando não é simulação (@spec:AC-267) executarEtl roda a etapa de verdade e commita quando não é simulação (@spec:AC-267)",
+      "method": "vitest-json"
+    },
+    "AC-268": {
+      "status": "pass",
+      "testName": "T-108: contrato comum contra Postgres real (AC-267, AC-268, AC-270) simulação roda a etapa por completo mas não grava nada no destino ao final (@spec:AC-268) simulação roda a etapa por completo mas não grava nada no destino ao final (@spec:AC-268)",
+      "method": "vitest-json"
+    },
+    "AC-269": {
+      "status": "pass",
+      "testName": "T-113: orquestrador do ETL contra Postgres real o relatório mostra lidas/criadas/ignoradas/em revisão por entidade e a conta fecha (@spec:AC-269) o relatório mostra lidas/criadas/ignoradas/em revisão por entidade e a conta fecha (@spec:AC-269)",
+      "method": "vitest-json"
+    },
+    "AC-270": {
+      "status": "pass",
+      "testName": "T-108: contrato comum contra Postgres real (AC-267, AC-268, AC-270) falha no meio da execução não deixa nada gravado — a transação inteira é desfeita (@spec:AC-270) falha no meio da execução não deixa nada gravado — a transação inteira é desfeita (@spec:AC-270)",
+      "method": "vitest-json"
+    },
+    "AC-271": {
+      "status": "pass",
+      "testName": "T-109: migração de empresas e usuários contra Postgres real usuário comum migra com o mesmo id, vinculado só à empresa de origem, e papel traduzido (@spec:AC-253) (@spec:AC-271) usuário comum migra com o mesmo id, vinculado só à empresa de origem, e papel traduzido (@spec:AC-253) (@spec:AC-271)",
+      "method": "vitest-json"
+    }
+  },
+  "principles": {}
+}
