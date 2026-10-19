@@ -19,8 +19,7 @@
 - Arquivos: src/etl/sheets/normalizar.ts, test/etl/sheets-normalizar.test.ts
 - Notas: E.164 com +55 padrão (ASM-089); data com fuso ISO e `dd/mm/aaaa` (ASM-088).
 
-## T-116 — Deduplicação entre abas e resolução de conflito [pendente]
-
+## T-116 — Deduplicação entre abas e resolução de conflito [concluida]
 - Refs: US-075, AC-275, AC-276
 - Arquivos: src/etl/sheets/dedupe.ts, test/etl/sheets-dedupe.test.ts
 - Notas: chave = id da Meta; desempate por `data_alteracao`, depois status mais avançado.
