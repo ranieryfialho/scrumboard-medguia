@@ -150,16 +150,16 @@ Como operador, quero usar a Mala Direta com as mesmas telas de hoje, para não t
 
 | ID | Suposição | Status | Resolução |
 |---|---|---|---|
-| ASM-075 | O contrato com o motor Python é só o status do destinatário: o CRM grava PENDENTE; o motor grava ENVIADO ou ERRO e incrementa `tentativas`. O CRM nunca grava ENVIADO/ERRO. | aberta | — |
-| ASM-076 | Só MASTER, GERENTE e super admin acessam campanhas; ATENDENTE não (mesma regra dos indicadores, ASM-074). | aberta | — |
-| ASM-077 | A planilha é lida no navegador (XLSX, como hoje) e a lista de contatos vai no corpo do `POST`; a rota não recebe o arquivo. | aberta | — |
-| ASM-078 | A origem "etapa do pipeline" lê `leads.email` dos cards da etapa escolhida (substitui a coluna "situacao" do Kanban legado). | aberta | — |
-| ASM-079 | A verificação de assinatura do webhook usa o padrão Svix do Resend com o segredo `RESEND_WEBHOOK_SECRET`; sem o segredo configurado, o webhook recusa tudo (falha fechada). | aberta | — |
-| ASM-080 | A finalização automática (AC-242) acontece na consulta do detalhe, como o "auto-healing" atual do navegador, mas gravada no servidor; sem job agendado. | aberta | — |
+| ASM-075 | O contrato com o motor Python é só o status do destinatário: o CRM grava PENDENTE; o motor grava ENVIADO ou ERRO e incrementa `tentativas`. O CRM nunca grava ENVIADO/ERRO. | confirmada | Confirmada pelo dono do produto em 2026-10-19. |
+| ASM-076 | Só MASTER, GERENTE e super admin acessam campanhas; ATENDENTE não (mesma regra dos indicadores, ASM-074). | confirmada | Confirmada pelo dono do produto em 2026-10-19. |
+| ASM-077 | A planilha é lida no navegador (XLSX, como hoje) e a lista de contatos vai no corpo do `POST`; a rota não recebe o arquivo. | confirmada | Confirmada pelo dono do produto em 2026-10-19. |
+| ASM-078 | A origem "etapa do pipeline" lê `leads.email` dos cards da etapa escolhida (substitui a coluna "situacao" do Kanban legado). | confirmada | Confirmada pelo dono do produto em 2026-10-19. |
+| ASM-079 | A verificação de assinatura do webhook usa o padrão Svix do Resend com o segredo `RESEND_WEBHOOK_SECRET`; sem o segredo configurado, o webhook recusa tudo (falha fechada). | confirmada | Confirmada pelo dono do produto em 2026-10-19. |
+| ASM-080 | A finalização automática (AC-242) acontece na consulta do detalhe, como o "auto-healing" atual do navegador, mas gravada no servidor; sem job agendado. | confirmada | Confirmada pelo dono do produto em 2026-10-19. |
 
 ## Perguntas em aberto
 
 | ID | Pergunta | Status | Resposta |
 |---|---|---|---|
-| Q-025 | O webhook do Resend em produção já tem um segredo de assinatura (Svix) configurado? Hoje o endpoint aceita qualquer chamada. | aberta | — |
-| Q-026 | Existe limite de destinatários por campanha (por causa do plano do Resend)? Sem resposta, esta feature não impõe limite. | aberta | — |
+| Q-025 | O webhook do Resend em produção já tem um segredo de assinatura (Svix) configurado? Hoje o endpoint aceita qualquer chamada. | respondida | Sim, já há segredo Svix em produção; ligar `RESEND_WEBHOOK_SECRET` no ambiente novo (falha fechada sem ele). |
+| Q-026 | Existe limite de destinatários por campanha (por causa do plano do Resend)? Sem resposta, esta feature não impõe limite. | respondida | Sem limite nesta feature; limite fica para depois. |

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# executar-tarefas.sh — gerado por `onp-spec plano fase2d-campanhas` em 2026-10-16 20:15
+# executar-tarefas.sh — gerado por `onp-spec plano fase2d-campanhas` em 2026-10-19 12:12
 # NÃO edite à mão: mudou tasks.md ou a config, regenere o plano.
 #
 # uso:
@@ -14,7 +14,7 @@
 set -u
 set -o pipefail
 
-RUN_ID='scrumboard-medguia-fase2d-campanhas-mvbepn8g'
+RUN_ID='scrumboard-medguia-fase2d-campanhas-mvf7skkx'
 FEATURE='fase2d-campanhas'
 BASE_BRANCH='spec/fase2d-campanhas'
 ENGINE='.claude/skills/onp-spec-driven/scripts/onp-spec.mjs'
@@ -166,15 +166,10 @@ iniciar_resumos() {
   trap 'parar_resumos; node "$ENGINE" resumo "$FEATURE" --gravar >/dev/null 2>&1 || true' EXIT
 }
 
-# ── faixa-1: T-104 ──
-executar_faixa_1() {
-  local WT="$WT_BASE-faixa-1"
-  preparar_worktree 'faixa-1' 'spec/fase2d-campanhas-faixa-1' "$WT" || return 1
-  evento --tipo faixa --faixa 'faixa-1' --estado executando --tentativa "$(tentativa 'faixa-1')"
-  : > "$LOG_DIR/faixa-1.log"
-  (
-    cd "$WT" || exit 9
-    rodar_tarefa 'faixa-1' 'T-104' 'Você executa UMA tarefa da feature "fase2d-campanhas" (fluxo onp-spec, spec-anchored).
+# ── sequencial T-104 (ordem do tasks.md) ──
+executar_seq_T_104() {
+  info 'sequencial T-104 — Repositório de campanhas e envios'
+  if rodar_tarefa seq 'T-104' 'Você executa UMA tarefa da feature "fase2d-campanhas" (fluxo onp-spec, spec-anchored).
 Leia primeiro: .spec/features/fase2d-campanhas/spec.md, .spec/features/fase2d-campanhas/tasks.md e .spec/constituicao.md.
 
 Sua tarefa (somente ela):
@@ -188,23 +183,25 @@ Regras inegociáveis:
 - NUNCA enfraqueça, pule (skip/todo) ou apague um teste para passar — teste pulado não é prova e o audit acusa.
 - Rode os testes localmente com `npx vitest run --reporter=json --outputFile=.spec/verification/raw.json` até passarem.
 - NÃO edite tasks.md, NÃO rode onp-spec verify/audit e NÃO toque em outras tarefas — o orquestrador cuida disso.
-- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' high
-  ) >> "$LOG_DIR/faixa-1.log" 2>&1
-  local st=$?
-  mesclar_faixa 'faixa-1' 'spec/fase2d-campanhas-faixa-1' "$WT" "$st" || return 1
-  marcar_concluidas T-104
-  return 0
+- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' high >> "$LOG_DIR/seq.log" 2>&1; then
+    # commit de segurança se o agente esqueceu (rastreabilidade > perfeição)
+    if [ -n "$(git status --porcelain)" ]; then
+      git add -A && git commit -q -m 'T-104 fase2d-campanhas: Repositório de campanhas e envios (auto-commit do plano)'
+    fi
+    marcar_concluidas T-104
+    verde "✔ T-104 concluída"
+    return 0
+  fi
+  vermelho "✘ T-104 falhou (log: $LOG_DIR/seq.log)"
+  amarelo "  reexecute só ela: bash .spec/features/fase2d-campanhas/executar-tarefas.sh --seq T-104"
+  FALHAS="$FALHAS T-104"
+  return 1
 }
 
-# ── faixa-2: T-105 ──
-executar_faixa_2() {
-  local WT="$WT_BASE-faixa-2"
-  preparar_worktree 'faixa-2' 'spec/fase2d-campanhas-faixa-2' "$WT" || return 1
-  evento --tipo faixa --faixa 'faixa-2' --estado executando --tentativa "$(tentativa 'faixa-2')"
-  : > "$LOG_DIR/faixa-2.log"
-  (
-    cd "$WT" || exit 9
-    rodar_tarefa 'faixa-2' 'T-105' 'Você executa UMA tarefa da feature "fase2d-campanhas" (fluxo onp-spec, spec-anchored).
+# ── sequencial T-105 (ordem do tasks.md) ──
+executar_seq_T_105() {
+  info 'sequencial T-105 — Rotas /api/campanhas (CRUD, iniciar, reenviar)'
+  if rodar_tarefa seq 'T-105' 'Você executa UMA tarefa da feature "fase2d-campanhas" (fluxo onp-spec, spec-anchored).
 Leia primeiro: .spec/features/fase2d-campanhas/spec.md, .spec/features/fase2d-campanhas/tasks.md e .spec/constituicao.md.
 
 Sua tarefa (somente ela):
@@ -218,23 +215,25 @@ Regras inegociáveis:
 - NUNCA enfraqueça, pule (skip/todo) ou apague um teste para passar — teste pulado não é prova e o audit acusa.
 - Rode os testes localmente com `npx vitest run --reporter=json --outputFile=.spec/verification/raw.json` até passarem.
 - NÃO edite tasks.md, NÃO rode onp-spec verify/audit e NÃO toque em outras tarefas — o orquestrador cuida disso.
-- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' high
-  ) >> "$LOG_DIR/faixa-2.log" 2>&1
-  local st=$?
-  mesclar_faixa 'faixa-2' 'spec/fase2d-campanhas-faixa-2' "$WT" "$st" || return 1
-  marcar_concluidas T-105
-  return 0
+- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' high >> "$LOG_DIR/seq.log" 2>&1; then
+    # commit de segurança se o agente esqueceu (rastreabilidade > perfeição)
+    if [ -n "$(git status --porcelain)" ]; then
+      git add -A && git commit -q -m 'T-105 fase2d-campanhas: Rotas /api/campanhas (CRUD, iniciar, reenviar) (auto-commit do plano)'
+    fi
+    marcar_concluidas T-105
+    verde "✔ T-105 concluída"
+    return 0
+  fi
+  vermelho "✘ T-105 falhou (log: $LOG_DIR/seq.log)"
+  amarelo "  reexecute só ela: bash .spec/features/fase2d-campanhas/executar-tarefas.sh --seq T-105"
+  FALHAS="$FALHAS T-105"
+  return 1
 }
 
-# ── faixa-3: T-106 ──
-executar_faixa_3() {
-  local WT="$WT_BASE-faixa-3"
-  preparar_worktree 'faixa-3' 'spec/fase2d-campanhas-faixa-3' "$WT" || return 1
-  evento --tipo faixa --faixa 'faixa-3' --estado executando --tentativa "$(tentativa 'faixa-3')"
-  : > "$LOG_DIR/faixa-3.log"
-  (
-    cd "$WT" || exit 9
-    rodar_tarefa 'faixa-3' 'T-106' 'Você executa UMA tarefa da feature "fase2d-campanhas" (fluxo onp-spec, spec-anchored).
+# ── sequencial T-106 (ordem do tasks.md) ──
+executar_seq_T_106() {
+  info 'sequencial T-106 — Webhook do Resend no modelo novo'
+  if rodar_tarefa seq 'T-106' 'Você executa UMA tarefa da feature "fase2d-campanhas" (fluxo onp-spec, spec-anchored).
 Leia primeiro: .spec/features/fase2d-campanhas/spec.md, .spec/features/fase2d-campanhas/tasks.md e .spec/constituicao.md.
 
 Sua tarefa (somente ela):
@@ -248,23 +247,25 @@ Regras inegociáveis:
 - NUNCA enfraqueça, pule (skip/todo) ou apague um teste para passar — teste pulado não é prova e o audit acusa.
 - Rode os testes localmente com `npx vitest run --reporter=json --outputFile=.spec/verification/raw.json` até passarem.
 - NÃO edite tasks.md, NÃO rode onp-spec verify/audit e NÃO toque em outras tarefas — o orquestrador cuida disso.
-- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' medium
-  ) >> "$LOG_DIR/faixa-3.log" 2>&1
-  local st=$?
-  mesclar_faixa 'faixa-3' 'spec/fase2d-campanhas-faixa-3' "$WT" "$st" || return 1
-  marcar_concluidas T-106
-  return 0
+- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' medium >> "$LOG_DIR/seq.log" 2>&1; then
+    # commit de segurança se o agente esqueceu (rastreabilidade > perfeição)
+    if [ -n "$(git status --porcelain)" ]; then
+      git add -A && git commit -q -m 'T-106 fase2d-campanhas: Webhook do Resend no modelo novo (auto-commit do plano)'
+    fi
+    marcar_concluidas T-106
+    verde "✔ T-106 concluída"
+    return 0
+  fi
+  vermelho "✘ T-106 falhou (log: $LOG_DIR/seq.log)"
+  amarelo "  reexecute só ela: bash .spec/features/fase2d-campanhas/executar-tarefas.sh --seq T-106"
+  FALHAS="$FALHAS T-106"
+  return 1
 }
 
-# ── faixa-4: T-107 ──
-executar_faixa_4() {
-  local WT="$WT_BASE-faixa-4"
-  preparar_worktree 'faixa-4' 'spec/fase2d-campanhas-faixa-4' "$WT" || return 1
-  evento --tipo faixa --faixa 'faixa-4' --estado executando --tentativa "$(tentativa 'faixa-4')"
-  : > "$LOG_DIR/faixa-4.log"
-  (
-    cd "$WT" || exit 9
-    rodar_tarefa 'faixa-4' 'T-107' 'Você executa UMA tarefa da feature "fase2d-campanhas" (fluxo onp-spec, spec-anchored).
+# ── sequencial T-107 (ordem do tasks.md) ──
+executar_seq_T_107() {
+  info 'sequencial T-107 — Telas de Mala Direta nas rotas novas'
+  if rodar_tarefa seq 'T-107' 'Você executa UMA tarefa da feature "fase2d-campanhas" (fluxo onp-spec, spec-anchored).
 Leia primeiro: .spec/features/fase2d-campanhas/spec.md, .spec/features/fase2d-campanhas/tasks.md e .spec/constituicao.md.
 
 Sua tarefa (somente ela):
@@ -278,12 +279,19 @@ Regras inegociáveis:
 - NUNCA enfraqueça, pule (skip/todo) ou apague um teste para passar — teste pulado não é prova e o audit acusa.
 - Rode os testes localmente com `npx vitest run --reporter=json --outputFile=.spec/verification/raw.json` até passarem.
 - NÃO edite tasks.md, NÃO rode onp-spec verify/audit e NÃO toque em outras tarefas — o orquestrador cuida disso.
-- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' high
-  ) >> "$LOG_DIR/faixa-4.log" 2>&1
-  local st=$?
-  mesclar_faixa 'faixa-4' 'spec/fase2d-campanhas-faixa-4' "$WT" "$st" || return 1
-  marcar_concluidas T-107
-  return 0
+- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' high >> "$LOG_DIR/seq.log" 2>&1; then
+    # commit de segurança se o agente esqueceu (rastreabilidade > perfeição)
+    if [ -n "$(git status --porcelain)" ]; then
+      git add -A && git commit -q -m 'T-107 fase2d-campanhas: Telas de Mala Direta nas rotas novas (auto-commit do plano)'
+    fi
+    marcar_concluidas T-107
+    verde "✔ T-107 concluída"
+    return 0
+  fi
+  vermelho "✘ T-107 falhou (log: $LOG_DIR/seq.log)"
+  amarelo "  reexecute só ela: bash .spec/features/fase2d-campanhas/executar-tarefas.sh --seq T-107"
+  FALHAS="$FALHAS T-107"
+  return 1
 }
 
 # ── gate: quem decide é a máquina ────────────────────────────────────
@@ -339,27 +347,19 @@ executar_tudo() {
   iniciar_resumos
   info "logs em: $LOG_DIR"
   info "resumo geral de andamento: a cada 1 min aqui no terminal (e via: onp-spec resumo)"
-  # onda 1: faixa-1 ∥ faixa-2 ∥ faixa-3
-  info "onda 1: faixa-1 ∥ faixa-2 ∥ faixa-3 — janelas limpas em paralelo"
-  executar_faixa_1 & PID_FAIXA_1=$!
-  executar_faixa_2 & PID_FAIXA_2=$!
-  executar_faixa_3 & PID_FAIXA_3=$!
-  wait "$PID_FAIXA_1" || true
-  wait "$PID_FAIXA_2" || true
-  wait "$PID_FAIXA_3" || true
-  # onda 2: faixa-4
-  info "onda 2: faixa-4 — janelas limpas em paralelo"
-  executar_faixa_4 & PID_FAIXA_4=$!
-  wait "$PID_FAIXA_4" || true
+  executar_seq_T_104 || true
+  executar_seq_T_105 || true
+  executar_seq_T_106 || true
+  executar_seq_T_107 || true
   encerrar tudo
 }
 
 listar() {
   echo "execução: $RUN_ID (feature $FEATURE, branch $BASE_BRANCH)"
-  echo "  faixa-1  onda 1  T-104"
-  echo "  faixa-2  onda 1  T-105"
-  echo "  faixa-3  onda 1  T-106"
-  echo "  faixa-4  onda 2  T-107"
+  echo "  seq       T-104 (sequencial)"
+  echo "  seq       T-105 (sequencial)"
+  echo "  seq       T-106 (sequencial)"
+  echo "  seq       T-107 (sequencial)"
   echo
   echo "reexecutar uma faixa:    --faixa <id>"
   echo "reexecutar sequencial:   --seq <T-xxx>"
@@ -390,14 +390,14 @@ case "$MODO" in
   gate) COM_GATE=1; iniciar_resumos; encerrar gate ;;
   faixa)
     case "$ALVO" in
-      faixa-1) evento --tipo inicio --escopo "faixa:faixa-1"; iniciar_resumos; executar_faixa_1 || true; encerrar "faixa:faixa-1" ;;
-      faixa-2) evento --tipo inicio --escopo "faixa:faixa-2"; iniciar_resumos; executar_faixa_2 || true; encerrar "faixa:faixa-2" ;;
-      faixa-3) evento --tipo inicio --escopo "faixa:faixa-3"; iniciar_resumos; executar_faixa_3 || true; encerrar "faixa:faixa-3" ;;
-      faixa-4) evento --tipo inicio --escopo "faixa:faixa-4"; iniciar_resumos; executar_faixa_4 || true; encerrar "faixa:faixa-4" ;;
       *) falhar "faixa desconhecida: '$ALVO' — veja as disponíveis com --listar" ;;
     esac ;;
   seq)
     case "$ALVO" in
+      T-104) evento --tipo inicio --escopo "seq:T-104"; iniciar_resumos; executar_seq_T_104 || true; encerrar "seq:T-104" ;;
+      T-105) evento --tipo inicio --escopo "seq:T-105"; iniciar_resumos; executar_seq_T_105 || true; encerrar "seq:T-105" ;;
+      T-106) evento --tipo inicio --escopo "seq:T-106"; iniciar_resumos; executar_seq_T_106 || true; encerrar "seq:T-106" ;;
+      T-107) evento --tipo inicio --escopo "seq:T-107"; iniciar_resumos; executar_seq_T_107 || true; encerrar "seq:T-107" ;;
       *) falhar "tarefa sequencial desconhecida: '$ALVO' — veja as disponíveis com --listar" ;;
     esac ;;
 esac

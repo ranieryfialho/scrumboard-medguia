@@ -38,11 +38,10 @@
 </style>
 <main>
   <h1>Plano de execução — fase2d-campanhas</h1>
-  <p class="sub">gerado por <code>onp-spec plano</code> em 2026-10-16 20:15 · regenere após mudar tasks.md</p>
+  <p class="sub">gerado por <code>onp-spec plano</code> em 2026-10-19 12:12 · regenere após mudar tasks.md</p>
   <div class="resumo">
-    <div><b>4</b> tarefa(s) em paralelo</div>
-    <div><b>4</b> faixa(s) · <b>2</b> onda(s)</div>
-    <div><b>0</b> sequencial(is)</div>
+    <div><b>4</b> tarefa(s), uma após a outra</div>
+    <div>modo <b>sequencial</b> (escolha do usuário)</div>
     <div>branch <code>spec/fase2d-campanhas</code></div>
   </div>
   
@@ -50,68 +49,47 @@
     <h2>Como executar — via agente</h2>
     <p>Peça ao agente (Claude Code) para executar o plano. Ele roda:</p>
     <div><code id="cmd">bash .spec/features/fase2d-campanhas/executar-tarefas.sh</code></div>
-    <p class="nota">Este arquivo é só visualização. Cada faixa roda <code>claude -p</code> num worktree próprio, com contexto limpo, modelo e esforço já definidos.
+    <p class="nota">Este arquivo é só visualização. Cada tarefa roda <code>claude -p</code> na árvore principal, uma após a outra, com contexto limpo e modelo/esforço já definidos.
     O gate final (verify + audit) roda sozinho; a execução fica em background e, a cada
     1 minuto, o agente posta no chat a <b>tabela de andamento</b>
     (<code>onp-spec resumo fase2d-campanhas --tabela</code>) e o
     <b>resumo geral de andamento</b> (<code>onp-spec resumo fase2d-campanhas</code>).</p>
   </div>
   
+  
     <section class="onda">
-      <h3>Onda 1 <small>faixa-1 ∥ faixa-2 ∥ faixa-3 — em paralelo, janelas limpas</small></h3>
-      <div class="grade">
-      <div class="faixa">
-        <h4>faixa-1 <small>branch <code>spec/fase2d-campanhas-faixa-1</code> · worktree <code>../onp-worktrees/scrumboard-medguia-fase2d-campanhas-faixa-1</code></small></h4>
-        
+      <h3>Ordem de execução <small>uma tarefa após a outra, na árvore principal</small></h3>
+      <div class="grade"><div class="faixa">
         <div class="tarefa">
           <span class="tid">T-104</span>
           <span class="ttitulo">Repositório de campanhas e envios</span>
           <span class="meta"><code>claude-sonnet-5</code> · esforço <b>high</b></span>
           <span class="arquivos"><code>src/repositories/campanhas.ts</code> <code>test/db/campanhas.test.ts</code></span>
         </div>
-      </div>
-      <div class="faixa">
-        <h4>faixa-2 <small>branch <code>spec/fase2d-campanhas-faixa-2</code> · worktree <code>../onp-worktrees/scrumboard-medguia-fase2d-campanhas-faixa-2</code></small></h4>
-        
         <div class="tarefa">
           <span class="tid">T-105</span>
           <span class="ttitulo">Rotas /api/campanhas (CRUD, iniciar, reenviar)</span>
           <span class="meta"><code>claude-sonnet-5</code> · esforço <b>high</b></span>
           <span class="arquivos"><code>src/app/api/campanhas/route.ts</code> <code>src/app/api/campanhas/[id]/route.ts</code> <code>src/app/api/campanhas/[id]/iniciar/route.ts</code> <code>src/app/api/campanhas/[id]/reenviar-falhas/route.ts</code> <code>test/api/campanhas.test.ts</code></span>
         </div>
-      </div>
-      <div class="faixa">
-        <h4>faixa-3 <small>branch <code>spec/fase2d-campanhas-faixa-3</code> · worktree <code>../onp-worktrees/scrumboard-medguia-fase2d-campanhas-faixa-3</code></small></h4>
-        
         <div class="tarefa">
           <span class="tid">T-106</span>
           <span class="ttitulo">Webhook do Resend no modelo novo</span>
           <span class="meta"><code>claude-sonnet-5</code> · esforço <b>medium</b></span>
           <span class="arquivos"><code>src/app/api/webhooks/resend/route.ts</code> <code>src/lib/resend/assinatura.ts</code> <code>test/api/webhook-resend.test.ts</code></span>
         </div>
-      </div></div>
-    </section>
-    <section class="onda">
-      <h3>Onda 2 <small>faixa-4 — em paralelo, janelas limpas</small></h3>
-      <div class="grade">
-      <div class="faixa">
-        <h4>faixa-4 <small>branch <code>spec/fase2d-campanhas-faixa-4</code> · worktree <code>../onp-worktrees/scrumboard-medguia-fase2d-campanhas-faixa-4</code></small></h4>
-        
         <div class="tarefa">
           <span class="tid">T-107</span>
           <span class="ttitulo">Telas de Mala Direta nas rotas novas</span>
           <span class="meta"><code>claude-sonnet-5</code> · esforço <b>high</b></span>
           <span class="arquivos"><code>src/components/campanhas/campanhas-tab.tsx</code> <code>src/components/campanhas/campanha-detalhes.tsx</code> <code>src/components/campanhas/nova-campanha-modal.tsx</code> <code>src/hooks/use-campanhas.ts</code> <code>test/components/campanhas/campanhas-telas.test.tsx</code></span>
-        </div>
-      </div></div>
+        </div></div></div>
     </section>
-  
   <section class="onda">
     <h3>Branches e commits</h3>
     <ol>
       <li>tudo parte da branch de trabalho <code>spec/fase2d-campanhas</code></li>
-      <li>1 faixa = 1 branch + 1 worktree; 1 tarefa = 1 commit <code>T-xxx fase2d-campanhas: título</code></li>
-      <li>merge <code>--no-ff</code> por faixa, na ordem; conflito interrompe e pede você</li>
+      <li>as tarefas rodam nela mesma, na ordem; 1 tarefa = 1 commit <code>T-xxx fase2d-campanhas: título</code></li>
       <li>gate final: <code>onp-spec verify fase2d-campanhas</code> + <code>onp-spec audit --ci</code> — exit 0 ou não está pronto</li>
     </ol>
   </section>
