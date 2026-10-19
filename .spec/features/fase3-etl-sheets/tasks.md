@@ -9,8 +9,7 @@
   Status: pendente | em-andamento | concluida
 -->
 
-## T-114 — Leitor das abas (somente leitura) e mapeamento de colunas por aba [pendente]
-
+## T-114 — Leitor das abas (somente leitura) e mapeamento de colunas por aba [concluida]
 - Refs: US-075, AC-273, AC-274, AC-291
 - Arquivos: src/etl/sheets/leitor.ts, test/etl/sheets-leitor.test.ts
 - Notas: reproduz as regras de `src/app/api/sheets/route.ts`; escopo somente leitura (`spreadsheets.readonly`).
