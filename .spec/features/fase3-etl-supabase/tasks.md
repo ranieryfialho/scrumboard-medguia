@@ -19,8 +19,7 @@
 - Arquivos: src/etl/supabase/identidade.ts, test/etl/identidade.test.ts
 - Notas: preserva UUID; papel conforme ASM-081; sem credencial de senha.
 
-## T-110 — Migrar leads como lead + card [pendente]
-
+## T-110 — Migrar leads como lead + card [concluida]
 - Refs: US-070, AC-256, AC-257, AC-258, AC-259, AC-260, AC-272
 - Arquivos: src/etl/supabase/leads.ts, test/etl/leads.test.ts
 - Notas: cria o motivo "Desqualificado (migração)" como sistêmico; evento `migrado_de` por card; "Em contato" vai para a fila de revisão e o arquivo de decisões cria o card (AC-259, AC-272).
