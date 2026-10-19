@@ -39,8 +39,7 @@
 - Arquivos: src/etl/sheets/agenda-mensagens.ts, test/etl/sheets-agenda-mensagens.test.ts
 - Notas: nada é criado a partir da Agenda; vínculo só quando o telefone tem um único lead.
 
-## T-120 — Orquestrador do ETL do Sheets com simulação e relatório [pendente]
-
+## T-120 — Orquestrador do ETL do Sheets com simulação e relatório [concluida]
 - Refs: US-081, AC-289, AC-290, AC-292
 - Arquivos: src/etl/sheets/executar.ts, scripts/etl-sheets.ts, test/etl/sheets-executar.test.ts
 - Notas: depende de T-114 a T-119; reaproveita o contexto de execução de T-108.

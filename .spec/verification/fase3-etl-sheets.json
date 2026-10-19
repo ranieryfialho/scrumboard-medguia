@@ -1,0 +1,117 @@
+{
+  "feature": "fase3-etl-sheets",
+  "timestamp": "2026-10-19T19:09:10.644Z",
+  "gitRev": "8ef000f",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
+  "reporter": "vitest-json",
+  "exitCode": 0,
+  "testsParsed": 832,
+  "results": {
+    "AC-273": {
+      "status": "pass",
+      "testName": "T-114: lerAba — colunas por aba (@spec:AC-273) sheet1/Página1: nome vem de company_name e especialidade vem de full_name sheet1/Página1: nome vem de company_name e especialidade vem de full_name",
+      "method": "vitest-json"
+    },
+    "AC-274": {
+      "status": "pass",
+      "testName": "T-114: lerAba — lead de teste e linha em branco são ignorados e contados (@spec:AC-274) lead com is_organic = true é ignorado e contado como lead_de_teste lead com is_organic = true é ignorado e contado como lead_de_teste",
+      "method": "vitest-json"
+    },
+    "AC-275": {
+      "status": "pass",
+      "testName": "T-116: deduplicarLeads — mesmo lead em várias abas vira um só (@spec:AC-275) mesmo metaId em duas abas diferentes gera um único lead mesmo metaId em duas abas diferentes gera um único lead",
+      "method": "vitest-json"
+    },
+    "AC-276": {
+      "status": "pass",
+      "testName": "T-116: deduplicarLeads — conflito de status vence a alteração mais recente (@spec:AC-276) data_alteracao mais recente vence, mesmo vindo de aba lida depois data_alteracao mais recente vence, mesmo vindo de aba lida depois",
+      "method": "vitest-json"
+    },
+    "AC-277": {
+      "status": "pass",
+      "testName": "T-115: normalizarTelefone (@spec:AC-277) p:+5511981665252 já tem código de país e vira E.164 sem alteração p:+5511981665252 já tem código de país e vira E.164 sem alteração",
+      "method": "vitest-json"
+    },
+    "AC-278": {
+      "status": "pass",
+      "testName": "T-115: normalizarData (@spec:AC-278) created_time com fuso -05:00 e -03:00 do mesmo instante produzem o mesmo ISO created_time com fuso -05:00 e -03:00 do mesmo instante produzem o mesmo ISO",
+      "method": "vitest-json"
+    },
+    "AC-279": {
+      "status": "pass",
+      "testName": "T-117: mapearStatusParaEtapa — novos leads e reunião agendada (@spec:AC-279) status \"CREATED\" vai para Entrada de leads status \"CREATED\" vai para Entrada de leads",
+      "method": "vitest-json"
+    },
+    "AC-280": {
+      "status": "pass",
+      "testName": "T-117: mapearStatusParaEtapa — Fechado vira Contrato (Ganho) com a data (@spec:AC-280) status \"Fechado\" vai para Contrato (Ganho) preservando a data_fechamento status \"Fechado\" vai para Contrato (Ganho) preservando a data_fechamento",
+      "method": "vitest-json"
+    },
+    "AC-281": {
+      "status": "pass",
+      "testName": "T-118: importarLeadsSheets contra Postgres real lead \"Desqualificado\" ganha motivo de perda sistêmico ligado ao card (@spec:AC-281) lead \"Desqualificado\" ganha motivo de perda sistêmico ligado ao card (@spec:AC-281)",
+      "method": "vitest-json"
+    },
+    "AC-282": {
+      "status": "pass",
+      "testName": "T-118: importarLeadsSheets contra Postgres real lead com decisão de revisão não cria lead nem card (@spec:AC-282, @spec:AC-283) lead com decisão de revisão não cria lead nem card (@spec:AC-282, @spec:AC-283)",
+      "method": "vitest-json"
+    },
+    "AC-283": {
+      "status": "pass",
+      "testName": "T-118: importarLeadsSheets contra Postgres real lead com decisão de revisão não cria lead nem card (@spec:AC-282, @spec:AC-283) lead com decisão de revisão não cria lead nem card (@spec:AC-282, @spec:AC-283)",
+      "method": "vitest-json"
+    },
+    "AC-284": {
+      "status": "pass",
+      "testName": "T-118: extrairDadosFormulario — respostas do formulário e observações (@spec:AC-284) especialidade, CRM, anúncio, campanha, formulário, plataforma e observações são extraídos especialidade, CRM, anúncio, campanha, formulário, plataforma e observações são extraídos",
+      "method": "vitest-json"
+    },
+    "AC-285": {
+      "status": "pass",
+      "testName": "T-118: obterOrigemComercial — a origem vem da planilha/aba (@spec:AC-285) sheet1/Página1 e sheet3/Página1 são \"BM MedGuia\" sheet1/Página1 e sheet3/Página1 são \"BM MedGuia\"",
+      "method": "vitest-json"
+    },
+    "AC-286": {
+      "status": "pass",
+      "testName": "T-119: lerAgenda — lê a aba Agenda por posição (@spec:AC-286) ignora o cabeçalho e lê id, data, título e hora de cada linha ignora o cabeçalho e lê id, data, título e hora de cada linha",
+      "method": "vitest-json"
+    },
+    "AC-287": {
+      "status": "pass",
+      "testName": "T-119: vincularMensagensPorTelefone contra Postgres real mensagem sem lead é vinculada quando existe um único lead com o telefone (@spec:AC-287) mensagem sem lead é vinculada quando existe um único lead com o telefone (@spec:AC-287)",
+      "method": "vitest-json"
+    },
+    "AC-288": {
+      "status": "pass",
+      "testName": "T-119: vincularMensagensPorTelefone contra Postgres real telefone sem nenhum lead continua sem vínculo e é contado (@spec:AC-288) telefone sem nenhum lead continua sem vínculo e é contado (@spec:AC-288)",
+      "method": "vitest-json"
+    },
+    "AC-289": {
+      "status": "pass",
+      "testName": "T-120: orquestrador do ETL do Sheets contra Postgres real rodar o ETL de novo sobre as mesmas planilhas não duplica nada (@spec:AC-289) rodar o ETL de novo sobre as mesmas planilhas não duplica nada (@spec:AC-289)",
+      "method": "vitest-json"
+    },
+    "AC-290": {
+      "status": "pass",
+      "testName": "T-120: orquestrador do ETL do Sheets contra Postgres real em modo simulação, o banco continua idêntico e o relatório diz o que seria criado, fundido, ignorado e em revisão (@spec:AC-290) em modo simulação, o banco continua idêntico e o relatório diz o que seria criado, fundido, ignorado e em revisão (@spec:AC-290)",
+      "method": "vitest-json"
+    },
+    "AC-291": {
+      "status": "pass",
+      "testName": "T-114: acesso somente leitura (@spec:AC-291) escopo usado é só o de leitura das planilhas escopo usado é só o de leitura das planilhas",
+      "method": "vitest-json"
+    },
+    "AC-292": {
+      "status": "pass",
+      "testName": "T-120: orquestrador do ETL do Sheets contra Postgres real o relatório por aba confere lidas = criadas + fundidas + ignoradas + em revisão, mesmo com lead duplicado entre abas (@spec:AC-292) o relatório por aba confere lidas = criadas + fundidas + ignoradas + em revisão, mesmo com lead duplicado entre abas (@spec:AC-292)",
+      "method": "vitest-json"
+    },
+    "AC-293": {
+      "status": "pass",
+      "testName": "T-118: importarLeadsSheets contra Postgres real tudo criado por este ETL pertence à empresa dona das planilhas, nunca a outra (@spec:AC-293) tudo criado por este ETL pertence à empresa dona das planilhas, nunca a outra (@spec:AC-293)",
+      "method": "vitest-json"
+    }
+  },
+  "principles": {}
+}
