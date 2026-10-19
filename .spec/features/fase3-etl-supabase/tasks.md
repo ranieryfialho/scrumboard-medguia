@@ -34,8 +34,7 @@
 - Arquivos: src/etl/supabase/mensagens-config.ts, test/etl/mensagens-config.test.ts
 - Notas: mensagem sem lead migra sem vínculo; configuração texto→jsonb com saída mascarada.
 
-## T-113 — Orquestrador e comando do ETL com simulação e relatório [pendente]
-
+## T-113 — Orquestrador e comando do ETL com simulação e relatório [concluida]
 - Refs: US-074, AC-267, AC-268, AC-269, AC-270
 - Arquivos: src/etl/supabase/executar.ts, scripts/etl-supabase.ts, test/etl/executar.test.ts
 - Notas: roda as etapas na ordem (empresas → usuários → leads → campanhas → mensagens/config) numa transação; depende de T-108 a T-112.
