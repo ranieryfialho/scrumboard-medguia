@@ -20,7 +20,7 @@
     (atalho: `onp-spec tarefa <feature> <T-xxx> <status>`)
 -->
 
-## T-104 — Repositório de campanhas e envios [pendente]
+## T-104 — Repositório de campanhas e envios [concluida]
 - Refs: AC-234, AC-235, AC-236, AC-239, AC-240, AC-241, AC-242, AC-243, AC-244, AC-245
 - Arquivos: src/repositories/campanhas.ts, test/db/campanhas.test.ts
 - Esforço: alto
