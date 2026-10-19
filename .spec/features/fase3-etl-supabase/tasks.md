@@ -1,0 +1,46 @@
+# Tasks: Fase3 etl supabase
+
+> feature: fase3-etl-supabase
+
+<!--
+  - T-xxx = tarefa (código de rastreio, único no projeto inteiro).
+  - `Refs:` = histórias/critérios que a tarefa atende; `Arquivos:` separados por vírgula.
+  - Uma tarefa só vira [concluida] com prova PASS de `onp-spec verify`.
+  Status: pendente | em-andamento | concluida
+-->
+
+## T-108 — Base do ETL: leitor da origem, mascaramento de segredos e contexto de execução [pendente]
+
+- Refs: AC-266, AC-267, AC-268, AC-270
+- Arquivos: src/etl/supabase/origem.ts, src/etl/comum.ts, test/etl/comum.test.ts
+- Notas: define o contrato que as tarefas seguintes usam (ler origem, registrar em `migracao_registros`, dry-run, transação única). Depende de Q-027 (conexão direta ou arquivo).
+
+## T-109 — Migrar empresas e usuários [pendente]
+
+- Refs: US-069, AC-252, AC-253, AC-254, AC-255, AC-271
+- Arquivos: src/etl/supabase/identidade.ts, test/etl/identidade.test.ts
+- Notas: preserva UUID; papel conforme ASM-081; sem credencial de senha.
+
+## T-110 — Migrar leads como lead + card [pendente]
+
+- Refs: US-070, AC-256, AC-257, AC-258, AC-259, AC-260
+- Arquivos: src/etl/supabase/leads.ts, test/etl/leads.test.ts
+- Notas: cria o motivo "Desqualificado (migração)" como sistêmico; evento `migrado_de` por card.
+
+## T-111 — Migrar campanhas e envios [pendente]
+
+- Refs: US-071, AC-261, AC-262
+- Arquivos: src/etl/supabase/campanhas.ts, test/etl/campanhas.test.ts
+- Notas: depende de Q-029 (status que o disparador trata como encerrado).
+
+## T-112 — Migrar mensagens de WhatsApp e configurações das empresas [pendente]
+
+- Refs: US-072, US-073, AC-263, AC-264, AC-265
+- Arquivos: src/etl/supabase/mensagens-config.ts, test/etl/mensagens-config.test.ts
+- Notas: mensagem sem lead migra sem vínculo; configuração texto→jsonb com saída mascarada.
+
+## T-113 — Orquestrador e comando do ETL com simulação e relatório [pendente]
+
+- Refs: US-074, AC-267, AC-268, AC-269, AC-270
+- Arquivos: src/etl/supabase/executar.ts, scripts/etl-supabase.ts, test/etl/executar.test.ts
+- Notas: roda as etapas na ordem (empresas → usuários → leads → campanhas → mensagens/config) numa transação; depende de T-108 a T-112.
