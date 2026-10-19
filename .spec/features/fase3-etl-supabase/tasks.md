@@ -24,8 +24,7 @@
 - Arquivos: src/etl/supabase/leads.ts, test/etl/leads.test.ts
 - Notas: cria o motivo "Desqualificado (migração)" como sistêmico; evento `migrado_de` por card; "Em contato" vai para a fila de revisão e o arquivo de decisões cria o card (AC-259, AC-272).
 
-## T-111 — Migrar campanhas e envios [pendente]
-
+## T-111 — Migrar campanhas e envios [concluida]
 - Refs: US-071, AC-261, AC-262
 - Arquivos: src/etl/supabase/campanhas.ts, test/etl/campanhas.test.ts
 - Notas: campanha migra FINALIZADA e sem envio PENDENTE (Q-029).
