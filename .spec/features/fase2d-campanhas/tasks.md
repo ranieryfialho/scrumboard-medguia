@@ -32,7 +32,7 @@
 - Esforço: alto
 - Notas: depende de T-104. Mesmo padrão de sessão/tenant de src/app/api/atividades/route.ts; MASTER/GERENTE/super admin (ASM-076); validação de corpo antes do banco.
 
-## T-106 — Webhook do Resend no modelo novo [pendente]
+## T-106 — Webhook do Resend no modelo novo [concluida]
 - Refs: AC-246, AC-247, AC-248
 - Arquivos: src/app/api/webhooks/resend/route.ts, src/lib/resend/assinatura.ts, test/api/webhook-resend.test.ts
 - Esforço: medio
