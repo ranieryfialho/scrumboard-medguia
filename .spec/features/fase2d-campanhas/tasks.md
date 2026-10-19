@@ -26,7 +26,7 @@
 - Esforço: alto
 - Notas: Drizzle + RLS (`campanhas`/`envios_campanha` em src/db/schema/legado.ts). Transações para criar (campanha + lote), iniciar (UPDATE condicional por status, seguro contra clique duplo) e reenviar falhas. Normalização de e-mail (trim, lower, validação, dedup) em função pura testável. Origem "etapa" faz join oportunidades→leads (ASM-078). Teste em Postgres efêmero.
 
-## T-105 — Rotas /api/campanhas (CRUD, iniciar, reenviar) [pendente]
+## T-105 — Rotas /api/campanhas (CRUD, iniciar, reenviar) [concluida]
 - Refs: AC-234, AC-235, AC-237, AC-238, AC-239, AC-240, AC-241, AC-243, AC-244, AC-245
 - Arquivos: src/app/api/campanhas/route.ts, src/app/api/campanhas/[id]/route.ts, src/app/api/campanhas/[id]/iniciar/route.ts, src/app/api/campanhas/[id]/reenviar-falhas/route.ts, test/api/campanhas.test.ts
 - Esforço: alto
