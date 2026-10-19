@@ -184,17 +184,17 @@ Como responsável pelo cutover, quero ensaiar e repetir o ETL sem risco.
 
 | ID | Suposição | Status | Resolução |
 |---|---|---|---|
-| ASM-088 | `data_alteracao` (`dd/mm/aaaa, hh:mm:ss`) está no horário de Brasília | aberta | — |
-| ASM-089 | Telefone sem código de país é brasileiro (+55) | aberta | — |
+| ASM-088 | `data_alteracao` (`dd/mm/aaaa, hh:mm:ss`) está no horário de Brasília | confirmada | Confirmado pelo usuário em 19/10 |
+| ASM-089 | Telefone sem código de país é brasileiro (+55) | confirmada | Confirmado pelo usuário em 19/10 |
 | ASM-090 | A chave única do lead é o id da Meta (`l:…`); o id posicional do legado não serve | confirmada | Código legado usa índice de linha |
 | ASM-091 | Duplicados: vence a `data_alteracao` mais recente; sem data, o status mais avançado | confirmada | Decidido em 19/10 |
 | ASM-092 | A aba `Agenda` não migra; sai em CSV | confirmada | Decidido em 19/10 |
-| ASM-093 | Mapa de status segue o RFC-001 §6.8 e o `STATUS_MAP` do legado ("Fechado" = Contrato (Ganho)) | aberta | — |
-| ASM-094 | O ETL acessa o Google com a conta de serviço já existente, somente leitura | aberta | — |
+| ASM-093 | Mapa de status segue o RFC-001 §6.8 e o `STATUS_MAP` do legado ("Fechado" = Contrato (Ganho)) | confirmada | Confirmado pelo usuário em 19/10 |
+| ASM-094 | O ETL acessa o Google com a conta de serviço já existente, somente leitura | confirmada | Confirmado pelo usuário em 19/10 |
 
 ## Perguntas em aberto
 
 | ID | Pergunta | Status | Resposta |
 |---|---|---|---|
-| Q-031 | As planilhas não têm data de próxima ação. Todos os "Recontato" e "Aguardando Ativação" vão para revisão, ou usa-se uma data padrão (ex.: `data_alteracao` + 30 dias)? | aberta | — |
-| Q-032 | Qual o volume por aba (linhas)? Define o tempo do ensaio e o tamanho esperado da fila de revisão | aberta | — |
+| Q-031 | As planilhas não têm data de próxima ação. Todos os "Recontato" e "Aguardando Ativação" vão para revisão, ou usa-se uma data padrão (ex.: `data_alteracao` + 30 dias)? | respondida | Todos vão para revisão; nenhuma data é inventada (decidido em 19/10) |
+| Q-032 | Qual o volume por aba (linhas)? Define o tempo do ensaio e o tamanho esperado da fila de revisão | respondida | Desconhecido; o volume sai do relatório da simulação (dry-run, AC-290/AC-292) (19/10) |

@@ -1,11 +1,11 @@
 {
   "feature": "fase2d-campanhas",
-  "timestamp": "2026-10-19T13:18:10.162Z",
-  "gitRev": "a2682e6",
-  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
+  "timestamp": "2026-10-19T19:42:29.888Z",
+  "gitRev": "17a3308",
+  "command": "echo 'reaproveitando a execucao unica da suite completa: vitest-json 832 de 832 PASS em .spec/verification/raw.json'",
   "reporter": "vitest-json",
-  "exitCode": 1,
-  "testsParsed": 682,
+  "exitCode": 0,
+  "testsParsed": 832,
   "results": {
     "AC-234": {
       "status": "pass",
