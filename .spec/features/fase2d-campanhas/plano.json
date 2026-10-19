@@ -1,0 +1,102 @@
+{
+  "runId": "scrumboard-medguia-fase2d-campanhas-mvf7skkx",
+  "feature": "fase2d-campanhas",
+  "agent": "claude",
+  "modo": "sequencial",
+  "paralelizar": null,
+  "modeloForcado": null,
+  "esforcoForcado": null,
+  "geradoEm": "2026-10-19 12:12",
+  "branchTrabalho": "spec/fase2d-campanhas",
+  "baseDir": ".spec/features/fase2d-campanhas",
+  "specDir": ".spec",
+  "repoName": "scrumboard-medguia",
+  "logsDir": "../onp-worktrees/scrumboard-medguia-fase2d-campanhas-logs",
+  "ondas": [],
+  "faixas": [],
+  "sequenciais": [
+    {
+      "id": "T-104",
+      "titulo": "Repositório de campanhas e envios",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "src/repositories/campanhas.ts",
+        "test/db/campanhas.test.ts"
+      ],
+      "refs": [
+        "AC-234",
+        "AC-235",
+        "AC-236",
+        "AC-239",
+        "AC-240",
+        "AC-241",
+        "AC-242",
+        "AC-243",
+        "AC-244",
+        "AC-245"
+      ]
+    },
+    {
+      "id": "T-105",
+      "titulo": "Rotas /api/campanhas (CRUD, iniciar, reenviar)",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "src/app/api/campanhas/route.ts",
+        "src/app/api/campanhas/[id]/route.ts",
+        "src/app/api/campanhas/[id]/iniciar/route.ts",
+        "src/app/api/campanhas/[id]/reenviar-falhas/route.ts",
+        "test/api/campanhas.test.ts"
+      ],
+      "refs": [
+        "AC-234",
+        "AC-235",
+        "AC-237",
+        "AC-238",
+        "AC-239",
+        "AC-240",
+        "AC-241",
+        "AC-243",
+        "AC-244",
+        "AC-245"
+      ]
+    },
+    {
+      "id": "T-106",
+      "titulo": "Webhook do Resend no modelo novo",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/app/api/webhooks/resend/route.ts",
+        "src/lib/resend/assinatura.ts",
+        "test/api/webhook-resend.test.ts"
+      ],
+      "refs": [
+        "AC-246",
+        "AC-247",
+        "AC-248"
+      ]
+    },
+    {
+      "id": "T-107",
+      "titulo": "Telas de Mala Direta nas rotas novas",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "src/components/campanhas/campanhas-tab.tsx",
+        "src/components/campanhas/campanha-detalhes.tsx",
+        "src/components/campanhas/nova-campanha-modal.tsx",
+        "src/hooks/use-campanhas.ts",
+        "test/components/campanhas/campanhas-telas.test.tsx"
+      ],
+      "refs": [
+        "AC-249",
+        "AC-250",
+        "AC-251"
+      ]
+    }
+  ],
+  "concluidas": [],
+  "avisos": []
+}
