@@ -24,7 +24,8 @@ Como operação, quero que as empresas e os usuários do legado existam no CRM n
 - **Dado** usuários do legado com perfil ADMIN, COMERCIAL ou MARKETING e alguns marcados como super admin
 - **Quando** o ETL roda
 - **Então** cada usuário existe com o mesmo `id`, vinculado à empresa de origem
-- **E** super admin vira MASTER, ADMIN vira GERENTE, COMERCIAL e MARKETING viram ATENDENTE
+- **E** ADMIN vira GERENTE, COMERCIAL e MARKETING viram ATENDENTE
+- **E** cada super admin vira MASTER nas duas empresas
 
 #### AC-254 — Usuário inativo no legado continua inativo
 
@@ -93,7 +94,7 @@ Como marketing, quero o histórico de campanhas e envios no CRM novo, para consu
 - **Dado** uma campanha com status PROCESSANDO no legado
 - **Quando** o ETL roda e o disparador do CRM novo trabalha
 - **Então** nenhum e-mail dessa campanha é reenviado
-- **E** a campanha migra com um status final (não retomável)
+- **E** a campanha migra como FINALIZADA e nenhum envio fica PENDENTE ou RASCUNHO
 
 ### US-072 — Migrar as mensagens de WhatsApp
 
@@ -178,19 +179,19 @@ Como responsável pelo cutover, quero poder ensaiar e repetir o ETL sem risco, p
 
 | ID | Suposição | Status | Resolução |
 |---|---|---|---|
-| ASM-081 | Mapa de papéis: super admin→MASTER, ADMIN→GERENTE, COMERCIAL e MARKETING→ATENDENTE | aberta | — |
+| ASM-081 | Mapa de papéis: ADMIN→GERENTE, COMERCIAL e MARKETING→ATENDENTE; super admin→MASTER nas duas empresas (Q-028) | aberta | — |
 | ASM-082 | "Em contato"→"1º dia de contato" e "Desqualificado"→"Perdido" com motivo novo (confirmado pelo usuário); demais situações vão para revisão | confirmada | Decidido em 19/10 |
 | ASM-083 | Os segredos de `empresa_configuracoes` são copiados como estão (decisão do usuário, contra a recomendação), com saída sempre mascarada | confirmada | Decidido em 19/10; risco registrado |
 | ASM-084 | O histórico de campanhas, envios e mensagens migra por completo | confirmada | Decidido em 19/10 |
 | ASM-085 | Telefones sem código de país são brasileiros (+55) | aberta | — |
 | ASM-086 | A contagem real de envios é 5.101 (a de 6.110 veio de estimativa do Postgres) | aberta | Conferir no ETL |
-| ASM-087 | O ETL lê o Supabase em modo somente leitura e nunca altera a origem | aberta | — |
+| ASM-087 | O ETL lê o Supabase por conexão direta somente leitura (credencial só em variável de ambiente) e nunca altera a origem | confirmada | Decidido em 19/10 (Q-027) |
 
 ## Perguntas em aberto
 
 | ID | Pergunta | Status | Resposta |
 |---|---|---|---|
-| Q-027 | Como o ETL lê o Supabase: conexão direta somente leitura ou arquivo exportado (JSON/CSV)? | aberta | — |
-| Q-028 | Os 2 super admins viram MASTER nas duas empresas ou só na empresa deles? | aberta | — |
-| Q-029 | Como o disparador do CRM novo identifica campanha encerrada (qual status é "não retomável")? | aberta | — |
+| Q-027 | Como o ETL lê o Supabase: conexão direta somente leitura ou arquivo exportado (JSON/CSV)? | respondida | Conexão direta somente leitura |
+| Q-028 | Os 2 super admins viram MASTER nas duas empresas ou só na empresa deles? | respondida | MASTER nas duas empresas |
+| Q-029 | Como o disparador do CRM novo identifica campanha encerrada (qual status é "não retomável")? | respondida | O disparador só consome envio PENDENTE; FINALIZADA é o status final (`src/repositories/campanhas.ts:290-306`). No legado não há envio PENDENTE |
 | Q-030 | As 7 mensagens com `lead_id` inexistente e as 1.565 sem `lead_id` pertencem a leads do Sheets? | aberta | — |
