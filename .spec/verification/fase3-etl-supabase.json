@@ -1,10 +1,10 @@
 {
   "feature": "fase3-etl-supabase",
-  "timestamp": "2026-10-19T17:55:53.197Z",
-  "gitRev": "939f61b",
+  "timestamp": "2026-10-19T19:21:41.135Z",
+  "gitRev": "748692a",
   "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
-  "exitCode": 0,
+  "exitCode": 1,
   "testsParsed": 758,
   "results": {
     "AC-252": {
