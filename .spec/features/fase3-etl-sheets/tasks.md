@@ -29,8 +29,7 @@
 - Arquivos: src/etl/sheets/status.ts, test/etl/sheets-status.test.ts
 - Notas: segue RFC-001 §6.8; Recontato e Aguardando Ativação sem data vão para revisão (Q-031).
 
-## T-118 — Importar leads, cards, origem e eventos `migrado_de` [pendente]
-
+## T-118 — Importar leads, cards, origem e eventos `migrado_de` [concluida]
 - Refs: US-078, AC-284, AC-285, AC-293
 - Arquivos: src/etl/sheets/leads.ts, test/etl/sheets-leads.test.ts
 - Notas: depende de T-114 a T-117; grava em `migracao_registros` com origem `sheets`.
