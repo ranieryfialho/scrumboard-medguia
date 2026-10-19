@@ -43,11 +43,11 @@ Como operação, quero que as empresas e os usuários do legado existam no CRM n
 
 Como operação, quero que cada lead do legado apareça como card na etapa certa do funil novo, para continuar o atendimento sem refazer o cadastro.
 
-#### AC-256 — Cada lead vira um lead e um card em "1º dia de contato"
+#### AC-256 — Lead com situação de mapa direto vira lead e card na etapa certa
 
-- **Dado** 32 leads com situação "Em contato"
+- **Dado** leads com situação "Novos Leads" (ou sem situação)
 - **Quando** o ETL roda
-- **Então** existem 32 leads e 32 cards na etapa "1º dia de contato"
+- **Então** cada um vira um lead e um card na etapa "Entrada de leads"
 - **E** nome, e-mail, origem e observações do legado estão preservados
 
 #### AC-257 — Desqualificado vira Perdido com motivo próprio da migração
@@ -64,12 +64,19 @@ Como operação, quero que cada lead do legado apareça como card na etapa certa
 - **Então** há um evento `migrado_de` com a origem e o id externo do legado
 - **E** o registro de migração liga o id do legado ao id novo
 
-#### AC-259 — Situação desconhecida vai para revisão manual
+#### AC-259 — Situação sem etapa automática vai para revisão manual
 
-- **Dado** um lead cuja situação não tem etapa mapeada
+- **Dado** leads com situação "Em contato" (32 no legado) ou com situação desconhecida
 - **Quando** o ETL roda
-- **Então** o lead NÃO é migrado nem descartado em silêncio
-- **E** ele aparece na fila de revisão manual com o motivo
+- **Então** esses leads NÃO são migrados nem descartados em silêncio
+- **E** cada um aparece na fila de revisão manual com o motivo
+
+#### AC-272 — A decisão da operação cria o card na etapa escolhida
+
+- **Dado** um lead na fila de revisão e um arquivo de decisões em que a operação escolheu a etapa dele
+- **Quando** o ETL roda de novo
+- **Então** o lead e o card são criados na etapa escolhida
+- **E** o lead sai da fila, sem duplicar nada
 
 #### AC-260 — WhatsApp inválido não bloqueia a migração do lead
 
@@ -180,7 +187,7 @@ Como responsável pelo cutover, quero poder ensaiar e repetir o ETL sem risco, p
 | ID | Suposição | Status | Resolução |
 |---|---|---|---|
 | ASM-081 | Mapa de papéis: ADMIN→GERENTE, COMERCIAL e MARKETING→ATENDENTE; super admin→MASTER nas duas empresas (Q-028) | aberta | — |
-| ASM-082 | "Em contato"→"1º dia de contato" e "Desqualificado"→"Perdido" com motivo novo (confirmado pelo usuário); demais situações vão para revisão | confirmada | Decidido em 19/10 |
+| ASM-082 | "Desqualificado"→Perdido com o motivo novo "Desqualificado (migração)" e "Em contato"→revisão manual (conforme RFC-001 §6.8). O usuário escolheu o motivo novo mesmo com o RFC prevendo "Sem perfil/fit" | confirmada | Decidido em 19/10; diverge do RFC neste motivo |
 | ASM-083 | Os segredos de `empresa_configuracoes` são copiados como estão (decisão do usuário, contra a recomendação), com saída sempre mascarada | confirmada | Decidido em 19/10; risco registrado |
 | ASM-084 | O histórico de campanhas, envios e mensagens migra por completo | confirmada | Decidido em 19/10 |
 | ASM-085 | Telefones sem código de país são brasileiros (+55) | aberta | — |
@@ -194,4 +201,4 @@ Como responsável pelo cutover, quero poder ensaiar e repetir o ETL sem risco, p
 | Q-027 | Como o ETL lê o Supabase: conexão direta somente leitura ou arquivo exportado (JSON/CSV)? | respondida | Conexão direta somente leitura |
 | Q-028 | Os 2 super admins viram MASTER nas duas empresas ou só na empresa deles? | respondida | MASTER nas duas empresas |
 | Q-029 | Como o disparador do CRM novo identifica campanha encerrada (qual status é "não retomável")? | respondida | O disparador só consome envio PENDENTE; FINALIZADA é o status final (`src/repositories/campanhas.ts:290-306`). No legado não há envio PENDENTE |
-| Q-030 | As 7 mensagens com `lead_id` inexistente e as 1.565 sem `lead_id` pertencem a leads do Sheets? | aberta | — |
+| Q-030 | As 7 mensagens com `lead_id` inexistente e as 1.565 sem `lead_id` pertencem a leads do Sheets? | respondida | O `lead_id` do legado é posicional e não confiável; o vínculo será feito pelo telefone na feature do Sheets (fase3-etl-sheets, AC-285) |

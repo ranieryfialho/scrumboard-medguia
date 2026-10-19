@@ -23,9 +23,9 @@
 
 ## T-110 — Migrar leads como lead + card [pendente]
 
-- Refs: US-070, AC-256, AC-257, AC-258, AC-259, AC-260
+- Refs: US-070, AC-256, AC-257, AC-258, AC-259, AC-260, AC-272
 - Arquivos: src/etl/supabase/leads.ts, test/etl/leads.test.ts
-- Notas: cria o motivo "Desqualificado (migração)" como sistêmico; evento `migrado_de` por card.
+- Notas: cria o motivo "Desqualificado (migração)" como sistêmico; evento `migrado_de` por card; "Em contato" vai para a fila de revisão e o arquivo de decisões cria o card (AC-259, AC-272).
 
 ## T-111 — Migrar campanhas e envios [pendente]
 
