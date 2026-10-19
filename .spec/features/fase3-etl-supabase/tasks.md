@@ -29,8 +29,7 @@
 - Arquivos: src/etl/supabase/campanhas.ts, test/etl/campanhas.test.ts
 - Notas: campanha migra FINALIZADA e sem envio PENDENTE (Q-029).
 
-## T-112 — Migrar mensagens de WhatsApp e configurações das empresas [pendente]
-
+## T-112 — Migrar mensagens de WhatsApp e configurações das empresas [concluida]
 - Refs: US-072, US-073, AC-263, AC-264, AC-265
 - Arquivos: src/etl/supabase/mensagens-config.ts, test/etl/mensagens-config.test.ts
 - Notas: mensagem sem lead migra sem vínculo; configuração texto→jsonb com saída mascarada.
