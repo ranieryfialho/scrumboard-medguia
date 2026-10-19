@@ -1,0 +1,135 @@
+{
+  "runId": "scrumboard-medguia-fase3-etl-sheets-mvfkiq4x",
+  "feature": "fase3-etl-sheets",
+  "agent": "claude",
+  "modo": "sequencial",
+  "paralelizar": null,
+  "modeloForcado": null,
+  "esforcoForcado": null,
+  "geradoEm": "2026-10-19 18:08",
+  "branchTrabalho": "spec/fase3-etl-sheets",
+  "baseDir": ".spec/features/fase3-etl-sheets",
+  "specDir": ".spec",
+  "repoName": "scrumboard-medguia",
+  "logsDir": "../onp-worktrees/scrumboard-medguia-fase3-etl-sheets-logs",
+  "ondas": [],
+  "faixas": [],
+  "sequenciais": [
+    {
+      "id": "T-114",
+      "titulo": "Leitor das abas (somente leitura) e mapeamento de colunas por aba",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/etl/sheets/leitor.ts",
+        "test/etl/sheets-leitor.test.ts"
+      ],
+      "refs": [
+        "US-075",
+        "AC-273",
+        "AC-274",
+        "AC-291"
+      ]
+    },
+    {
+      "id": "T-115",
+      "titulo": "Normalização de telefone e datas",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/etl/sheets/normalizar.ts",
+        "test/etl/sheets-normalizar.test.ts"
+      ],
+      "refs": [
+        "US-076",
+        "AC-277",
+        "AC-278"
+      ]
+    },
+    {
+      "id": "T-116",
+      "titulo": "Deduplicação entre abas e resolução de conflito",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/etl/sheets/dedupe.ts",
+        "test/etl/sheets-dedupe.test.ts"
+      ],
+      "refs": [
+        "US-075",
+        "AC-275",
+        "AC-276"
+      ]
+    },
+    {
+      "id": "T-117",
+      "titulo": "Mapa de status para etapa e motivo de perda",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/etl/sheets/status.ts",
+        "test/etl/sheets-status.test.ts"
+      ],
+      "refs": [
+        "US-077",
+        "AC-279",
+        "AC-280",
+        "AC-281",
+        "AC-282",
+        "AC-283"
+      ]
+    },
+    {
+      "id": "T-118",
+      "titulo": "Importar leads, cards, origem e eventos `migrado_de`",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/etl/sheets/leads.ts",
+        "test/etl/sheets-leads.test.ts"
+      ],
+      "refs": [
+        "US-078",
+        "AC-284",
+        "AC-285",
+        "AC-293"
+      ]
+    },
+    {
+      "id": "T-119",
+      "titulo": "Exportar a Agenda em CSV e ligar mensagens aos leads pelo telefone",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/etl/sheets/agenda-mensagens.ts",
+        "test/etl/sheets-agenda-mensagens.test.ts"
+      ],
+      "refs": [
+        "US-079",
+        "US-080",
+        "AC-286",
+        "AC-287",
+        "AC-288"
+      ]
+    },
+    {
+      "id": "T-120",
+      "titulo": "Orquestrador do ETL do Sheets com simulação e relatório",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/etl/sheets/executar.ts",
+        "scripts/etl-sheets.ts",
+        "test/etl/sheets-executar.test.ts"
+      ],
+      "refs": [
+        "US-081",
+        "AC-289",
+        "AC-290",
+        "AC-292"
+      ]
+    }
+  ],
+  "concluidas": [],
+  "avisos": []
+}
