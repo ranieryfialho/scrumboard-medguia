@@ -186,12 +186,12 @@ Como responsável pelo cutover, quero poder ensaiar e repetir o ETL sem risco, p
 
 | ID | Suposição | Status | Resolução |
 |---|---|---|---|
-| ASM-081 | Mapa de papéis: ADMIN→GERENTE, COMERCIAL e MARKETING→ATENDENTE; super admin→MASTER nas duas empresas (Q-028) | aberta | — |
+| ASM-081 | Mapa de papéis: ADMIN→GERENTE, COMERCIAL e MARKETING→ATENDENTE; super admin→MASTER nas duas empresas (Q-028) | confirmada | Confirmado pelo usuário em 19/10 |
 | ASM-082 | "Desqualificado"→Perdido com o motivo novo "Desqualificado (migração)" e "Em contato"→revisão manual (conforme RFC-001 §6.8). O usuário escolheu o motivo novo mesmo com o RFC prevendo "Sem perfil/fit" | confirmada | Decidido em 19/10; diverge do RFC neste motivo |
 | ASM-083 | Os segredos de `empresa_configuracoes` são copiados como estão (decisão do usuário, contra a recomendação), com saída sempre mascarada | confirmada | Decidido em 19/10; risco registrado |
 | ASM-084 | O histórico de campanhas, envios e mensagens migra por completo | confirmada | Decidido em 19/10 |
-| ASM-085 | Telefones sem código de país são brasileiros (+55) | aberta | — |
-| ASM-086 | A contagem real de envios é 5.101 (a de 6.110 veio de estimativa do Postgres) | aberta | Conferir no ETL |
+| ASM-085 | Telefones sem código de país são brasileiros (+55) | confirmada | Confirmado pelo usuário em 19/10 |
+| ASM-086 | A contagem real de envios é 5.101 (a de 6.110 veio de estimativa do Postgres) | confirmada | Usuário confirmou 5.101 em 19/10; o relatório do ETL ainda confere a contagem |
 | ASM-087 | O ETL lê o Supabase por conexão direta somente leitura (credencial só em variável de ambiente) e nunca altera a origem | confirmada | Decidido em 19/10 (Q-027) |
 
 ## Perguntas em aberto
