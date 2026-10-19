@@ -1,11 +1,11 @@
 {
   "feature": "fase2-kanban",
-  "timestamp": "2026-10-19T13:29:45.173Z",
-  "gitRev": "22ad235",
-  "command": "echo reaproveitando a suite completa unica de raw.json (opcao 2, 2026-10-19)",
+  "timestamp": "2026-10-19T19:42:30.113Z",
+  "gitRev": "17a3308",
+  "command": "echo 'reaproveitando a execucao unica da suite completa: vitest-json 832 de 832 PASS em .spec/verification/raw.json'",
   "reporter": "vitest-json",
-  "exitCode": 2,
-  "testsParsed": 682,
+  "exitCode": 0,
+  "testsParsed": 832,
   "results": {
     "AC-074": {
       "status": "pass",
