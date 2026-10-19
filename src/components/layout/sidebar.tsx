@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { LayoutDashboard, KanbanSquare, Archive, LogOut, ChevronLeft, ChevronRight, Mail, Users, Trophy, Target, X, Building2, ShieldCheck, MessageCircle, ListChecks } from "lucide-react";
+import { LayoutDashboard, KanbanSquare, Archive, LogOut, ChevronLeft, ChevronRight, Mail, Users, Trophy, Target, X, Building2, ShieldCheck, MessageCircle, ListChecks, Gauge } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -39,17 +39,25 @@ export function Sidebar({ abaAtiva, setAbaAtiva, mobileOpen = false, onMobileClo
 
       const isAdminPerfil = perfilAntigo === 'MASTER' || perfilAntigo === 'ADMIN' || user.user_metadata?.is_super_admin;
 
+      // AC-231 (fase2d-kpis): só MASTER/ADMIN/GERENTE e super admin veem
+      // "Indicadores" (ASM-074 da feature) — ATENDENTE cai no `else` abaixo.
+      const podeVerIndicadoresPerfil = isAdminPerfil || perfilAntigo === 'GERENTE';
+
       if (metadataModulos && Array.isArray(metadataModulos)) {
         // Garante que ADMIN/MASTER sempre veem 'whatsapp', mesmo em contas antigas
-        const modulos = isAdminPerfil && !metadataModulos.includes('whatsapp')
+        let modulos = isAdminPerfil && !metadataModulos.includes('whatsapp')
           ? [...metadataModulos, 'whatsapp']
           : metadataModulos;
+        // Garante que MASTER/ADMIN/GERENTE sempre veem 'indicadores', mesmo em contas antigas
+        if (podeVerIndicadoresPerfil && !modulos.includes('indicadores')) {
+          modulos = [...modulos, 'indicadores'];
+        }
         setModulosPermitidos(modulos);
       } else {
         if (isAdminPerfil) {
-          setModulosPermitidos(['dashboard', 'kanban', 'arquivados', 'relatorios', 'relatorios-comerciais', 'campanhas', 'whatsapp', 'usuarios']);
+          setModulosPermitidos(['dashboard', 'kanban', 'arquivados', 'relatorios', 'relatorios-comerciais', 'indicadores', 'campanhas', 'whatsapp', 'usuarios']);
         } else if (perfilAntigo === 'GERENTE') {
-          setModulosPermitidos(['dashboard', 'kanban', 'arquivados', 'relatorios', 'relatorios-comerciais']);
+          setModulosPermitidos(['dashboard', 'kanban', 'arquivados', 'relatorios', 'relatorios-comerciais', 'indicadores']);
         } else {
           setModulosPermitidos(['dashboard', 'kanban']);
         }
@@ -178,6 +186,20 @@ export function Sidebar({ abaAtiva, setAbaAtiva, mobileOpen = false, onMobileClo
           <ListChecks className="w-5 h-5 shrink-0 text-zinc-500 group-hover:text-zinc-300 transition-colors" />
           {isExpanded && <span className="ml-3 text-sm font-medium">Minhas tarefas</span>}
         </Link>
+
+        {/* AC-231 (fase2d-kpis, US-063): "Indicadores" leva a /indicadores
+            (T-103), mesma rota própria fora do sistema de abas; oculto para
+            ATENDENTE via `modulosPermitidos` (ver `carregarPermissoes`). */}
+        {modulosPermitidos.includes('indicadores') && (
+          <Link
+            href="/indicadores"
+            className="w-full flex items-center px-4 py-3 rounded-xl transition-all duration-200 group hover:bg-white/5 hover:text-white"
+            title={!isExpanded ? "Indicadores" : ""}
+          >
+            <Gauge className="w-5 h-5 shrink-0 text-zinc-500 group-hover:text-zinc-300 transition-colors" />
+            {isExpanded && <span className="ml-3 text-sm font-medium">Indicadores</span>}
+          </Link>
+        )}
       </div>
 
       <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent">
