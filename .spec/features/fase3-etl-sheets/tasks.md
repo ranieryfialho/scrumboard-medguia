@@ -24,8 +24,7 @@
 - Arquivos: src/etl/sheets/dedupe.ts, test/etl/sheets-dedupe.test.ts
 - Notas: chave = id da Meta; desempate por `data_alteracao`, depois status mais avançado.
 
-## T-117 — Mapa de status para etapa e motivo de perda [pendente]
-
+## T-117 — Mapa de status para etapa e motivo de perda [concluida]
 - Refs: US-077, AC-279, AC-280, AC-281, AC-282, AC-283
 - Arquivos: src/etl/sheets/status.ts, test/etl/sheets-status.test.ts
 - Notas: segue RFC-001 §6.8; Recontato e Aguardando Ativação sem data vão para revisão (Q-031).
