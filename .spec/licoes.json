@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "proximoId": 2,
+  "licoes": [
+    {
+      "id": "L-001",
+      "texto": "O título de todo teste de critério de aceite termina com (@spec:AC-xxx); prefixo 'AC-xxx:' não conta como prova, então confira com grep '@spec:AC-' antes de encerrar a tarefa.",
+      "chave": "AC_SEM_TESTE::o titulo de todo teste de criterio de aceite termina com spec ac xxx prefixo ac xxx nao conta como prova entao confira com grep spec ac antes de encerrar a tarefa",
+      "sinal": "AC_SEM_TESTE",
+      "escopo": "testes",
+      "status": "candidata",
+      "recorrencia": 1,
+      "features": [
+        "fase3-etl-decisoes"
+      ],
+      "evidencias": [
+        {
+          "fonte": "AC-309",
+          "feature": "fase3-etl-decisoes",
+          "quando": "2026-10-21T15:51:19.171Z",
+          "gitRev": "90aa3a3"
+        }
+      ],
+      "penalidades": 0,
+      "criadaEm": "2026-10-21T15:51:19.171Z",
+      "ultimaVez": "2026-10-21T15:51:19.171Z"
+    }
+  ]
+}
