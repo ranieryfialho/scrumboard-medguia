@@ -22,8 +22,7 @@
 - Arquivos: src/worker/index.ts, test/worker/index.spec.test.ts, package.json
 - Notas: `node-cron` (ASM-112); SIGTERM espera o ciclo em andamento e sai 0. Depende de T-127, T-128.
 
-## T-131 — Serviço crm-worker na composição [pendente]
-
+## T-131 — Serviço crm-worker na composição [concluida]
 - Refs: AC-328
 - Arquivos: docker-compose.yml, docker-compose.staging.yml, test/worker/compose.spec.test.ts
 - Notas: mesma imagem da aplicação, comando de entrada do worker, healthcheck de T-129. Depende de T-129, T-130.

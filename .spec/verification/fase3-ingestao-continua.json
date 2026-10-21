@@ -1,0 +1,57 @@
+{
+  "feature": "fase3-ingestao-continua",
+  "timestamp": "2026-10-21T19:47:48.172Z",
+  "gitRev": "bc4794a",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
+  "reporter": "vitest-json",
+  "exitCode": 1,
+  "testsParsed": 919,
+  "results": {
+    "AC-318": {
+      "status": "pass",
+      "testName": "T-128: ciclo de importação contra Postgres real um lead novo vira card no próximo ciclo — o ciclo repassa lidos/criados/ignorados do executor (@spec:AC-318) um lead novo vira card no próximo ciclo — o ciclo repassa lidos/criados/ignorados do executor (@spec:AC-318)",
+      "method": "vitest-json"
+    },
+    "AC-319": {
+      "status": "pass",
+      "testName": "T-128: ciclo de importação contra Postgres real repetir o ciclo sem cadastro novo não duplica ninguém — criados fica em zero na segunda vez (@spec:AC-319) repetir o ciclo sem cadastro novo não duplica ninguém — criados fica em zero na segunda vez (@spec:AC-319)",
+      "method": "vitest-json"
+    },
+    "AC-320": {
+      "status": "pass",
+      "testName": "carregarConfiguracaoWorker sem WORKER_INTERVALO_IMPORT_MIN, os dois ciclos usam o intervalo padrão de 5 min (ASM-108) @spec:AC-320 sem WORKER_INTERVALO_IMPORT_MIN, os dois ciclos usam o intervalo padrão de 5 min (ASM-108) @spec:AC-320",
+      "method": "vitest-json"
+    },
+    "AC-321": {
+      "status": "pass",
+      "testName": "T-128: ciclo de importação contra Postgres real cada execução fica registrada com início, fim e resultado (@spec:AC-321) cada execução fica registrada com início, fim e resultado (@spec:AC-321)",
+      "method": "vitest-json"
+    },
+    "AC-322": {
+      "status": "pass",
+      "testName": "T-128: ciclo de importação contra Postgres real uma origem fora do ar não derruba o worker nem a outra origem (@spec:AC-322) uma origem fora do ar não derruba o worker nem a outra origem (@spec:AC-322)",
+      "method": "vitest-json"
+    },
+    "AC-323": {
+      "status": "pass",
+      "testName": "T-129: verificação de saúde do worker contra Postgres real diz \"saudável\" se houve sucesso dentro de duas vezes o intervalo (@spec:AC-323) diz \"saudável\" se houve sucesso dentro de duas vezes o intervalo (@spec:AC-323)",
+      "method": "vitest-json"
+    },
+    "AC-324": {
+      "status": "pass",
+      "testName": "T-128: ciclo de importação contra Postgres real ciclo atrasado não começa por cima do anterior ainda em andamento (@spec:AC-324) ciclo atrasado não começa por cima do anterior ainda em andamento (@spec:AC-324)",
+      "method": "vitest-json"
+    },
+    "AC-325": {
+      "status": "pass",
+      "testName": "T-128: ciclo de importação contra Postgres real dois workers não importam a mesma origem juntos — só um importa, o outro desiste sem erro (@spec:AC-325) dois workers não importam a mesma origem juntos — só um importa, o outro desiste sem erro (@spec:AC-325)",
+      "method": "vitest-json"
+    },
+    "AC-327": {
+      "status": "pass",
+      "testName": "carregarConfiguracaoWorker com todas as variáveis presentes, carrega a configuração sem lançar @spec:AC-327 com todas as variáveis presentes, carrega a configuração sem lançar @spec:AC-327",
+      "method": "vitest-json"
+    }
+  },
+  "principles": {}
+}
