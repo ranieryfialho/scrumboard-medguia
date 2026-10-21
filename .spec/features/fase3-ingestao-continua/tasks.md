@@ -2,8 +2,7 @@
 
 > feature: fase3-ingestao-continua
 
-## T-127 — Configuração do worker e validação das variáveis [pendente]
-
+## T-127 — Configuração do worker e validação das variáveis [concluida]
 - Refs: AC-327, AC-320
 - Arquivos: src/worker/config.ts, test/worker/config.spec.test.ts
 - Notas: lê `DATABASE_URL`, `SUPABASE_LP_URL`, `SUPABASE_LP_SERVICE_KEY`, credenciais do Sheets e `WORKER_INTERVALO_IMPORT_MIN` (padrão 5, ASM-108); lista só os NOMES que faltam.
