@@ -19,6 +19,48 @@ services:
     networks:
       - wp-network
 
+  # fase3-ingestao-continua (AC-328): worker de staging — mesma imagem do
+  # `crm-app-staging`, outro comando de entrada (`npm run worker`), conectado
+  # só em `crm_staging` (AC-005/AC-006, mesma regra do app de staging). Ver
+  # a nota sobre o Dockerfile no `crm-worker` de docker-compose.yml: o
+  # healthcheck abaixo só roda de fato depois desse ajuste.
+  crm-worker-staging:
+    image: ghcr.io/ranieryfialho/scrumboard-medguia:${IMAGE_TAG:-latest}
+    container_name: crm-worker-staging
+    command: ["npm", "run", "worker"]
+    env_file:
+      - .env.staging
+    environment:
+      DATABASE_URL: postgres://crm_app:${CRM_APP_PASSWORD}@pg-master:5432/crm_staging
+    restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - |
+          npx tsx -e "
+          import('./src/worker/config').then(async ({ carregarConfiguracaoWorker }) => {
+            const { verificarSaudeWorker } = await import('./src/worker/saude');
+            const { Pool } = await import('pg');
+            const { drizzle } = await import('drizzle-orm/node-postgres');
+            const config = carregarConfiguracaoWorker();
+            const pool = new Pool({ connectionString: config.databaseUrl });
+            const db = drizzle(pool);
+            const resultado = await verificarSaudeWorker(db, ['import-sheets', 'import-lp'], config.intervaloImportacaoMin);
+            await pool.end();
+            process.exit(resultado.status === 'saudavel' ? 0 : 1);
+          }).catch(() => process.exit(1));
+          "
+      interval: 2m
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 500m
+    networks:
+      - wp-network
+
 networks:
   wp-network:
     external: true
