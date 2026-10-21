@@ -6629,145 +6629,145 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "fase0-fundacao-ci-staging",
       "ref": "—",
-      "ocorrencias": 61,
+      "ocorrencias": 63,
       "primeiraVez": "2026-09-23T14:14:35.866Z",
-      "ultimaVez": "2026-10-19T19:22:30.876Z",
-      "gitRev": "17a3308"
+      "ultimaVez": "2026-10-21T12:35:45.226Z",
+      "gitRev": "6033a4a"
     },
     "VERIFY_OBSOLETO::fase1-auth-rbac::—": {
       "codigo": "VERIFY_OBSOLETO",
       "feature": "fase1-auth-rbac",
       "ref": "—",
-      "ocorrencias": 46,
+      "ocorrencias": 48,
       "primeiraVez": "2026-09-25T11:58:40.273Z",
-      "ultimaVez": "2026-10-19T19:22:30.876Z",
-      "gitRev": "17a3308"
+      "ultimaVez": "2026-10-21T12:35:45.226Z",
+      "gitRev": "6033a4a"
     },
     "VERIFY_OBSOLETO::fase1-dominio-pipeline::—": {
       "codigo": "VERIFY_OBSOLETO",
       "feature": "fase1-dominio-pipeline",
       "ref": "—",
-      "ocorrencias": 44,
+      "ocorrencias": 46,
       "primeiraVez": "2026-09-25T12:54:10.359Z",
-      "ultimaVez": "2026-10-19T19:22:30.876Z",
-      "gitRev": "17a3308"
+      "ultimaVez": "2026-10-21T12:35:45.226Z",
+      "gitRev": "6033a4a"
     },
     "VERIFY_OBSOLETO::fase1-repositorios-isolamento::—": {
       "codigo": "VERIFY_OBSOLETO",
       "feature": "fase1-repositorios-isolamento",
       "ref": "—",
-      "ocorrencias": 42,
+      "ocorrencias": 44,
       "primeiraVez": "2026-09-25T14:55:10.861Z",
-      "ultimaVez": "2026-10-19T19:22:30.876Z",
-      "gitRev": "17a3308"
+      "ultimaVez": "2026-10-21T12:35:45.226Z",
+      "gitRev": "6033a4a"
     },
     "VERIFY_OBSOLETO::fase1-schema-drizzle::—": {
       "codigo": "VERIFY_OBSOLETO",
       "feature": "fase1-schema-drizzle",
       "ref": "—",
-      "ocorrencias": 50,
+      "ocorrencias": 52,
       "primeiraVez": "2026-09-24T15:43:08.558Z",
-      "ultimaVez": "2026-10-19T19:22:30.876Z",
-      "gitRev": "17a3308"
+      "ultimaVez": "2026-10-21T12:35:45.226Z",
+      "gitRev": "6033a4a"
     },
     "VERIFY_OBSOLETO::fase2-kanban::—": {
       "codigo": "VERIFY_OBSOLETO",
       "feature": "fase2-kanban",
       "ref": "—",
-      "ocorrencias": 38,
+      "ocorrencias": 40,
       "primeiraVez": "2026-10-02T19:38:14.783Z",
-      "ultimaVez": "2026-10-19T19:22:30.876Z",
-      "gitRev": "17a3308"
+      "ultimaVez": "2026-10-21T12:35:45.226Z",
+      "gitRev": "6033a4a"
     },
     "VERIFY_OBSOLETO::fase2b-cadencia::—": {
       "codigo": "VERIFY_OBSOLETO",
       "feature": "fase2b-cadencia",
       "ref": "—",
-      "ocorrencias": 20,
+      "ocorrencias": 22,
       "primeiraVez": "2026-10-15T15:05:27.431Z",
-      "ultimaVez": "2026-10-19T19:22:30.876Z",
-      "gitRev": "17a3308"
+      "ultimaVez": "2026-10-21T12:35:45.226Z",
+      "gitRev": "6033a4a"
     },
     "VERIFY_OBSOLETO::fase2b-fila-tarefas::—": {
       "codigo": "VERIFY_OBSOLETO",
       "feature": "fase2b-fila-tarefas",
       "ref": "—",
-      "ocorrencias": 9,
+      "ocorrencias": 11,
       "primeiraVez": "2026-10-16T18:22:46.985Z",
-      "ultimaVez": "2026-10-19T19:22:30.876Z",
-      "gitRev": "17a3308"
+      "ultimaVez": "2026-10-21T12:35:45.226Z",
+      "gitRev": "6033a4a"
     },
     "VERIFY_OBSOLETO::fase2c-anexos::—": {
       "codigo": "VERIFY_OBSOLETO",
       "feature": "fase2c-anexos",
       "ref": "—",
-      "ocorrencias": 36,
+      "ocorrencias": 38,
       "primeiraVez": "2026-10-05T13:37:27.783Z",
-      "ultimaVez": "2026-10-19T19:22:30.876Z",
-      "gitRev": "17a3308"
+      "ultimaVez": "2026-10-21T12:35:45.226Z",
+      "gitRev": "6033a4a"
     },
     "VERIFY_OBSOLETO::fase2c-sse::—": {
       "codigo": "VERIFY_OBSOLETO",
       "feature": "fase2c-sse",
       "ref": "—",
-      "ocorrencias": 32,
+      "ocorrencias": 34,
       "primeiraVez": "2026-10-05T17:55:53.374Z",
-      "ultimaVez": "2026-10-19T19:22:30.876Z",
-      "gitRev": "17a3308"
+      "ultimaVez": "2026-10-21T12:35:45.226Z",
+      "gitRev": "6033a4a"
     },
     "VERIFY_OBSOLETO::fase2c-whatsapp-conexao::—": {
       "codigo": "VERIFY_OBSOLETO",
       "feature": "fase2c-whatsapp-conexao",
       "ref": "—",
-      "ocorrencias": 23,
+      "ocorrencias": 25,
       "primeiraVez": "2026-10-13T18:06:32.516Z",
-      "ultimaVez": "2026-10-19T19:22:30.876Z",
-      "gitRev": "17a3308"
+      "ultimaVez": "2026-10-21T12:35:45.226Z",
+      "gitRev": "6033a4a"
     },
     "VERIFY_OBSOLETO::fase2c-whatsapp-conversa::—": {
       "codigo": "VERIFY_OBSOLETO",
       "feature": "fase2c-whatsapp-conversa",
       "ref": "—",
-      "ocorrencias": 25,
+      "ocorrencias": 27,
       "primeiraVez": "2026-10-07T15:15:41.124Z",
-      "ultimaVez": "2026-10-19T19:22:30.876Z",
-      "gitRev": "17a3308"
+      "ultimaVez": "2026-10-21T12:35:45.226Z",
+      "gitRev": "6033a4a"
     },
     "VERIFY_OBSOLETO::fase2c-whatsapp-entrada::—": {
       "codigo": "VERIFY_OBSOLETO",
       "feature": "fase2c-whatsapp-entrada",
       "ref": "—",
-      "ocorrencias": 29,
+      "ocorrencias": 31,
       "primeiraVez": "2026-10-06T13:05:40.960Z",
-      "ultimaVez": "2026-10-19T19:22:30.876Z",
-      "gitRev": "17a3308"
+      "ultimaVez": "2026-10-21T12:35:45.226Z",
+      "gitRev": "6033a4a"
     },
     "VERIFY_OBSOLETO::fase2d-campanhas::—": {
       "codigo": "VERIFY_OBSOLETO",
       "feature": "fase2d-campanhas",
       "ref": "—",
-      "ocorrencias": 7,
+      "ocorrencias": 9,
       "primeiraVez": "2026-10-19T14:24:00.439Z",
-      "ultimaVez": "2026-10-19T19:22:30.876Z",
-      "gitRev": "17a3308"
+      "ultimaVez": "2026-10-21T12:35:45.226Z",
+      "gitRev": "6033a4a"
     },
     "VERIFY_OBSOLETO::fase2d-kpis::—": {
       "codigo": "VERIFY_OBSOLETO",
       "feature": "fase2d-kpis",
       "ref": "—",
-      "ocorrencias": 3,
+      "ocorrencias": 5,
       "primeiraVez": "2026-10-19T17:55:53.413Z",
-      "ultimaVez": "2026-10-19T19:22:30.876Z",
-      "gitRev": "17a3308"
+      "ultimaVez": "2026-10-21T12:35:45.226Z",
+      "gitRev": "6033a4a"
     },
     "VERIFY_OBSOLETO::fase3-etl-supabase::—": {
       "codigo": "VERIFY_OBSOLETO",
       "feature": "fase3-etl-supabase",
       "ref": "—",
-      "ocorrencias": 2,
+      "ocorrencias": 4,
       "primeiraVez": "2026-10-19T19:09:10.870Z",
-      "ultimaVez": "2026-10-19T19:22:30.876Z",
-      "gitRev": "17a3308"
+      "ultimaVez": "2026-10-21T12:35:45.227Z",
+      "gitRev": "6033a4a"
     },
     "VERIFY_PULADO::fase0-fundacao-ci-staging::AC-005": {
       "codigo": "VERIFY_PULADO",
@@ -7250,10 +7250,154 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "fase3-etl-sheets",
       "ref": "—",
-      "ocorrencias": 1,
+      "ocorrencias": 3,
       "primeiraVez": "2026-10-19T19:22:30.876Z",
-      "ultimaVez": "2026-10-19T19:22:30.876Z",
-      "gitRev": "17a3308"
+      "ultimaVez": "2026-10-21T12:35:45.227Z",
+      "gitRev": "6033a4a"
+    },
+    "ARQUIVO_INEXISTENTE::fase3-etl-lp::T-121": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "fase3-etl-lp",
+      "ref": "T-121",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-10-21T12:35:45.226Z",
+      "ultimaVez": "2026-10-21T12:35:45.226Z",
+      "gitRev": "6033a4a"
+    },
+    "ARQUIVO_INEXISTENTE::fase3-etl-lp::T-122": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "fase3-etl-lp",
+      "ref": "T-122",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-10-21T12:35:45.226Z",
+      "ultimaVez": "2026-10-21T12:35:45.226Z",
+      "gitRev": "6033a4a"
+    },
+    "ARQUIVO_INEXISTENTE::fase3-etl-lp::T-123": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "fase3-etl-lp",
+      "ref": "T-123",
+      "ocorrencias": 3,
+      "primeiraVez": "2026-10-21T12:35:45.226Z",
+      "ultimaVez": "2026-10-21T12:35:45.226Z",
+      "gitRev": "6033a4a"
+    },
+    "AC_SEM_TESTE::fase3-etl-lp::AC-294": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase3-etl-lp",
+      "ref": "AC-294",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-10-21T12:35:45.226Z",
+      "ultimaVez": "2026-10-21T12:35:45.226Z",
+      "gitRev": "6033a4a"
+    },
+    "AC_SEM_TESTE::fase3-etl-lp::AC-295": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase3-etl-lp",
+      "ref": "AC-295",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-10-21T12:35:45.226Z",
+      "ultimaVez": "2026-10-21T12:35:45.226Z",
+      "gitRev": "6033a4a"
+    },
+    "AC_SEM_TESTE::fase3-etl-lp::AC-296": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase3-etl-lp",
+      "ref": "AC-296",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-10-21T12:35:45.226Z",
+      "ultimaVez": "2026-10-21T12:35:45.226Z",
+      "gitRev": "6033a4a"
+    },
+    "AC_SEM_TESTE::fase3-etl-lp::AC-297": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase3-etl-lp",
+      "ref": "AC-297",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-10-21T12:35:45.226Z",
+      "ultimaVez": "2026-10-21T12:35:45.226Z",
+      "gitRev": "6033a4a"
+    },
+    "AC_SEM_TESTE::fase3-etl-lp::AC-298": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase3-etl-lp",
+      "ref": "AC-298",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-10-21T12:35:45.226Z",
+      "ultimaVez": "2026-10-21T12:35:45.226Z",
+      "gitRev": "6033a4a"
+    },
+    "AC_SEM_TESTE::fase3-etl-lp::AC-299": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase3-etl-lp",
+      "ref": "AC-299",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-10-21T12:35:45.226Z",
+      "ultimaVez": "2026-10-21T12:35:45.226Z",
+      "gitRev": "6033a4a"
+    },
+    "AC_SEM_TESTE::fase3-etl-lp::AC-300": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase3-etl-lp",
+      "ref": "AC-300",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-10-21T12:35:45.226Z",
+      "ultimaVez": "2026-10-21T12:35:45.226Z",
+      "gitRev": "6033a4a"
+    },
+    "AC_SEM_TESTE::fase3-etl-lp::AC-301": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase3-etl-lp",
+      "ref": "AC-301",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-10-21T12:35:45.226Z",
+      "ultimaVez": "2026-10-21T12:35:45.226Z",
+      "gitRev": "6033a4a"
+    },
+    "AC_SEM_TESTE::fase3-etl-lp::AC-302": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase3-etl-lp",
+      "ref": "AC-302",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-10-21T12:35:45.226Z",
+      "ultimaVez": "2026-10-21T12:35:45.226Z",
+      "gitRev": "6033a4a"
+    },
+    "AC_SEM_TESTE::fase3-etl-lp::AC-303": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase3-etl-lp",
+      "ref": "AC-303",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-10-21T12:35:45.226Z",
+      "ultimaVez": "2026-10-21T12:35:45.226Z",
+      "gitRev": "6033a4a"
+    },
+    "AC_SEM_TESTE::fase3-etl-lp::AC-304": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase3-etl-lp",
+      "ref": "AC-304",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-10-21T12:35:45.226Z",
+      "ultimaVez": "2026-10-21T12:35:45.226Z",
+      "gitRev": "6033a4a"
+    },
+    "AC_SEM_TESTE::fase3-etl-lp::AC-305": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase3-etl-lp",
+      "ref": "AC-305",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-10-21T12:35:45.226Z",
+      "ultimaVez": "2026-10-21T12:35:45.227Z",
+      "gitRev": "6033a4a"
+    },
+    "AC_SEM_TESTE::fase3-etl-lp::AC-306": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "fase3-etl-lp",
+      "ref": "AC-306",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-10-21T12:35:45.227Z",
+      "ultimaVez": "2026-10-21T12:35:45.227Z",
+      "gitRev": "6033a4a"
     }
   }
 }

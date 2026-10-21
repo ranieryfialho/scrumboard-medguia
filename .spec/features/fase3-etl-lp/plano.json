@@ -1,0 +1,76 @@
+{
+  "runId": "scrumboard-medguia-fase3-etl-lp-mvi3o6pr",
+  "feature": "fase3-etl-lp",
+  "agent": "claude",
+  "modo": "sequencial",
+  "paralelizar": null,
+  "modeloForcado": null,
+  "esforcoForcado": null,
+  "geradoEm": "2026-10-21 12:40",
+  "branchTrabalho": "spec/fase3-etl-lp",
+  "baseDir": ".spec/features/fase3-etl-lp",
+  "specDir": ".spec",
+  "repoName": "scrumboard-medguia",
+  "logsDir": "../onp-worktrees/scrumboard-medguia-fase3-etl-lp-logs",
+  "ondas": [],
+  "faixas": [],
+  "sequenciais": [
+    {
+      "id": "T-121",
+      "titulo": "Leitor somente leitura da LP",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/etl/lp/origem.ts",
+        "test/etl/lp-origem.test.ts"
+      ],
+      "refs": [
+        "AC-299",
+        "AC-306"
+      ]
+    },
+    {
+      "id": "T-122",
+      "titulo": "Importar cadastros da LP como lead + card",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "src/etl/lp/leads.ts",
+        "test/etl/lp-leads.test.ts"
+      ],
+      "refs": [
+        "US-082",
+        "US-083",
+        "US-084",
+        "AC-294",
+        "AC-295",
+        "AC-296",
+        "AC-297",
+        "AC-298",
+        "AC-300",
+        "AC-301"
+      ]
+    },
+    {
+      "id": "T-123",
+      "titulo": "Orquestrador e comando do ETL da LP com simulação e relatório",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/etl/lp/executar.ts",
+        "scripts/etl-lp.ts",
+        "test/etl/lp-executar.test.ts"
+      ],
+      "refs": [
+        "US-085",
+        "AC-299",
+        "AC-302",
+        "AC-303",
+        "AC-304",
+        "AC-305"
+      ]
+    }
+  ],
+  "concluidas": [],
+  "avisos": []
+}
