@@ -1,0 +1,77 @@
+{
+  "feature": "fase3-etl-lp",
+  "timestamp": "2026-10-21T13:30:44.159Z",
+  "gitRev": "af27f4e",
+  "command": "echo reaproveitando a execucao unica da suite completa: vitest-json 862 de 862 PASS em .spec/verification/raw.json",
+  "reporter": "vitest-json",
+  "exitCode": 0,
+  "testsParsed": 862,
+  "results": {
+    "AC-294": {
+      "status": "pass",
+      "testName": "T-122: importarLeadsLp contra Postgres real cadastro \"Novos Leads\" vira lead + card em \"Entrada de leads\", com origem \"LP - Aula\" (@spec:AC-294) cadastro \"Novos Leads\" vira lead + card em \"Entrada de leads\", com origem \"LP - Aula\" (@spec:AC-294)",
+      "method": "vitest-json"
+    },
+    "AC-295": {
+      "status": "pass",
+      "testName": "T-122: importarLeadsLp contra Postgres real \"Reunião Agendada\" e \"Sem interesse\" seguem o mesmo mapa do Sheets (@spec:AC-295) \"Reunião Agendada\" e \"Sem interesse\" seguem o mesmo mapa do Sheets (@spec:AC-295)",
+      "method": "vitest-json"
+    },
+    "AC-296": {
+      "status": "pass",
+      "testName": "T-122: importarLeadsLp contra Postgres real telefone válido com e sem código de país fica em E.164; inválido migra sem telefone e vai para revisão (@spec:AC-296) telefone válido com e sem código de país fica em E.164; inválido migra sem telefone e vai para revisão (@spec:AC-296)",
+      "method": "vitest-json"
+    },
+    "AC-297": {
+      "status": "pass",
+      "testName": "T-122: importarLeadsLp contra Postgres real cada card migrado guarda de onde veio: evento migrado_de e migracao_registros ligam o id da LP ao id novo (@spec:AC-297) cada card migrado guarda de onde veio: evento migrado_de e migracao_registros ligam o id da LP ao id novo (@spec:AC-297)",
+      "method": "vitest-json"
+    },
+    "AC-298": {
+      "status": "pass",
+      "testName": "T-122: extrairDadosCadastro — dados do cadastro preservados (@spec:AC-298) CRM, especialidade, anúncio, aceite dos termos, progresso do vídeo e datas (instante correto) CRM, especialidade, anúncio, aceite dos termos, progresso do vídeo e datas (instante correto)",
+      "method": "vitest-json"
+    },
+    "AC-299": {
+      "status": "pass",
+      "testName": "T-123: orquestrador do ETL da LP contra Postgres real password_hash nunca aparece no relatório, mesmo quando o objeto de origem carrega o campo (@spec:AC-299) password_hash nunca aparece no relatório, mesmo quando o objeto de origem carrega o campo (@spec:AC-299)",
+      "method": "vitest-json"
+    },
+    "AC-300": {
+      "status": "pass",
+      "testName": "T-122: importarLeadsLp contra Postgres real pessoa já existente por e-mail (sem diferenciar maiúsculas) não cria nem altera o lead — vai para revisão (@spec:AC-300) pessoa já existente por e-mail (sem diferenciar maiúsculas) não cria nem altera o lead — vai para revisão (@spec:AC-300)",
+      "method": "vitest-json"
+    },
+    "AC-301": {
+      "status": "pass",
+      "testName": "T-122: importarLeadsLp contra Postgres real decisão com etapaId resolve o item da revisão criando lead e card nessa etapa (@spec:AC-301) decisão com etapaId resolve o item da revisão criando lead e card nessa etapa (@spec:AC-301)",
+      "method": "vitest-json"
+    },
+    "AC-302": {
+      "status": "pass",
+      "testName": "T-123: orquestrador do ETL da LP contra Postgres real rodar o ETL de novo sobre os mesmos cadastros não duplica nada (@spec:AC-302) rodar o ETL de novo sobre os mesmos cadastros não duplica nada (@spec:AC-302)",
+      "method": "vitest-json"
+    },
+    "AC-303": {
+      "status": "pass",
+      "testName": "T-123: orquestrador do ETL da LP contra Postgres real em modo simulação, o banco de destino continua idêntico e o relatório diz o que seria criado, ignorado e em revisão (@spec:AC-303) em modo simulação, o banco de destino continua idêntico e o relatório diz o que seria criado, ignorado e em revisão (@spec:AC-303)",
+      "method": "vitest-json"
+    },
+    "AC-304": {
+      "status": "pass",
+      "testName": "T-123: orquestrador do ETL da LP contra Postgres real o relatório confere lidas = criadas + ignoradas + em revisão, e lidas com o total de linhas da LP (@spec:AC-304) o relatório confere lidas = criadas + ignoradas + em revisão, e lidas com o total de linhas da LP (@spec:AC-304)",
+      "method": "vitest-json"
+    },
+    "AC-305": {
+      "status": "pass",
+      "testName": "T-123: orquestrador do ETL da LP contra Postgres real uma falha no meio da importação derruba a transação inteira — nada da execução fica gravado (@spec:AC-305) uma falha no meio da importação derruba a transação inteira — nada da execução fica gravado (@spec:AC-305)",
+      "method": "vitest-json"
+    },
+    "AC-306": {
+      "status": "pass",
+      "testName": "T-121: só leitura (GET), nunca escreve na LP (@spec:AC-306) a requisição usa método GET a requisição usa método GET",
+      "method": "vitest-json"
+    }
+  },
+  "principles": {}
+}

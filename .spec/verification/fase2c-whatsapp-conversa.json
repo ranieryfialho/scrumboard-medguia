@@ -1,11 +1,11 @@
 {
   "feature": "fase2c-whatsapp-conversa",
-  "timestamp": "2026-10-19T19:42:29.677Z",
-  "gitRev": "17a3308",
-  "command": "echo 'reaproveitando a execucao unica da suite completa: vitest-json 832 de 832 PASS em .spec/verification/raw.json'",
+  "timestamp": "2026-10-21T13:30:43.463Z",
+  "gitRev": "af27f4e",
+  "command": "echo reaproveitando a execucao unica da suite completa: vitest-json 862 de 862 PASS em .spec/verification/raw.json",
   "reporter": "vitest-json",
   "exitCode": 0,
-  "testsParsed": 832,
+  "testsParsed": 862,
   "results": {
     "AC-135": {
       "status": "pass",
