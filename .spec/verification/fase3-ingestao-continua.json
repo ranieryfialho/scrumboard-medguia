@@ -1,11 +1,11 @@
 {
   "feature": "fase3-ingestao-continua",
-  "timestamp": "2026-10-21T19:47:48.172Z",
-  "gitRev": "bc4794a",
+  "timestamp": "2026-10-21T20:10:30.714Z",
+  "gitRev": "930d68d",
   "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
-  "exitCode": 1,
-  "testsParsed": 919,
+  "exitCode": 0,
+  "testsParsed": 922,
   "results": {
     "AC-318": {
       "status": "pass",
@@ -45,6 +45,11 @@
     "AC-325": {
       "status": "pass",
       "testName": "T-128: ciclo de importação contra Postgres real dois workers não importam a mesma origem juntos — só um importa, o outro desiste sem erro (@spec:AC-325) dois workers não importam a mesma origem juntos — só um importa, o outro desiste sem erro (@spec:AC-325)",
+      "method": "vitest-json"
+    },
+    "AC-326": {
+      "status": "pass",
+      "testName": "T-130: agendador e parada graciosa o manipulador de SIGTERM espera o ciclo em andamento terminar antes de sair com código 0 (@spec:AC-326) o manipulador de SIGTERM espera o ciclo em andamento terminar antes de sair com código 0 (@spec:AC-326)",
       "method": "vitest-json"
     },
     "AC-327": {
