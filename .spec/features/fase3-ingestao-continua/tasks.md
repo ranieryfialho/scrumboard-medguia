@@ -7,8 +7,7 @@
 - Arquivos: src/worker/config.ts, test/worker/config.spec.test.ts
 - Notas: lê `DATABASE_URL`, `SUPABASE_LP_URL`, `SUPABASE_LP_SERVICE_KEY`, credenciais do Sheets e `WORKER_INTERVALO_IMPORT_MIN` (padrão 5, ASM-108); lista só os NOMES que faltam.
 
-## T-128 — Ciclo de importação: trava, registro e isolamento de falhas [pendente]
-
+## T-128 — Ciclo de importação: trava, registro e isolamento de falhas [concluida]
 - Refs: AC-318, AC-319, AC-321, AC-322, AC-324, AC-325
 - Arquivos: src/worker/ciclo.ts, test/worker/ciclo.spec.test.ts
 - Notas: `pg_try_advisory_lock` por origem (ASM-110); grava `cron_execucoes` e `importacoes` (ASM-111); chama `executarMigracaoSheets`/`executarMigracaoLp` sem decisões (ASM-107, ASM-109); erro sem segredos. Depende de T-127 só pelo tipo de configuração.
