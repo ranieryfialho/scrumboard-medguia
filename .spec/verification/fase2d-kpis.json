@@ -1,8 +1,8 @@
 {
   "feature": "fase2d-kpis",
-  "timestamp": "2026-10-19T19:42:30.001Z",
-  "gitRev": "17a3308",
-  "command": "echo 'reaproveitando a execucao unica da suite completa: vitest-json 832 de 832 PASS em .spec/verification/raw.json'",
+  "timestamp": "2026-10-21T12:53:58.652Z",
+  "gitRev": "33b5434",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
   "exitCode": 0,
   "testsParsed": 832,
