@@ -23,13 +23,27 @@
 // o WhatsApp do legado vira telefone válido. Quando não vira, o lead migra
 // do mesmo jeito (sem telefone) e entra em `revisao` com o motivo — ausência
 // de telefone nunca bloqueia a criação do lead/card.
+//
+// T-126 (fase3-etl-decisoes, US-089): além do formato simples `{ idExterno,
+// etapaId }` (`decisoes`, mantido para quem já chamava `migrarLeads` assim —
+// só serve etapas sem exigência), um lead sem etapa automática também pode
+// ser resolvido por uma decisão já validada da planilha comum (T-124,
+// `decisoesValidadas`, casada por `lead.id`) — quem valida é o orquestrador
+// (T-113), que tem a tabela `etapas` e o instante da execução. `etapa` cria
+// o lead/card com `proximaAcaoEm`/`valor`/`motivoPerdaId` da decisão (AC-315);
+// `ignorar` registra `lead_ignorado` sem criar nada; `recusada` mantém o
+// lead em revisão com o motivo (mesma regra do Sheets, US-088).
 import { eq } from 'drizzle-orm';
+import { randomUUID } from 'node:crypto';
 
 import { buscarIdDestino, registrarMigracao, type ContextoExecucao, type TransacaoEtl } from '../comum';
 import { normalizarNumero } from '../../domain/whatsapp/numero';
+import type { ResultadoValidacao } from '../decisoes';
 import { leads, motivosPerda, oportunidadeEventos, oportunidades } from '../../db/schema';
 
 export const ENTIDADE_LEAD = 'lead';
+/** Lead cuja decisão foi "ignorar" (T-126) — registrado só para sair da fila, sem FK para nenhuma tabela de negócio. */
+export const ENTIDADE_LEAD_IGNORADO = 'lead_ignorado';
 
 // Mesmos ids do seed imutável de `pipeline_etapas` (drizzle/0005_seeds.sql).
 export const ETAPA_ENTRADA_DE_LEADS = 1;
@@ -57,7 +71,8 @@ export interface DecisaoRevisao {
   etapaId: number;
 }
 
-export type TipoItemRevisao = 'situacao_sem_etapa' | 'whatsapp_invalido';
+/** `decisao_recusada` (T-126): a planilha de decisões trazia algo para este `idExterno`, mas `validarDecisao` recusou — volta para a revisão com o motivo, sem abortar a execução. */
+export type TipoItemRevisao = 'situacao_sem_etapa' | 'whatsapp_invalido' | 'decisao_recusada';
 
 export interface ItemRevisao {
   idExterno: string;
@@ -71,12 +86,28 @@ export interface ResultadoMigracaoLeads {
   ignoradas: number;
   emRevisao: number;
   revisao: ItemRevisao[];
+  /** Decisões de etapa aplicadas nesta execução (AC-317). */
+  decisoesAplicadas: number;
+  /** Decisões "ignorar" aplicadas nesta execução (AC-317). */
+  decisoesIgnoradas: number;
+  /** Decisões que `validarDecisao` recusou nesta execução (AC-317). */
+  decisoesRecusadas: number;
 }
 
-function etapaDireta(situacao: string | null): number | null {
+/** Acha a etapa automática pela situação do legado (AC-256/AC-257), ou `null` quando não há uma (AC-259) — o orquestrador usa isso para montar a fila de leads que esperam decisão. */
+export function etapaDireta(situacao: string | null): number | null {
   if (!situacao || situacao === 'Novos Leads') return ETAPA_ENTRADA_DE_LEADS;
   if (situacao === 'Desqualificado') return ETAPA_PERDIDO;
   return null;
+}
+
+/** Registra o lead como ignorado (T-126) — sem FK, só para sair da fila de revisão de vez. */
+async function registrarIgnorado(tx: TransacaoEtl, contexto: ContextoExecucao, idExterno: string): Promise<void> {
+  await registrarMigracao(tx, contexto, {
+    entidade: ENTIDADE_LEAD_IGNORADO,
+    idExterno,
+    idDestino: randomUUID(),
+  });
 }
 
 /**
@@ -100,22 +131,37 @@ async function obterMotivoDesqualificadoMigracao(tx: TransacaoEtl): Promise<stri
 
 /**
  * Migra os leads do legado como lead + card (AC-256/AC-257/AC-259/AC-260).
- * `decisoes` resolve, nesta execução, leads que ficaram na fila de revisão
- * em execuções anteriores (AC-272) — quem decide se uma decisão "vale" (ex.:
- * etapa existente, card ainda não criado) é só esta função; o arquivo de
- * decisões em si é responsabilidade do orquestrador (T-113).
+ * `decisoes` (formato simples, mantido por compatibilidade) resolve, nesta
+ * execução, leads que ficaram na fila de revisão em execuções anteriores
+ * (AC-272) — serve só para etapas sem exigência, já que não carrega
+ * `proximaAcaoEm`/`valor`/`motivoPerdaId`. `decisoesValidadas` (T-126,
+ * US-089) é o caminho novo: o resultado já validado (`validarDecisao`,
+ * T-124) da planilha de decisões comum, casado por `lead.id` — quem valida
+ * é o orquestrador (T-113), que tem a tabela `etapas`, os motivos de perda e
+ * o instante da execução; aqui só se aplica o resultado, exatamente como no
+ * ETL do Sheets (T-125):
+ *   - `etapa` cria o lead/card nessa etapa, com `proximaAcaoEm`/`valor`/
+ *     `motivoPerdaId` da decisão (AC-315);
+ *   - `ignorar` registra `lead_ignorado` e não cria nada;
+ *   - `recusada` mantém o lead em revisão com o motivo.
+ * Nenhuma das duas fontes de decisão se aplica quando a situação já resolve
+ * a etapa sozinha (AC-256/AC-257).
  */
 export async function migrarLeads(
   tx: TransacaoEtl,
   contexto: ContextoExecucao,
   leadsLegado: LeadLegado[],
-  decisoes: DecisaoRevisao[] = []
+  decisoes: DecisaoRevisao[] = [],
+  decisoesValidadas: Map<string, ResultadoValidacao> = new Map()
 ): Promise<ResultadoMigracaoLeads> {
   const etapaDecidida = new Map(decisoes.map((d) => [d.idExterno, d.etapaId]));
 
   let criadas = 0;
   let ignoradas = 0;
   let emRevisao = 0;
+  let decisoesAplicadas = 0;
+  let decisoesIgnoradas = 0;
+  let decisoesRecusadas = 0;
   const revisao: ItemRevisao[] = [];
 
   for (const lead of leadsLegado) {
@@ -127,23 +173,46 @@ export async function migrarLeads(
 
     let etapaId = etapaDireta(lead.situacao);
     let motivoPerdaId: string | undefined;
+    let proximaAcaoEm: Date | undefined;
+    let valor: number | undefined;
 
     if (etapaId === ETAPA_PERDIDO) {
       motivoPerdaId = await obterMotivoDesqualificadoMigracao(tx);
     }
 
     if (etapaId === null) {
-      const decisao = etapaDecidida.get(lead.id);
-      if (decisao === undefined) {
-        emRevisao++;
-        revisao.push({
-          idExterno: lead.id,
-          tipo: 'situacao_sem_etapa',
-          motivo: `situação sem etapa automática: "${lead.situacao ?? ''}"`,
-        });
-        continue;
+      const decisaoValidada = decisoesValidadas.get(lead.id);
+      if (decisaoValidada) {
+        if (decisaoValidada.tipo === 'ignorar') {
+          await registrarIgnorado(tx, contexto, lead.id);
+          ignoradas++;
+          decisoesIgnoradas++;
+          continue;
+        }
+        if (decisaoValidada.tipo === 'recusada') {
+          emRevisao++;
+          decisoesRecusadas++;
+          revisao.push({ idExterno: lead.id, tipo: 'decisao_recusada', motivo: decisaoValidada.motivo });
+          continue;
+        }
+        etapaId = decisaoValidada.etapaId;
+        motivoPerdaId = decisaoValidada.motivoPerdaId ?? motivoPerdaId;
+        proximaAcaoEm = decisaoValidada.proximaAcaoEm;
+        valor = decisaoValidada.valor;
+        decisoesAplicadas++;
+      } else {
+        const decisaoSimples = etapaDecidida.get(lead.id);
+        if (decisaoSimples === undefined) {
+          emRevisao++;
+          revisao.push({
+            idExterno: lead.id,
+            tipo: 'situacao_sem_etapa',
+            motivo: `situação sem etapa automática: "${lead.situacao ?? ''}"`,
+          });
+          continue;
+        }
+        etapaId = decisaoSimples;
       }
-      etapaId = decisao;
     }
 
     let telefoneE164: string | null = null;
@@ -180,6 +249,8 @@ export async function migrarLeads(
         leadId: novoLead.id,
         etapaId,
         motivoPerdaId: motivoPerdaId ?? null,
+        proximaAcaoEm: proximaAcaoEm ?? null,
+        valor: valor !== undefined ? String(valor) : null,
       })
       .returning();
 
@@ -200,5 +271,14 @@ export async function migrarLeads(
     criadas++;
   }
 
-  return { lidas: leadsLegado.length, criadas, ignoradas, emRevisao, revisao };
+  return {
+    lidas: leadsLegado.length,
+    criadas,
+    ignoradas,
+    emRevisao,
+    revisao,
+    decisoesAplicadas,
+    decisoesIgnoradas,
+    decisoesRecusadas,
+  };
 }

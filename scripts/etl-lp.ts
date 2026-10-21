@@ -6,11 +6,15 @@
 // dentro de uma única transação no destino, imprimindo o relatório.
 //
 // Uso:
-//   npx tsx scripts/etl-lp.ts [--dry-run] [--decisoes <arquivo.json>]
+//   npx tsx scripts/etl-lp.ts [--dry-run] [--fila-revisao <arquivo.csv>]
+//     [--decisoes <arquivo.csv>]
 //
-// --dry-run    roda em modo simulação (AC-303): nada é gravado no destino.
-// --decisoes   arquivo JSON com as decisões da fila de revisão (AC-301),
-//              formato: { "<idLp>": { "etapaId": 1 } | { "ignorar": true } }.
+// --dry-run       roda em modo simulação (AC-303): nada é gravado no destino.
+// --fila-revisao  caminho onde salvar a planilha da fila de revisão (AC-307)
+//                 desta execução — a operação preenche e devolve em --decisoes.
+// --decisoes      planilha de decisões preenchida pela operação (AC-316),
+//                 lida com `lerCsvDecisoes` (T-124, UTF-8 com BOM) — substitui
+//                 o antigo arquivo JSON (ASM-105).
 //
 // `SUPABASE_LP_URL` e `SUPABASE_LP_SERVICE_KEY` (a chave de serviço da LP,
 // ASM-095) nunca aparecem no relatório nem no log (AC-299, AC-306) — os
@@ -22,8 +26,8 @@ import { eq } from 'drizzle-orm';
 import { getDb } from '../src/db/client';
 import { empresas } from '../src/db/schema';
 import type { ContextoExecucao } from '../src/etl/comum';
+import { lerCsvDecisoes, type LinhaDecisaoBruta } from '../src/etl/decisoes';
 import { lerTodosCadastros } from '../src/etl/lp/origem';
-import type { DecisoesLp } from '../src/etl/lp/leads';
 import { executarMigracaoLp, type RelatorioEtlLp } from '../src/etl/lp/executar';
 
 const ORIGEM_ETL = 'supabase-lp';
@@ -31,20 +35,24 @@ const EMPRESA_SLUG = 'medguia';
 
 interface Argumentos {
   dryRun: boolean;
+  caminhoFilaRevisao: string | undefined;
   caminhoDecisoes: string | undefined;
 }
 
 function lerArgumentos(argv: string[]): Argumentos {
   const dryRun = argv.includes('--dry-run');
+  const indiceFilaRevisao = argv.indexOf('--fila-revisao');
+  const caminhoFilaRevisao = indiceFilaRevisao >= 0 ? argv[indiceFilaRevisao + 1] : undefined;
   const indiceDecisoes = argv.indexOf('--decisoes');
   const caminhoDecisoes = indiceDecisoes >= 0 ? argv[indiceDecisoes + 1] : undefined;
-  return { dryRun, caminhoDecisoes };
+  return { dryRun, caminhoFilaRevisao, caminhoDecisoes };
 }
 
-function lerDecisoes(caminho: string | undefined): DecisoesLp {
-  if (!caminho) return {};
-  const conteudo = fs.readFileSync(caminho, 'utf8');
-  return JSON.parse(conteudo) as DecisoesLp;
+/** Lê a planilha de decisões devolvida pela operação (AC-316), se informada. */
+function lerLinhasDecisao(caminho: string | undefined): LinhaDecisaoBruta[] {
+  if (!caminho) return [];
+  const texto = fs.readFileSync(caminho, 'utf8');
+  return lerCsvDecisoes(texto);
 }
 
 async function buscarEmpresaMedguia(db: ReturnType<typeof getDb>): Promise<string> {
@@ -76,11 +84,23 @@ function imprimirRelatorio(relatorio: RelatorioEtlLp): void {
       console.log(`  - ${item.idLp} [${item.tipo}]: ${item.motivo}`);
     }
   }
+
+  console.log(
+    `\nDecisões — aplicadas: ${relatorio.decisoes.aplicadas}, ` +
+      `ignoradas: ${relatorio.decisoes.ignoradas}, recusadas: ${relatorio.decisoes.recusadas}`
+  );
+
+  if (relatorio.decisoesForaDaFila.length > 0) {
+    console.log(`\nDecisões para um id que não está na fila (${relatorio.decisoesForaDaFila.length}), nada foi criado:`);
+    for (const linha of relatorio.decisoesForaDaFila) {
+      console.log(`  - ${linha.idOrigem}`);
+    }
+  }
 }
 
 async function main(): Promise<void> {
-  const { dryRun, caminhoDecisoes } = lerArgumentos(process.argv.slice(2));
-  const decisoes = lerDecisoes(caminhoDecisoes);
+  const { dryRun, caminhoFilaRevisao, caminhoDecisoes } = lerArgumentos(process.argv.slice(2));
+  const linhasDecisao = lerLinhasDecisao(caminhoDecisoes);
 
   const { cadastros, total } = await lerTodosCadastros();
 
@@ -88,8 +108,13 @@ async function main(): Promise<void> {
   const empresaId = await buscarEmpresaMedguia(db);
   const contexto: ContextoExecucao = { origem: ORIGEM_ETL, simulacao: dryRun };
 
-  const relatorio = await executarMigracaoLp(db, contexto, empresaId, cadastros, total, decisoes);
+  const relatorio = await executarMigracaoLp(db, contexto, empresaId, cadastros, total, {}, linhasDecisao);
   imprimirRelatorio(relatorio);
+
+  if (caminhoFilaRevisao) {
+    fs.writeFileSync(caminhoFilaRevisao, relatorio.csvFilaRevisao, 'utf8');
+    console.log(`Planilha da fila de revisão salva em ${caminhoFilaRevisao}`);
+  }
 }
 
 main().catch((erro) => {

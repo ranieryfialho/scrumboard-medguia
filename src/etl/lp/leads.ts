@@ -18,16 +18,27 @@
 // telefone E.164. Achando, nada é criado nem alterado — o cadastro só entra
 // em revisão com o id do lead existente.
 //
-// Decisões (AC-301): `decisoes[idLp]` resolve, numa execução seguinte, um
-// item que ficou bloqueado em revisão (status desconhecido/sem data, ou
-// pessoa já existente) — `{ etapaId }` cria o lead/card nessa etapa;
-// `{ ignorar: true }` registra o cadastro como `lead_ignorado` em
-// `migracao_registros` (com um id de destino só de controle, sem FK) para
-// ele sair da fila e uma terceira execução não repetir a revisão.
+// Decisões (AC-301): `decisoes[idLp]` (formato simples, mantido por
+// compatibilidade) resolve, numa execução seguinte, um item que ficou
+// bloqueado em revisão (status desconhecido/sem data, ou pessoa já
+// existente) — `{ etapaId }` cria o lead/card nessa etapa; `{ ignorar: true
+// }` registra o cadastro como `lead_ignorado` em `migracao_registros` (com
+// um id de destino só de controle, sem FK) para ele sair da fila e uma
+// terceira execução não repetir a revisão.
+//
+// T-126 (fase3-etl-decisoes, US-089): um cadastro cujo status cai em
+// revisão (AC-295) também pode ser resolvido pela planilha de decisões
+// comum (T-124, `decisoesValidadas`, casada por `idLp`) — quem valida é o
+// orquestrador (T-123), que tem a tabela `etapas`, os motivos de perda e o
+// instante da execução. `etapa` cria o lead/card com `proximaAcaoEm`/
+// `valor`/`motivoPerdaId` da decisão (AC-316); `ignorar` registra
+// `lead_ignorado` sem criar nada; `recusada` mantém o cadastro em revisão
+// com o motivo (mesma regra do Sheets, US-088).
 import { and, eq, or, sql, type SQL } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
 
 import { buscarIdDestino, registrarMigracao, type ContextoExecucao, type TransacaoEtl } from '../comum';
+import type { ResultadoValidacao } from '../decisoes';
 import { leads, motivosPerda, oportunidadeEventos, oportunidades } from '../../db/schema';
 import type { CadastroLpBruto } from './origem';
 import { normalizarData, normalizarTelefone } from '../sheets/normalizar';
@@ -48,7 +59,8 @@ export type DecisaoLp = { etapaId: number } | { ignorar: true };
 /** `idLp -> decisão`, montado pelo orquestrador (T-123) a partir do arquivo de decisões. */
 export type DecisoesLp = Record<string, DecisaoLp>;
 
-export type TipoItemRevisaoLp = 'status_em_revisao' | 'telefone_invalido' | 'pessoa_existente';
+/** `decisao_recusada` (T-126): a planilha de decisões trazia algo para este `idLp`, mas `validarDecisao` recusou — volta para a revisão com o motivo, sem abortar a execução. */
+export type TipoItemRevisaoLp = 'status_em_revisao' | 'telefone_invalido' | 'pessoa_existente' | 'decisao_recusada';
 
 export interface ItemRevisaoLp {
   idLp: string;
@@ -64,6 +76,12 @@ export interface ResultadoImportacaoLeadsLp {
   ignoradas: number;
   emRevisao: number;
   revisao: ItemRevisaoLp[];
+  /** Decisões de etapa aplicadas nesta execução (AC-317). */
+  decisoesAplicadas: number;
+  /** Decisões "ignorar" aplicadas nesta execução (AC-317). */
+  decisoesIgnoradas: number;
+  /** Decisões que `validarDecisao` recusou nesta execução (AC-317). */
+  decisoesRecusadas: number;
 }
 
 /** Dados do cadastro preservados no lead (AC-294, AC-298) — nunca `password_hash`. */
@@ -151,6 +169,10 @@ interface CriacaoLead {
   idLp: string;
   etapaId: number;
   motivoPerdaNome?: string;
+  /** Já resolvido (T-126, decisão da planilha) — tem prioridade sobre `motivoPerdaNome`. */
+  motivoPerdaId?: string;
+  proximaAcaoEm?: Date;
+  valor?: number;
 }
 
 /** Cria lead + card + evento `migrado_de` e registra a migração (AC-294, AC-297, AC-298). */
@@ -160,7 +182,7 @@ async function criarLeadECard(
   empresaId: string,
   criacao: CriacaoLead
 ): Promise<void> {
-  const { cadastro, idLp, etapaId, motivoPerdaNome } = criacao;
+  const { cadastro, idLp, etapaId, motivoPerdaNome, proximaAcaoEm, valor } = criacao;
 
   const telefoneE164 = normalizarTelefone(cadastro.whatsapp) ?? null;
   const dados = dadosSemVazios(extrairDadosCadastro(cadastro));
@@ -178,8 +200,8 @@ async function criarLeadECard(
     })
     .returning();
 
-  let motivoPerdaId: string | undefined;
-  if (motivoPerdaNome) {
+  let motivoPerdaId = criacao.motivoPerdaId;
+  if (!motivoPerdaId && motivoPerdaNome) {
     motivoPerdaId = await obterOuCriarMotivoPerda(tx, motivoPerdaNome);
   }
 
@@ -190,6 +212,8 @@ async function criarLeadECard(
       leadId: novoLead.id,
       etapaId,
       motivoPerdaId: motivoPerdaId ?? null,
+      proximaAcaoEm: proximaAcaoEm ?? null,
+      valor: valor !== undefined ? String(valor) : null,
     })
     .returning();
 
@@ -222,17 +246,29 @@ async function registrarIgnorado(tx: TransacaoEtl, contexto: ContextoExecucao, i
  * Idempotente via `migracao_registros` (origem `contexto.origem`, qualquer
  * entidade): um `idLp` já registrado — migrado ou ignorado — é só contado
  * como ignorado, nunca duplicado (AC-301, AC-302).
+ *
+ * `decisoesValidadas` (T-126, US-089) traz, por `idLp`, o resultado já
+ * validado (`validarDecisao`, T-124) da planilha de decisões para os
+ * cadastros que o mapa de status colocaria em revisão — quem casa a linha
+ * da planilha com o cadastro e roda a validação é o orquestrador (T-123).
+ * `etapa` cria o lead/card com `proximaAcaoEm`/`valor`/`motivoPerdaId` da
+ * decisão (AC-316); `ignorar` registra `lead_ignorado` e não cria nada;
+ * `recusada` mantém o cadastro em revisão com o motivo (AC-312 a AC-314).
  */
 export async function importarLeadsLp(
   tx: TransacaoEtl,
   contexto: ContextoExecucao,
   empresaId: string,
   cadastros: CadastroLpBruto[],
-  decisoes: DecisoesLp = {}
+  decisoes: DecisoesLp = {},
+  decisoesValidadas: Map<string, ResultadoValidacao> = new Map()
 ): Promise<ResultadoImportacaoLeadsLp> {
   let criadas = 0;
   let ignoradas = 0;
   let emRevisao = 0;
+  let decisoesAplicadas = 0;
+  let decisoesIgnoradas = 0;
+  let decisoesRecusadas = 0;
   const revisao: ItemRevisaoLp[] = [];
 
   for (const cadastro of cadastros) {
@@ -275,6 +311,33 @@ export async function importarLeadsLp(
     });
 
     if (decisaoStatus.tipo === 'revisao') {
+      const decisaoValidada = decisoesValidadas.get(idLp);
+      if (decisaoValidada) {
+        if (decisaoValidada.tipo === 'ignorar') {
+          await registrarIgnorado(tx, contexto, idLp);
+          ignoradas++;
+          decisoesIgnoradas++;
+          continue;
+        }
+        if (decisaoValidada.tipo === 'recusada') {
+          emRevisao++;
+          decisoesRecusadas++;
+          revisao.push({ idLp, tipo: 'decisao_recusada', motivo: decisaoValidada.motivo });
+          continue;
+        }
+        await criarLeadECard(tx, contexto, empresaId, {
+          cadastro,
+          idLp,
+          etapaId: decisaoValidada.etapaId,
+          motivoPerdaId: decisaoValidada.motivoPerdaId,
+          proximaAcaoEm: decisaoValidada.proximaAcaoEm,
+          valor: decisaoValidada.valor,
+        });
+        criadas++;
+        decisoesAplicadas++;
+        continue;
+      }
+
       emRevisao++;
       revisao.push({ idLp, tipo: 'status_em_revisao', motivo: decisaoStatus.motivo });
       continue;
@@ -297,5 +360,14 @@ export async function importarLeadsLp(
     criadas++;
   }
 
-  return { lidas: cadastros.length, criadas, ignoradas, emRevisao, revisao };
+  return {
+    lidas: cadastros.length,
+    criadas,
+    ignoradas,
+    emRevisao,
+    revisao,
+    decisoesAplicadas,
+    decisoesIgnoradas,
+    decisoesRecusadas,
+  };
 }

@@ -15,9 +15,31 @@
 // a ocorrência vencedora é que de fato vira lead/card ou vai para revisão.
 // `ignoradas` soma o que a leitura já descartou (lead de teste/linha em
 // branco, T-114) com o que já tinha sido migrado numa execução anterior.
+//
+// T-125 (fase3-etl-decisoes, US-087): `linhasDecisao` (lidas de volta pelo
+// script via `lerCsvDecisoes`, T-124) é casada por `metaId` com os leads que
+// esta execução colocaria em revisão, e validada aqui com a tabela `etapas`
+// e os motivos de perda ativos do banco (nunca fixos no código — AC-312 a
+// AC-314) e o instante `agora` da execução (AC-313). Uma linha de decisão
+// para um `metaId` fora da fila é listada em `decisoesForaDaFila` e não cria
+// nada (AC-314). A fila de revisão desta execução (já líquida das decisões
+// aplicadas) sai em `csvFilaRevisao` (AC-307), no mesmo formato que a
+// operação devolve em `--decisoes`.
+import { eq } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
 import { buscarIdDestino, executarEtl, type ContextoExecucao, type TransacaoEtl } from '../comum';
+import {
+  gerarCsvFilaRevisao,
+  linhasDecisaoForaDaFila,
+  validarDecisao,
+  type EtapaValidacao,
+  type ItemFilaRevisao,
+  type LinhaDecisaoBruta,
+  type MotivoPerdaValidacao,
+  type ResultadoValidacao,
+} from '../decisoes';
+import { motivosPerda, pipelineEtapas } from '../../db/schema';
 import { lerAba, type ChaveAbaConhecida } from './leitor';
 import { deduplicarLeads, type ConflitoDedupe, type LeadComOrigem, type OrigemLead } from './dedupe';
 import { mapearStatusParaEtapa } from './status';
@@ -45,13 +67,26 @@ export interface LinhaRelatorioAba {
   emRevisao: number;
 }
 
+/** Conta das decisões aplicadas nesta execução (AC-317). */
+export interface ContagemDecisoes {
+  aplicadas: number;
+  ignoradas: number;
+  recusadas: number;
+}
+
 export interface RelatorioEtlSheets {
   simulacao: boolean;
   linhas: LinhaRelatorioAba[];
   /** Conflitos de status resolvidos na deduplicação (AC-276), reportados mesmo já decididos. */
   conflitos: ConflitoDedupe[];
-  /** Fila de revisão manual desta execução (AC-282, AC-283). */
+  /** Fila de revisão manual desta execução, já líquida das decisões aplicadas (AC-282, AC-283). */
   revisao: ItemRevisaoLead[];
+  /** Planilha da fila de revisão (AC-307), no mesmo formato que `--decisoes` espera de volta. */
+  csvFilaRevisao: string;
+  /** Decisões aplicadas/ignoradas/recusadas nesta execução (AC-317). */
+  decisoes: ContagemDecisoes;
+  /** Linhas da planilha de decisões para um `metaId` que não está na fila (AC-314) — nada foi criado para elas. */
+  decisoesForaDaFila: LinhaDecisaoBruta[];
   /** CSV da aba `Agenda` (AC-286) — nada daqui é gravado no banco. */
   csvAgenda: string;
   vinculoMensagens: ResultadoVinculoMensagens;
@@ -90,12 +125,48 @@ interface ContadorAba {
   emRevisao: number;
 }
 
+async function buscarEtapasValidacao(tx: TransacaoEtl): Promise<EtapaValidacao[]> {
+  return tx
+    .select({
+      id: pipelineEtapas.id,
+      nome: pipelineEtapas.nome,
+      exigeValor: pipelineEtapas.exigeValor,
+      exigeMotivo: pipelineEtapas.exigeMotivo,
+      exigeProximaAcao: pipelineEtapas.exigeProximaAcao,
+    })
+    .from(pipelineEtapas);
+}
+
+async function buscarMotivosPerdaValidacao(tx: TransacaoEtl): Promise<MotivoPerdaValidacao[]> {
+  return tx
+    .select({ id: motivosPerda.id, nome: motivosPerda.nome })
+    .from(motivosPerda)
+    .where(eq(motivosPerda.ativo, true));
+}
+
+/** Decide, para o relatório por aba, em qual contagem a ocorrência entra — antes de decisões, depois delas (AC-317). */
+function categoriaDaOcorrencia(
+  decisaoStatus: LeadParaImportar['decisao'],
+  jaMigrado: boolean,
+  decisaoValidada: ResultadoValidacao | undefined
+): 'criadas' | 'ignoradas' | 'emRevisao' {
+  if (jaMigrado) return 'ignoradas';
+  if (decisaoValidada) {
+    if (decisaoValidada.tipo === 'ignorar') return 'ignoradas';
+    if (decisaoValidada.tipo === 'etapa') return 'criadas';
+    return 'emRevisao';
+  }
+  return decisaoStatus.tipo === 'revisao' ? 'emRevisao' : 'criadas';
+}
+
 async function rodarEtapas(
   tx: TransacaoEtl,
   contexto: ContextoExecucao,
   empresaId: string,
   abas: AbaParaLer[],
-  agendaLinhas: string[][]
+  agendaLinhas: string[][],
+  linhasDecisao: LinhaDecisaoBruta[],
+  agora: Date
 ): Promise<RelatorioEtlSheets> {
   const leituras = abas.map((aba) => ({
     origem: origemDaChave(aba.chave),
@@ -144,19 +215,39 @@ async function rodarEtapas(
     return { lead: deduplicado.lead, origem: deduplicado.origem, decisao };
   });
 
+  // Fila desta execução (AC-307): leads que, sem decisão, cairiam em revisão
+  // — é contra esta fila que a planilha de decisões é casada (AC-309) e
+  // reportada (AC-314, linhas para um id fora da fila).
+  const idsNaFila = new Set(
+    entradasParaImportar.filter((entrada) => entrada.decisao.tipo === 'revisao').map((entrada) => entrada.lead.metaId)
+  );
+  const decisoesForaDaFila = linhasDecisaoForaDaFila(idsNaFila, linhasDecisao);
+
+  const etapasValidacao = await buscarEtapasValidacao(tx);
+  const motivosPerdaValidacao = await buscarMotivosPerdaValidacao(tx);
+  const decisoesValidadas = new Map<string, ResultadoValidacao>();
+  for (const linha of linhasDecisao) {
+    if (!idsNaFila.has(linha.idOrigem)) continue;
+    decisoesValidadas.set(
+      linha.idOrigem,
+      validarDecisao(linha, { etapas: etapasValidacao, motivosPerda: motivosPerdaValidacao, agora })
+    );
+  }
+
   for (const entrada of entradasParaImportar) {
     const contador = contadores.get(chaveDaOrigem(entrada.origem))!;
     const jaMigrado = await buscarIdDestino(tx, contexto.origem, entrada.lead.metaId);
-    if (jaMigrado) {
-      contador.ignoradas += 1;
-    } else if (entrada.decisao.tipo === 'revisao') {
-      contador.emRevisao += 1;
-    } else {
-      contador.criadas += 1;
-    }
+    const decisaoValidada = decisoesValidadas.get(entrada.lead.metaId);
+    contador[categoriaDaOcorrencia(entrada.decisao, Boolean(jaMigrado), decisaoValidada)] += 1;
   }
 
-  const resultadoImportacao = await importarLeadsSheets(tx, contexto, empresaId, entradasParaImportar);
+  const resultadoImportacao = await importarLeadsSheets(
+    tx,
+    contexto,
+    empresaId,
+    entradasParaImportar,
+    decisoesValidadas
+  );
 
   const linhas: LinhaRelatorioAba[] = Array.from(contadores.entries()).map(([aba, contador]) => {
     const linha: LinhaRelatorioAba = { aba, ...contador };
@@ -169,11 +260,27 @@ async function rodarEtapas(
   const csvAgenda = gerarCsvAgenda(lerAgenda(agendaLinhas));
   const vinculoMensagens = await vincularMensagensPorTelefone(tx, empresaId);
 
+  const itensFilaRevisao: ItemFilaRevisao[] = resultadoImportacao.revisao.map((item) => ({
+    idOrigem: item.metaId,
+    nome: item.nome,
+    telefone: item.telefone,
+    email: item.email,
+    statusOriginal: item.statusOriginal,
+    motivoRevisao: item.motivo,
+  }));
+
   return {
     simulacao: contexto.simulacao,
     linhas,
     conflitos,
     revisao: resultadoImportacao.revisao,
+    csvFilaRevisao: gerarCsvFilaRevisao(itensFilaRevisao),
+    decisoes: {
+      aplicadas: resultadoImportacao.decisoesAplicadas,
+      ignoradas: resultadoImportacao.decisoesIgnoradas,
+      recusadas: resultadoImportacao.decisoesRecusadas,
+    },
+    decisoesForaDaFila,
     csvAgenda,
     vinculoMensagens,
   };
@@ -186,13 +293,22 @@ async function rodarEtapas(
  * em modo simulação (AC-290). Nenhuma chamada daqui escreve na planilha
  * (AC-291 é responsabilidade de `leitor.ts`/`agenda-mensagens.ts`, que só
  * expõem leitura).
+ *
+ * `linhasDecisao` (T-125, já lidas de volta pelo script via `lerCsvDecisoes`)
+ * resolve os leads que esta execução colocaria em revisão (AC-309 a AC-311);
+ * `agora` é o instante da execução, usado para recusar próxima ação vencida
+ * (AC-313) — passável nos testes para não depender do relógio real.
  */
 export async function executarMigracaoSheets(
   db: NodePgDatabase,
   contexto: ContextoExecucao,
   empresaId: string,
   abas: AbaParaLer[],
-  agendaLinhas: string[][]
+  agendaLinhas: string[][],
+  linhasDecisao: LinhaDecisaoBruta[] = [],
+  agora: Date = new Date()
 ): Promise<RelatorioEtlSheets> {
-  return executarEtl(db, contexto, (tx, ctx) => rodarEtapas(tx, ctx, empresaId, abas, agendaLinhas));
+  return executarEtl(db, contexto, (tx, ctx) =>
+    rodarEtapas(tx, ctx, empresaId, abas, agendaLinhas, linhasDecisao, agora)
+  );
 }
