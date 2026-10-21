@@ -1,7 +1,7 @@
 # Spec: Fase3 etl sheets
 
 > feature: fase3-etl-sheets
-> status: rascunho
+> status: auditada
 
 ## Contexto
 

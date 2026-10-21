@@ -15,7 +15,7 @@
 - Esforço: medio
 - Notas: lê `leads` da LP via PostgREST com `SUPABASE_LP_URL` + `SUPABASE_LP_SERVICE_KEY` (ASM-095), só GET, com `select=` explícito que NUNCA inclui `password_hash` (AC-299); paginado; devolve também o total da origem (header `Content-Range`, para AC-304). Erro de leitura nunca imprime a chave (usar `mascarar` de `src/etl/comum.ts`). O `fetch` é injetável para o teste.
 
-## T-122 — Importar cadastros da LP como lead + card [pendente]
+## T-122 — Importar cadastros da LP como lead + card [concluida]
 - Refs: US-082, US-083, US-084, AC-294, AC-295, AC-296, AC-297, AC-298, AC-300, AC-301
 - Arquivos: src/etl/lp/leads.ts, test/etl/lp-leads.test.ts
 - Esforço: alto
