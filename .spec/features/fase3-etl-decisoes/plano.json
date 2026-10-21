@@ -1,0 +1,82 @@
+{
+  "runId": "scrumboard-medguia-fase3-etl-decisoes-mvi7n5ii",
+  "feature": "fase3-etl-decisoes",
+  "agent": "claude",
+  "modo": "sequencial",
+  "paralelizar": null,
+  "modeloForcado": null,
+  "esforcoForcado": null,
+  "geradoEm": "2026-10-21 14:31",
+  "branchTrabalho": "spec/fase3-etl-decisoes",
+  "baseDir": ".spec/features/fase3-etl-decisoes",
+  "specDir": ".spec",
+  "repoName": "scrumboard-medguia",
+  "logsDir": "../onp-worktrees/scrumboard-medguia-fase3-etl-decisoes-logs",
+  "ondas": [],
+  "faixas": [],
+  "sequenciais": [
+    {
+      "id": "T-124",
+      "titulo": "Planilha de decisões e validador comuns",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "src/etl/decisoes.ts",
+        "test/etl/decisoes.test.ts"
+      ],
+      "refs": [
+        "US-086",
+        "US-088",
+        "AC-307",
+        "AC-308",
+        "AC-312",
+        "AC-313",
+        "AC-314"
+      ]
+    },
+    {
+      "id": "T-125",
+      "titulo": "ETL do Sheets aplica as decisões",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "src/etl/sheets/leads.ts",
+        "src/etl/sheets/executar.ts",
+        "scripts/etl-sheets.ts",
+        "test/etl/sheets-decisoes.test.ts"
+      ],
+      "refs": [
+        "US-087",
+        "AC-307",
+        "AC-309",
+        "AC-310",
+        "AC-311",
+        "AC-317"
+      ]
+    },
+    {
+      "id": "T-126",
+      "titulo": "ETLs do Supabase e da LP usam a mesma planilha de decisões",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "src/etl/supabase/leads.ts",
+        "src/etl/supabase/executar.ts",
+        "scripts/etl-supabase.ts",
+        "src/etl/lp/leads.ts",
+        "src/etl/lp/executar.ts",
+        "scripts/etl-lp.ts",
+        "test/etl/decisoes-supabase-lp.test.ts"
+      ],
+      "refs": [
+        "US-089",
+        "AC-307",
+        "AC-315",
+        "AC-316",
+        "AC-317"
+      ]
+    }
+  ],
+  "concluidas": [],
+  "avisos": []
+}
