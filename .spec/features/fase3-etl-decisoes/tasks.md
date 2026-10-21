@@ -15,7 +15,7 @@
 - Esforço: alto
 - Notas: `gerarCsvFilaRevisao(itens)` e `lerCsvDecisoes(texto)` (UTF-8 com BOM, separador `;`, aspas RFC 4180). `validarDecisao(linha, { etapas, motivosPerda, agora })` devolve `{ tipo: 'etapa', etapaId, proximaAcaoEm?, valor?, motivoPerdaId? } | { tipo: 'ignorar' } | { tipo: 'recusada', motivo }`, aplicando as exigências das etapas (`exige_proxima_acao`, `exige_valor`, `exige_motivo`, lidas da tabela `etapas`, nunca fixas no código) e a regra de data vencida (ASM-103, ASM-106). Etapa por nome (sem acento/maiúsculas) ou número. Função pura; não toca no banco além de receber as listas.
 
-## T-125 — ETL do Sheets aplica as decisões [pendente]
+## T-125 — ETL do Sheets aplica as decisões [concluida]
 - Refs: US-087, AC-307, AC-309, AC-310, AC-311, AC-317
 - Arquivos: src/etl/sheets/leads.ts, src/etl/sheets/executar.ts, scripts/etl-sheets.ts, test/etl/sheets-decisoes.test.ts
 - Esforço: alto
