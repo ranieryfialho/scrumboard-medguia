@@ -6,11 +6,15 @@
 // transação e imprime o relatório.
 //
 // Uso:
-//   npx tsx scripts/etl-supabase.ts [--dry-run] [--decisoes <arquivo.json>]
+//   npx tsx scripts/etl-supabase.ts [--dry-run] [--fila-revisao <arquivo.csv>]
+//     [--decisoes <arquivo.csv>]
 //
 // --dry-run       roda em modo simulação (AC-268): nada é gravado no destino.
-// --decisoes      arquivo JSON com as decisões da fila de revisão (AC-272),
-//                 formato: [{ "idExterno": "...", "etapaId": 1 }, ...].
+// --fila-revisao  caminho onde salvar a planilha da fila de revisão (AC-307)
+//                 desta execução — a operação preenche e devolve em --decisoes.
+// --decisoes      planilha de decisões preenchida pela operação (AC-315),
+//                 lida com `lerCsvDecisoes` (T-124, UTF-8 com BOM) — substitui
+//                 o antigo arquivo JSON (ASM-105).
 //
 // As tabelas legadas (`empresas`, `leads`, `campanhas`, `envios_campanha`,
 // `whatsapp_mensagens`, `empresa_configuracoes`) e os usuários (Supabase
@@ -19,6 +23,7 @@
 // a conexão com `default_transaction_read_only=on`).
 import { getDb } from '../src/db/client';
 import type { ContextoExecucao } from '../src/etl/comum';
+import { lerCsvDecisoes, type LinhaDecisaoBruta } from '../src/etl/decisoes';
 import { conectarOrigem, encerrarOrigem } from '../src/etl/supabase/origem';
 import {
   executarMigracaoSupabase,
@@ -26,7 +31,7 @@ import {
   type RelatorioEtl,
 } from '../src/etl/supabase/executar';
 import type { EmpresaLegado, PapelLegado, UsuarioLegado } from '../src/etl/supabase/identidade';
-import type { DecisaoRevisao, LeadLegado } from '../src/etl/supabase/leads';
+import type { LeadLegado } from '../src/etl/supabase/leads';
 import type { CampanhaLegado, EnvioLegado } from '../src/etl/supabase/campanhas';
 import type { ConfiguracaoLegado, MensagemLegado } from '../src/etl/supabase/mensagens-config';
 
@@ -37,20 +42,24 @@ const ORIGEM_ETL = 'supabase-legado-crm';
 
 interface Argumentos {
   dryRun: boolean;
+  caminhoFilaRevisao: string | undefined;
   caminhoDecisoes: string | undefined;
 }
 
 function lerArgumentos(argv: string[]): Argumentos {
   const dryRun = argv.includes('--dry-run');
+  const indiceFilaRevisao = argv.indexOf('--fila-revisao');
+  const caminhoFilaRevisao = indiceFilaRevisao >= 0 ? argv[indiceFilaRevisao + 1] : undefined;
   const indiceDecisoes = argv.indexOf('--decisoes');
   const caminhoDecisoes = indiceDecisoes >= 0 ? argv[indiceDecisoes + 1] : undefined;
-  return { dryRun, caminhoDecisoes };
+  return { dryRun, caminhoFilaRevisao, caminhoDecisoes };
 }
 
-function lerDecisoes(caminho: string | undefined): DecisaoRevisao[] {
+/** Lê a planilha de decisões devolvida pela operação (AC-315), se informada. */
+function lerLinhasDecisao(caminho: string | undefined): LinhaDecisaoBruta[] {
   if (!caminho) return [];
-  const conteudo = fs.readFileSync(caminho, 'utf8');
-  return JSON.parse(conteudo) as DecisaoRevisao[];
+  const texto = fs.readFileSync(caminho, 'utf8');
+  return lerCsvDecisoes(texto);
 }
 
 async function lerEmpresas(pool: Pool): Promise<EmpresaLegado[]> {
@@ -199,12 +208,12 @@ async function lerConfiguracoes(pool: Pool): Promise<ConfiguracaoLegado[]> {
   }));
 }
 
-async function lerDadosOrigem(pool: Pool, decisoesRevisao: DecisaoRevisao[]): Promise<DadosOrigemEtl> {
+async function lerDadosOrigem(pool: Pool, linhasDecisao: LinhaDecisaoBruta[]): Promise<DadosOrigemEtl> {
   return {
     empresas: await lerEmpresas(pool),
     usuarios: await lerUsuarios(pool),
     leads: await lerLeads(pool),
-    decisoesRevisao,
+    linhasDecisao,
     campanhas: await lerCampanhas(pool),
     envios: await lerEnvios(pool),
     mensagens: await lerMensagens(pool),
@@ -230,20 +239,37 @@ function imprimirRelatorio(relatorio: RelatorioEtl): void {
       console.log(`  - ${item.idExterno} [${item.tipo}]: ${item.motivo}`);
     }
   }
+
+  console.log(
+    `\nDecisões — aplicadas: ${relatorio.decisoes.aplicadas}, ` +
+      `ignoradas: ${relatorio.decisoes.ignoradas}, recusadas: ${relatorio.decisoes.recusadas}`
+  );
+
+  if (relatorio.decisoesForaDaFila.length > 0) {
+    console.log(`\nDecisões para um id que não está na fila (${relatorio.decisoesForaDaFila.length}), nada foi criado:`);
+    for (const linha of relatorio.decisoesForaDaFila) {
+      console.log(`  - ${linha.idOrigem}`);
+    }
+  }
 }
 
 async function main(): Promise<void> {
-  const { dryRun, caminhoDecisoes } = lerArgumentos(process.argv.slice(2));
-  const decisoesRevisao = lerDecisoes(caminhoDecisoes);
+  const { dryRun, caminhoFilaRevisao, caminhoDecisoes } = lerArgumentos(process.argv.slice(2));
+  const linhasDecisao = lerLinhasDecisao(caminhoDecisoes);
 
   const poolOrigem = conectarOrigem();
   try {
-    const dados = await lerDadosOrigem(poolOrigem, decisoesRevisao);
+    const dados = await lerDadosOrigem(poolOrigem, linhasDecisao);
     const db = getDb();
     const contexto: ContextoExecucao = { origem: ORIGEM_ETL, simulacao: dryRun };
 
     const relatorio = await executarMigracaoSupabase(db, contexto, dados);
     imprimirRelatorio(relatorio);
+
+    if (caminhoFilaRevisao) {
+      fs.writeFileSync(caminhoFilaRevisao, relatorio.csvFilaRevisao, 'utf8');
+      console.log(`Planilha da fila de revisão salva em ${caminhoFilaRevisao}`);
+    }
   } finally {
     await encerrarOrigem(poolOrigem);
   }
