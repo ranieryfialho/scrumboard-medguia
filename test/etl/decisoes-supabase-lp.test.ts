@@ -105,7 +105,7 @@ describe('T-126: ETLs do Supabase e da LP aplicam a planilha de decisões comum,
   });
 
   describe('Supabase', () => {
-    test('AC-307: a simulação gera a planilha da fila de revisão com os leads que ficariam em revisão', async () => {
+    test('a simulação gera a planilha da fila de revisão com os leads que ficariam em revisão (@spec:AC-307)', async () => {
       const contexto: ContextoExecucao = { origem: 'supabase-dec-307', simulacao: true };
       const dados = dadosSupabaseMinimos([
         leadLegado(empresaMedguia.id, { id: 'sb:300', nome: 'Dra. Carla', situacao: 'Em contato' }),
@@ -120,7 +120,7 @@ describe('T-126: ETLs do Supabase e da LP aplicam a planilha de decisões comum,
       expect(relatorio.csvFilaRevisao).toContain('situação sem etapa automática');
     });
 
-    test('AC-315: decisão de "Follow de longo prazo" com próxima ação futura cria o card em vez de derrubar a transação', async () => {
+    test('decisão de "Follow de longo prazo" com próxima ação futura cria o card em vez de derrubar a transação (@spec:AC-315)', async () => {
       const contexto: ContextoExecucao = { origem: 'supabase-dec-315', simulacao: false };
       const dados = dadosSupabaseMinimos([
         leadLegado(empresaMedguia.id, { id: 'sb:301', situacao: 'Em contato' }),
@@ -142,7 +142,7 @@ describe('T-126: ETLs do Supabase e da LP aplicam a planilha de decisões comum,
       expect(card.proximaAcaoEm?.toISOString()).toBe('2026-11-10T17:00:00.000Z');
     });
 
-    test('AC-317: o relatório do Supabase mostra decisões aplicadas, ignoradas e recusadas, e a conta fecha', async () => {
+    test('o relatório do Supabase mostra decisões aplicadas, ignoradas e recusadas, e a conta fecha (@spec:AC-317)', async () => {
       const contexto: ContextoExecucao = { origem: 'supabase-dec-317', simulacao: false };
       const dados = dadosSupabaseMinimos([
         leadLegado(empresaMedguia.id, { id: 'sb:305', situacao: 'Em contato' }), // decisão aplicada
@@ -175,7 +175,7 @@ describe('T-126: ETLs do Supabase e da LP aplicam a planilha de decisões comum,
   });
 
   describe('LP', () => {
-    test('AC-307: a simulação gera a planilha da fila de revisão com os cadastros que ficariam em revisão', async () => {
+    test('a simulação gera a planilha da fila de revisão com os cadastros que ficariam em revisão (@spec:AC-307)', async () => {
       const contexto: ContextoExecucao = { origem: 'lp-dec-307', simulacao: true };
       const cadastros = [cadastroLp({ id: 400, name: 'Dra. Ana', status: 'Aguardando Ativação' })];
 
@@ -187,7 +187,7 @@ describe('T-126: ETLs do Supabase e da LP aplicam a planilha de decisões comum,
       expect(relatorio.csvFilaRevisao).toContain('Aguardando Ativação sem data de próxima ação');
     });
 
-    test('AC-316: "Teste (Trial)" decidido com próxima ação futura cria o card, e outro marcado ignorar não cria nada', async () => {
+    test('"Teste (Trial)" decidido com próxima ação futura cria o card, e outro marcado ignorar não cria nada (@spec:AC-316)', async () => {
       const contexto: ContextoExecucao = { origem: 'lp-dec-316', simulacao: false };
       const cadastros = [
         cadastroLp({ id: 401, name: 'Dr. Pedro', status: 'Aguardando Ativação' }),
@@ -222,7 +222,7 @@ describe('T-126: ETLs do Supabase e da LP aplicam a planilha de decisões comum,
       expect(leadIgnorado).toHaveLength(0);
     });
 
-    test('AC-317: o relatório da LP mostra decisões aplicadas, ignoradas e recusadas, e a conta fecha', async () => {
+    test('o relatório da LP mostra decisões aplicadas, ignoradas e recusadas, e a conta fecha (@spec:AC-317)', async () => {
       const contexto: ContextoExecucao = { origem: 'lp-dec-317', simulacao: false };
       const cadastros = [
         cadastroLp({ id: 501, status: 'Aguardando Ativação' }), // decisão aplicada

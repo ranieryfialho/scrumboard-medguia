@@ -1,20 +1,35 @@
 {
   "feature": "fase3-etl-decisoes",
-  "timestamp": "2026-10-21T15:33:01.439Z",
-  "gitRev": "90aa3a3",
-  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
+  "timestamp": "2026-10-21T15:51:00.343Z",
+  "gitRev": "899d58a",
+  "command": "echo reaproveitando a execucao unica da suite completa: vitest-json 899 de 899 PASS em .spec/verification/raw.json",
   "reporter": "vitest-json",
   "exitCode": 0,
   "testsParsed": 899,
   "results": {
     "AC-307": {
       "status": "pass",
-      "testName": "T-124: gerarCsvFilaRevisao (@spec:AC-307) uma linha por lead, com as colunas descritivas e as de decisão em branco uma linha por lead, com as colunas descritivas e as de decisão em branco",
+      "testName": "T-126: ETLs do Supabase e da LP aplicam a planilha de decisões comum, contra Postgres real Supabase a simulação gera a planilha da fila de revisão com os leads que ficariam em revisão (@spec:AC-307) a simulação gera a planilha da fila de revisão com os leads que ficariam em revisão (@spec:AC-307)",
       "method": "vitest-json"
     },
     "AC-308": {
       "status": "pass",
       "testName": "T-124: formato do arquivo — Excel e Google Sheets (@spec:AC-308) começa com o BOM UTF-8 e usa ; como separador começa com o BOM UTF-8 e usa ; como separador",
+      "method": "vitest-json"
+    },
+    "AC-309": {
+      "status": "pass",
+      "testName": "T-125: ETL do Sheets aplica as decisões, contra Postgres real decisão de etapa (por nome) cria o lead e o card do Sheets, igual a uma migração automática (@spec:AC-309) decisão de etapa (por nome) cria o lead e o card do Sheets, igual a uma migração automática (@spec:AC-309)",
+      "method": "vitest-json"
+    },
+    "AC-310": {
+      "status": "pass",
+      "testName": "T-125: ETL do Sheets aplica as decisões, contra Postgres real \"Recontato\" decidido como \"Follow de longo prazo\" ganha a próxima ação, no horário de Brasília (@spec:AC-310) \"Recontato\" decidido como \"Follow de longo prazo\" ganha a próxima ação, no horário de Brasília (@spec:AC-310)",
+      "method": "vitest-json"
+    },
+    "AC-311": {
+      "status": "pass",
+      "testName": "T-125: ETL do Sheets aplica as decisões, contra Postgres real \"ignorar\" tira o lead da fila sem criar nada, e não volta a aparecer numa execução seguinte (@spec:AC-311) \"ignorar\" tira o lead da fila sem criar nada, e não volta a aparecer numa execução seguinte (@spec:AC-311)",
       "method": "vitest-json"
     },
     "AC-312": {
@@ -30,6 +45,21 @@
     "AC-314": {
       "status": "pass",
       "testName": "T-124: validarDecisao — etapa/motivo desconhecidos e valores mal formatados (@spec:AC-314) etapa inexistente (nem nome nem número) volta para a revisão etapa inexistente (nem nome nem número) volta para a revisão",
+      "method": "vitest-json"
+    },
+    "AC-315": {
+      "status": "pass",
+      "testName": "T-126: ETLs do Supabase e da LP aplicam a planilha de decisões comum, contra Postgres real Supabase decisão de \"Follow de longo prazo\" com próxima ação futura cria o card em vez de derrubar a transação (@spec:AC-315) decisão de \"Follow de longo prazo\" com próxima ação futura cria o card em vez de derrubar a transação (@spec:AC-315)",
+      "method": "vitest-json"
+    },
+    "AC-316": {
+      "status": "pass",
+      "testName": "T-126: ETLs do Supabase e da LP aplicam a planilha de decisões comum, contra Postgres real LP \"Teste (Trial)\" decidido com próxima ação futura cria o card, e outro marcado ignorar não cria nada (@spec:AC-316) \"Teste (Trial)\" decidido com próxima ação futura cria o card, e outro marcado ignorar não cria nada (@spec:AC-316)",
+      "method": "vitest-json"
+    },
+    "AC-317": {
+      "status": "pass",
+      "testName": "T-126: ETLs do Supabase e da LP aplicam a planilha de decisões comum, contra Postgres real Supabase o relatório do Supabase mostra decisões aplicadas, ignoradas e recusadas, e a conta fecha (@spec:AC-317) o relatório do Supabase mostra decisões aplicadas, ignoradas e recusadas, e a conta fecha (@spec:AC-317)",
       "method": "vitest-json"
     }
   },

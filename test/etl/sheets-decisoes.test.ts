@@ -94,7 +94,7 @@ describe('T-125: ETL do Sheets aplica as decisões, contra Postgres real', () =>
     await db.execute("DELETE FROM migracao_registros WHERE entidade IN ('lead', 'lead_ignorado')");
   });
 
-  test('AC-307: a simulação gera a planilha da fila de revisão com os leads que ficariam em revisão', async () => {
+  test('a simulação gera a planilha da fila de revisão com os leads que ficariam em revisão (@spec:AC-307)', async () => {
     const contexto: ContextoExecucao = { origem: 'sheets-dec-307', simulacao: true };
     const abas: AbaParaLer[] = [
       aba([linha({ id: 'l:300', nome: 'Dra. Carla', telefone: '11999990000', email: 'carla@exemplo.com', status: 'Recontato' })]),
@@ -110,7 +110,7 @@ describe('T-125: ETL do Sheets aplica as decisões, contra Postgres real', () =>
     expect(relatorio.csvFilaRevisao).toContain('Recontato sem data de próxima ação');
   });
 
-  test('AC-309: decisão de etapa (por nome) cria o lead e o card do Sheets, igual a uma migração automática', async () => {
+  test('decisão de etapa (por nome) cria o lead e o card do Sheets, igual a uma migração automática (@spec:AC-309)', async () => {
     const contexto: ContextoExecucao = { origem: 'sheets-dec-309', simulacao: false };
     const abas: AbaParaLer[] = [
       aba([linha({ id: 'l:301', nome: 'Dr. João', telefone: '11999991111', email: 'joao@exemplo.com', status: 'Em contato' })]),
@@ -147,7 +147,7 @@ describe('T-125: ETL do Sheets aplica as decisões, contra Postgres real', () =>
     expect(leadsEncontrados).toHaveLength(1);
   });
 
-  test('AC-309: decisão de etapa pelo número também resolve a revisão', async () => {
+  test('decisão de etapa pelo número também resolve a revisão (@spec:AC-309)', async () => {
     const contexto: ContextoExecucao = { origem: 'sheets-dec-309-numero', simulacao: false };
     const abas: AbaParaLer[] = [aba([linha({ id: 'l:302', status: 'Em contato' })])];
     const decisoes: LinhaDecisaoBruta[] = [linhaDecisao({ idOrigem: 'l:302', etapa: String(ETAPA_REUNIAO_AGENDADA) })];
@@ -159,7 +159,7 @@ describe('T-125: ETL do Sheets aplica as decisões, contra Postgres real', () =>
     expect(card.etapaId).toBe(ETAPA_REUNIAO_AGENDADA);
   });
 
-  test('AC-310: "Recontato" decidido como "Follow de longo prazo" ganha a próxima ação, no horário de Brasília', async () => {
+  test('"Recontato" decidido como "Follow de longo prazo" ganha a próxima ação, no horário de Brasília (@spec:AC-310)', async () => {
     const contexto: ContextoExecucao = { origem: 'sheets-dec-310', simulacao: false };
     const abas: AbaParaLer[] = [aba([linha({ id: 'l:303', status: 'Recontato' })])];
     const decisoes: LinhaDecisaoBruta[] = [
@@ -175,7 +175,7 @@ describe('T-125: ETL do Sheets aplica as decisões, contra Postgres real', () =>
     expect(card.proximaAcaoEm?.toISOString()).toBe('2026-11-10T17:00:00.000Z');
   });
 
-  test('AC-311: "ignorar" tira o lead da fila sem criar nada, e não volta a aparecer numa execução seguinte', async () => {
+  test('"ignorar" tira o lead da fila sem criar nada, e não volta a aparecer numa execução seguinte (@spec:AC-311)', async () => {
     const contexto: ContextoExecucao = { origem: 'sheets-dec-311', simulacao: false };
     const abas: AbaParaLer[] = [aba([linha({ id: 'l:304', status: 'Em contato' })])];
     const decisoes: LinhaDecisaoBruta[] = [linhaDecisao({ idOrigem: 'l:304', ignorar: 'sim' })];
@@ -194,7 +194,7 @@ describe('T-125: ETL do Sheets aplica as decisões, contra Postgres real', () =>
     expect(encontradosDepois).toHaveLength(0);
   });
 
-  test('AC-317: o relatório mostra decisões aplicadas, ignoradas e recusadas, e a conta fecha', async () => {
+  test('o relatório mostra decisões aplicadas, ignoradas e recusadas, e a conta fecha (@spec:AC-317)', async () => {
     const contexto: ContextoExecucao = { origem: 'sheets-dec-317', simulacao: false };
     const abas: AbaParaLer[] = [
       aba([
