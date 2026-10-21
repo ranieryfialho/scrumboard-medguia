@@ -21,7 +21,7 @@
 - Esforço: alto
 - Notas: depende de T-124. A decisão é casada pelo id da Meta (`metaId`). Lead decidido usa o mesmo caminho de criação do lead automático (origem comercial, `dados`, `migrado_de`) e grava `proxima_acao_em`/`valor`/`motivo_perda_id`. `ignorar` registra em `migracao_registros` com entidade `lead_ignorado`. Decisão recusada volta para `revisao` com o motivo. Script ganha `--decisoes` e `--fila-revisao`; relatório ganha decisões aplicadas/ignoradas/recusadas e a conta por aba continua fechando.
 
-## T-126 — ETLs do Supabase e da LP usam a mesma planilha de decisões [pendente]
+## T-126 — ETLs do Supabase e da LP usam a mesma planilha de decisões [concluida]
 - Refs: US-089, AC-307, AC-315, AC-316, AC-317
 - Arquivos: src/etl/supabase/leads.ts, src/etl/supabase/executar.ts, scripts/etl-supabase.ts, src/etl/lp/leads.ts, src/etl/lp/executar.ts, scripts/etl-lp.ts, test/etl/decisoes-supabase-lp.test.ts
 - Esforço: alto
