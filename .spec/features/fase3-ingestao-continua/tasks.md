@@ -17,12 +17,12 @@
 - Arquivos: src/worker/saude.ts, test/worker/saude.spec.test.ts
 - Notas: consulta `cron_execucoes`; saudável = sucesso nos últimos 2 intervalos; sai com código 0/1 para o healthcheck do compose.
 
-## T-130 — Agendador e parada graciosa [concluida]
+## T-130 — Agendador e parada graciosa [pendente]
 - Refs: AC-320, AC-326
 - Arquivos: src/worker/index.ts, test/worker/index.spec.test.ts, package.json
 - Notas: `node-cron` (ASM-112); SIGTERM espera o ciclo em andamento e sai 0. Depende de T-127, T-128.
 
-## T-131 — Serviço crm-worker na composição [concluida]
+## T-131 — Serviço crm-worker na composição [pendente]
 - Refs: AC-328
 - Arquivos: docker-compose.yml, docker-compose.staging.yml, test/worker/compose.spec.test.ts
 - Notas: mesma imagem da aplicação, comando de entrada do worker, healthcheck de T-129. Depende de T-129, T-130.
