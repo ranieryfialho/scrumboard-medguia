@@ -21,7 +21,7 @@
 - Esforço: alto
 - Notas: reaproveita `mapearStatusParaEtapa` (`src/etl/sheets/status.ts`), `normalizarTelefone`/`normalizarData` (`src/etl/sheets/normalizar.ts`) e `buscarIdDestino`/`registrarMigracao` (`src/etl/comum.ts`), com `contexto.origem = 'supabase-lp'` e entidade `lead`. Dedupe contra leads existentes da empresa por e-mail (lower) ou telefone E.164 → revisão com o id do lead existente (ASM-096). Decisões: `{ idLp: { etapaId } | { ignorar: true } }`; "ignorar" registra em `migracao_registros` com entidade `lead_ignorado` para sair da fila.
 
-## T-123 — Orquestrador e comando do ETL da LP com simulação e relatório [pendente]
+## T-123 — Orquestrador e comando do ETL da LP com simulação e relatório [concluida]
 - Refs: US-085, AC-299, AC-302, AC-303, AC-304, AC-305
 - Arquivos: src/etl/lp/executar.ts, scripts/etl-lp.ts, test/etl/lp-executar.test.ts
 - Esforço: medio
