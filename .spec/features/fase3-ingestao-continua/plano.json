@@ -1,0 +1,95 @@
+{
+  "runId": "scrumboard-medguia-fase3-ingestao-continua-mvihcymd",
+  "feature": "fase3-ingestao-continua",
+  "agent": "claude",
+  "modo": "sequencial",
+  "paralelizar": null,
+  "modeloForcado": null,
+  "esforcoForcado": null,
+  "geradoEm": "2026-10-21 19:03",
+  "branchTrabalho": "spec/fase3-ingestao-continua",
+  "baseDir": ".spec/features/fase3-ingestao-continua",
+  "specDir": ".spec",
+  "repoName": "scrumboard-medguia",
+  "logsDir": "../onp-worktrees/scrumboard-medguia-fase3-ingestao-continua-logs",
+  "ondas": [],
+  "faixas": [],
+  "sequenciais": [
+    {
+      "id": "T-127",
+      "titulo": "Configuração do worker e validação das variáveis",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/worker/config.ts",
+        "test/worker/config.spec.test.ts"
+      ],
+      "refs": [
+        "AC-327",
+        "AC-320"
+      ]
+    },
+    {
+      "id": "T-128",
+      "titulo": "Ciclo de importação: trava, registro e isolamento de falhas",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/worker/ciclo.ts",
+        "test/worker/ciclo.spec.test.ts"
+      ],
+      "refs": [
+        "AC-318",
+        "AC-319",
+        "AC-321",
+        "AC-322",
+        "AC-324",
+        "AC-325"
+      ]
+    },
+    {
+      "id": "T-129",
+      "titulo": "Verificação de saúde do worker",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/worker/saude.ts",
+        "test/worker/saude.spec.test.ts"
+      ],
+      "refs": [
+        "AC-323"
+      ]
+    },
+    {
+      "id": "T-130",
+      "titulo": "Agendador e parada graciosa",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/worker/index.ts",
+        "test/worker/index.spec.test.ts",
+        "package.json"
+      ],
+      "refs": [
+        "AC-320",
+        "AC-326"
+      ]
+    },
+    {
+      "id": "T-131",
+      "titulo": "Serviço crm-worker na composição",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "docker-compose.yml",
+        "docker-compose.staging.yml",
+        "test/worker/compose.spec.test.ts"
+      ],
+      "refs": [
+        "AC-328"
+      ]
+    }
+  ],
+  "concluidas": [],
+  "avisos": []
+}
