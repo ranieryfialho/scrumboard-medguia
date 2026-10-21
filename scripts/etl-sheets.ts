@@ -9,9 +9,14 @@
 //
 // Uso:
 //   npx tsx scripts/etl-sheets.ts [--dry-run] [--csv-agenda <arquivo.csv>]
+//     [--fila-revisao <arquivo.csv>] [--decisoes <arquivo.csv>]
 //
 // --dry-run       roda em modo simulação (AC-290): nada é gravado no destino.
 // --csv-agenda    caminho onde salvar o CSV da aba Agenda (padrão: agenda.csv).
+// --fila-revisao  caminho onde salvar a planilha da fila de revisão (AC-307)
+//                 desta execução — a operação preenche e devolve em --decisoes.
+// --decisoes      planilha de decisões preenchida pela operação (AC-309 a
+//                 AC-311); lida com `lerCsvDecisoes` (T-124, UTF-8 com BOM).
 //
 // As planilhas (`GOOGLE_SHEET_ID_1`, `GOOGLE_SHEET_ID_2`, `GOOGLE_SHEET_ID_3`)
 // e a conta de serviço (`GOOGLE_CLIENT_EMAIL`, `GOOGLE_PRIVATE_KEY`) são as
@@ -24,6 +29,7 @@ import { eq } from 'drizzle-orm';
 import { getDb } from '../src/db/client';
 import { empresas } from '../src/db/schema';
 import type { ContextoExecucao } from '../src/etl/comum';
+import { lerCsvDecisoes, type LinhaDecisaoBruta } from '../src/etl/decisoes';
 import {
   buscarLinhasAba,
   criarClienteSheetsSomenteLeitura,
@@ -51,13 +57,26 @@ const ABAS_DE_LEADS: { chave: ChaveAbaConhecida; spreadsheetIdEnv: string; range
 interface Argumentos {
   dryRun: boolean;
   caminhoCsvAgenda: string;
+  caminhoFilaRevisao?: string;
+  caminhoDecisoes?: string;
 }
 
 function lerArgumentos(argv: string[]): Argumentos {
   const dryRun = argv.includes('--dry-run');
   const indiceCsv = argv.indexOf('--csv-agenda');
   const caminhoCsvAgenda = indiceCsv >= 0 ? argv[indiceCsv + 1] : 'agenda.csv';
-  return { dryRun, caminhoCsvAgenda };
+  const indiceFilaRevisao = argv.indexOf('--fila-revisao');
+  const caminhoFilaRevisao = indiceFilaRevisao >= 0 ? argv[indiceFilaRevisao + 1] : undefined;
+  const indiceDecisoes = argv.indexOf('--decisoes');
+  const caminhoDecisoes = indiceDecisoes >= 0 ? argv[indiceDecisoes + 1] : undefined;
+  return { dryRun, caminhoCsvAgenda, caminhoFilaRevisao, caminhoDecisoes };
+}
+
+/** Lê a planilha de decisões devolvida pela operação (AC-309 a AC-311), se informada. */
+function lerLinhasDecisao(caminho: string | undefined): LinhaDecisaoBruta[] {
+  if (!caminho) return [];
+  const texto = fs.readFileSync(caminho, 'utf8');
+  return lerCsvDecisoes(texto);
 }
 
 function lerCredenciais(): CredenciaisContaDeServico {
@@ -121,6 +140,18 @@ function imprimirRelatorio(relatorio: RelatorioEtlSheets): void {
   }
 
   console.log(
+    `\nDecisões — aplicadas: ${relatorio.decisoes.aplicadas}, ` +
+      `ignoradas: ${relatorio.decisoes.ignoradas}, recusadas: ${relatorio.decisoes.recusadas}`
+  );
+
+  if (relatorio.decisoesForaDaFila.length > 0) {
+    console.log(`\nDecisões para um id que não está na fila (${relatorio.decisoesForaDaFila.length}), nada foi criado:`);
+    for (const linha of relatorio.decisoesForaDaFila) {
+      console.log(`  - ${linha.idOrigem}`);
+    }
+  }
+
+  console.log(
     `\nMensagens de WhatsApp sem lead: ${relatorio.vinculoMensagens.semLead}, ` +
       `vinculadas: ${relatorio.vinculoMensagens.vinculadas}, ` +
       `sem lead para o telefone: ${relatorio.vinculoMensagens.semLeadParaTelefone}, ` +
@@ -129,7 +160,8 @@ function imprimirRelatorio(relatorio: RelatorioEtlSheets): void {
 }
 
 async function main(): Promise<void> {
-  const { dryRun, caminhoCsvAgenda } = lerArgumentos(process.argv.slice(2));
+  const { dryRun, caminhoCsvAgenda, caminhoFilaRevisao, caminhoDecisoes } = lerArgumentos(process.argv.slice(2));
+  const linhasDecisao = lerLinhasDecisao(caminhoDecisoes);
   const credenciais = lerCredenciais();
   const sheets = criarClienteSheetsSomenteLeitura(credenciais);
 
@@ -146,11 +178,16 @@ async function main(): Promise<void> {
   const empresaId = await buscarEmpresaMedguia(db);
   const contexto: ContextoExecucao = { origem: ORIGEM_ETL, simulacao: dryRun };
 
-  const relatorio = await executarMigracaoSheets(db, contexto, empresaId, abas, agendaLinhas);
+  const relatorio = await executarMigracaoSheets(db, contexto, empresaId, abas, agendaLinhas, linhasDecisao);
   imprimirRelatorio(relatorio);
 
   fs.writeFileSync(caminhoCsvAgenda, relatorio.csvAgenda, 'utf8');
   console.log(`\nCSV da Agenda salvo em ${caminhoCsvAgenda}`);
+
+  if (caminhoFilaRevisao) {
+    fs.writeFileSync(caminhoFilaRevisao, relatorio.csvFilaRevisao, 'utf8');
+    console.log(`Planilha da fila de revisão salva em ${caminhoFilaRevisao}`);
+  }
 }
 
 main().catch((erro) => {
