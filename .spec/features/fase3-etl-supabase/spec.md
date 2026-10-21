@@ -1,7 +1,7 @@
 # Spec: Fase3 etl supabase
 
 > feature: fase3-etl-supabase
-> status: auditada
+> status: rascunho
 
 ## Contexto
 

@@ -1,7 +1,7 @@
 # Spec: Fase 2d — KPIs e relatório do funil comercial
 
 > feature: fase2d-kpis
-> status: auditada
+> status: rascunho
 
 ## Contexto
 

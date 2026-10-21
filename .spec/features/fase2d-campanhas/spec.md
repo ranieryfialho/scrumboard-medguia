@@ -1,7 +1,7 @@
 # Spec: Fase 2d — Campanhas (Mala Direta) no modelo novo
 
 > feature: fase2d-campanhas
-> status: auditada
+> status: rascunho
 
 ## Contexto
 
