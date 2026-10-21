@@ -9,7 +9,7 @@
   Status: pendente | em-andamento | concluida
 -->
 
-## T-121 — Leitor somente leitura da LP [pendente]
+## T-121 — Leitor somente leitura da LP [concluida]
 - Refs: AC-299, AC-306
 - Arquivos: src/etl/lp/origem.ts, test/etl/lp-origem.test.ts
 - Esforço: medio
