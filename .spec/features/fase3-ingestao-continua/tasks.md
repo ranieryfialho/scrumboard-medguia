@@ -12,8 +12,7 @@
 - Arquivos: src/worker/ciclo.ts, test/worker/ciclo.spec.test.ts
 - Notas: `pg_try_advisory_lock` por origem (ASM-110); grava `cron_execucoes` e `importacoes` (ASM-111); chama `executarMigracaoSheets`/`executarMigracaoLp` sem decisões (ASM-107, ASM-109); erro sem segredos. Depende de T-127 só pelo tipo de configuração.
 
-## T-129 — Verificação de saúde do worker [pendente]
-
+## T-129 — Verificação de saúde do worker [concluida]
 - Refs: AC-323
 - Arquivos: src/worker/saude.ts, test/worker/saude.spec.test.ts
 - Notas: consulta `cron_execucoes`; saudável = sucesso nos últimos 2 intervalos; sai com código 0/1 para o healthcheck do compose.
