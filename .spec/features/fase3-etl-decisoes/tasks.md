@@ -9,7 +9,7 @@
   Status: pendente | em-andamento | concluida
 -->
 
-## T-124 — Planilha de decisões e validador comuns [pendente]
+## T-124 — Planilha de decisões e validador comuns [concluida]
 - Refs: US-086, US-088, AC-307, AC-308, AC-312, AC-313, AC-314
 - Arquivos: src/etl/decisoes.ts, test/etl/decisoes.test.ts
 - Esforço: alto
