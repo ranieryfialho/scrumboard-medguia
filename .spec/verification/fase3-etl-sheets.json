@@ -1,11 +1,11 @@
 {
   "feature": "fase3-etl-sheets",
-  "timestamp": "2026-10-19T19:42:30.238Z",
-  "gitRev": "17a3308",
-  "command": "echo 'reaproveitando a execucao unica da suite completa: vitest-json 832 de 832 PASS em .spec/verification/raw.json'",
+  "timestamp": "2026-10-21T13:30:44.305Z",
+  "gitRev": "af27f4e",
+  "command": "echo reaproveitando a execucao unica da suite completa: vitest-json 862 de 862 PASS em .spec/verification/raw.json",
   "reporter": "vitest-json",
   "exitCode": 0,
-  "testsParsed": 832,
+  "testsParsed": 862,
   "results": {
     "AC-273": {
       "status": "pass",
