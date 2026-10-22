@@ -22,8 +22,7 @@
 - Arquivos: test/espelho/isolamento.spec.test.ts
 - Notas: só teste. Com a aba "Espelho CRM" presente na planilha 1, as abas lidas pela importação continuam sendo as quatro de leads + `Agenda` (`ABAS_DE_LEADS`, `AGENDA_RANGE` em src/worker/index.ts), e uma linha editada no espelho não cria nem altera lead/card. Se o teste achar um problema na ingestão, vira nova tarefa.
 
-## T-136 — Ligar o espelho no worker: ciclo, intervalo e registro [pendente]
-
+## T-136 — Ligar o espelho no worker: ciclo, intervalo e registro [concluida]
 - Refs: AC-336, AC-337, AC-339
 - Arquivos: src/worker/config.ts, src/worker/index.ts, test/worker/espelho.spec.test.ts
 - Notas: `WORKER_INTERVALO_ESPELHO_MIN` (padrão 15, ASM-120), validado como `WORKER_INTERVALO_IMPORT_MIN`. Roda o job `espelho-sheets` com `rodarCicloImportacao` de src/worker/ciclo.ts (trava advisory, `cron_execucoes`, erro sem segredos), num agendador próprio com o intervalo do espelho. Depende de T-132, T-133 e T-134.
