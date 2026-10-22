@@ -17,8 +17,7 @@
 - Arquivos: src/espelho/gravar.ts, test/espelho/gravar.spec.test.ts
 - Notas: recebe as linhas já prontas (as linhas vêm antes de qualquer chamada ao Sheets, AC-339); cria a aba se não existir, faz `values.clear` e `values.update` com `valueInputOption: 'RAW'` na planilha `GOOGLE_SHEET_ID_1` (ASM-114, ASM-116); sem linha antiga sobrando. Cliente do Sheets injetado (teste com dublê). Erro do Sheets sobe como exceção para o ciclo registrar; nunca limpa a aba se a leitura do banco falhou.
 
-## T-135 — Provar que a ingestão não lê o espelho nem o CRM lê a edição [pendente]
-
+## T-135 — Provar que a ingestão não lê o espelho nem o CRM lê a edição [concluida]
 - Refs: AC-333, AC-334
 - Arquivos: test/espelho/isolamento.spec.test.ts
 - Notas: só teste. Com a aba "Espelho CRM" presente na planilha 1, as abas lidas pela importação continuam sendo as quatro de leads + `Agenda` (`ABAS_DE_LEADS`, `AGENDA_RANGE` em src/worker/index.ts), e uma linha editada no espelho não cria nem altera lead/card. Se o teste achar um problema na ingestão, vira nova tarefa.
