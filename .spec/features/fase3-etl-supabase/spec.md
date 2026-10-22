@@ -187,6 +187,26 @@ Como responsável pelo cutover, quero poder ensaiar e repetir o ETL sem risco, p
 - **Quando** o ETL roda
 - **Então** todo registro migrado pertence à mesma empresa que tinha na origem, sem mistura
 
+#### AC-342 — Os envios herdam a empresa da campanha
+
+- **Dado** envios do legado que não têm coluna de empresa, ligados a campanhas de duas empresas
+- **Quando** o ETL lê a origem
+- **Então** cada envio é lido com a empresa da sua campanha, sem depender de uma coluna que o legado não tem
+- **E** a quantidade de tentativas de cada envio é 0, porque o legado não a registra
+
+#### AC-343 — As mensagens do legado migram como lidas, com a data original
+
+- **Dado** mensagens do legado, que guardam só a data de criação (`created_at`) e nenhuma data de leitura
+- **Quando** o ETL lê a origem
+- **Então** cada mensagem é lida com a data original como horário da mensagem
+- **E** a data de leitura recebe essa mesma data, para o histórico antigo não aparecer como não lido
+
+#### AC-344 — Todas as leituras funcionam contra o schema real do legado
+
+- **Dado** o schema real do Supabase do CRM (as seis tabelas lidas, com as colunas conferidas em 22/10)
+- **Quando** o ETL lê empresas, leads, campanhas, envios, mensagens e configurações
+- **Então** nenhuma leitura falha por coluna inexistente e cada uma devolve as linhas que existem na origem
+
 ## Fora de escopo
 
 - Google Sheets e Supabase da LP (features seguintes da fase 3).
@@ -207,6 +227,7 @@ Como responsável pelo cutover, quero poder ensaiar e repetir o ETL sem risco, p
 | ASM-085 | Telefones sem código de país são brasileiros (+55) | confirmada | Confirmado pelo usuário em 19/10 |
 | ASM-086 | A contagem real de envios é 5.101 (a de 6.110 veio de estimativa do Postgres) | confirmada | Usuário confirmou 5.101 em 19/10; o relatório do ETL ainda confere a contagem |
 | ASM-087 | O ETL lê o Supabase por conexão direta somente leitura (credencial só em variável de ambiente) e nunca altera a origem | confirmada | Decidido em 19/10 (Q-027) |
+| ASM-122 | Os dados de acompanhamento dos envios (`aberto_em`, `clicado_em`, `log_erro`) não migram: o destino (`envios_campanha`) não tem onde guardá-los. A coluna `tentativas` não existe na origem e entra como 0 | aberta | Achado no dry-run de 22/10; falta o usuário confirmar que perder abertura/clique/erro de envio é aceitável |
 | ASM-121 | O Supabase do CRM não deixa o usuário do SQL Editor liberar o schema `auth` a um usuário de leitura (`permission denied to set role "supabase_auth_admin"`, 22/10); por isso os usuários são lidos de uma view `etl.usuarios` (só `id`, `email`, `raw_user_meta_data`), em schema próprio, sem acesso de `anon` nem `authenticated` | confirmada | View criada no Supabase do CRM pelo usuário em 22/10 e lida pelo `etl_leitura` (11 usuários, todos com `empresa_id`); a view e o usuário são removidos depois do ETL |
 
 ## Perguntas em aberto
@@ -217,3 +238,5 @@ Como responsável pelo cutover, quero poder ensaiar e repetir o ETL sem risco, p
 | Q-028 | Os 2 super admins viram MASTER nas duas empresas ou só na empresa deles? | respondida | MASTER nas duas empresas |
 | Q-029 | Como o disparador do CRM novo identifica campanha encerrada (qual status é "não retomável")? | respondida | O disparador só consome envio PENDENTE; FINALIZADA é o status final (`src/repositories/campanhas.ts:290-306`). No legado não há envio PENDENTE |
 | Q-030 | As 7 mensagens com `lead_id` inexistente e as 1.565 sem `lead_id` pertencem a leads do Sheets? | respondida | O `lead_id` do legado é posicional e não confiável; o vínculo será feito pelo telefone na feature do Sheets (fase3-etl-sheets, AC-285) |
+| Q-039 | As mensagens de WhatsApp migradas devem aparecer como lidas ou não lidas no CRM novo? | respondida | Todas como lidas: a data de leitura recebe a data original da mensagem (decidido pelo usuário em 22/10; AC-343) |
+| Q-040 | O ETL ignora hoje `responsavel`, `data_fechamento`, `dados_fechamento`, `anuncio`, `tipo` e `cargo` da tabela real `leads`. Algum deles precisa migrar (o RFC-001 §6.8 manda preservar a data de fechamento dos cards Ganhos)? | aberta | Aguardando as contagens de quantos leads têm cada campo preenchido (consulta no Supabase) |

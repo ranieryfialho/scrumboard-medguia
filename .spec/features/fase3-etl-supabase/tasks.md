@@ -43,3 +43,8 @@
 - Refs: US-069, AC-340, AC-341
 - Arquivos: src/etl/supabase/origem.ts, scripts/etl-supabase.ts, test/etl/origem-usuarios.test.ts
 - Notas: `SUPABASE_LEGADO_TABELA_USUARIOS` (padrão `auth.users`), validada por regex de identificador (`schema.nome`) porque vem de variável de ambiente e entra no texto SQL. A consulta continua com os mesmos aliases (`nome`, `perfil`, `ativo`, `empresa_id`, `is_super_admin`). Ver ASM-121.
+
+## T-139 — Leitores da origem contra o schema real do legado [pendente]
+- Refs: US-074, AC-342, AC-343, AC-344
+- Arquivos: src/etl/supabase/leitura-origem.ts, scripts/etl-supabase.ts, test/etl/leitura-origem.test.ts, test/etl/fixtures/legado-supabase.sql
+- Notas: move para `leitura-origem.ts` os leitores de empresas, leads, campanhas, envios, mensagens e configurações (hoje dentro do script) e corrige os dois que divergem do banco real: envios (empresa via `JOIN campanhas`, tentativas 0) e mensagens (`created_at`, `lida_em = created_at`). O teste roda num Postgres efêmero com o schema real do Supabase do CRM (colunas conferidas em 22/10 pelo `information_schema`), em vez de uma tabela inventada. Ver ASM-122, Q-039, Q-040.

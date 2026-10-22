@@ -26,14 +26,18 @@ import type { ContextoExecucao } from '../src/etl/comum';
 import { lerCsvDecisoes, type LinhaDecisaoBruta } from '../src/etl/decisoes';
 import { conectarOrigem, encerrarOrigem, lerUsuarios } from '../src/etl/supabase/origem';
 import {
+  lerCampanhas,
+  lerConfiguracoes,
+  lerEmpresas,
+  lerEnvios,
+  lerLeads,
+  lerMensagens,
+} from '../src/etl/supabase/leitura-origem';
+import {
   executarMigracaoSupabase,
   type DadosOrigemEtl,
   type RelatorioEtl,
 } from '../src/etl/supabase/executar';
-import type { EmpresaLegado } from '../src/etl/supabase/identidade';
-import type { LeadLegado } from '../src/etl/supabase/leads';
-import type { CampanhaLegado, EnvioLegado } from '../src/etl/supabase/campanhas';
-import type { ConfiguracaoLegado, MensagemLegado } from '../src/etl/supabase/mensagens-config';
 
 import fs from 'node:fs';
 import type { Pool } from 'pg';
@@ -60,121 +64,6 @@ function lerLinhasDecisao(caminho: string | undefined): LinhaDecisaoBruta[] {
   if (!caminho) return [];
   const texto = fs.readFileSync(caminho, 'utf8');
   return lerCsvDecisoes(texto);
-}
-
-async function lerEmpresas(pool: Pool): Promise<EmpresaLegado[]> {
-  const { rows } = await pool.query<EmpresaLegado>('SELECT id, nome, slug FROM empresas');
-  return rows;
-}
-
-async function lerLeads(pool: Pool): Promise<LeadLegado[]> {
-  const { rows } = await pool.query<{
-    id: string;
-    empresa_id: string;
-    nome: string;
-    email: string | null;
-    situacao: string | null;
-    origem: string | null;
-    observacoes: string | null;
-    whatsapp: string | null;
-  }>(
-    'SELECT id, empresa_id, nome, email, situacao, origem, observacoes, whatsapp FROM leads'
-  );
-  return rows.map((linha) => ({
-    id: linha.id,
-    empresaId: linha.empresa_id,
-    nome: linha.nome,
-    email: linha.email,
-    situacao: linha.situacao,
-    origem: linha.origem,
-    observacoes: linha.observacoes,
-    whatsapp: linha.whatsapp,
-  }));
-}
-
-async function lerCampanhas(pool: Pool): Promise<CampanhaLegado[]> {
-  const { rows } = await pool.query<{
-    id: string;
-    empresa_id: string;
-    nome: string;
-    assunto: string;
-    corpo_html: string;
-    status: string;
-    criado_por: string | null;
-  }>('SELECT id, empresa_id, nome, assunto, corpo_html, status, criado_por FROM campanhas');
-  return rows.map((linha) => ({
-    id: linha.id,
-    empresaId: linha.empresa_id,
-    nome: linha.nome,
-    assunto: linha.assunto,
-    corpoHtml: linha.corpo_html,
-    status: linha.status,
-    criadoPor: linha.criado_por,
-  }));
-}
-
-async function lerEnvios(pool: Pool): Promise<EnvioLegado[]> {
-  const { rows } = await pool.query<{
-    id: string;
-    empresa_id: string;
-    campanha_id: string;
-    nome_destinatario: string;
-    email_destinatario: string;
-    status: string;
-    tentativas: number;
-  }>(
-    'SELECT id, empresa_id, campanha_id, nome_destinatario, email_destinatario, status, tentativas FROM envios_campanha'
-  );
-  return rows.map((linha) => ({
-    id: linha.id,
-    empresaId: linha.empresa_id,
-    campanhaId: linha.campanha_id,
-    nomeDestinatario: linha.nome_destinatario,
-    emailDestinatario: linha.email_destinatario,
-    status: linha.status,
-    tentativas: linha.tentativas,
-  }));
-}
-
-async function lerMensagens(pool: Pool): Promise<MensagemLegado[]> {
-  const { rows } = await pool.query<{
-    id: string;
-    empresa_id: string;
-    lead_id: string | null;
-    numero: string;
-    mensagem: string;
-    direcao: 'enviada' | 'recebida';
-    status: string;
-    evolution_message_id: string | null;
-    lida_em: Date | null;
-    criado_em: Date;
-  }>(
-    'SELECT id, empresa_id, lead_id, numero, mensagem, direcao, status, evolution_message_id, lida_em, criado_em FROM whatsapp_mensagens'
-  );
-  return rows.map((linha) => ({
-    id: linha.id,
-    empresaId: linha.empresa_id,
-    leadId: linha.lead_id,
-    numero: linha.numero,
-    mensagem: linha.mensagem,
-    direcao: linha.direcao,
-    status: linha.status,
-    evolutionMessageId: linha.evolution_message_id,
-    lidaEm: linha.lida_em,
-    criadoEm: linha.criado_em,
-  }));
-}
-
-async function lerConfiguracoes(pool: Pool): Promise<ConfiguracaoLegado[]> {
-  const { rows } = await pool.query<{ id: string; empresa_id: string; chave: string; valor: string }>(
-    'SELECT id, empresa_id, chave, valor FROM empresa_configuracoes'
-  );
-  return rows.map((linha) => ({
-    id: linha.id,
-    empresaId: linha.empresa_id,
-    chave: linha.chave,
-    valor: linha.valor,
-  }));
 }
 
 async function lerDadosOrigem(pool: Pool, linhasDecisao: LinhaDecisaoBruta[]): Promise<DadosOrigemEtl> {
