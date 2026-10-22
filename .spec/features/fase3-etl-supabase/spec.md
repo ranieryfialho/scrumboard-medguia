@@ -39,6 +39,20 @@ Como operação, quero que as empresas e os usuários do legado existam no CRM n
 - **Quando** o ETL roda
 - **Então** nenhum usuário migrado tem credencial de senha, e cada um precisa redefinir a senha para entrar
 
+#### AC-340 — Os usuários podem ser lidos de uma view da origem
+
+- **Dado** a variável `SUPABASE_LEGADO_TABELA_USUARIOS` apontando para `etl.usuarios`
+- **Quando** o ETL monta a consulta dos usuários
+- **Então** ela lê `id`, `email` e os dados do usuário dessa view, com as mesmas colunas de sempre
+- **E** sem a variável a leitura continua em `auth.users`
+
+#### AC-341 — Um nome de origem inválido é recusado antes de qualquer consulta
+
+- **Dado** um nome de origem com aspas, ponto e vírgula, espaço ou mais de um ponto
+- **Quando** o ETL monta a consulta dos usuários
+- **Então** ele para com um erro claro que cita a variável
+- **E** nenhuma consulta chega a ser enviada à origem
+
 ### US-070 — Migrar os leads como cards do pipeline
 
 Como operação, quero que cada lead do legado apareça como card na etapa certa do funil novo, para continuar o atendimento sem refazer o cadastro.
@@ -193,6 +207,7 @@ Como responsável pelo cutover, quero poder ensaiar e repetir o ETL sem risco, p
 | ASM-085 | Telefones sem código de país são brasileiros (+55) | confirmada | Confirmado pelo usuário em 19/10 |
 | ASM-086 | A contagem real de envios é 5.101 (a de 6.110 veio de estimativa do Postgres) | confirmada | Usuário confirmou 5.101 em 19/10; o relatório do ETL ainda confere a contagem |
 | ASM-087 | O ETL lê o Supabase por conexão direta somente leitura (credencial só em variável de ambiente) e nunca altera a origem | confirmada | Decidido em 19/10 (Q-027) |
+| ASM-121 | O Supabase do CRM não deixa o usuário do SQL Editor liberar o schema `auth` a um usuário de leitura (`permission denied to set role "supabase_auth_admin"`, 22/10); por isso os usuários são lidos de uma view `etl.usuarios` (só `id`, `email`, `raw_user_meta_data`), em schema próprio, sem acesso de `anon` nem `authenticated` | confirmada | View criada no Supabase do CRM pelo usuário em 22/10 e lida pelo `etl_leitura` (11 usuários, todos com `empresa_id`); a view e o usuário são removidos depois do ETL |
 
 ## Perguntas em aberto
 
