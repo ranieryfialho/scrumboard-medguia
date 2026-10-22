@@ -1,0 +1,108 @@
+{
+  "runId": "scrumboard-medguia-fase3-espelho-sheets-mvjjfbge",
+  "feature": "fase3-espelho-sheets",
+  "agent": "claude",
+  "modo": "sequencial",
+  "paralelizar": null,
+  "modeloForcado": null,
+  "esforcoForcado": null,
+  "geradoEm": "2026-10-22 12:49",
+  "branchTrabalho": "spec/fase3-espelho-sheets",
+  "baseDir": ".spec/features/fase3-espelho-sheets",
+  "specDir": ".spec",
+  "repoName": "scrumboard-medguia",
+  "logsDir": "../onp-worktrees/scrumboard-medguia-fase3-espelho-sheets-logs",
+  "ondas": [],
+  "faixas": [],
+  "sequenciais": [
+    {
+      "id": "T-132",
+      "titulo": "Montar as linhas do espelho e proteger contra fórmulas",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/espelho/linhas.ts",
+        "test/espelho/linhas.spec.test.ts"
+      ],
+      "refs": [
+        "AC-329",
+        "AC-330",
+        "AC-335"
+      ]
+    },
+    {
+      "id": "T-133",
+      "titulo": "Consultar no banco os cards da empresa do Sheets",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/espelho/consulta.ts",
+        "test/espelho/consulta.spec.test.ts"
+      ],
+      "refs": [
+        "AC-329",
+        "AC-330",
+        "AC-331"
+      ]
+    },
+    {
+      "id": "T-134",
+      "titulo": "Gravar o espelho na aba \"Espelho CRM\"",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/espelho/gravar.ts",
+        "test/espelho/gravar.spec.test.ts"
+      ],
+      "refs": [
+        "AC-332",
+        "AC-333",
+        "AC-339"
+      ]
+    },
+    {
+      "id": "T-135",
+      "titulo": "Provar que a ingestão não lê o espelho nem o CRM lê a edição",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "test/espelho/isolamento.spec.test.ts"
+      ],
+      "refs": [
+        "AC-333",
+        "AC-334"
+      ]
+    },
+    {
+      "id": "T-136",
+      "titulo": "Ligar o espelho no worker: ciclo, intervalo e registro",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/worker/config.ts",
+        "src/worker/index.ts",
+        "test/worker/espelho.spec.test.ts"
+      ],
+      "refs": [
+        "AC-336",
+        "AC-337",
+        "AC-339"
+      ]
+    },
+    {
+      "id": "T-137",
+      "titulo": "Saúde do worker acusa espelho atrasado",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/worker/saude.ts",
+        "test/worker/saude-espelho.spec.test.ts"
+      ],
+      "refs": [
+        "AC-338"
+      ]
+    }
+  ],
+  "concluidas": [],
+  "avisos": []
+}
