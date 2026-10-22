@@ -9,6 +9,11 @@
 // AC-320 — `intervaloImportacaoMin` é o intervalo único usado pelos dois
 // ciclos (Sheets e LP); `WORKER_INTERVALO_IMPORT_MIN` é opcional e cai no
 // padrão de 5 minutos (ASM-108) quando ausente ou não for um número > 0.
+//
+// T-136 (fase3-espelho-sheets, AC-337, ASM-120) — `intervaloEspelhoMin` é o
+// intervalo do job `espelho-sheets`, independente do dos dois ciclos de
+// importação. `WORKER_INTERVALO_ESPELHO_MIN` segue a mesma validação de
+// `WORKER_INTERVALO_IMPORT_MIN`: ausente ou inválido cai no padrão de 15 min.
 
 /** Nomes das variáveis obrigatórias — nunca os valores aparecem em erro ou log. */
 export const VARIAVEIS_OBRIGATORIAS = [
@@ -20,6 +25,7 @@ export const VARIAVEIS_OBRIGATORIAS = [
 ] as const;
 
 export const INTERVALO_IMPORT_MIN_PADRAO = 5;
+export const INTERVALO_ESPELHO_MIN_PADRAO = 15;
 
 export class ErroConfiguracaoWorker extends Error {
   constructor(public readonly variaveisFaltando: string[]) {
@@ -35,15 +41,16 @@ export interface ConfiguracaoWorker {
   googleClientEmail: string;
   googlePrivateKey: string;
   intervaloImportacaoMin: number;
+  intervaloEspelhoMin: number;
 }
 
-function lerIntervaloImportacaoMin(valorBruto: string | undefined): number {
+function lerIntervaloMin(valorBruto: string | undefined, padrao: number): number {
   if (valorBruto === undefined || valorBruto.trim() === '') {
-    return INTERVALO_IMPORT_MIN_PADRAO;
+    return padrao;
   }
   const valor = Number(valorBruto);
   if (!Number.isFinite(valor) || valor <= 0) {
-    return INTERVALO_IMPORT_MIN_PADRAO;
+    return padrao;
   }
   return valor;
 }
@@ -67,6 +74,7 @@ export function carregarConfiguracaoWorker(
     supabaseLpServiceKey: env.SUPABASE_LP_SERVICE_KEY as string,
     googleClientEmail: env.GOOGLE_CLIENT_EMAIL as string,
     googlePrivateKey: env.GOOGLE_PRIVATE_KEY as string,
-    intervaloImportacaoMin: lerIntervaloImportacaoMin(env.WORKER_INTERVALO_IMPORT_MIN),
+    intervaloImportacaoMin: lerIntervaloMin(env.WORKER_INTERVALO_IMPORT_MIN, INTERVALO_IMPORT_MIN_PADRAO),
+    intervaloEspelhoMin: lerIntervaloMin(env.WORKER_INTERVALO_ESPELHO_MIN, INTERVALO_ESPELHO_MIN_PADRAO),
   };
 }
