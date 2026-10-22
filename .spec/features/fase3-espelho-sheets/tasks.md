@@ -2,8 +2,7 @@
 
 > feature: fase3-espelho-sheets
 
-## T-132 — Montar as linhas do espelho e proteger contra fórmulas [pendente]
-
+## T-132 — Montar as linhas do espelho e proteger contra fórmulas [concluida]
 - Refs: AC-329, AC-330, AC-335
 - Arquivos: src/espelho/linhas.ts, test/espelho/linhas.spec.test.ts
 - Notas: função pura. Cabeçalho fixo "Espelho CRM" (nome, telefone, e-mail, etapa, responsável, valor, motivo de perda, criado em, atualizado em, dia da cadência, turno, tentativas, próxima ação) e uma linha por card. Células de texto começando com `=`, `+`, `-` ou `@` recebem prefixo `'` para o Sheets não interpretar fórmula. Datas em America/Sao_Paulo. Sem cadência, colunas de cadência em branco.
