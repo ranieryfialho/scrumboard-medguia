@@ -12,8 +12,7 @@
 - Arquivos: src/espelho/consulta.ts, test/espelho/consulta.spec.test.ts
 - Notas: lê oportunidades + lead + etapa + responsável + motivo de perda da empresa `medguia` (ASM-118), todas as etapas inclusive Ganho/Perdido (ASM-115). Tentativas = atividades de `cadencia_atividades` com resultado diferente de `pendente` (ASM-117). Teste de integração com Postgres efêmero (`test/support/postgres-efemero.ts`) e duas empresas. Só leitura; nenhuma escrita no banco.
 
-## T-134 — Gravar o espelho na aba "Espelho CRM" [pendente]
-
+## T-134 — Gravar o espelho na aba "Espelho CRM" [concluida]
 - Refs: AC-332, AC-333, AC-339
 - Arquivos: src/espelho/gravar.ts, test/espelho/gravar.spec.test.ts
 - Notas: recebe as linhas já prontas (as linhas vêm antes de qualquer chamada ao Sheets, AC-339); cria a aba se não existir, faz `values.clear` e `values.update` com `valueInputOption: 'RAW'` na planilha `GOOGLE_SHEET_ID_1` (ASM-114, ASM-116); sem linha antiga sobrando. Cliente do Sheets injetado (teste com dublê). Erro do Sheets sobe como exceção para o ciclo registrar; nunca limpa a aba se a leitura do banco falhou.
