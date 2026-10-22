@@ -1,11 +1,11 @@
 {
   "feature": "fase3-etl-supabase",
-  "timestamp": "2026-10-21T15:51:00.753Z",
-  "gitRev": "899d58a",
-  "command": "echo reaproveitando a execucao unica da suite completa: vitest-json 899 de 899 PASS em .spec/verification/raw.json",
+  "timestamp": "2026-10-22T19:32:41.344Z",
+  "gitRev": "7e5ce14",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
-  "exitCode": 0,
-  "testsParsed": 899,
+  "exitCode": 1,
+  "testsParsed": 974,
   "results": {
     "AC-252": {
       "status": "pass",
@@ -25,6 +25,16 @@
     "AC-255": {
       "status": "pass",
       "testName": "T-109: migração de empresas e usuários contra Postgres real nenhum usuário migrado tem credencial de senha (@spec:AC-255) nenhum usuário migrado tem credencial de senha (@spec:AC-255)",
+      "method": "vitest-json"
+    },
+    "AC-340": {
+      "status": "pass",
+      "testName": "T-138: os usuários podem ser lidos de uma view da origem (@spec:AC-340) com a origem etl.usuarios a consulta lê dessa view, com as mesmas colunas de sempre com a origem etl.usuarios a consulta lê dessa view, com as mesmas colunas de sempre",
+      "method": "vitest-json"
+    },
+    "AC-341": {
+      "status": "pass",
+      "testName": "T-138: nome de origem inválido é recusado antes de qualquer consulta (@spec:AC-341) recusa \"etl.usuarios; drop table x\", cita a variável e não envia consulta recusa \"etl.usuarios; drop table x\", cita a variável e não envia consulta",
       "method": "vitest-json"
     },
     "AC-256": {
