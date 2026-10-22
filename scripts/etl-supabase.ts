@@ -24,13 +24,13 @@
 import { getDb } from '../src/db/client';
 import type { ContextoExecucao } from '../src/etl/comum';
 import { lerCsvDecisoes, type LinhaDecisaoBruta } from '../src/etl/decisoes';
-import { conectarOrigem, encerrarOrigem } from '../src/etl/supabase/origem';
+import { conectarOrigem, encerrarOrigem, lerUsuarios } from '../src/etl/supabase/origem';
 import {
   executarMigracaoSupabase,
   type DadosOrigemEtl,
   type RelatorioEtl,
 } from '../src/etl/supabase/executar';
-import type { EmpresaLegado, PapelLegado, UsuarioLegado } from '../src/etl/supabase/identidade';
+import type { EmpresaLegado } from '../src/etl/supabase/identidade';
 import type { LeadLegado } from '../src/etl/supabase/leads';
 import type { CampanhaLegado, EnvioLegado } from '../src/etl/supabase/campanhas';
 import type { ConfiguracaoLegado, MensagemLegado } from '../src/etl/supabase/mensagens-config';
@@ -65,37 +65,6 @@ function lerLinhasDecisao(caminho: string | undefined): LinhaDecisaoBruta[] {
 async function lerEmpresas(pool: Pool): Promise<EmpresaLegado[]> {
   const { rows } = await pool.query<EmpresaLegado>('SELECT id, nome, slug FROM empresas');
   return rows;
-}
-
-async function lerUsuarios(pool: Pool): Promise<UsuarioLegado[]> {
-  const { rows } = await pool.query<{
-    id: string;
-    email: string;
-    nome: string;
-    perfil: PapelLegado;
-    ativo: boolean;
-    empresa_id: string;
-    is_super_admin: boolean;
-  }>(
-    `SELECT
-       id,
-       email,
-       coalesce(raw_user_meta_data ->> 'nome', email) AS nome,
-       (raw_user_meta_data ->> 'perfil') AS perfil,
-       coalesce((raw_user_meta_data ->> 'ativo')::boolean, true) AS ativo,
-       (raw_user_meta_data ->> 'empresa_id') AS empresa_id,
-       coalesce((raw_user_meta_data ->> 'is_super_admin')::boolean, false) AS is_super_admin
-     FROM auth.users`
-  );
-  return rows.map((linha) => ({
-    id: linha.id,
-    email: linha.email,
-    nome: linha.nome,
-    perfil: linha.perfil,
-    ativo: linha.ativo,
-    empresaId: linha.empresa_id,
-    isSuperAdmin: linha.is_super_admin,
-  }));
 }
 
 async function lerLeads(pool: Pool): Promise<LeadLegado[]> {
