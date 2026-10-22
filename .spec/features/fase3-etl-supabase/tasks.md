@@ -39,7 +39,7 @@
 - Arquivos: src/etl/supabase/executar.ts, scripts/etl-supabase.ts, test/etl/executar.test.ts
 - Notas: roda as etapas na ordem (empresas → usuários → leads → campanhas → mensagens/config) numa transação; depende de T-108 a T-112.
 
-## T-138 — Origem dos usuários configurável (view em vez de auth.users) [pendente]
+## T-138 — Origem dos usuários configurável (view em vez de auth.users) [concluida]
 - Refs: US-069, AC-340, AC-341
 - Arquivos: src/etl/supabase/origem.ts, scripts/etl-supabase.ts, test/etl/origem-usuarios.test.ts
 - Notas: `SUPABASE_LEGADO_TABELA_USUARIOS` (padrão `auth.users`), validada por regex de identificador (`schema.nome`) porque vem de variável de ambiente e entra no texto SQL. A consulta continua com os mesmos aliases (`nome`, `perfil`, `ativo`, `empresa_id`, `is_super_admin`). Ver ASM-121.
