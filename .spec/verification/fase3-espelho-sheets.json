@@ -1,0 +1,67 @@
+{
+  "feature": "fase3-espelho-sheets",
+  "timestamp": "2026-10-22T13:22:52.002Z",
+  "gitRev": "1f06f64",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
+  "reporter": "vitest-json",
+  "exitCode": 0,
+  "testsParsed": 962,
+  "results": {
+    "AC-329": {
+      "status": "pass",
+      "testName": "T-133: consulta dos cards do espelho cada card da empresa do Sheets aparece no resultado (@spec:AC-329) cada card da empresa do Sheets aparece no resultado (@spec:AC-329)",
+      "method": "vitest-json"
+    },
+    "AC-330": {
+      "status": "pass",
+      "testName": "T-133: consulta dos cards do espelho card em cadência traz dia, turno, tentativas (atividades não pendentes) e próxima ação (@spec:AC-330) card em cadência traz dia, turno, tentativas (atividades não pendentes) e próxima ação (@spec:AC-330)",
+      "method": "vitest-json"
+    },
+    "AC-331": {
+      "status": "pass",
+      "testName": "T-133: consulta dos cards do espelho nenhum card da outra empresa entra no resultado (@spec:AC-331) nenhum card da outra empresa entra no resultado (@spec:AC-331)",
+      "method": "vitest-json"
+    },
+    "AC-332": {
+      "status": "pass",
+      "testName": "T-134: gravar o espelho na aba \"Espelho CRM\" substitui o conteúdo inteiro da aba, sem sobrar linha antiga (@spec:AC-332) substitui o conteúdo inteiro da aba, sem sobrar linha antiga (@spec:AC-332)",
+      "method": "vitest-json"
+    },
+    "AC-333": {
+      "status": "pass",
+      "testName": "T-134: gravar o espelho na aba \"Espelho CRM\" edição manual na aba é sobrescrita por completo, sem sobreviver à gravação (@spec:AC-333) edição manual na aba é sobrescrita por completo, sem sobreviver à gravação (@spec:AC-333)",
+      "method": "vitest-json"
+    },
+    "AC-334": {
+      "status": "pass",
+      "testName": "T-135: isolamento entre a ingestão de leads e o espelho ABAS_DE_LEADS e AGENDA_RANGE do worker nunca citam a aba do espelho (@spec:AC-334) ABAS_DE_LEADS e AGENDA_RANGE do worker nunca citam a aba do espelho (@spec:AC-334)",
+      "method": "vitest-json"
+    },
+    "AC-335": {
+      "status": "pass",
+      "testName": "T-132: montar linhas do espelho texto começando com \"=\" não é interpretado como fórmula: recebe prefixo de texto literal (@spec:AC-335) texto começando com \"=\" não é interpretado como fórmula: recebe prefixo de texto literal (@spec:AC-335)",
+      "method": "vitest-json"
+    },
+    "AC-336": {
+      "status": "pass",
+      "testName": "T-136: ciclo do espelho (construirCicloEspelho) contra Postgres real ao rodar com sucesso, fica uma linha em cron_execucoes para \"espelho-sheets\" com início, fim, status e a quantidade de cards gravados (@spec:AC-336) ao rodar com sucesso, fica uma linha em cron_execucoes para \"espelho-sheets\" com início, fim, status e a quantidade de cards gravados (@spec:AC-336)",
+      "method": "vitest-json"
+    },
+    "AC-337": {
+      "status": "pass",
+      "testName": "T-136: config do intervalo do espelho (WORKER_INTERVALO_ESPELHO_MIN) sem a variável, o espelho usa o padrão de 15 min, independente do intervalo de importação (@spec:AC-337) sem a variável, o espelho usa o padrão de 15 min, independente do intervalo de importação (@spec:AC-337)",
+      "method": "vitest-json"
+    },
+    "AC-338": {
+      "status": "pass",
+      "testName": "T-137: saúde do worker acusa espelho atrasado diz \"doente\" quando a última execução bem-sucedida do espelho tem mais de 45 min (@spec:AC-338) diz \"doente\" quando a última execução bem-sucedida do espelho tem mais de 45 min (@spec:AC-338)",
+      "method": "vitest-json"
+    },
+    "AC-339": {
+      "status": "pass",
+      "testName": "T-134: gravar o espelho na aba \"Espelho CRM\" erro do Sheets ao limpar a aba sobe como exceção, sem ser engolido (@spec:AC-339) erro do Sheets ao limpar a aba sobe como exceção, sem ser engolido (@spec:AC-339)",
+      "method": "vitest-json"
+    }
+  },
+  "principles": {}
+}

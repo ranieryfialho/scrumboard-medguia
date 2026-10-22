@@ -27,8 +27,7 @@
 - Arquivos: src/worker/config.ts, src/worker/index.ts, test/worker/espelho.spec.test.ts
 - Notas: `WORKER_INTERVALO_ESPELHO_MIN` (padrão 15, ASM-120), validado como `WORKER_INTERVALO_IMPORT_MIN`. Roda o job `espelho-sheets` com `rodarCicloImportacao` de src/worker/ciclo.ts (trava advisory, `cron_execucoes`, erro sem segredos), num agendador próprio com o intervalo do espelho. Depende de T-132, T-133 e T-134.
 
-## T-137 — Saúde do worker acusa espelho atrasado [pendente]
-
+## T-137 — Saúde do worker acusa espelho atrasado [concluida]
 - Refs: AC-338
 - Arquivos: src/worker/saude.ts, test/worker/saude-espelho.spec.test.ts
 - Notas: inclui o job `espelho-sheets` na verificação, com prazo de 45 min (TDD-001 §8) em vez de 2× o intervalo de importação; sem nenhuma execução conta como doente. Independente das demais: só lê `cron_execucoes`.
