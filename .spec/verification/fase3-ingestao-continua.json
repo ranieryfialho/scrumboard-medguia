@@ -1,11 +1,11 @@
 {
   "feature": "fase3-ingestao-continua",
-  "timestamp": "2026-10-21T20:10:30.714Z",
-  "gitRev": "930d68d",
+  "timestamp": "2026-10-22T12:02:57.291Z",
+  "gitRev": "f6a067a",
   "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
   "exitCode": 0,
-  "testsParsed": 922,
+  "testsParsed": 924,
   "results": {
     "AC-318": {
       "status": "pass",
@@ -55,6 +55,11 @@
     "AC-327": {
       "status": "pass",
       "testName": "carregarConfiguracaoWorker com todas as variáveis presentes, carrega a configuração sem lançar @spec:AC-327 com todas as variáveis presentes, carrega a configuração sem lançar @spec:AC-327",
+      "method": "vitest-json"
+    },
+    "AC-328": {
+      "status": "pass",
+      "testName": "T-131: serviço crm-worker na composição docker-compose.yml define o serviço crm-worker com a mesma imagem do app, outro comando e o healthcheck de saúde (@spec:AC-328) docker-compose.yml define o serviço crm-worker com a mesma imagem do app, outro comando e o healthcheck de saúde (@spec:AC-328)",
       "method": "vitest-json"
     }
   },

@@ -105,12 +105,12 @@ Como responsável técnico, quero que o worker suba em container próprio e pare
 
 | ID | Suposição | Status | Resolução |
 |---|---|---|---|
-| ASM-107 | Cada ciclo reaproveita `executarMigracaoSheets` e `executarMigracaoLp` como estão: relê a origem inteira e a idempotência de `migracao_registros` evita duplicar (volume de ~70 MB não justifica leitura incremental) | aberta | — |
+| ASM-107 | Cada ciclo reaproveita `executarMigracaoSheets` e `executarMigracaoLp` como estão: relê a origem inteira e a idempotência de `migracao_registros` evita duplicar (volume de ~70 MB não justifica leitura incremental) | confirmada | Confirmado pelo usuário em 22/10 |
 | ASM-108 | Intervalo padrão de 5 minutos para as duas origens, configurável por `WORKER_INTERVALO_IMPORT_MIN` | confirmada | Confirmado pelo usuário em 21/10 |
 | ASM-109 | Sem planilha de decisões no modo contínuo: leads que o ETL manda para revisão não viram card, ficam só contados/logados e reaparecem a cada ciclo até a operação resolver pelo comando manual com `--decisoes` | confirmada | Confirmado pelo usuário em 21/10 |
-| ASM-110 | A trava de não-sobreposição usa `pg_try_advisory_lock` por origem (a conexão é do worker, não do pool compartilhado) | aberta | — |
-| ASM-111 | `importacoes` ganha uma linha por ciclo com as contagens; `cron_execucoes` guarda o resultado de saúde (jobs `import-sheets` e `import-lp`) | aberta | — |
-| ASM-112 | O agendador é `node-cron` (D-S6) e roda no mesmo repositório, com ponto de entrada `src/worker/index.ts` executado por `tsx` na imagem existente | aberta | — |
+| ASM-110 | A trava de não-sobreposição usa `pg_try_advisory_lock` por origem (a conexão é do worker, não do pool compartilhado) | confirmada | Confirmado pelo usuário em 22/10 |
+| ASM-111 | `importacoes` ganha uma linha por ciclo com as contagens; `cron_execucoes` guarda o resultado de saúde (jobs `import-sheets` e `import-lp`) | confirmada | Confirmado pelo usuário em 22/10 |
+| ASM-112 | O agendador é `node-cron` (D-S6) e roda no mesmo repositório, com ponto de entrada `src/worker/index.ts` executado por `tsx` na imagem existente | confirmada | Confirmado pelo usuário em 22/10 |
 
 ## Perguntas em aberto
 
