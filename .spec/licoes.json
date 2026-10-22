@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "proximoId": 2,
+  "proximoId": 4,
   "licoes": [
     {
       "id": "L-001",
@@ -24,6 +24,52 @@
       "penalidades": 0,
       "criadaEm": "2026-10-21T15:51:19.171Z",
       "ultimaVez": "2026-10-21T15:51:19.171Z"
+    },
+    {
+      "id": "L-002",
+      "texto": "Ao escrever o tasks.md, cruze a lista de critérios de aceite com os campos Refs das tarefas antes de começar a executar: todo critério precisa de pelo menos uma tarefa.",
+      "chave": "AC_SEM_TASK::ao escrever o tasks md cruze a lista de criterios de aceite com os campos refs das tarefas antes de comecar a executar todo criterio precisa de pelo menos uma tarefa",
+      "sinal": "AC_SEM_TASK",
+      "escopo": null,
+      "status": "candidata",
+      "recorrencia": 1,
+      "features": [
+        "fase2-kanban"
+      ],
+      "evidencias": [
+        {
+          "fonte": "AC-079",
+          "feature": "fase2-kanban",
+          "quando": "2026-10-22T15:48:52.881Z",
+          "gitRev": "0bb6544"
+        }
+      ],
+      "penalidades": 0,
+      "criadaEm": "2026-10-22T15:48:52.881Z",
+      "ultimaVez": "2026-10-22T15:48:52.881Z"
+    },
+    {
+      "id": "L-003",
+      "texto": "Só marque a tarefa como concluída depois que o verify gravar PASS para os critérios dela; teste escrito ou código pronto não basta.",
+      "chave": "TASK_CONCLUIDA_SEM_PROVA::so marque a tarefa como concluida depois que o verify gravar pass para os criterios dela teste escrito ou codigo pronto nao basta",
+      "sinal": "TASK_CONCLUIDA_SEM_PROVA",
+      "escopo": null,
+      "status": "candidata",
+      "recorrencia": 1,
+      "features": [
+        "fase2-kanban"
+      ],
+      "evidencias": [
+        {
+          "fonte": "T-046",
+          "feature": "fase2-kanban",
+          "quando": "2026-10-22T15:48:52.942Z",
+          "gitRev": "5fd7c83"
+        }
+      ],
+      "penalidades": 0,
+      "criadaEm": "2026-10-22T15:48:52.942Z",
+      "ultimaVez": "2026-10-22T15:48:52.942Z"
     }
   ]
 }
