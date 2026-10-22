@@ -7,8 +7,7 @@
 - Arquivos: src/espelho/linhas.ts, test/espelho/linhas.spec.test.ts
 - Notas: função pura. Cabeçalho fixo "Espelho CRM" (nome, telefone, e-mail, etapa, responsável, valor, motivo de perda, criado em, atualizado em, dia da cadência, turno, tentativas, próxima ação) e uma linha por card. Células de texto começando com `=`, `+`, `-` ou `@` recebem prefixo `'` para o Sheets não interpretar fórmula. Datas em America/Sao_Paulo. Sem cadência, colunas de cadência em branco.
 
-## T-133 — Consultar no banco os cards da empresa do Sheets [pendente]
-
+## T-133 — Consultar no banco os cards da empresa do Sheets [concluida]
 - Refs: AC-329, AC-330, AC-331
 - Arquivos: src/espelho/consulta.ts, test/espelho/consulta.spec.test.ts
 - Notas: lê oportunidades + lead + etapa + responsável + motivo de perda da empresa `medguia` (ASM-118), todas as etapas inclusive Ganho/Perdido (ASM-115). Tentativas = atividades de `cadencia_atividades` com resultado diferente de `pendente` (ASM-117). Teste de integração com Postgres efêmero (`test/support/postgres-efemero.ts`) e duas empresas. Só leitura; nenhuma escrita no banco.
