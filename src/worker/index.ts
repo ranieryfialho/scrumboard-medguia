@@ -18,8 +18,18 @@
 // cada intervalo configurado) sem exigir instalação de pacote externo; a
 // exclusão mútua entre ciclos continua sendo responsabilidade da trava
 // consultiva de `ciclo.ts` (AC-324/AC-325), não do agendador.
+//
+// T-136 (fase3-espelho-sheets, US-096): o job `espelho-sheets` roda no SEU
+// PRÓPRIO agendador (`montarAgendadores`), com o intervalo de
+// `config.intervaloEspelhoMin` (AC-337, ASM-120) — independente do
+// agendador dos dois ciclos de importação. Ele reaproveita
+// `rodarCicloImportacao` (AC-336: mesma trava advisory e o mesmo registro
+// em `cron_execucoes`, com `itensProcessados` = quantidade de cards
+// gravados; AC-339: qualquer erro do Sheets vira "falha" registrada em vez
+// de subir e derrubar o worker, mesmo mecanismo de AC-321/AC-322).
 import { eq } from 'drizzle-orm';
 import { drizzle, type NodePgDatabase } from 'drizzle-orm/node-postgres';
+import { google, type sheets_v4 } from 'googleapis';
 import { Pool } from 'pg';
 
 import { empresas } from '../db/schema';
@@ -32,13 +42,20 @@ import {
 import { executarMigracaoSheets, type AbaParaLer } from '../etl/sheets/executar';
 import { lerTodosCadastros } from '../etl/lp/origem';
 import { executarMigracaoLp } from '../etl/lp/executar';
+import { consultarCardsDoEspelho } from '../espelho/consulta';
+import { montarLinhasDoEspelho } from '../espelho/linhas';
+import { gravarEspelho, type ClienteSheetsEspelho } from '../espelho/gravar';
 import { carregarConfiguracaoWorker, ErroConfiguracaoWorker, type ConfiguracaoWorker } from './config';
-import { rodarCiclosImportacao, type CicloOrigem, type ResultadoImportacao } from './ciclo';
+import { rodarCicloImportacao, rodarCiclosImportacao, type CicloOrigem, type ResultadoImportacao } from './ciclo';
 
 const ORIGEM_SHEETS = 'import-sheets';
 const ORIGEM_LP = 'import-lp';
+const ORIGEM_ESPELHO = 'espelho-sheets';
 const EMPRESA_SLUG = 'medguia';
 const AGENDA_RANGE = 'Agenda!A:D';
+
+/** Escopo de escrita do Sheets (ASM-119) — só usado pelo job do espelho, nunca pela ingestão. */
+const ESCOPO_ESCRITA_SHEETS = 'https://www.googleapis.com/auth/spreadsheets';
 
 const ABAS_DE_LEADS: { chave: ChaveAbaConhecida; spreadsheetIdEnv: string; range: string }[] = [
   { chave: 'sheet1/Página1', spreadsheetIdEnv: 'GOOGLE_SHEET_ID_1', range: 'Página1' },
@@ -123,6 +140,58 @@ function somarRelatorioSheets(
   );
 }
 
+/** Cliente do Sheets com escopo de escrita (ASM-119) — só para o job `espelho-sheets`. */
+function criarClienteSheetsEscrita(credenciais: { email: string; chavePrivada: string }): sheets_v4.Sheets {
+  const auth = new google.auth.JWT({
+    email: credenciais.email,
+    key: credenciais.chavePrivada,
+    scopes: [ESCOPO_ESCRITA_SHEETS],
+  });
+  return google.sheets({ version: 'v4', auth });
+}
+
+/** Dependências do ciclo do espelho, injetáveis para teste (padrão já usado nos outros módulos de `espelho/`). */
+export interface DependenciasCicloEspelho {
+  consultarCards: typeof consultarCardsDoEspelho;
+  montarLinhas: typeof montarLinhasDoEspelho;
+  gravar: typeof gravarEspelho;
+  criarClienteEscrita: (credenciais: { email: string; chavePrivada: string }) => ClienteSheetsEspelho;
+}
+
+/**
+ * Monta o ciclo do job `espelho-sheets` (T-132/T-133/T-134 compostos): lê os
+ * cards do banco, monta as linhas e grava na aba "Espelho CRM" — nessa
+ * ordem, para nunca limpar a aba antes de ter os dados novos em mãos
+ * (AC-339). O resultado devolve a quantidade de cards gravados como
+ * `linhasLidas`, que `rodarCicloImportacao` grava em
+ * `cron_execucoes.itens_processados` (AC-336).
+ */
+export function construirCicloEspelho(
+  db: NodePgDatabase,
+  config: ConfiguracaoWorker,
+  env: Record<string, string | undefined> = process.env,
+  dependencias: Partial<DependenciasCicloEspelho> = {}
+): CicloOrigem {
+  const consultarCards = dependencias.consultarCards ?? consultarCardsDoEspelho;
+  const montarLinhas = dependencias.montarLinhas ?? montarLinhasDoEspelho;
+  const gravar = dependencias.gravar ?? gravarEspelho;
+  const criarClienteEscrita = dependencias.criarClienteEscrita ?? criarClienteSheetsEscrita;
+
+  return {
+    job: ORIGEM_ESPELHO,
+    executarImportacao: async () => {
+      const cards = await consultarCards(db);
+      const linhas = montarLinhas(cards);
+      const sheets = criarClienteEscrita({
+        email: config.googleClientEmail,
+        chavePrivada: config.googlePrivateKey.replace(/\\n/g, '\n'),
+      });
+      await gravar(sheets, idDaPlanilha(env, 'GOOGLE_SHEET_ID_1'), linhas);
+      return { linhasLidas: cards.length, linhasCriadas: 0, linhasIgnoradas: 0 };
+    },
+  };
+}
+
 /** Monta os dois ciclos de origem (Sheets e LP), sem decisões (ASM-107, ASM-109). */
 function construirCiclosOrigem(
   db: NodePgDatabase,
@@ -170,6 +239,33 @@ function construirCiclosOrigem(
   ];
 }
 
+/**
+ * Monta as opções dos dois agendadores do worker: o dos ciclos de
+ * importação (Sheets + LP, intervalo único — AC-320) e o do espelho
+ * (intervalo próprio, AC-337) — sem iniciar nenhum deles, para o teste
+ * poder inspecionar os intervalos sem depender de `setInterval` real.
+ */
+export function montarAgendadores(
+  pool: Pool,
+  db: NodePgDatabase,
+  config: ConfiguracaoWorker,
+  env: Record<string, string | undefined> = process.env
+): { importacao: OpcoesAgendador; espelho: OpcoesAgendador } {
+  const ciclos = construirCiclosOrigem(db, config, env);
+  const cicloEspelho = construirCicloEspelho(db, config, env);
+
+  return {
+    importacao: {
+      intervaloMs: config.intervaloImportacaoMin * 60_000,
+      rodarCiclos: () => rodarCiclosImportacao(pool, db, ciclos),
+    },
+    espelho: {
+      intervaloMs: config.intervaloEspelhoMin * 60_000,
+      rodarCiclos: () => rodarCicloImportacao(pool, db, cicloEspelho.job, cicloEspelho.executarImportacao),
+    },
+  };
+}
+
 async function main(): Promise<void> {
   let config: ConfiguracaoWorker;
   try {
@@ -185,16 +281,14 @@ async function main(): Promise<void> {
 
   const pool = new Pool({ connectionString: config.databaseUrl });
   const db = drizzle(pool);
-  const ciclos = construirCiclosOrigem(db, config);
+  const { importacao, espelho } = montarAgendadores(pool, db, config);
 
-  const agendador = iniciarAgendador({
-    intervaloMs: config.intervaloImportacaoMin * 60_000,
-    rodarCiclos: () => rodarCiclosImportacao(pool, db, ciclos),
-  });
+  const agendadorImportacao = iniciarAgendador(importacao);
+  const agendadorEspelho = iniciarAgendador(espelho);
 
   process.once('SIGTERM', () => {
     (async () => {
-      await agendador.pararEEsperar();
+      await Promise.all([agendadorImportacao.pararEEsperar(), agendadorEspelho.pararEEsperar()]);
       await pool.end();
       process.exit(0);
     })().catch((erro) => {
