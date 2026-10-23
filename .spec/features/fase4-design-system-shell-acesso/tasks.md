@@ -57,8 +57,7 @@
 - Esforço: alto
 - Notas: GET valida o token sem consumi-lo (AC-370/374); POST consome, aplica a política (T-141) e cria a sessão (ASM-126). Esqueci-senha responde igual para e-mail existente ou não (AC-364) e usa o limite de AC-047. Depende de T-141 e T-142.
 
-## T-146 — Casca: menu lateral, topo e layout das telas logadas [pendente]
-
+## T-146 — Casca: menu lateral, topo e layout das telas logadas [concluida]
 - Refs: AC-348, AC-349, AC-350, AC-351, AC-352, AC-353, AC-354, AC-355, AC-356, AC-357
 - Arquivos: src/components/shell/menu-lateral.tsx, src/components/shell/topo.tsx, src/components/shell/menu-config.ts, src/components/shell/use-contadores.ts, src/components/shell/use-tempo-real.ts, src/app/(app)/layout.tsx, test/components/shell/casca.test.tsx
 - Esforço: xalto

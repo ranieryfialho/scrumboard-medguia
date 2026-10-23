@@ -1,11 +1,11 @@
 {
   "feature": "fase4-design-system-shell-acesso",
-  "timestamp": "2026-10-23T18:54:06.056Z",
-  "gitRev": "82e42e3",
+  "timestamp": "2026-10-23T19:51:45.316Z",
+  "gitRev": "1f4df65",
   "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
   "exitCode": 1,
-  "testsParsed": 1048,
+  "testsParsed": 1064,
   "results": {
     "AC-345": {
       "status": "pass",
@@ -17,9 +17,49 @@
       "testName": "T-140: fontes e ícones do protótipo (AC-346) Plus Jakarta Sans e Inter são carregadas por next/font/google @spec:AC-346 Plus Jakarta Sans e Inter são carregadas por next/font/google @spec:AC-346",
       "method": "vitest-json"
     },
+    "AC-348": {
+      "status": "pass",
+      "testName": "AC-348: o menu traz os grupos e itens do protótipo mostra os 4 grupos e os itens na ordem do protótipo, com ícone, rota e rodapé @spec:AC-348 mostra os 4 grupos e os itens na ordem do protótipo, com ícone, rota e rodapé @spec:AC-348",
+      "method": "vitest-json"
+    },
+    "AC-349": {
+      "status": "pass",
+      "testName": "AC-349: o menu esconde o que o papel não pode ver ATENDENTE vê só Operação e Comunicação @spec:AC-349 ATENDENTE vê só Operação e Comunicação @spec:AC-349",
+      "method": "vitest-json"
+    },
+    "AC-350": {
+      "status": "pass",
+      "testName": "AC-350: o item da tela atual aparece destacado em /tarefas/atrasadas, só \"Tarefas Atrasadas\" tem o estilo ativo @spec:AC-350 em /tarefas/atrasadas, só \"Tarefas Atrasadas\" tem o estilo ativo @spec:AC-350",
+      "method": "vitest-json"
+    },
+    "AC-351": {
+      "status": "pass",
+      "testName": "AC-351: os contadores do menu mostram números reais mostra 12 no turno, 4 (vermelho) nos atrasados e 5 (verde) no WhatsApp @spec:AC-351 mostra 12 no turno, 4 (vermelho) nos atrasados e 5 (verde) no WhatsApp @spec:AC-351",
+      "method": "vitest-json"
+    },
+    "AC-352": {
+      "status": "pass",
+      "testName": "AC-352: o topo mostra quem está logado mostra nome, papel, e-mail e empresa ativa da sessão @spec:AC-352 mostra nome, papel, e-mail e empresa ativa da sessão @spec:AC-352",
+      "method": "vitest-json"
+    },
     "AC-353": {
       "status": "pass",
       "testName": "T-144: rotas HTTP de autenticação, /api/me e empresa ativa AC-353: só o super admin vê e usa o seletor de empresa MASTER não recebe a lista de empresas em /api/me @spec:AC-353 MASTER não recebe a lista de empresas em /api/me @spec:AC-353",
+      "method": "vitest-json"
+    },
+    "AC-354": {
+      "status": "pass",
+      "testName": "AC-354: o indicador de tempo real diz a verdade mostra conectado enquanto aberto, reconectando quando cai, e volta ao verde sem recarregar @spec:AC-354 mostra conectado enquanto aberto, reconectando quando cai, e volta ao verde sem recarregar @spec:AC-354",
+      "method": "vitest-json"
+    },
+    "AC-355": {
+      "status": "pass",
+      "testName": "AC-355: o que não tem backend aparece como \"em breve\" busca global, sino de notificações e Ajuda & Suporte continuam visíveis, marcados \"em breve\", sem ação ao clicar @spec:AC-355 busca global, sino de notificações e Ajuda & Suporte continuam visíveis, marcados \"em breve\", sem ação ao clicar @spec:AC-355",
+      "method": "vitest-json"
+    },
+    "AC-356": {
+      "status": "pass",
+      "testName": "AC-356: no celular o menu vira gaveta o botão do topo abre a gaveta sobre um fundo escurecido, e ela fecha ao tocar no fundo ou escolher um item @spec:AC-356 o botão do topo abre a gaveta sobre um fundo escurecido, e ela fecha ao tocar no fundo ou escolher um item @spec:AC-356",
       "method": "vitest-json"
     },
     "AC-357": {
