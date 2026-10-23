@@ -33,8 +33,7 @@
 - Esforço: medio
 - Notas: (suposição ASM-127) módulo puro `validarSenha(senha)` usado no servidor e importado pelas telas (AC-386). `definirSenhaComToken` passa a receber `nome` opcional e gravar em `usuarios.nome`. Política decidida em Q-041 (8+, maiúscula, número ou símbolo).
 
-## T-142 — Envio de e-mail (Resend) para redefinição de senha [pendente]
-
+## T-142 — Envio de e-mail (Resend) para redefinição de senha [concluida]
 - Refs: AC-365
 - Arquivos: src/lib/email/enviar.ts, src/lib/email/templates.ts, test/email/enviar.test.ts
 - Esforço: medio
