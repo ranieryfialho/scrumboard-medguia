@@ -27,8 +27,7 @@
 - Esforço: medio
 - Notas: portar o `tailwind.config` do `code.html` (cores, `spacing`, `fontSize`, `fontFamily`) para `@theme` do Tailwind v4; Plus Jakarta Sans e Inter por `next/font/google`; Material Symbols Outlined por `<link>` do Google Fonts (com `FILL`). Conflitos com os tokens do shadcn: ASM-125.
 
-## T-141 — Política de senha única e nome gravado no convite [pendente]
-
+## T-141 — Política de senha única e nome gravado no convite [concluida]
 - Refs: AC-385, AC-386
 - Arquivos: src/lib/auth/politica-senha.ts, src/lib/auth/definir-senha.ts, src/lib/auth/reset-senha.ts, test/auth/politica-senha.test.ts
 - Esforço: medio
