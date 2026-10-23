@@ -21,8 +21,7 @@
   (a marcação e as classes do protótipo são a fonte; ver "Regra de fidelidade" na spec).
 -->
 
-## T-140 — Tokens de tema, fontes e ícones do protótipo [pendente]
-
+## T-140 — Tokens de tema, fontes e ícones do protótipo [concluida]
 - Refs: AC-345, AC-346
 - Arquivos: src/app/globals.css, src/app/layout.tsx, test/ui/design-system.test.ts
 - Esforço: medio
