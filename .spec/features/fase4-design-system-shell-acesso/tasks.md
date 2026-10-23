@@ -39,8 +39,7 @@
 - Esforço: medio
 - Notas: transporte injetável (o teste usa um falso, sem rede). Depende da resposta de Q-043 (chave, domínio, remetente) só para o envio real; o código nasce sem ela e falha com erro claro se `RESEND_API_KEY` faltar.
 
-## T-143 — Permissões por rota, middleware do Better Auth e raiz [pendente]
-
+## T-143 — Permissões por rota, middleware do Better Auth e raiz [concluida]
 - Refs: AC-379, AC-380, AC-381, AC-382, AC-384
 - Arquivos: src/middleware.ts, src/lib/auth/rotas.ts, src/app/page.tsx, test/auth/middleware.test.ts
 - Esforço: alto
