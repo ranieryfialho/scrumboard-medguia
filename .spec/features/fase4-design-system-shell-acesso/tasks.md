@@ -51,8 +51,7 @@
 - Esforço: alto
 - Notas: `[...all]` entrega o handler do Better Auth (`toNextJsHandler`). `/api/me` devolve usuário, papel, empresa e, para super admin, as empresas. `empresa-ativa` usa `troca-empresa.ts` (AC-045). Testes sobem o Postgres efêmero.
 
-## T-145 — APIs das telas públicas: esqueci, redefinir e convite [pendente]
-
+## T-145 — APIs das telas públicas: esqueci, redefinir e convite [concluida]
 - Refs: AC-364, AC-365, AC-369, AC-370, AC-371, AC-373, AC-374
 - Arquivos: src/app/api/acesso/esqueci-senha/route.ts, src/app/api/acesso/redefinir-senha/[token]/route.ts, src/app/api/acesso/convite/[token]/route.ts, test/api/acesso.test.ts
 - Esforço: alto

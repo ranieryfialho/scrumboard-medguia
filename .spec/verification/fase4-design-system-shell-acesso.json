@@ -1,11 +1,11 @@
 {
   "feature": "fase4-design-system-shell-acesso",
-  "timestamp": "2026-10-23T18:06:16.935Z",
-  "gitRev": "e6635ab",
+  "timestamp": "2026-10-23T18:54:06.056Z",
+  "gitRev": "82e42e3",
   "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
   "exitCode": 1,
-  "testsParsed": 1042,
+  "testsParsed": 1048,
   "results": {
     "AC-345": {
       "status": "pass",
@@ -29,37 +29,37 @@
     },
     "AC-364": {
       "status": "pass",
-      "testName": "T-145: APIs das telas públicas: esqueci, redefinir e convite AC-364/AC-365: esqueci-senha e-mail cadastrado e ativo: responde igual ao de e-mail inexistente e envia o e-mail de verdade @spec:AC-364 @spec:AC-365 e-mail cadastrado e ativo: responde igual ao de e-mail inexistente e envia o e-mail de verdade @spec:AC-364 @spec:AC-365",
+      "testName": "T-145: APIs das telas públicas: esqueci, redefinir e convite AC-364: a confirmação é a mesma para qualquer e-mail e-mail cadastrado e inexistente recebem a mesma resposta @spec:AC-364 e-mail cadastrado e inexistente recebem a mesma resposta @spec:AC-364",
       "method": "vitest-json"
     },
     "AC-365": {
       "status": "pass",
-      "testName": "T-145: APIs das telas públicas: esqueci, redefinir e convite AC-364/AC-365: esqueci-senha e-mail cadastrado e ativo: responde igual ao de e-mail inexistente e envia o e-mail de verdade @spec:AC-364 @spec:AC-365 e-mail cadastrado e ativo: responde igual ao de e-mail inexistente e envia o e-mail de verdade @spec:AC-364 @spec:AC-365",
+      "testName": "T-145: APIs das telas públicas: esqueci, redefinir e convite AC-365: o e-mail só é enviado quando a conta existe conta cadastrada e ativa: envia o e-mail marcado MedCRM com o link do token @spec:AC-365 conta cadastrada e ativa: envia o e-mail marcado MedCRM com o link do token @spec:AC-365",
       "method": "vitest-json"
     },
     "AC-369": {
       "status": "pass",
-      "testName": "T-145: APIs das telas públicas: esqueci, redefinir e convite AC-369/AC-370: redefinir-senha token válido e senha dentro da política trocam a senha, revogam sessões antigas e já entram no sistema @spec:AC-369 token válido e senha dentro da política trocam a senha, revogam sessões antigas e já entram no sistema @spec:AC-369",
+      "testName": "T-145: APIs das telas públicas: esqueci, redefinir e convite AC-369: salvar troca a senha e já entra no sistema token válido e senha dentro da política trocam a credencial, revogam sessões antigas e criam uma sessão nova @spec:AC-369 token válido e senha dentro da política trocam a credencial, revogam sessões antigas e criam uma sessão nova @spec:AC-369",
       "method": "vitest-json"
     },
     "AC-370": {
       "status": "pass",
-      "testName": "T-145: APIs das telas públicas: esqueci, redefinir e convite AC-369/AC-370: redefinir-senha token expirado: TOKEN_INVALIDO sem pedir senha, e abrir a página não consome o token @spec:AC-370 token expirado: TOKEN_INVALIDO sem pedir senha, e abrir a página não consome o token @spec:AC-370",
+      "testName": "T-145: APIs das telas públicas: esqueci, redefinir e convite AC-370: link expirado ou já usado mostra a tela de erro, sem pedir senha GET com token válido confirma sem consumir o token @spec:AC-370 GET com token válido confirma sem consumir o token @spec:AC-370",
       "method": "vitest-json"
     },
     "AC-371": {
       "status": "pass",
-      "testName": "T-145: APIs das telas públicas: esqueci, redefinir e convite AC-371/AC-373/AC-374: convite convite válido mostra para quem é: empresa, papel e e-mail @spec:AC-371 convite válido mostra para quem é: empresa, papel e e-mail @spec:AC-371",
+      "testName": "T-145: APIs das telas públicas: esqueci, redefinir e convite AC-371: a tela mostra para quem é o convite GET com convite válido mostra a empresa, o papel e o e-mail, sem consumir o token @spec:AC-371 GET com convite válido mostra a empresa, o papel e o e-mail, sem consumir o token @spec:AC-371",
       "method": "vitest-json"
     },
     "AC-373": {
       "status": "pass",
-      "testName": "T-145: APIs das telas públicas: esqueci, redefinir e convite AC-371/AC-373/AC-374: convite ativar com nome e senha válidos consome o convite, grava o nome e já entra no sistema @spec:AC-373 ativar com nome e senha válidos consome o convite, grava o nome e já entra no sistema @spec:AC-373",
+      "testName": "T-145: APIs das telas públicas: esqueci, redefinir e convite AC-373: ativar cria a senha, grava o nome e entra convite válido com nome e senha ativa a conta, grava o nome e cria a sessão @spec:AC-373 convite válido com nome e senha ativa a conta, grava o nome e cria a sessão @spec:AC-373",
       "method": "vitest-json"
     },
     "AC-374": {
       "status": "pass",
-      "testName": "T-145: APIs das telas públicas: esqueci, redefinir e convite AC-371/AC-373/AC-374: convite convite inexistente, expirado ou já utilizado mostra o erro sem vazar empresa, nome ou e-mail @spec:AC-374 convite inexistente, expirado ou já utilizado mostra o erro sem vazar empresa, nome ou e-mail @spec:AC-374",
+      "testName": "T-145: APIs das telas públicas: esqueci, redefinir e convite AC-374: convite inválido mostra o erro sem vazar dados da empresa GET com convite expirado mostra o erro genérico, sem empresa nem e-mail @spec:AC-374 GET com convite expirado mostra o erro genérico, sem empresa nem e-mail @spec:AC-374",
       "method": "vitest-json"
     },
     "AC-378": {
