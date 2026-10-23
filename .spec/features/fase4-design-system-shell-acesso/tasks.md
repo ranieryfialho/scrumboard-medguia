@@ -45,8 +45,7 @@
 - Esforço: alto
 - Notas: `rotas.ts` concentra a lista de rotas públicas e o papel mínimo por rota (matriz de ASM-123), usada também pelo menu da casca. O middleware não consulta o Supabase (AC-384). `/` vira redirecionamento. Q-045 define o destino das telas legadas.
 
-## T-144 — Rotas HTTP de autenticação, `/api/me` e empresa ativa [pendente]
-
+## T-144 — Rotas HTTP de autenticação, `/api/me` e empresa ativa [concluida]
 - Refs: AC-353, AC-357, AC-378, AC-383
 - Arquivos: src/app/api/auth/[...all]/route.ts, src/app/api/me/route.ts, src/app/api/empresa-ativa/route.ts, test/api/auth-http.test.ts
 - Esforço: alto
