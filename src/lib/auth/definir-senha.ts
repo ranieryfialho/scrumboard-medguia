@@ -45,6 +45,13 @@ export function verificarSenha(senha: string, hashArmazenado: string): boolean {
 
 export interface DefinirSenhaOpcoes {
   agora?: () => Date;
+  /**
+   * Nome informado na ativação do convite (ASM-127, T-141/T-151) — grava em
+   * `usuarios.nome`, substituindo o placeholder (e-mail) deixado por
+   * `convidarUsuario`. Omitido quando quem chama não coletou nome (ex.: uso
+   * interno/testes).
+   */
+  nome?: string;
 }
 
 export interface DefinirSenhaResultado {
@@ -112,6 +119,10 @@ export async function definirSenhaComToken(
       idProvedor: PROVEDOR_CREDENCIAL,
       senha: hashSenha(novaSenha),
     });
+
+    if (opcoes.nome) {
+      await tx.update(usuarios).set({ nome: opcoes.nome }).where(eq(usuarios.id, usuario.id));
+    }
 
     return { usuarioId: usuario.id, email };
   });
