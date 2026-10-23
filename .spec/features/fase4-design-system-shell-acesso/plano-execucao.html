@@ -1,0 +1,156 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plano de execução — fase4-design-system-shell-acesso</title>
+<style>
+  :root { --bg:#fafafa; --fg:#1a1a1a; --card:#fff; --borda:#e2e2e2; --sub:#666;
+          --acc:#0a7c42; --acc-fg:#fff; --aviso:#8a6d00; --aviso-bg:#fff8e1; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#141414; --fg:#eaeaea; --card:#1e1e1e; --borda:#333; --sub:#9a9a9a;
+            --acc:#17a35c; --aviso:#e0c36a; --aviso-bg:#2a2410; }
+  }
+  * { box-sizing:border-box }
+  body { margin:0; padding:2rem 1rem; background:var(--bg); color:var(--fg);
+         font:15px/1.55 system-ui,-apple-system,sans-serif }
+  main { max-width:64rem; margin:0 auto }
+  h1 { font-size:1.5rem; margin:0 0 .25rem } h3 { margin:1.5rem 0 .5rem }
+  h4 { margin:0 0 .5rem } small { color:var(--sub); font-weight:400 }
+  .sub { color:var(--sub); margin:0 0 1.25rem }
+  code { font:.85em ui-monospace,monospace; background:var(--card);
+         border:1px solid var(--borda); border-radius:4px; padding:.05em .35em; overflow-wrap:anywhere }
+  .resumo { display:flex; gap:.75rem; flex-wrap:wrap; margin:0 0 1rem }
+  .resumo div { background:var(--card); border:1px solid var(--borda); border-radius:8px;
+                padding:.5rem .9rem } .resumo b { font-size:1.2rem }
+  .executor { background:var(--card); border:1px solid var(--borda); border-radius:10px;
+              padding:1rem; margin:0 0 .5rem }
+  .executor h2 { margin:0 0 .5rem; font-size:1.05rem }
+  .nota { color:var(--sub); font-size:.85rem; margin:.5rem 0 0 }
+  #cmd { display:inline-block; margin-top:.6rem }
+  .grade { display:grid; grid-template-columns:repeat(auto-fit,minmax(17rem,1fr)); gap:.75rem }
+  .faixa { background:var(--card); border:1px solid var(--borda); border-radius:10px; padding: .9rem }
+  .tarefa { display:flex; flex-direction:column; gap:.15rem; padding:.6rem 0;
+            border-top:1px dashed var(--borda) }
+  .tarefa:first-of-type { border-top:0 }
+  .tid { font:700 .85rem ui-monospace,monospace; color:var(--acc) }
+  .meta,.arquivos { font-size:.85rem; color:var(--sub) }
+  .avisos { background:var(--aviso-bg); color:var(--aviso); border-radius:8px;
+            padding:.6rem .9rem; margin:0 0 1rem; font-size:.9rem }
+  ol li { margin:.25rem 0 }
+</style>
+<main>
+  <h1>Plano de execução — fase4-design-system-shell-acesso</h1>
+  <p class="sub">gerado por <code>onp-spec plano</code> em 2026-10-23 16:21 · regenere após mudar tasks.md</p>
+  <div class="resumo">
+    <div><b>14</b> tarefa(s), uma após a outra</div>
+    <div>modo <b>sequencial</b> (escolha do usuário)</div>
+    <div>branch <code>spec/fase4-design-system-shell-acesso</code></div>
+  </div>
+  
+  <div class="executor">
+    <h2>Como executar — via agente</h2>
+    <p>Peça ao agente (Claude Code) para executar o plano. Ele roda:</p>
+    <div><code id="cmd">bash .spec/features/fase4-design-system-shell-acesso/executar-tarefas.sh</code></div>
+    <p class="nota">Este arquivo é só visualização. Cada tarefa roda <code>claude -p</code> na árvore principal, uma após a outra, com contexto limpo e modelo/esforço já definidos.
+    O gate final (verify + audit) roda sozinho; a execução fica em background e, a cada
+    1 minuto, o agente posta no chat a <b>tabela de andamento</b>
+    (<code>onp-spec resumo fase4-design-system-shell-acesso --tabela</code>) e o
+    <b>resumo geral de andamento</b> (<code>onp-spec resumo fase4-design-system-shell-acesso</code>).</p>
+  </div>
+  
+  
+    <section class="onda">
+      <h3>Ordem de execução <small>uma tarefa após a outra, na árvore principal</small></h3>
+      <div class="grade"><div class="faixa">
+        <div class="tarefa">
+          <span class="tid">T-140</span>
+          <span class="ttitulo">Tokens de tema, fontes e ícones do protótipo</span>
+          <span class="meta"><code>claude-sonnet-5</code> · esforço <b>medium</b></span>
+          <span class="arquivos"><code>src/app/globals.css</code> <code>src/app/layout.tsx</code> <code>test/ui/design-system.test.ts</code></span>
+        </div>
+        <div class="tarefa">
+          <span class="tid">T-141</span>
+          <span class="ttitulo">Política de senha única e nome gravado no convite</span>
+          <span class="meta"><code>claude-sonnet-5</code> · esforço <b>medium</b></span>
+          <span class="arquivos"><code>src/lib/auth/politica-senha.ts</code> <code>src/lib/auth/definir-senha.ts</code> <code>src/lib/auth/reset-senha.ts</code> <code>test/auth/politica-senha.test.ts</code></span>
+        </div>
+        <div class="tarefa">
+          <span class="tid">T-142</span>
+          <span class="ttitulo">Envio de e-mail (Resend) para redefinição de senha</span>
+          <span class="meta"><code>claude-sonnet-5</code> · esforço <b>medium</b></span>
+          <span class="arquivos"><code>src/lib/email/enviar.ts</code> <code>src/lib/email/templates.ts</code> <code>test/email/enviar.test.ts</code></span>
+        </div>
+        <div class="tarefa">
+          <span class="tid">T-143</span>
+          <span class="ttitulo">Permissões por rota, middleware do Better Auth e raiz</span>
+          <span class="meta"><code>claude-sonnet-5</code> · esforço <b>high</b></span>
+          <span class="arquivos"><code>src/middleware.ts</code> <code>src/lib/auth/rotas.ts</code> <code>src/app/page.tsx</code> <code>test/auth/middleware.test.ts</code></span>
+        </div>
+        <div class="tarefa">
+          <span class="tid">T-144</span>
+          <span class="ttitulo">Rotas HTTP de autenticação, `/api/me` e empresa ativa</span>
+          <span class="meta"><code>claude-sonnet-5</code> · esforço <b>high</b></span>
+          <span class="arquivos"><code>src/app/api/auth/[...all]/route.ts</code> <code>src/app/api/me/route.ts</code> <code>src/app/api/empresa-ativa/route.ts</code> <code>test/api/auth-http.test.ts</code></span>
+        </div>
+        <div class="tarefa">
+          <span class="tid">T-145</span>
+          <span class="ttitulo">APIs das telas públicas: esqueci, redefinir e convite</span>
+          <span class="meta"><code>claude-sonnet-5</code> · esforço <b>high</b></span>
+          <span class="arquivos"><code>src/app/api/acesso/esqueci-senha/route.ts</code> <code>src/app/api/acesso/redefinir-senha/[token]/route.ts</code> <code>src/app/api/acesso/convite/[token]/route.ts</code> <code>test/api/acesso.test.ts</code></span>
+        </div>
+        <div class="tarefa">
+          <span class="tid">T-146</span>
+          <span class="ttitulo">Casca: menu lateral, topo e layout das telas logadas</span>
+          <span class="meta"><code>claude-sonnet-5</code> · esforço <b>xhigh</b></span>
+          <span class="arquivos"><code>src/components/shell/menu-lateral.tsx</code> <code>src/components/shell/topo.tsx</code> <code>src/components/shell/menu-config.ts</code> <code>src/components/shell/use-contadores.ts</code> <code>src/components/shell/use-tempo-real.ts</code> <code>src/app/(app)/layout.tsx</code> <code>test/components/shell/casca.test.tsx</code></span>
+        </div>
+        <div class="tarefa">
+          <span class="tid">T-147</span>
+          <span class="ttitulo">Moldura das telas de acesso (fundo, cartão e rodapé)</span>
+          <span class="meta"><code>claude-sonnet-5</code> · esforço <b>medium</b></span>
+          <span class="arquivos"><code>src/components/auth/moldura-acesso.tsx</code> <code>src/components/auth/criterios-senha.tsx</code> <code>src/app/(auth)/layout.tsx</code> <code>test/components/auth/moldura.test.tsx</code></span>
+        </div>
+        <div class="tarefa">
+          <span class="tid">T-148</span>
+          <span class="ttitulo">Tela de login</span>
+          <span class="meta"><code>claude-sonnet-5</code> · esforço <b>high</b></span>
+          <span class="arquivos"><code>src/app/(auth)/login/page.tsx</code> <code>src/components/auth/formulario-login.tsx</code> <code>test/components/auth/login.test.tsx</code></span>
+        </div>
+        <div class="tarefa">
+          <span class="tid">T-149</span>
+          <span class="ttitulo">Tela de esqueci minha senha</span>
+          <span class="meta"><code>claude-sonnet-5</code> · esforço <b>medium</b></span>
+          <span class="arquivos"><code>src/app/(auth)/esqueci-senha/page.tsx</code> <code>src/components/auth/formulario-esqueci-senha.tsx</code> <code>test/components/auth/esqueci-senha.test.tsx</code></span>
+        </div>
+        <div class="tarefa">
+          <span class="tid">T-150</span>
+          <span class="ttitulo">Tela de redefinir senha</span>
+          <span class="meta"><code>claude-sonnet-5</code> · esforço <b>high</b></span>
+          <span class="arquivos"><code>src/app/(auth)/redefinir-senha/[token]/page.tsx</code> <code>src/components/auth/formulario-redefinir-senha.tsx</code> <code>test/components/auth/redefinir-senha.test.tsx</code></span>
+        </div>
+        <div class="tarefa">
+          <span class="tid">T-151</span>
+          <span class="ttitulo">Tela de convite</span>
+          <span class="meta"><code>claude-sonnet-5</code> · esforço <b>high</b></span>
+          <span class="arquivos"><code>src/app/(auth)/convite/[token]/page.tsx</code> <code>src/components/auth/formulario-convite.tsx</code> <code>test/components/auth/convite.test.tsx</code></span>
+        </div>
+        <div class="tarefa">
+          <span class="tid">T-152</span>
+          <span class="ttitulo">Tela de sem acesso e sessão expirada</span>
+          <span class="meta"><code>claude-sonnet-5</code> · esforço <b>medium</b></span>
+          <span class="arquivos"><code>src/app/(auth)/sem-acesso/page.tsx</code> <code>src/components/auth/painel-sem-acesso.tsx</code> <code>src/lib/auth/nomes-de-rotas.ts</code> <code>test/components/auth/sem-acesso.test.tsx</code></span>
+        </div>
+        <div class="tarefa">
+          <span class="tid">T-153</span>
+          <span class="ttitulo">Garantia transversal: nenhuma tela de acesso traz artefato do protótipo</span>
+          <span class="meta"><code>claude-sonnet-5</code> · esforço <b>low</b></span>
+          <span class="arquivos"><code>test/components/auth/sem-artefatos.test.tsx</code></span>
+        </div></div></div>
+    </section>
+  <section class="onda">
+    <h3>Branches e commits</h3>
+    <ol>
+      <li>tudo parte da branch de trabalho <code>spec/fase4-design-system-shell-acesso</code></li>
+      <li>as tarefas rodam nela mesma, na ordem; 1 tarefa = 1 commit <code>T-xxx fase4-design-system-shell-acesso: título</code></li>
+      <li>gate final: <code>onp-spec verify fase4-design-system-shell-acesso</code> + <code>onp-spec audit --ci</code> — exit 0 ou não está pronto</li>
+    </ol>
+  </section>
+</main>

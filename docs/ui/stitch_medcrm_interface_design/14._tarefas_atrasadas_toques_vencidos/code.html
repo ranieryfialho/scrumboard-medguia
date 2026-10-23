@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-subtle": "#F8FAFC", "info-border": "#BFDBFE", "danger-text": "#DC2626", "on-error-container": "#93000a", "surface-tint": "#1157cb", "on-secondary-fixed": "#131b30", "primary-fixed-dim": "#b1c5ff", "on-secondary-container": "#5a627b", "on-primary": "#ffffff", "inverse-on-surface": "#f0f0fa", "warning-surface": "#FEF3C7", "text-secondary": "#64748B", "surface-bright": "#faf8ff", "on-primary-fixed-variant": "#0040a0", "sidebar-surface": "#1E293B", "on-primary-fixed": "#001847", "success-border": "#A7F3D0", "on-tertiary-container": "#fffbff", "on-primary-container": "#fefcff", "secondary-fixed": "#dae2ff", "surface-container-lowest": "#ffffff", "on-tertiary-fixed": "#311300", "on-background": "#191b22", "text-muted": "#94A3B8", "background-canvas": "#F4F6FA", "tertiary-fixed-dim": "#ffb787", "warning-text": "#D97706", "sidebar-surface-active": "#2D3748", "on-secondary": "#ffffff", "border-subtle": "#E2E8F0", "outline": "#737785", "border-focus": "#93C5FD", "inverse-surface": "#2e3038", "on-tertiary": "#ffffff", "secondary-container": "#d7dffd", "inverse-primary": "#b1c5ff", "text-primary": "#0F172A", "error": "#ba1a1a", "info-text": "#2563EB", "success-surface": "#D1FAE5", "on-surface-variant": "#434654", "surface-container": "#ededf7", "on-secondary-fixed-variant": "#3e465e", "danger-surface": "#FEE2E2", "tertiary": "#924700", "primary-fixed": "#dae2ff", "success-text": "#059669", "warning-border": "#FDE68A", "surface-container-highest": "#e1e2ec", "error-container": "#ffdad6", "surface-dim": "#d9d9e3", "background": "#faf8ff", "tertiary-container": "#b85b00", "on-surface": "#191b22", "on-error": "#ffffff", "tertiary-fixed": "#ffdcc7", "secondary": "#565e77", "surface-container-low": "#f3f3fd", "surface-variant": "#e1e2ec", "info-surface": "#EFF6FF", "danger-border": "#FECACA", "surface-card": "#FFFFFF", "on-tertiary-fixed-variant": "#723600", "secondary-fixed-dim": "#bec6e3", "primary-container": "#366ee3", "primary": "#0954c9", "outline-variant": "#c3c6d6", "surface-container-high": "#e7e7f2", "surface": "#faf8ff" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "gutter-sm": "0.75rem", "gutter-lg": "1.5rem", "space-lg": "1.25rem", "space-sm": "0.5rem", "gutter": "1.25rem", "space-xs": "0.25rem", "space-md": "0.875rem", "margin": "1.75rem", "space-xl": "1.75rem", "margin-mobile": "1rem", "space-2xl": "2.5rem" }, "fontFamily": { "body-sm": ["Inter"], "headline-sm": ["Plus Jakarta Sans"], "body-lg": ["Inter"], "label-sm": ["Inter"], "body-md": ["Inter"], "headline-md": ["Plus Jakarta Sans"], "metric-stat": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "display-lg": ["Plus Jakarta Sans"], "label-md": ["Inter"], "display-lg-mobile": ["Plus Jakarta Sans"], "label-lg": ["Inter"], "table-header": ["Inter"] }, "fontSize": { "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }], "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }], "body-lg": ["15px", { "lineHeight": "22px", "fontWeight": "400" }], "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.03em", "fontWeight": "600" }], "body-md": ["13px", { "lineHeight": "20px", "fontWeight": "400" }], "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }], "metric-stat": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "500" }], "display-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "700" }], "label-lg": ["13px", { "lineHeight": "18px", "fontWeight": "600" }], "table-header": ["11px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }] } } } };</script></head><body class="bg-background-canvas font-body-md text-text-primary antialiased selection:bg-primary-fixed selection:text-on-primary-fixed"><aside class="fixed left-0 top-0 h-full w-64 bg-sidebar-surface text-surface z-50 flex flex-col justify-between shadow-[0_4px_20px_-2px_rgba(0,0,0,0.08)] overflow-hidden"><div class="flex flex-col flex-1 min-h-0"><div class="h-16 px-space-lg flex items-center justify-between border-b border-sidebar-surface-active/60 bg-sidebar-surface"><div class="flex items-center gap-space-sm"><div class="w-9 h-9 rounded-xl bg-primary flex items-center justify-center shadow-md"><span class="material-symbols-outlined text-on-primary text-[20px]">local_hospital</span></div><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-surface-container-lowest leading-none tracking-tight">MedCRM</span><span class="font-label-sm text-label-sm text-text-muted mt-0.5">MedGuia B2B</span></div></div><span class="font-label-sm text-[10px] px-1.5 py-0.5 rounded-full bg-primary-container/30 text-primary-fixed-dim uppercase tracking-wider font-semibold">Pipeline</span></div><div class="flex-1 overflow-y-auto px-space-sm py-space-md space-y-space-lg scrollbar-none"><nav class="space-y-space-md" data-active-classes="bg-sidebar-surface-active text-surface-container-lowest font-semibold rounded-lg shadow-sm"><div class="space-y-1"><div class="px-space-sm pb-1"><span class="font-table-header text-table-header text-text-muted uppercase tracking-wider">Operação</span></div><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="funil-pipeline" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">view_kanban</span><span class="font-body-md text-body-md">Funil Pipeline</span></div></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="lista-de-leads" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">format_list_bulleted</span><span class="font-body-md text-body-md">Lista</span></div></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="arquivados" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">archive</span><span class="font-body-md text-body-md">Arquivados</span></div></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="tarefas-do-turno" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">check_circle</span><span class="font-body-md text-body-md">Tarefas do Turno</span></div><span class="font-label-sm text-label-sm bg-primary-container text-on-primary px-2 py-0.5 rounded-full font-bold">12</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="tarefas-atrasadas" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px] text-danger-text">warning</span><span class="font-body-md text-body-md text-danger-text font-medium">Tarefas Atrasadas</span></div><span class="font-label-sm text-label-sm bg-danger-surface text-danger-text px-2 py-0.5 rounded-full font-bold">4</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="agenda" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">calendar_month</span><span class="font-body-md text-body-md">Agenda</span></div></a></div><div class="space-y-1"><div class="px-space-sm pb-1"><span class="font-table-header text-table-header text-text-muted uppercase tracking-wider">Comunicação</span></div><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="whatsapp-inbox" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">chat</span><span class="font-body-md text-body-md">WhatsApp Inbox</span></div><span class="font-label-sm text-label-sm bg-success-surface text-success-text px-2 py-0.5 rounded-full font-bold">5</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="campanhas" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">send</span><span class="font-body-md text-body-md">Campanhas</span></div></a></div><div class="space-y-1"><div class="px-space-sm pb-1"><span class="font-table-header text-table-header text-text-muted uppercase tracking-wider">Análises</span></div><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="indicadores" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">monitoring</span><span class="font-body-md text-body-md">Indicadores</span></div></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="relatorios" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">description</span><span class="font-body-md text-body-md">Relatórios</span></div></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="comercial" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">query_stats</span><span class="font-body-md text-body-md">Comercial</span></div></a></div><div class="space-y-1"><div class="px-space-sm pb-1"><span class="font-table-header text-table-header text-text-muted uppercase tracking-wider">Administração</span></div><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="equipe" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">groups</span><span class="font-body-md text-body-md">Equipe</span></div></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="motivos-de-perda" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">cancel</span><span class="font-body-md text-body-md">Motivos de Perda</span></div></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="empresas" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">apartment</span><span class="font-body-md text-body-md">Empresas</span></div></a></div></nav></div></div><div class="p-space-md border-t border-sidebar-surface-active/50 bg-sidebar-surface"><div class="flex items-center justify-between text-text-muted"><a class="flex items-center gap-2 hover:text-surface-container-lowest transition-colors font-label-md text-label-md" data-path="suporte-e-ajuda" href="#"><span class="material-symbols-outlined text-[18px]">help</span><span>Ajuda &amp; Suporte</span></a><span class="font-label-sm text-label-sm text-text-muted/80 bg-sidebar-surface-active/80 px-2 py-0.5 rounded">v2.4.0</span></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface-card border-b border-border-subtle z-40 flex items-center justify-between px-gutter shadow-[0_1px_8px_rgba(0,0,0,0.02)]"><div class="flex items-center gap-space-lg flex-1 max-w-2xl"><div class="relative w-full max-w-lg"><span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[19px]">search</span><input class="w-full h-10 pl-9 pr-16 bg-surface-subtle border border-border-subtle rounded-lg font-body-md text-body-md text-text-primary placeholder:text-text-muted focus:outline-none focus:border-border-focus focus:bg-surface-card transition-all" placeholder="Buscar lead, clínica, telefone ou responsável... (Ctrl + K)" type="text"/><kbd class="absolute right-3 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[10px] font-label-sm bg-surface-card border border-border-subtle text-text-muted rounded shadow-sm">⌘K</kbd></div><div class="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border-subtle bg-surface-card text-text-primary shadow-sm hover:border-border-focus cursor-pointer transition-all"><span class="material-symbols-outlined text-primary text-[18px]">domain</span><div class="flex flex-col text-left"><span class="font-label-sm text-label-sm font-semibold leading-tight">Clínica São Lucas - Matriz</span><span class="font-label-sm text-[10px] text-success-text leading-none flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-success-text inline-block"></span>Ativo</span></div><span class="material-symbols-outlined text-text-muted text-[16px] ml-1">expand_more</span></div></div><div class="flex items-center gap-space-md"><div class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-success-surface border border-success-border"><span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success-text opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-success-text"></span></span><span class="font-label-sm text-label-sm text-success-text font-semibold">Tempo real conectado</span></div><button class="relative p-2 rounded-lg text-text-secondary hover:bg-surface-subtle hover:text-text-primary transition-colors" type="button"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-danger-text"></span></button><div class="h-6 w-px bg-border-subtle"></div><div class="flex items-center gap-space-sm pl-1 cursor-pointer"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><div class="hidden lg:flex flex-col text-left"><div class="flex items-center gap-1.5"><span class="font-label-lg text-label-lg font-semibold text-text-primary leading-tight">Dr. Roberto Mendes</span><span class="font-label-sm text-[10px] bg-primary-fixed text-on-primary-fixed px-1.5 py-0.2 rounded font-bold uppercase tracking-wider">MASTER</span></div><span class="font-label-sm text-label-sm text-text-muted leading-tight">roberto.mendes@medguia.com.br</span></div><span class="material-symbols-outlined text-text-muted text-[18px]">expand_more</span></div></div></header><main class="w-full pt-16 bg-background-canvas min-h-screen"><div class="flex flex-col w-full">
+<!-- Interactive script for toast and quick actions -->
+<script>
+    function triggerActionModal(title, message) {
+      const banner = document.getElementById('action-alert-banner');
+      if (banner) {
+        document.getElementById('action-alert-title').innerText = title;
+        document.getElementById('action-alert-desc').innerText = message;
+        banner.classList.remove('hidden');
+        banner.classList.add('flex');
+        setTimeout(() => {
+          banner.classList.add('hidden');
+          banner.classList.remove('flex');
+        }, 4500);
+      }
+    }
+    function toggleSelectAll(master) {
+      const checkboxes = document.querySelectorAll('.lead-checkbox');
+      checkboxes.forEach(cb => cb.checked = master.checked);
+      updateBatchCounter();
+    }
+    function updateBatchCounter() {
+      const checked = document.querySelectorAll('.lead-checkbox:checked').length;
+      const pill = document.getElementById('batch-selected-count');
+      if (pill) {
+        pill.innerText = checked > 0 ? `${checked} selecionado(s)` : '';
+      }
+    }
+  </script>
+<!-- Notification Banner Overlay (Floating) -->
+<div class="hidden fixed bottom-6 right-6 z-50 bg-sidebar-surface text-surface-container-lowest p-4 rounded-xl shadow-2xl flex-row items-center gap-3 border border-border-subtle/30 animate-fade-in" id="action-alert-banner">
+<div class="w-9 h-9 rounded-full bg-danger-surface text-danger-text flex items-center justify-center font-bold">
+<span class="material-symbols-outlined text-[20px]">bolt</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-surface-container-lowest font-semibold" id="action-alert-title">Mutirão Iniciado</span>
+<span class="font-body-sm text-body-sm text-text-muted" id="action-alert-desc">A fila expressa redistribuiu os cards vencidos para a equipe do turno vespertino.</span>
+</div>
+<button class="ml-4 text-text-muted hover:text-surface-container-lowest p-1 rounded-lg" onclick="document.getElementById('action-alert-banner').classList.add('hidden')">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<div class="px-margin py-gutter-lg space-y-gutter-lg">
+<!-- 1. Header & Severity Alert Strip -->
+<div class="space-y-4">
+<!-- Breadcrumb & System State -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm text-text-muted uppercase tracking-wider">Operação Comercial</span>
+<span class="material-symbols-outlined text-text-muted text-[14px]">chevron_right</span>
+<span class="font-label-sm text-label-sm text-text-muted uppercase tracking-wider">Turno Atual</span>
+<span class="material-symbols-outlined text-text-muted text-[14px]">chevron_right</span>
+<span class="font-label-sm text-label-sm text-danger-text font-bold uppercase tracking-wider bg-danger-surface px-2 py-0.5 rounded-full">SLA Crítico / US-058</span>
+</div>
+<div class="flex items-center gap-2 text-text-muted font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[16px] text-danger-text animate-pulse">timer</span>
+<span>Ciclo de verificação em lote: a cada 60s</span>
+</div>
+</div>
+<!-- Critical Header Card -->
+<div class="bg-surface-card rounded-2xl p-6 shadow-sm border border-danger-border/40 relative overflow-hidden">
+<div class="absolute -top-12 -right-12 w-64 h-64 bg-danger-surface/40 rounded-full blur-3xl pointer-events-none"></div>
+<div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+<div class="space-y-2 max-w-3xl">
+<div class="flex items-center gap-3">
+<span class="w-3 h-3 rounded-full bg-danger-text animate-ping"></span>
+<h1 class="font-headline-lg text-headline-lg text-text-primary font-bold tracking-tight">
+                Controle de SLA &amp; Toques Vencidos
+              </h1>
+<span class="font-label-sm text-label-sm bg-danger-surface text-danger-text px-2.5 py-1 rounded-full font-bold">
+                4 Casos em Risco Imediato
+              </span>
+</div>
+<p class="font-body-md text-body-md text-text-secondary leading-relaxed">
+              Leads com cadência estagnada ou turnos anteriores não executados. A prioridade de atendimento é estritamente regulada pelo maior tempo de atraso para evitar churn precoce e perda irreversível de oportunidade clínica.
+            </p>
+</div>
+<!-- Top CTA Action Buttons -->
+<div class="flex flex-wrap items-center gap-3">
+<button class="h-10 px-4 rounded-lg bg-danger-text hover:bg-danger-text/90 text-on-primary font-label-lg text-label-lg font-semibold flex items-center gap-2 shadow-sm transition-all active:scale-[0.98]" onclick="triggerActionModal('Mutirão de Regularização Acionado', 'Todos os 4 contatos foram adicionados à fila prioritária de ligação com discador automático.')">
+<span class="material-symbols-outlined text-[19px]">emergency_home</span>
+<span>Forçar Mutirão de Regularização</span>
+</button>
+<button class="h-10 px-4 rounded-lg bg-surface-subtle hover:bg-border-subtle/50 text-text-primary font-label-lg text-label-lg font-semibold flex items-center gap-2 border border-border-subtle transition-all" onclick="triggerActionModal('Reatribuição em Lote', 'Rotina round-robin ativada: leads atribuídos aos SDRs com capacidade ociosa.')">
+<span class="material-symbols-outlined text-[19px] text-primary">swap_horiz</span>
+<span>Reatribuir Tarefas em Lote</span>
+</button>
+</div>
+</div>
+<!-- Filter Row bar -->
+<div class="mt-6 pt-5 border-t border-border-subtle/60 flex flex-wrap items-center justify-between gap-4">
+<div class="flex flex-wrap items-center gap-2">
+<span class="font-label-sm text-label-sm text-text-muted font-bold mr-1 uppercase">Filtrar por:</span>
+<!-- Delay Filter Pills -->
+<button class="px-3 py-1.5 rounded-lg bg-danger-surface text-danger-text font-label-sm text-label-sm font-semibold flex items-center gap-1.5 border border-danger-border">
+<span>Atraso: Todos (&gt;0m)</span>
+<span class="material-symbols-outlined text-[14px]">expand_more</span>
+</button>
+<button class="px-3 py-1.5 rounded-lg bg-surface-subtle text-text-secondary hover:text-text-primary font-label-sm text-label-sm font-medium flex items-center gap-1.5 border border-border-subtle">
+<span>Consultor: Todos (SDR &amp; Closer)</span>
+<span class="material-symbols-outlined text-[14px]">expand_more</span>
+</button>
+<button class="px-3 py-1.5 rounded-lg bg-surface-subtle text-text-secondary hover:text-text-primary font-label-sm text-label-sm font-medium flex items-center gap-1.5 border border-border-subtle">
+<span>Etapa do Funil: Diagnóstico / Proposta</span>
+<span class="material-symbols-outlined text-[14px]">expand_more</span>
+</button>
+<button class="px-2.5 py-1.5 rounded-lg bg-surface-subtle text-text-muted hover:text-text-primary font-label-sm text-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">filter_alt_off</span>
+<span>Limpar</span>
+</button>
+</div>
+<div class="flex items-center gap-2 text-text-secondary font-label-sm text-label-sm">
+<span>Classificação:</span>
+<span class="font-bold text-text-primary bg-surface-subtle px-2 py-1 rounded border border-border-subtle flex items-center gap-1">
+<span class="material-symbols-outlined text-danger-text text-[15px]">arrow_downward</span>
+              Maior tempo de atraso (Decrescente)
+            </span>
+</div>
+</div>
+</div>
+</div>
+<!-- 2. Severity SLA Metric Cards Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- Card 1 -->
+<div class="bg-surface-card rounded-2xl p-5 shadow-sm border border-danger-border/60 hover:shadow-md transition-shadow relative overflow-hidden">
+<div class="flex items-start justify-between">
+<div class="space-y-1">
+<span class="font-label-sm text-label-sm text-danger-text font-semibold uppercase tracking-wider">Toques Atrasados</span>
+<div class="flex items-baseline gap-2">
+<span class="font-metric-stat text-metric-stat text-text-primary font-bold">4</span>
+<span class="font-label-sm text-label-sm text-danger-text font-bold bg-danger-surface px-1.5 py-0.5 rounded">Crítico</span>
+</div>
+<p class="font-body-sm text-body-sm text-text-muted">Cadências bloqueadas sem interação</p>
+</div>
+<div class="w-12 h-12 rounded-xl bg-danger-surface text-danger-text flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[26px]">alarm_on</span>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-border-subtle/50 flex items-center justify-between text-text-muted font-body-sm text-body-sm">
+<span>Meta SLA Turno:</span>
+<span class="font-semibold text-text-primary">0 atrasos</span>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-card rounded-2xl p-5 shadow-sm border border-border-subtle hover:shadow-md transition-shadow relative overflow-hidden">
+<div class="flex items-start justify-between">
+<div class="space-y-1">
+<span class="font-label-sm text-label-sm text-text-muted font-semibold uppercase tracking-wider">Receita (MRR) sob Risco</span>
+<div class="flex items-baseline gap-1">
+<span class="font-metric-stat text-metric-stat text-text-primary font-bold">R$ 41.500</span>
+<span class="font-label-sm text-label-sm text-text-muted">/mês</span>
+</div>
+<p class="font-body-sm text-body-sm text-text-muted">Valor somado dos 4 contratos parados</p>
+</div>
+<div class="w-12 h-12 rounded-xl bg-warning-surface text-warning-text flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[26px]">monetization_on</span>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-border-subtle/50 flex items-center justify-between text-text-muted font-body-sm text-body-sm">
+<span>Ticket médio em risco:</span>
+<span class="font-semibold text-text-primary">R$ 10.375 / deal</span>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-card rounded-2xl p-5 shadow-sm border border-border-subtle hover:shadow-md transition-shadow relative overflow-hidden">
+<div class="flex items-start justify-between">
+<div class="space-y-1">
+<span class="font-label-sm text-label-sm text-text-muted font-semibold uppercase tracking-wider">Maior Tempo de Atraso</span>
+<div class="flex items-baseline gap-2">
+<span class="font-metric-stat text-metric-stat text-danger-text font-bold">+3h 45m</span>
+</div>
+<p class="font-body-sm text-body-sm text-text-primary font-medium truncate max-w-[170px]">Instituto CardioVida</p>
+</div>
+<div class="w-12 h-12 rounded-xl bg-danger-surface text-danger-text flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[26px]">hourglass_disabled</span>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-border-subtle/50 flex items-center justify-between text-text-muted font-body-sm text-body-sm">
+<span>Expira redistribuição em:</span>
+<span class="font-bold text-danger-text">15 min</span>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="bg-surface-card rounded-2xl p-5 shadow-sm border border-border-subtle hover:shadow-md transition-shadow relative overflow-hidden">
+<div class="flex items-start justify-between">
+<div class="space-y-1">
+<span class="font-label-sm text-label-sm text-text-muted font-semibold uppercase tracking-wider">Recuperação de SLA Hoje</span>
+<div class="flex items-baseline gap-2">
+<span class="font-metric-stat text-metric-stat text-success-text font-bold">88.4%</span>
+<span class="font-label-sm text-label-sm text-success-text font-bold flex items-center">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>+3.1%
+              </span>
+</div>
+<p class="font-body-sm text-body-sm text-text-muted">Toques normalizados no mesmo turno</p>
+</div>
+<div class="w-12 h-12 rounded-xl bg-success-surface text-success-text flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[26px]">verified</span>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-border-subtle/50 flex items-center justify-between text-text-muted font-body-sm text-body-sm">
+<span>Regularizados hoje:</span>
+<span class="font-semibold text-text-primary">27 de 31 casos</span>
+</div>
+</div>
+</div>
+<!-- 3. Overdue Cadence Table (Order strictly by delay time) -->
+<div class="bg-surface-card rounded-2xl shadow-sm border border-border-subtle overflow-hidden">
+<!-- Table Header Action Toolbar -->
+<div class="px-6 py-4 bg-surface-subtle/80 border-b border-border-subtle flex flex-wrap items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-danger-text text-[20px]">warning</span>
+<span class="font-headline-sm text-headline-sm text-text-primary font-bold">Fila de Resgate Imediato</span>
+</div>
+<span class="w-1.5 h-1.5 rounded-full bg-text-muted"></span>
+<span class="font-label-sm text-label-sm text-text-secondary">Exibindo 4 contatos críticos</span>
+<span class="font-label-sm text-label-sm text-primary font-bold ml-2" id="batch-selected-count"></span>
+</div>
+<div class="flex items-center gap-2">
+<button class="h-8 px-3 rounded-lg bg-surface-card hover:bg-surface-subtle text-text-secondary hover:text-text-primary border border-border-subtle font-label-md text-label-md flex items-center gap-1.5 transition-colors" onclick="triggerActionModal('Disparo em Massa Realizado', 'Lembrete enviado aos 2 consultores responsáveis com deadline de 30min.')">
+<span class="material-symbols-outlined text-[16px]">notifications_active</span>
+<span>Alertar Consultores</span>
+</button>
+<button class="h-8 px-3 rounded-lg bg-surface-card hover:bg-surface-subtle text-text-secondary hover:text-text-primary border border-border-subtle font-label-md text-label-md flex items-center gap-1.5 transition-colors" onclick="triggerActionModal('Exportação de Relatório', 'Relatório de incidentes de SLA exportado para CSV com sucesso.')">
+<span class="material-symbols-outlined text-[16px]">download</span>
+<span>Exportar Auditoria</span>
+</button>
+</div>
+</div>
+<!-- Main Responsive Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-subtle border-b border-border-subtle">
+<th class="w-12 px-4 py-3 text-center">
+<input class="rounded border-border-subtle text-primary focus:ring-0 cursor-pointer w-4 h-4" onchange="toggleSelectAll(this)" type="checkbox"/>
+</th>
+<th class="px-4 py-3 font-table-header text-table-header text-text-secondary uppercase">Tempo de Atraso</th>
+<th class="px-5 py-3 font-table-header text-table-header text-text-secondary uppercase">Lead / Clínica &amp; Decisor</th>
+<th class="px-4 py-3 font-table-header text-table-header text-text-secondary uppercase">MRR Estimado</th>
+<th class="px-4 py-3 font-table-header text-table-header text-text-secondary uppercase">Toque &amp; Canal</th>
+<th class="px-4 py-3 font-table-header text-table-header text-text-secondary uppercase">Responsável Original</th>
+<th class="px-4 py-3 font-table-header text-table-header text-text-secondary uppercase">Gargalo / Diagnóstico</th>
+<th class="px-6 py-3 font-table-header text-table-header text-text-secondary uppercase text-right">Ações de Resgate</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-subtle">
+<!-- Lead 1: Instituto CardioVida -->
+<tr class="hover:bg-danger-surface/20 transition-colors group">
+<td class="px-4 py-4 text-center">
+<input class="lead-checkbox rounded border-border-subtle text-primary focus:ring-0 cursor-pointer w-4 h-4" onchange="updateBatchCounter()" type="checkbox"/>
+</td>
+<td class="px-4 py-4 whitespace-nowrap">
+<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-danger-surface text-danger-text border border-danger-border font-label-sm text-label-sm font-bold shadow-sm">
+<span class="material-symbols-outlined text-[16px] animate-spin">history</span>
+<span>+3h 45m atrasado</span>
+</div>
+<div class="text-[10px] text-danger-text font-semibold mt-1 ml-1 flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-danger-text"></span>
+                  Estouro iminente de SLA 4h
+                </div>
+</td>
+<td class="px-5 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-danger-surface/80 text-danger-text flex items-center justify-center font-bold text-headline-sm shrink-0">
+<span class="material-symbols-outlined text-[22px]">cardiology</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-body-lg font-bold text-text-primary hover:text-primary cursor-pointer truncate">Instituto CardioVida</span>
+<span class="px-1.5 py-0.2 rounded text-[10px] font-bold bg-surface-subtle text-text-secondary uppercase border border-border-subtle">Cardiologia</span>
+</div>
+<div class="flex items-center gap-2 text-text-secondary font-body-sm text-body-sm mt-0.5">
+<span class="font-medium text-text-primary">Dr. Paulo Fontes</span>
+<span>•</span>
+<span>(11) 98421-4402</span>
+</div>
+</div>
+</div>
+</td>
+<td class="px-4 py-4 whitespace-nowrap">
+<span class="font-headline-sm text-headline-sm font-bold text-text-primary">R$ 8.900</span>
+<span class="font-body-sm text-body-sm text-text-muted block">Plano Enterprise Clínicas</span>
+</td>
+<td class="px-4 py-4 whitespace-nowrap">
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5 font-label-md text-label-md font-semibold text-text-primary">
+<span class="material-symbols-outlined text-primary text-[18px]">phone_in_talk</span>
+<span>Toque #2 / Ligação</span>
+</div>
+<span class="font-label-sm text-[11px] text-text-muted mt-0.5">Qualificação de Necessidades</span>
+</div>
+</td>
+<td class="px-4 py-4 whitespace-nowrap">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-label-sm">
+                    PA
+                  </div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-medium text-text-primary">Patrícia Alvarenga</span>
+<span class="font-label-sm text-[10px] text-text-muted">SDR Pleno</span>
+</div>
+</div>
+</td>
+<td class="px-4 py-4">
+<div class="flex items-start gap-1.5">
+<span class="material-symbols-outlined text-danger-text text-[16px] shrink-0 mt-0.5">error_outline</span>
+<span class="font-body-sm text-body-sm text-text-secondary leading-snug">
+                    Turno Manhã encerrado sem discagem registrada. Sem contato prévio há 24h.
+                  </span>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="px-3 py-1.5 rounded-lg bg-danger-text hover:bg-danger-text/90 text-on-primary font-label-sm text-label-sm font-semibold flex items-center gap-1 shadow-sm transition-all active:scale-95" onclick="triggerActionModal('Executando Ligação Prioritária', 'Discador conectado para Dr. Paulo Fontes (Instituto CardioVida)...')" title="Executar Toque Imediato">
+<span class="material-symbols-outlined text-[16px]">call</span>
+<span>Executar Agora</span>
+</button>
+<button class="p-1.5 rounded-lg bg-surface-subtle hover:bg-border-subtle/60 text-text-secondary hover:text-text-primary border border-border-subtle transition-colors" onclick="triggerActionModal('Reatribuir Lead', 'Lead transferido de Patrícia Alvarenga para Lucas Viana (SDR de Plantão).')" title="Passar para outro SDR de Plantão">
+<span class="material-symbols-outlined text-[18px]">person_pin</span>
+</button>
+<button class="p-1.5 rounded-lg bg-surface-subtle hover:bg-border-subtle/60 text-text-secondary hover:text-text-primary border border-border-subtle transition-colors" onclick="triggerActionModal('Justificar Estagnação', 'Janela de registro de justificativa de SLA aberta.')" title="Justificar Atraso">
+<span class="material-symbols-outlined text-[18px]">edit_note</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Lead 2: GastroVita Especialistas -->
+<tr class="hover:bg-danger-surface/10 transition-colors group">
+<td class="px-4 py-4 text-center">
+<input class="lead-checkbox rounded border-border-subtle text-primary focus:ring-0 cursor-pointer w-4 h-4" onchange="updateBatchCounter()" type="checkbox"/>
+</td>
+<td class="px-4 py-4 whitespace-nowrap">
+<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-danger-surface text-danger-text border border-danger-border font-label-sm text-label-sm font-bold">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+<span>+2h 10m atrasado</span>
+</div>
+<div class="text-[10px] text-text-muted mt-1 ml-1">SLA padrão: máx 45 min</div>
+</td>
+<td class="px-5 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-info-surface text-info-text flex items-center justify-center font-bold text-headline-sm shrink-0">
+<span class="material-symbols-outlined text-[22px]">medical_services</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-body-lg font-bold text-text-primary hover:text-primary cursor-pointer truncate">GastroVita Especialistas</span>
+<span class="px-1.5 py-0.2 rounded text-[10px] font-bold bg-surface-subtle text-text-secondary uppercase border border-border-subtle">Gastro</span>
+</div>
+<div class="flex items-center gap-2 text-text-secondary font-body-sm text-body-sm mt-0.5">
+<span class="font-medium text-text-primary">Dra. Regina Toledo</span>
+<span>•</span>
+<span>(11) 97112-9090</span>
+</div>
+</div>
+</div>
+</td>
+<td class="px-4 py-4 whitespace-nowrap">
+<span class="font-headline-sm text-headline-sm font-bold text-text-primary">R$ 5.100</span>
+<span class="font-body-sm text-body-sm text-text-muted block">Assinatura MedGuia Pro</span>
+</td>
+<td class="px-4 py-4 whitespace-nowrap">
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5 font-label-md text-label-md font-semibold text-text-primary">
+<span class="material-symbols-outlined text-success-text text-[18px]">chat</span>
+<span>Toque #1 / WhatsApp</span>
+</div>
+<span class="font-label-sm text-[11px] text-text-muted mt-0.5">Primeira Abordagem Ativa</span>
+</div>
+</td>
+<td class="px-4 py-4 whitespace-nowrap">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-label-sm">
+                    PA
+                  </div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-medium text-text-primary">Patrícia Alvarenga</span>
+<span class="font-label-sm text-[10px] text-text-muted">SDR Pleno</span>
+</div>
+</div>
+</td>
+<td class="px-4 py-4">
+<div class="flex items-start gap-1.5">
+<span class="material-symbols-outlined text-warning-text text-[16px] shrink-0 mt-0.5">pending_actions</span>
+<span class="font-body-sm text-body-sm text-text-secondary leading-snug">
+                    Lead inbound aguardando primeiro contato personalizado desde as 10:15.
+                  </span>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="px-3 py-1.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-sm text-label-sm font-semibold flex items-center gap-1 shadow-sm transition-all active:scale-95" onclick="triggerActionModal('Abrindo WhatsApp Integrado', 'Chat direto com Dra. Regina Toledo pronto para envio de template homologado.')" title="Enviar WhatsApp Imediato">
+<span class="material-symbols-outlined text-[16px]">send</span>
+<span>Executar Agora</span>
+</button>
+<button class="p-1.5 rounded-lg bg-surface-subtle hover:bg-border-subtle/60 text-text-secondary hover:text-text-primary border border-border-subtle transition-colors" onclick="triggerActionModal('Reatribuir Lead', 'Lead transferido de Patrícia Alvarenga para Carlos Mendes.')" title="Passar para outro SDR">
+<span class="material-symbols-outlined text-[18px]">person_pin</span>
+</button>
+<button class="p-1.5 rounded-lg bg-surface-subtle hover:bg-border-subtle/60 text-text-secondary hover:text-text-primary border border-border-subtle transition-colors" onclick="triggerActionModal('Justificar Atraso', 'Registro aberto.')" title="Justificar Atraso">
+<span class="material-symbols-outlined text-[18px]">edit_note</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Lead 3: Centro Diagnóstico Morumbi -->
+<tr class="hover:bg-warning-surface/10 transition-colors group">
+<td class="px-4 py-4 text-center">
+<input class="lead-checkbox rounded border-border-subtle text-primary focus:ring-0 cursor-pointer w-4 h-4" onchange="updateBatchCounter()" type="checkbox"/>
+</td>
+<td class="px-4 py-4 whitespace-nowrap">
+<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-warning-surface text-warning-text border border-warning-border font-label-sm text-label-sm font-bold">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+<span>+1h 30m atrasado</span>
+</div>
+<div class="text-[10px] text-text-muted mt-1 ml-1">Promessa em ata de reunião</div>
+</td>
+<td class="px-5 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-headline-sm shrink-0">
+<span class="material-symbols-outlined text-[22px]">biotech</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-body-lg font-bold text-text-primary hover:text-primary cursor-pointer truncate">Centro Diagnóstico Morumbi</span>
+<span class="px-1.5 py-0.2 rounded text-[10px] font-bold bg-warning-surface text-warning-text uppercase border border-warning-border">Alto Ticket</span>
+</div>
+<div class="flex items-center gap-2 text-text-secondary font-body-sm text-body-sm mt-0.5">
+<span class="font-medium text-text-primary">Dr. André Vasconcelos</span>
+<span>•</span>
+<span>(11) 99120-0033</span>
+</div>
+</div>
+</div>
+</td>
+<td class="px-4 py-4 whitespace-nowrap">
+<span class="font-headline-sm text-headline-sm font-bold text-text-primary">R$ 15.500</span>
+<span class="font-body-sm text-body-sm text-text-muted block">3 Unidades Integradas</span>
+</td>
+<td class="px-4 py-4 whitespace-nowrap">
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5 font-label-md text-label-md font-semibold text-text-primary">
+<span class="material-symbols-outlined text-primary text-[18px]">contract</span>
+<span>Toque #9 / Envio Proposta</span>
+</div>
+<span class="font-label-sm text-[11px] text-text-muted mt-0.5">Minuta Comercial + SLA</span>
+</div>
+</td>
+<td class="px-4 py-4 whitespace-nowrap">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center font-bold text-label-sm">
+                    CM
+                  </div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-medium text-text-primary">Carlos Mendes</span>
+<span class="font-label-sm text-[10px] text-text-muted">Senior Closer</span>
+</div>
+</div>
+</td>
+<td class="px-4 py-4">
+<div class="flex items-start gap-1.5">
+<span class="material-symbols-outlined text-warning-text text-[16px] shrink-0 mt-0.5">schedule_send</span>
+<span class="font-body-sm text-body-sm text-text-secondary leading-snug">
+                    Minuta prometida pós-call das 11h. Dr. André questionou status às 13h via secretária.
+                  </span>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="px-3 py-1.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-sm text-label-sm font-semibold flex items-center gap-1 shadow-sm transition-all active:scale-95" onclick="triggerActionModal('Disparar Proposta Pré-configurada', 'Minuta PDF gerada automaticamente e enviada para o e-mail do Dr. André.')" title="Enviar Proposta Imediata">
+<span class="material-symbols-outlined text-[16px]">send</span>
+<span>Executar Agora</span>
+</button>
+<button class="p-1.5 rounded-lg bg-surface-subtle hover:bg-border-subtle/60 text-text-secondary hover:text-text-primary border border-border-subtle transition-colors" onclick="triggerActionModal('Reatribuir Lead', 'Closer Lucas Alencar acionado para assumir negociação.')" title="Passar para outro Closer">
+<span class="material-symbols-outlined text-[18px]">person_pin</span>
+</button>
+<button class="p-1.5 rounded-lg bg-surface-subtle hover:bg-border-subtle/60 text-text-secondary hover:text-text-primary border border-border-subtle transition-colors" onclick="triggerActionModal('Justificar Atraso', 'Janela de justificativa aberta.')" title="Justificar Atraso">
+<span class="material-symbols-outlined text-[18px]">edit_note</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Lead 4: DermaCare Estética Avançada -->
+<tr class="hover:bg-warning-surface/5 transition-colors group">
+<td class="px-4 py-4 text-center">
+<input class="lead-checkbox rounded border-border-subtle text-primary focus:ring-0 cursor-pointer w-4 h-4" onchange="updateBatchCounter()" type="checkbox"/>
+</td>
+<td class="px-4 py-4 whitespace-nowrap">
+<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-warning-surface text-warning-text border border-warning-border font-label-sm text-label-sm font-bold">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+<span>+45m atrasado</span>
+</div>
+<div class="text-[10px] text-text-muted mt-1 ml-1">Follow-up pós-demo</div>
+</td>
+<td class="px-5 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center font-bold text-headline-sm shrink-0">
+<span class="material-symbols-outlined text-[22px]">face</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-body-lg font-bold text-text-primary hover:text-primary cursor-pointer truncate">DermaCare Estética Avançada</span>
+<span class="px-1.5 py-0.2 rounded text-[10px] font-bold bg-surface-subtle text-text-secondary uppercase border border-border-subtle">Dermatologia</span>
+</div>
+<div class="flex items-center gap-2 text-text-secondary font-body-sm text-body-sm mt-0.5">
+<span class="font-medium text-text-primary">Dra. Carla Esteves</span>
+<span>•</span>
+<span>(11) 98845-1212</span>
+</div>
+</div>
+</div>
+</td>
+<td class="px-4 py-4 whitespace-nowrap">
+<span class="font-headline-sm text-headline-sm font-bold text-text-primary">R$ 12.000</span>
+<span class="font-body-sm text-body-sm text-text-muted block">Pacote Multi-Profissionais</span>
+</td>
+<td class="px-4 py-4 whitespace-nowrap">
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5 font-label-md text-label-md font-semibold text-text-primary">
+<span class="material-symbols-outlined text-primary text-[18px]">forward_to_inbox</span>
+<span>Toque #11 / Follow-up</span>
+</div>
+<span class="font-label-sm text-[11px] text-text-muted mt-0.5">Checagem de Objeções</span>
+</div>
+</td>
+<td class="px-4 py-4 whitespace-nowrap">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center font-bold text-label-sm">
+                    CM
+                  </div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-medium text-text-primary">Carlos Mendes</span>
+<span class="font-label-sm text-[10px] text-text-muted">Senior Closer</span>
+</div>
+</div>
+</td>
+<td class="px-4 py-4">
+<div class="flex items-start gap-1.5">
+<span class="material-symbols-outlined text-text-muted text-[16px] shrink-0 mt-0.5">hourglass_empty</span>
+<span class="font-body-sm text-body-sm text-text-secondary leading-snug">
+                    Tentativa de ligação sem resposta às 11:30. Exige reagendamento ou mensagem formal.
+                  </span>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="px-3 py-1.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-sm text-label-sm font-semibold flex items-center gap-1 shadow-sm transition-all active:scale-95" onclick="triggerActionModal('Enviando Follow-up Modelo #3', 'Disparada mensagem modelo com proposta resumida via WhatsApp para Dra. Carla.')" title="Executar Follow-up">
+<span class="material-symbols-outlined text-[16px]">send</span>
+<span>Executar Agora</span>
+</button>
+<button class="p-1.5 rounded-lg bg-surface-subtle hover:bg-border-subtle/60 text-text-secondary hover:text-text-primary border border-border-subtle transition-colors" onclick="triggerActionModal('Reatribuir Lead', 'Lead transferido de Carlos Mendes para equipe de apoio.')" title="Passar para outro SDR">
+<span class="material-symbols-outlined text-[18px]">person_pin</span>
+</button>
+<button class="p-1.5 rounded-lg bg-surface-subtle hover:bg-border-subtle/60 text-text-secondary hover:text-text-primary border border-border-subtle transition-colors" onclick="triggerActionModal('Justificar Atraso', 'Janela de registro aberta.')" title="Justificar Atraso">
+<span class="material-symbols-outlined text-[18px]">edit_note</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footer Batch Options -->
+<div class="px-6 py-3.5 bg-surface-subtle border-t border-border-subtle flex flex-wrap items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<span class="font-body-sm text-body-sm text-text-secondary">Ações para itens selecionados:</span>
+<button class="h-8 px-3 rounded-lg bg-surface-card hover:bg-border-subtle/40 border border-border-subtle text-text-primary font-label-md text-label-md font-semibold transition-colors" onclick="triggerActionModal('Avanço Coletivo Executado', 'Todos os leads marcados foram direcionados para os respectivos SDRs de apoio.')">
+            Reatribuir em Lote
+          </button>
+<button class="h-8 px-3 rounded-lg bg-surface-card hover:bg-border-subtle/40 border border-border-subtle text-danger-text font-label-md text-label-md font-semibold transition-colors" onclick="triggerActionModal('Notificação em Massa', 'Cobrança enviada ao Slack dos consultores com prazo de 15min.')">
+            Notificar Atraso Urgente
+          </button>
+</div>
+<div class="flex items-center gap-2 font-body-sm text-body-sm text-text-secondary">
+<span>Página 1 de 1</span>
+<span class="w-1 h-1 rounded-full bg-text-muted"></span>
+<span>4 tarefas pendentes de SLA</span>
+</div>
+</div>
+</div>
+<!-- 4. Playbook & Governance Automation Box (US-058) -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+<!-- Governance Protocol Callout (2 cols) -->
+<div class="lg:col-span-2 bg-gradient-to-br from-sidebar-surface to-sidebar-surface-active text-surface-container-lowest rounded-2xl p-6 shadow-md flex flex-col justify-between relative overflow-hidden">
+<div class="absolute right-0 top-0 w-80 h-80 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
+<div class="relative z-10 space-y-4">
+<div class="flex items-center gap-2">
+<span class="px-2.5 py-1 rounded-md bg-danger-surface text-danger-text font-label-sm text-label-sm font-bold uppercase tracking-wider">
+              Regra de Governança Comercial Automática
+            </span>
+<span class="font-label-sm text-label-sm text-text-muted">Cláusula SLA MedCRM v2.4</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-surface-container-lowest font-bold">
+            Transbordo Compulsório por Atraso &gt; 4 Horas
+          </h2>
+<p class="font-body-md text-body-md text-text-muted max-w-2xl leading-relaxed">
+            Conforme a diretriz de conversão do MedCRM para clínicas médicas, contatos não realizados em até <span class="text-surface-container-lowest font-bold">4 horas</span> após o horário estipulado pela cadência e sem justificativa operacional registrada sofrem transbordo automático para o <span class="text-primary-fixed font-semibold">SDR com maior taxa de resolução do turno</span>.
+          </p>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+<div class="bg-sidebar-surface/80 border border-sidebar-surface-active p-3 rounded-xl">
+<span class="font-label-sm text-label-sm text-text-muted block">Teto de tolerância:</span>
+<span class="font-headline-sm text-headline-sm text-surface-container-lowest font-bold">04:00 horas</span>
+</div>
+<div class="bg-sidebar-surface/80 border border-sidebar-surface-active p-3 rounded-xl">
+<span class="font-label-sm text-label-sm text-text-muted block">Penalidade no ranking:</span>
+<span class="font-headline-sm text-headline-sm text-danger-text font-bold">-15 pts SLA</span>
+</div>
+<div class="bg-sidebar-surface/80 border border-sidebar-surface-active p-3 rounded-xl">
+<span class="font-label-sm text-label-sm text-text-muted block">Distribuição alvo:</span>
+<span class="font-headline-sm text-headline-sm text-success-text font-bold">Fila Dinâmica</span>
+</div>
+</div>
+</div>
+<div class="relative z-10 pt-6 mt-4 border-t border-sidebar-surface-active flex flex-wrap items-center justify-between gap-4">
+<div class="flex items-center gap-2 text-text-muted font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-primary text-[18px]">verified_user</span>
+<span>Automação ativa no tenant Clínica São Lucas - Matriz</span>
+</div>
+<button class="h-10 px-5 rounded-xl bg-primary hover:bg-primary-container text-on-primary font-label-lg text-label-lg font-semibold flex items-center gap-2 shadow-lg transition-all active:scale-[0.98]" onclick="triggerActionModal('Fila Expressa Ativada', 'Iniciando modo Foco Total: discador sequencial aberto para os 4 leads em ordem decrescente de atraso.')">
+<span class="material-symbols-outlined text-[19px]">play_circle</span>
+<span>Executar Fila Expressa de Resgate (1 por 1)</span>
+</button>
+</div>
+</div>
+<!-- Quick Resolution Mini-Widget (1 col) -->
+<div class="bg-surface-card rounded-2xl p-6 shadow-sm border border-border-subtle flex flex-col justify-between">
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-text-primary font-bold">Plantão de Resgate</span>
+<span class="w-2 h-2 rounded-full bg-success-text animate-ping"></span>
+</div>
+<p class="font-body-sm text-body-sm text-text-secondary">
+            Consultores disponíveis com capacidade imediata para acolher os 4 toques bloqueados:
+          </p>
+<div class="space-y-3">
+<div class="flex items-center justify-between p-2.5 rounded-xl bg-surface-subtle border border-border-subtle/70">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-full bg-success-surface text-success-text flex items-center justify-center font-bold text-label-sm">
+                  LV
+                </div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-text-primary">Lucas Viana</span>
+<span class="font-label-sm text-[10px] text-text-muted">SDR • 0 atrasos hoje</span>
+</div>
+</div>
+<button class="px-2.5 py-1 rounded bg-surface-card hover:bg-primary hover:text-on-primary border border-border-subtle text-text-primary font-label-sm text-label-sm font-semibold transition-colors" onclick="triggerActionModal('Reatribuído', 'Contato enviado para a fila de Lucas Viana.')">
+                Alocar
+              </button>
+</div>
+<div class="flex items-center justify-between p-2.5 rounded-xl bg-surface-subtle border border-border-subtle/70">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-label-sm">
+                  LA
+                </div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-text-primary">Lucas Alencar</span>
+<span class="font-label-sm text-[10px] text-text-muted">Closer • Disponível</span>
+</div>
+</div>
+<button class="px-2.5 py-1 rounded bg-surface-card hover:bg-primary hover:text-on-primary border border-border-subtle text-text-primary font-label-sm text-label-sm font-semibold transition-colors" onclick="triggerActionModal('Reatribuído', 'Contato enviado para a fila de Lucas Alencar.')">
+                Alocar
+              </button>
+</div>
+</div>
+</div>
+<div class="pt-4 border-t border-border-subtle/60 mt-4">
+<a class="font-label-sm text-label-sm text-primary hover:underline flex items-center justify-center gap-1" href="#">
+<span>Ver regras completas de round-robin no CRM</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+</div></main></div></body></html>

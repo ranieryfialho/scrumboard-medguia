@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-subtle": "#F8FAFC", "info-border": "#BFDBFE", "danger-text": "#DC2626", "on-error-container": "#93000a", "surface-tint": "#1157cb", "on-secondary-fixed": "#131b30", "primary-fixed-dim": "#b1c5ff", "on-secondary-container": "#5a627b", "on-primary": "#ffffff", "inverse-on-surface": "#f0f0fa", "warning-surface": "#FEF3C7", "text-secondary": "#64748B", "surface-bright": "#faf8ff", "on-primary-fixed-variant": "#0040a0", "sidebar-surface": "#1E293B", "on-primary-fixed": "#001847", "success-border": "#A7F3D0", "on-tertiary-container": "#fffbff", "on-primary-container": "#fefcff", "secondary-fixed": "#dae2ff", "surface-container-lowest": "#ffffff", "on-tertiary-fixed": "#311300", "on-background": "#191b22", "text-muted": "#94A3B8", "background-canvas": "#F4F6FA", "tertiary-fixed-dim": "#ffb787", "warning-text": "#D97706", "sidebar-surface-active": "#2D3748", "on-secondary": "#ffffff", "border-subtle": "#E2E8F0", "outline": "#737785", "border-focus": "#93C5FD", "inverse-surface": "#2e3038", "on-tertiary": "#ffffff", "secondary-container": "#d7dffd", "inverse-primary": "#b1c5ff", "text-primary": "#0F172A", "error": "#ba1a1a", "info-text": "#2563EB", "success-surface": "#D1FAE5", "on-surface-variant": "#434654", "surface-container": "#ededf7", "on-secondary-fixed-variant": "#3e465e", "danger-surface": "#FEE2E2", "tertiary": "#924700", "primary-fixed": "#dae2ff", "success-text": "#059669", "warning-border": "#FDE68A", "surface-container-highest": "#e1e2ec", "error-container": "#ffdad6", "surface-dim": "#d9d9e3", "background": "#faf8ff", "tertiary-container": "#b85b00", "on-surface": "#191b22", "on-error": "#ffffff", "tertiary-fixed": "#ffdcc7", "secondary": "#565e77", "surface-container-low": "#f3f3fd", "surface-variant": "#e1e2ec", "info-surface": "#EFF6FF", "danger-border": "#FECACA", "surface-card": "#FFFFFF", "on-tertiary-fixed-variant": "#723600", "secondary-fixed-dim": "#bec6e3", "primary-container": "#366ee3", "primary": "#0954c9", "outline-variant": "#c3c6d6", "surface-container-high": "#e7e7f2", "surface": "#faf8ff" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "gutter-sm": "0.75rem", "gutter-lg": "1.5rem", "space-lg": "1.25rem", "space-sm": "0.5rem", "gutter": "1.25rem", "space-xs": "0.25rem", "space-md": "0.875rem", "margin": "1.75rem", "space-xl": "1.75rem", "margin-mobile": "1rem", "space-2xl": "2.5rem" }, "fontFamily": { "body-sm": ["Inter"], "headline-sm": ["Plus Jakarta Sans"], "body-lg": ["Inter"], "label-sm": ["Inter"], "body-md": ["Inter"], "headline-md": ["Plus Jakarta Sans"], "metric-stat": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "display-lg": ["Plus Jakarta Sans"], "label-md": ["Inter"], "display-lg-mobile": ["Plus Jakarta Sans"], "label-lg": ["Inter"], "table-header": ["Inter"] }, "fontSize": { "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }], "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }], "body-lg": ["15px", { "lineHeight": "22px", "fontWeight": "400" }], "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.03em", "fontWeight": "600" }], "body-md": ["13px", { "lineHeight": "20px", "fontWeight": "400" }], "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }], "metric-stat": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "500" }], "display-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "700" }], "label-lg": ["13px", { "lineHeight": "18px", "fontWeight": "600" }], "table-header": ["11px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }] } } } };</script></head><body class="bg-surface font-body-md text-text-primary antialiased selection:bg-primary-fixed selection:text-on-primary-fixed"><aside class="fixed left-0 top-0 h-full w-64 bg-sidebar-surface text-surface z-50 flex flex-col justify-between shadow-[0_4px_20px_-2px_rgba(0,0,0,0.08)] overflow-hidden"><div class="flex flex-col flex-1 min-h-0"><div class="h-16 px-space-lg flex items-center justify-between border-b border-sidebar-surface-active/60 bg-sidebar-surface"><div class="flex items-center gap-space-sm"><div class="w-9 h-9 rounded-xl bg-primary flex items-center justify-center shadow-md"><span class="material-symbols-outlined text-on-primary text-[20px]">local_hospital</span></div><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-surface-container-lowest leading-none tracking-tight">MedCRM</span><span class="font-label-sm text-label-sm text-text-muted mt-0.5">MedGuia B2B</span></div></div><span class="font-label-sm text-[10px] px-2 py-0.5 rounded-full bg-primary/25 border border-primary/40 text-primary-fixed-dim uppercase tracking-wider font-bold">COMUNICAÇÃO</span></div><div class="flex-1 overflow-y-auto px-space-sm py-space-md space-y-space-md scrollbar-none"><nav class="space-y-space-md" data-active-classes="bg-primary text-on-primary font-semibold rounded-lg shadow-sm"><div class="space-y-1"><div class="px-space-sm pb-1"><span class="font-table-header text-table-header text-text-muted uppercase tracking-wider">Operação</span></div><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="pipeline" href="#"><span class="font-body-md text-body-md">Funil Pipeline</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="pipeline-lista" href="#"><span class="font-body-md text-body-md">Lista</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="pipeline-arquivados" href="#"><span class="font-body-md text-body-md">Arquivados</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="tarefas" href="#"><span class="font-body-md text-body-md">Tarefas do Turno</span><span class="font-label-sm text-label-sm bg-primary-container text-on-primary px-2 py-0.5 rounded-full font-bold">12</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="tarefas-atrasadas" href="#"><span class="font-body-md text-body-md">Tarefas Atrasadas</span><span class="font-label-sm text-label-sm bg-danger-surface text-danger-text px-2 py-0.5 rounded-full font-bold">4</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="agenda" href="#"><span class="font-body-md text-body-md">Agenda</span></a></div><div class="space-y-1 p-1.5 rounded-xl bg-sidebar-surface-active/40 border border-primary/30"><div class="px-space-sm pb-1 flex items-center justify-between"><span class="font-table-header text-table-header text-primary-fixed-dim uppercase tracking-wider font-bold">Comunicação</span><span class="font-label-sm text-[10px] px-1.5 py-0.2 rounded bg-primary/30 text-primary-fixed-dim font-bold uppercase tracking-wider">Ativo</span></div><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="whatsapp" href="#"><span class="font-body-md text-body-md font-medium text-surface-container-lowest">WhatsApp Inbox</span><span class="font-label-sm text-label-sm bg-success-surface text-success-text px-2 py-0.5 rounded-full font-bold">5</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="whatsapp-conexao" href="#"><span class="font-body-md text-body-md">Conexão &amp; QR Code</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="whatsapp-configuracao" href="#"><span class="font-body-md text-body-md">Configuração Evolution</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="campanhas" href="#"><span class="font-body-md text-body-md">Campanhas</span></a></div><div class="space-y-1"><div class="px-space-sm pb-1"><span class="font-table-header text-table-header text-text-muted uppercase tracking-wider">Análises</span></div><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="indicadores" href="#"><span class="font-body-md text-body-md">Indicadores</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="relatorios" href="#"><span class="font-body-md text-body-md">Relatórios</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="relatorios-comerciais" href="#"><span class="font-body-md text-body-md">Comercial</span></a></div><div class="space-y-1"><div class="px-space-sm pb-1"><span class="font-table-header text-table-header text-text-muted uppercase tracking-wider">Administração</span></div><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="equipe" href="#"><span class="font-body-md text-body-md">Equipe</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="configuracoes-motivos-perda" href="#"><span class="font-body-md text-body-md">Motivos de Perda</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="admin-empresas" href="#"><span class="font-body-md text-body-md">Empresas</span></a></div></nav></div></div><div class="p-space-md border-t border-sidebar-surface-active/50 bg-sidebar-surface"><div class="flex items-center justify-between text-text-muted"><a class="flex items-center gap-2 hover:text-surface-container-lowest transition-colors font-label-md text-label-md" data-path="suporte-e-ajuda" href="#"><span>Ajuda &amp; Suporte</span></a><span class="font-label-sm text-label-sm text-text-muted/80 bg-sidebar-surface-active/80 px-2 py-0.5 rounded">v2.4.0</span></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface-card border-b border-border-subtle z-40 flex items-center justify-between px-gutter shadow-[0_1px_8px_rgba(0,0,0,0.02)]"><div class="flex items-center gap-space-lg flex-1 max-w-2xl"><div class="relative w-full max-w-lg"><span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[19px]">search</span><input class="w-full h-10 pl-9 pr-16 bg-surface-subtle border border-border-subtle rounded-lg font-body-md text-body-md text-text-primary placeholder:text-text-muted focus:outline-none focus:border-border-focus focus:bg-surface-card transition-all" placeholder="Buscar conversa, médico, telefone..." type="text"/><kbd class="absolute right-3 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[10px] font-label-sm bg-surface-card border border-border-subtle text-text-muted rounded shadow-sm">⌘K</kbd></div><div class="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border-subtle bg-surface-card text-text-primary shadow-sm hover:border-border-focus cursor-pointer transition-all"><span class="material-symbols-outlined text-primary text-[18px]">domain</span><div class="flex flex-col text-left"><span class="font-label-sm text-label-sm font-semibold leading-tight">Clínica São Lucas - Matriz</span><span class="font-label-sm text-[10px] text-success-text leading-none flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-success-text inline-block"></span>Ativo</span></div><span class="material-symbols-outlined text-text-muted text-[16px] ml-1">expand_more</span></div></div><div class="flex items-center gap-space-md"><div class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-success-surface border border-success-border"><span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success-text opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-success-text"></span></span><span class="font-label-sm text-label-sm text-success-text font-semibold">Tempo real conectado</span></div><button class="relative p-2 rounded-lg text-text-secondary hover:bg-surface-subtle hover:text-text-primary transition-colors" type="button"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-danger-text"></span></button><div class="h-6 w-px bg-border-subtle"></div><div class="flex items-center gap-space-sm pl-1 cursor-pointer"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><div class="hidden lg:flex flex-col text-left"><div class="flex items-center gap-1.5"><span class="font-label-lg text-label-lg font-semibold text-text-primary leading-tight">Dr. Roberto Mendes</span><span class="font-label-sm text-[10px] bg-primary-fixed text-on-primary-fixed px-1.5 py-0.2 rounded font-bold uppercase tracking-wider">MASTER</span></div><span class="font-label-sm text-label-sm text-text-muted leading-tight">roberto.mendes@medguia.com.br</span></div><span class="material-symbols-outlined text-text-muted text-[18px]">expand_more</span></div></div></header><main class="w-full pt-16 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<div class="px-margin py-gutter-lg space-y-gutter-lg max-w-[1720px] mx-auto w-full">
+<!-- 1. CABEÇALHO DE NAVEGAÇÃO & AÇÕES RÁPIDAS -->
+<header class="flex flex-col xl:flex-row xl:items-center justify-between gap-space-lg bg-surface-card p-space-xl rounded-2xl shadow-sm">
+<div class="flex flex-col gap-space-xs">
+<!-- Breadcrumb & Tag Canal -->
+<nav aria-label="Breadcrumb" class="flex items-center gap-2 text-text-muted">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-text-secondary">Comunicação</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<a class="font-label-sm text-label-sm hover:text-primary transition-colors" href="#">Campanhas</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="font-label-sm text-label-sm text-text-primary font-semibold">CMP-1048</span>
+<span class="mx-1.5 inline-block w-1 h-1 rounded-full bg-text-muted"></span>
+<span class="inline-flex items-center gap-1 font-label-sm text-label-sm text-primary bg-info-surface px-2 py-0.5 rounded-full font-semibold">
+<span class="material-symbols-outlined text-[13px]">forward_to_inbox</span> E-mail Corporativo (SendGrid Dedicated IP)
+          </span>
+</nav>
+<!-- Título e Status -->
+<div class="flex flex-wrap items-center gap-3 pt-1">
+<h1 class="font-headline-lg text-headline-lg text-text-primary font-bold tracking-tight">
+            Apresentação MedCRM v2.4 + Módulo IA
+          </h1>
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-info-surface text-info-text font-label-sm text-label-sm font-semibold shadow-xs">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-info-text opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-info-text"></span>
+</span>
+            Enviando (64% concluído)
+          </span>
+<span class="font-body-sm text-body-sm text-text-secondary bg-surface-subtle px-2.5 py-1 rounded-lg">
+            Assunto: <span class="font-medium text-text-primary">"Nova inteligência preditiva para sua clínica médica"</span>
+</span>
+</div>
+<!-- Metadados de Auditoria -->
+<div class="flex flex-wrap items-center gap-y-1 gap-x-4 pt-1 font-body-sm text-body-sm text-text-secondary">
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-text-muted">schedule</span>
+            Disparada em: <strong class="font-semibold text-text-primary">24 Outubro, 09:30</strong>
+</span>
+<span>•</span>
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-text-muted">person_check</span>
+            Disparado por: <strong class="font-semibold text-text-primary">Dr. Roberto Mendes (Master)</strong>
+</span>
+<span>•</span>
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-text-muted">target</span>
+            Segmentação: <strong class="font-semibold text-text-primary">Etapas 7 &amp; 9 do Pipeline (482 decisores)</strong>
+</span>
+<span>•</span>
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-success-text">payments</span>
+            Pipeline sob impacto: <strong class="font-semibold text-success-text">R$ 840.000</strong>
+</span>
+</div>
+</div>
+<!-- Barra de Ações Rápidas -->
+<div class="flex flex-wrap items-center gap-2 self-start xl:self-center">
+<button class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-surface-card hover:bg-surface-subtle text-text-primary font-label-md text-label-md font-semibold rounded-lg shadow-sm transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">arrow_back</span> Voltar
+        </button>
+<button class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-warning-surface hover:opacity-90 text-warning-text font-label-md text-label-md font-semibold rounded-lg shadow-sm transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">pause_circle</span> Pausar Disparo
+        </button>
+<button class="inline-flex items-center gap-1.5 px-4 py-2 bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md font-semibold rounded-lg shadow-sm transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">replay</span> Reenviar Falhas (14)
+        </button>
+<button class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-surface-card hover:bg-surface-subtle text-text-secondary font-label-md text-label-md font-semibold rounded-lg shadow-sm transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">file_download</span> CSV
+        </button>
+<button class="inline-flex items-center gap-1.5 px-3 py-2 bg-surface-subtle hover:bg-danger-surface hover:text-danger-text text-text-secondary font-label-md text-label-md rounded-lg transition-all" title="Finalizar Manually" type="button">
+<span class="material-symbols-outlined text-[18px]">stop_circle</span>
+</button>
+</div>
+</header>
+<!-- LIVE WEBSOCKET PROGRESS BAR -->
+<div class="bg-surface-card p-4 rounded-xl shadow-sm flex flex-col gap-2">
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<span class="flex items-center gap-2 text-text-primary font-semibold">
+<span class="material-symbols-outlined text-info-text text-[16px] animate-spin">sync</span>
+          Transmissão em Fila Ativa: 308 de 482 e-mails enviados
+        </span>
+<span class="text-text-secondary font-medium">64% concluído • 160 restantes (~6 min restantes)</span>
+</div>
+<div class="w-full h-2.5 bg-surface-subtle rounded-full overflow-hidden flex">
+<div class="bg-primary h-full transition-all duration-500 rounded-l-full" style="width: 61%;"></div>
+<div class="bg-danger-text h-full transition-all duration-500" style="width: 3%;"></div>
+<div class="bg-surface-subtle h-full" style="width: 36%;"></div>
+</div>
+<div class="flex items-center justify-between text-[11px] text-text-muted">
+<span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-primary inline-block"></span> 308 Entregues / Em Trânsito</span>
+<span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-danger-text inline-block"></span> 14 Falhas Temporárias (Soft Bounce)</span>
+<span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-surface-variant inline-block"></span> 160 Aguardando Rate-limit</span>
+</div>
+</div>
+<!-- 2. GRID SUPERIOR DE KPIS DE PERFORMANCE & ENTREGABILIDADE -->
+<section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-gutter">
+<!-- Card 1: Total & Fila -->
+<article class="bg-surface-card p-space-lg rounded-2xl shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+<div class="flex items-start justify-between">
+<div class="space-y-1">
+<span class="font-table-header text-table-header uppercase tracking-wider text-text-secondary font-semibold">Volume Total de Disparo</span>
+<div class="flex items-baseline gap-2">
+<span class="font-metric-stat text-metric-stat text-text-primary font-bold">482</span>
+<span class="font-label-sm text-label-sm text-text-secondary font-medium">médicos</span>
+</div>
+</div>
+<div class="w-10 h-10 rounded-xl bg-info-surface text-info-text flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]">mark_email_read</span>
+</div>
+</div>
+<div class="pt-4 mt-4 bg-surface-subtle -mx-space-lg -mb-space-lg p-space-md rounded-b-2xl grid grid-cols-3 gap-2 text-center">
+<div>
+<div class="font-label-lg text-label-lg font-bold text-success-text">308</div>
+<div class="text-[10px] uppercase font-semibold text-text-secondary">Enviados</div>
+</div>
+<div>
+<div class="font-label-lg text-label-lg font-bold text-warning-text">160</div>
+<div class="text-[10px] uppercase font-semibold text-text-secondary">Na Fila</div>
+</div>
+<div>
+<div class="font-label-lg text-label-lg font-bold text-danger-text">14</div>
+<div class="text-[10px] uppercase font-semibold text-text-secondary">Falhas</div>
+</div>
+</div>
+</article>
+<!-- Card 2: Entregabilidade Efetiva -->
+<article class="bg-surface-card p-space-lg rounded-2xl shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+<div class="flex items-start justify-between">
+<div class="space-y-1">
+<span class="font-table-header text-table-header uppercase tracking-wider text-text-secondary font-semibold">Taxa de Entrega Efetiva</span>
+<div class="flex items-baseline gap-2">
+<span class="font-metric-stat text-metric-stat text-text-primary font-bold">95.5%</span>
+<span class="inline-flex items-center text-success-text font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> Primário
+              </span>
+</div>
+</div>
+<div class="w-10 h-10 rounded-xl bg-success-surface text-success-text flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]">verified</span>
+</div>
+</div>
+<div class="pt-4 mt-4 bg-surface-subtle -mx-space-lg -mb-space-lg p-space-md rounded-b-2xl flex items-center justify-between text-body-sm text-body-sm">
+<span class="text-text-secondary font-medium">SPF/DKIM/DMARC:</span>
+<span class="font-semibold text-success-text flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-success-text"></span> 100% Válido (0 Hard Bounces)
+          </span>
+</div>
+</article>
+<!-- Card 3: Taxa de Abertura Única -->
+<article class="bg-surface-card p-space-lg rounded-2xl shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+<div class="flex items-start justify-between">
+<div class="space-y-1">
+<span class="font-table-header text-table-header uppercase tracking-wider text-text-secondary font-semibold">Taxa de Abertura Única</span>
+<div class="flex items-baseline gap-2">
+<span class="font-metric-stat text-metric-stat text-text-primary font-bold">52.8%</span>
+<span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-success-surface text-success-text font-label-sm text-label-sm font-bold">
+<span class="material-symbols-outlined text-[13px]">trending_up</span> +27.8% vs bench
+              </span>
+</div>
+</div>
+<div class="w-10 h-10 rounded-xl bg-info-surface text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]">drafts</span>
+</div>
+</div>
+<div class="pt-4 mt-4 bg-surface-subtle -mx-space-lg -mb-space-lg p-space-md rounded-b-2xl flex items-center justify-between text-body-sm text-body-sm">
+<span class="text-text-secondary">163 médicos abriram</span>
+<span class="font-semibold text-text-primary flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-text-muted">timer</span> Méd 14 min
+          </span>
+</div>
+</article>
+<!-- Card 4: Taxa de Cliques (CTR) & Conversões -->
+<article class="bg-surface-card p-space-lg rounded-2xl shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+<div class="flex items-start justify-between">
+<div class="space-y-1">
+<span class="font-table-header text-table-header uppercase tracking-wider text-text-secondary font-semibold">Taxa de Cliques (CTR)</span>
+<div class="flex items-baseline gap-2">
+<span class="font-metric-stat text-metric-stat text-text-primary font-bold">23.4%</span>
+<span class="font-label-sm text-label-sm text-primary font-bold">72 cliques únicos</span>
+</div>
+</div>
+<div class="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]">ads_click</span>
+</div>
+</div>
+<div class="pt-4 mt-4 bg-surface-subtle -mx-space-lg -mb-space-lg p-space-md rounded-b-2xl flex items-center justify-between text-body-sm text-body-sm">
+<span class="text-text-secondary">Contatos WhatsApp:</span>
+<span class="font-bold text-success-text flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">chat</span> 12 conversas diretas
+          </span>
+</div>
+</article>
+</section>
+<!-- 3. BARRA DE ALERTA TÉCNICO DE FALHAS / ERROS DE ENVIO (US-067) -->
+<div class="bg-warning-surface text-on-warning p-space-lg rounded-2xl shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-space-md">
+<div class="flex items-start gap-3">
+<div class="p-2 bg-warning-text/15 text-warning-text rounded-xl shrink-0">
+<span class="material-symbols-outlined text-[24px]">warning_amber</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-text-primary font-bold">
+            14 disparos apresentaram falha temporária de entrega (Soft Bounce)
+          </h2>
+<p class="font-body-md text-body-md text-text-secondary mt-0.5">
+            Identificamos greylisting e caixas postais hospitalares temporariamente cheias (erro 4.2.2). Próxima tentativa automática agendada para daqui a <strong class="text-text-primary font-semibold">18 minutos</strong> ou acione a rotina de reenvio prioritário agora.
+          </p>
+</div>
+</div>
+<div class="flex items-center gap-2 shrink-0 w-full md:w-auto">
+<button class="w-full md:w-auto px-4 py-2.5 bg-warning-text hover:opacity-90 text-on-primary font-label-md text-label-md font-semibold rounded-lg shadow-sm transition-all flex items-center justify-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[18px]">replay</span>
+          Reenviar 14 Falhas Agora
+        </button>
+<button class="px-3 py-2.5 bg-surface-card hover:bg-surface-subtle text-text-secondary font-label-md text-label-md rounded-lg shadow-xs" title="Ver logs detalhados de bounce" type="button">
+<span class="material-symbols-outlined text-[18px]">help_outline</span>
+</button>
+</div>
+</div>
+<!-- 4. SELETOR DE ABAS / VISÕES ANALÍTICAS -->
+<nav class="flex items-center gap-2 overflow-x-auto pb-1">
+<button class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-on-primary font-label-lg text-label-lg font-semibold shadow-sm transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">group</span>
+        Destinatários e Status Individual (482)
+      </button>
+<button class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-surface-card hover:bg-surface-subtle text-text-secondary font-label-lg text-label-lg font-medium shadow-xs transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">link</span>
+        Mapa de Calor de Cliques &amp; Links
+      </button>
+<button class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-surface-card hover:bg-surface-subtle text-text-secondary font-label-lg text-label-lg font-medium shadow-xs transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">history</span>
+        Eventos em Linha do Tempo (Log)
+      </button>
+<button class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-surface-card hover:bg-surface-subtle text-text-secondary font-label-lg text-label-lg font-medium shadow-xs transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+        Conteúdo Enviado (Prévia)
+      </button>
+</nav>
+<!-- 5. TABELA DETALHADA DE ENVIOS POR DESTINATÁRIO (US-065, US-066) -->
+<section class="bg-surface-card rounded-2xl shadow-sm overflow-hidden flex flex-col">
+<!-- Toolbar: Busca e Filtros Rápidos -->
+<div class="p-space-lg bg-surface-card flex flex-col lg:flex-row lg:items-center justify-between gap-space-md">
+<!-- Campo de Busca -->
+<div class="relative w-full lg:w-96">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[19px]">search</span>
+<input class="w-full h-10 pl-9 pr-4 bg-surface-subtle rounded-lg font-body-md text-body-md text-text-primary placeholder:text-text-muted focus:outline-none focus:bg-surface-card transition-all" placeholder="Buscar por médico, clínica ou e-mail..." type="text"/>
+</div>
+<!-- Filtros Rápidos com Contadores -->
+<div class="flex items-center gap-1.5 overflow-x-auto py-1">
+<button class="px-3 py-1.5 rounded-full bg-primary text-on-primary font-label-sm text-label-sm font-semibold shadow-xs shrink-0" type="button">
+            Todos (482)
+          </button>
+<button class="px-3 py-1.5 rounded-full bg-surface-subtle hover:bg-surface-container text-text-secondary font-label-sm text-label-sm font-semibold shrink-0 transition-colors" type="button">
+            Abertos (163)
+          </button>
+<button class="px-3 py-1.5 rounded-full bg-surface-subtle hover:bg-surface-container text-text-secondary font-label-sm text-label-sm font-semibold shrink-0 transition-colors" type="button">
+            Clicados (72)
+          </button>
+<button class="px-3 py-1.5 rounded-full bg-surface-subtle hover:bg-surface-container text-text-secondary font-label-sm text-label-sm font-semibold shrink-0 transition-colors" type="button">
+            Enviados/Não Abertos (131)
+          </button>
+<button class="px-3 py-1.5 rounded-full bg-danger-surface text-danger-text font-label-sm text-label-sm font-semibold shrink-0 transition-colors" type="button">
+            Falhas (14)
+          </button>
+<button class="px-3 py-1.5 rounded-full bg-surface-subtle hover:bg-surface-container text-text-secondary font-label-sm text-label-sm font-semibold shrink-0 transition-colors" type="button">
+            Na Fila (160)
+          </button>
+</div>
+</div>
+<!-- Tabela -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-subtle h-11 text-text-secondary font-table-header text-table-header uppercase tracking-wider">
+<th class="pl-6 pr-3 w-10" scope="col">
+<input class="rounded text-primary focus:ring-0 cursor-pointer w-4 h-4" type="checkbox"/>
+</th>
+<th class="px-4" scope="col">Destinatário &amp; Clínica</th>
+<th class="px-4" scope="col">Etapa Funil</th>
+<th class="px-4" scope="col">Status do Disparo</th>
+<th class="px-4" scope="col">Último Evento / Horário</th>
+<th class="px-4 text-center" scope="col">Cliques</th>
+<th class="pr-6 pl-4 text-right" scope="col">Ações Rápidas</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-subtle text-body-md text-body-md text-text-primary">
+<!-- Linha 1: Clicado -->
+<tr class="hover:bg-surface-subtle transition-colors group">
+<td class="pl-6 pr-3 py-3.5">
+<input class="rounded text-primary focus:ring-0 cursor-pointer w-4 h-4" type="checkbox"/>
+</td>
+<td class="px-4 py-3.5">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-primary/10 text-primary font-bold font-headline-sm text-headline-sm flex items-center justify-center shrink-0">
+                    CS
+                  </div>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-headline-sm text-text-primary font-semibold truncate">Dr. Carlos Eduardo Silveira</span>
+<span class="font-body-sm text-body-sm text-text-secondary truncate">OftalmoCentro SP • c.silveira@oftalmocentro.com.br</span>
+</div>
+</div>
+</td>
+<td class="px-4 py-3.5">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-info-surface text-info-text font-label-sm text-label-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-info-text"></span> Etapa 9: Proposta Enviada
+                </span>
+</td>
+<td class="px-4 py-3.5">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-success-surface text-success-text font-label-sm text-label-sm font-bold">
+<span class="material-symbols-outlined text-[14px]">touch_app</span> Clicou na Proposta
+                </span>
+</td>
+<td class="px-4 py-3.5">
+<div class="flex flex-col">
+<span class="font-semibold text-text-primary flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-success-text">ads_click</span> Clicou 10:18
+                  </span>
+<span class="text-[11px] text-text-muted">Aberto às 10:14 (IP 177.18.94.2)</span>
+</div>
+</td>
+<td class="px-4 py-3.5 text-center">
+<span class="font-label-lg text-label-lg font-bold text-primary px-2 py-0.5 rounded-full bg-info-surface">3</span>
+</td>
+<td class="pr-6 pl-4 py-3.5 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-success-surface hover:bg-success-border text-success-text font-label-sm text-label-sm font-semibold transition-colors" title="Iniciar Conversa no WhatsApp" type="button">
+<span class="material-symbols-outlined text-[15px]">chat</span> WhatsApp
+                  </button>
+<button class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-subtle hover:bg-surface-variant text-text-secondary font-label-sm text-label-sm transition-colors" title="Ver Card no Funil" type="button">
+<span>#MED-9402</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Linha 2: Aberto -->
+<tr class="hover:bg-surface-subtle transition-colors group">
+<td class="pl-6 pr-3 py-3.5">
+<input class="rounded text-primary focus:ring-0 cursor-pointer w-4 h-4" type="checkbox"/>
+</td>
+<td class="px-4 py-3.5">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-secondary-container text-on-secondary-container font-bold font-headline-sm text-headline-sm flex items-center justify-center shrink-0">
+                    CE
+                  </div>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-headline-sm text-text-primary font-semibold truncate">Dra. Carla Esteves</span>
+<span class="font-body-sm text-body-sm text-text-secondary truncate">DermaCare Centro Estético • carla@dermacare.med.br</span>
+</div>
+</div>
+</td>
+<td class="px-4 py-3.5">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-subtle text-text-secondary font-label-sm text-label-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-text-muted"></span> Etapa 7: Reunião Realizada
+                </span>
+</td>
+<td class="px-4 py-3.5">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-info-surface text-info-text font-label-sm text-label-sm font-bold">
+<span class="material-symbols-outlined text-[14px]">drafts</span> Aberto (2x)
+                </span>
+</td>
+<td class="px-4 py-3.5">
+<div class="flex flex-col">
+<span class="font-semibold text-text-primary flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-info-text">visibility</span> Aberto 09:55
+                  </span>
+<span class="text-[11px] text-text-muted">Reabriu às 10:22 via iPhone</span>
+</div>
+</td>
+<td class="px-4 py-3.5 text-center">
+<span class="text-text-muted font-medium">0</span>
+</td>
+<td class="pr-6 pl-4 py-3.5 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-subtle hover:bg-surface-variant text-text-secondary font-label-sm text-label-sm transition-colors" title="Ver Card no Funil" type="button">
+<span>#MED-9388</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Linha 3: Clicado -->
+<tr class="hover:bg-surface-subtle transition-colors group">
+<td class="pl-6 pr-3 py-3.5">
+<input class="rounded text-primary focus:ring-0 cursor-pointer w-4 h-4" type="checkbox"/>
+</td>
+<td class="px-4 py-3.5">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-primary/10 text-primary font-bold font-headline-sm text-headline-sm flex items-center justify-center shrink-0">
+                    MA
+                  </div>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-headline-sm text-text-primary font-semibold truncate">Dr. Marcos Albuquerque</span>
+<span class="font-body-sm text-body-sm text-text-secondary truncate">Clínica Santa Luzia • marcos@santaluzia.com.br</span>
+</div>
+</div>
+</td>
+<td class="px-4 py-3.5">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-info-surface text-info-text font-label-sm text-label-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-info-text"></span> Etapa 9: Proposta Enviada
+                </span>
+</td>
+<td class="px-4 py-3.5">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-success-surface text-success-text font-label-sm text-label-sm font-bold">
+<span class="material-symbols-outlined text-[14px]">touch_app</span> Clicou na Proposta
+                </span>
+</td>
+<td class="px-4 py-3.5">
+<div class="flex flex-col">
+<span class="font-semibold text-text-primary flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-success-text">ads_click</span> Clicou 10:05
+                  </span>
+<span class="text-[11px] text-text-muted">Aberto às 10:02</span>
+</div>
+</td>
+<td class="px-4 py-3.5 text-center">
+<span class="font-label-lg text-label-lg font-bold text-primary px-2 py-0.5 rounded-full bg-info-surface">1</span>
+</td>
+<td class="pr-6 pl-4 py-3.5 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-subtle hover:bg-surface-variant text-text-secondary font-label-sm text-label-sm transition-colors" type="button">
+<span>#MED-9311</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Linha 4: Aberto -->
+<tr class="hover:bg-surface-subtle transition-colors group">
+<td class="pl-6 pr-3 py-3.5">
+<input class="rounded text-primary focus:ring-0 cursor-pointer w-4 h-4" type="checkbox"/>
+</td>
+<td class="px-4 py-3.5">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-surface-variant text-text-secondary font-bold font-headline-sm text-headline-sm flex items-center justify-center shrink-0">
+                    PF
+                  </div>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-headline-sm text-text-primary font-semibold truncate">Dr. Paulo Fontes</span>
+<span class="font-body-sm text-body-sm text-text-secondary truncate">Instituto CardioVida • p.fontes@cardiovida.com.br</span>
+</div>
+</div>
+</td>
+<td class="px-4 py-3.5">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-warning-surface text-warning-text font-label-sm text-label-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-warning-text"></span> Negociação de Contrato
+                </span>
+</td>
+<td class="px-4 py-3.5">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-info-surface text-info-text font-label-sm text-label-sm font-bold">
+<span class="material-symbols-outlined text-[14px]">drafts</span> Aberto
+                </span>
+</td>
+<td class="px-4 py-3.5">
+<div class="flex flex-col">
+<span class="font-semibold text-text-primary flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-info-text">visibility</span> Aberto 11:20
+                  </span>
+<span class="text-[11px] text-text-muted">Aberto em desktop Chrome</span>
+</div>
+</td>
+<td class="px-4 py-3.5 text-center">
+<span class="text-text-muted font-medium">0</span>
+</td>
+<td class="pr-6 pl-4 py-3.5 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-subtle hover:bg-surface-variant text-text-secondary font-label-sm text-label-sm transition-colors" type="button">
+<span>#MED-9104</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Linha 5: Enviado (Não Aberto) -->
+<tr class="hover:bg-surface-subtle transition-colors group">
+<td class="pl-6 pr-3 py-3.5">
+<input class="rounded text-primary focus:ring-0 cursor-pointer w-4 h-4" type="checkbox"/>
+</td>
+<td class="px-4 py-3.5">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-surface-subtle text-text-secondary font-bold font-headline-sm text-headline-sm flex items-center justify-center shrink-0">
+                    HV
+                  </div>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-headline-sm text-text-primary font-semibold truncate">Dr. Henrique Vilela</span>
+<span class="font-body-sm text-body-sm text-text-secondary truncate">Centro Cirúrgico Paulista • dr.henrique@ccp.med.br</span>
+</div>
+</div>
+</td>
+<td class="px-4 py-3.5">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-subtle text-text-secondary font-label-sm text-label-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-text-muted"></span> Etapa 7: Reunião Realizada
+                </span>
+</td>
+<td class="px-4 py-3.5">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-subtle text-text-secondary font-label-sm text-label-sm font-medium">
+<span class="material-symbols-outlined text-[14px]">done</span> Enviado (Não aberto)
+                </span>
+</td>
+<td class="px-4 py-3.5">
+<div class="flex flex-col">
+<span class="font-medium text-text-secondary">Entregue no inbox 09:32</span>
+<span class="text-[11px] text-text-muted">Sem visualização ainda</span>
+</div>
+</td>
+<td class="px-4 py-3.5 text-center">
+<span class="text-text-muted font-medium">0</span>
+</td>
+<td class="pr-6 pl-4 py-3.5 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-subtle hover:bg-surface-variant text-text-secondary font-label-sm text-label-sm transition-colors" type="button">
+<span>#MED-9205</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Linha 6: Falha Temporária (Soft Bounce) -->
+<tr class="bg-danger-surface/20 hover:bg-danger-surface/40 transition-colors group">
+<td class="pl-6 pr-3 py-3.5">
+<input class="rounded text-primary focus:ring-0 cursor-pointer w-4 h-4" type="checkbox"/>
+</td>
+<td class="px-4 py-3.5">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-danger-surface text-danger-text font-bold font-headline-sm text-headline-sm flex items-center justify-center shrink-0">
+                    ML
+                  </div>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-headline-sm text-text-primary font-semibold truncate">Dra. Mariana Luz</span>
+<span class="font-body-sm text-body-sm text-text-secondary truncate">Hospital Dia Santa Clara • mariana.luz@santaclara.org.br</span>
+</div>
+</div>
+</td>
+<td class="px-4 py-3.5">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-info-surface text-info-text font-label-sm text-label-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-info-text"></span> Etapa 9: Proposta Enviada
+                </span>
+</td>
+<td class="px-4 py-3.5">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-danger-surface text-danger-text font-label-sm text-label-sm font-bold">
+<span class="material-symbols-outlined text-[14px]">error</span> Soft Bounce (4.2.2 Mailbox Full)
+                </span>
+</td>
+<td class="px-4 py-3.5">
+<div class="flex flex-col">
+<span class="font-medium text-danger-text">Tentativa 09:31</span>
+<span class="text-[11px] text-text-muted">Retry programado para 10:49</span>
+</div>
+</td>
+<td class="px-4 py-3.5 text-center">
+<span class="text-text-muted font-medium">-</span>
+</td>
+<td class="pr-6 pl-4 py-3.5 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-danger-surface hover:bg-danger-border text-danger-text font-label-sm text-label-sm font-bold transition-colors" type="button">
+<span class="material-symbols-outlined text-[14px]">replay</span> Reenviar
+                  </button>
+<button class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-surface-subtle hover:bg-surface-variant text-text-secondary font-label-sm text-label-sm transition-colors" title="Editar E-mail" type="button">
+<span class="material-symbols-outlined text-[14px]">edit</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Linha 7: Na Fila de Disparo -->
+<tr class="hover:bg-surface-subtle transition-colors group">
+<td class="pl-6 pr-3 py-3.5">
+<input class="rounded text-primary focus:ring-0 cursor-pointer w-4 h-4" type="checkbox"/>
+</td>
+<td class="px-4 py-3.5">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-surface-subtle text-text-secondary font-bold font-headline-sm text-headline-sm flex items-center justify-center shrink-0">
+                    FB
+                  </div>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-headline-sm text-text-primary font-semibold truncate">Dr. Fernando Bastos</span>
+<span class="font-body-sm text-body-sm text-text-secondary truncate">Clínica Bastos Orto • fbastos@bastosorto.com.br</span>
+</div>
+</div>
+</td>
+<td class="px-4 py-3.5">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-subtle text-text-secondary font-label-sm text-label-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-text-muted"></span> Etapa 7: Reunião Realizada
+                </span>
+</td>
+<td class="px-4 py-3.5">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-warning-surface text-warning-text font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[14px] animate-spin">schedule</span> Na Fila de Disparo
+                </span>
+</td>
+<td class="px-4 py-3.5">
+<div class="flex flex-col">
+<span class="font-medium text-text-secondary">Estimado: 10:45</span>
+<span class="text-[11px] text-text-muted">Aguardando lote 4 de 6</span>
+</div>
+</td>
+<td class="px-4 py-3.5 text-center">
+<span class="text-text-muted font-medium">-</span>
+</td>
+<td class="pr-6 pl-4 py-3.5 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-subtle hover:bg-surface-variant text-text-secondary font-label-sm text-label-sm transition-colors" type="button">
+<span>#MED-9122</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Paginação -->
+<footer class="p-space-lg bg-surface-card flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<span class="font-body-sm text-body-sm text-text-secondary">
+          Mostrando <strong class="text-text-primary font-semibold">1 a 7</strong> de <strong class="text-text-primary font-semibold">482</strong> médicos decisores
+        </span>
+<div class="flex items-center gap-1 font-label-sm text-label-sm">
+<button class="px-3 py-1.5 rounded-lg bg-surface-subtle text-text-muted cursor-not-allowed flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[16px]">chevron_left</span> Anterior
+          </button>
+<button class="w-8 h-8 rounded-lg bg-primary text-on-primary font-bold shadow-xs" type="button">1</button>
+<button class="w-8 h-8 rounded-lg bg-surface-subtle hover:bg-surface-variant text-text-primary" type="button">2</button>
+<button class="w-8 h-8 rounded-lg bg-surface-subtle hover:bg-surface-variant text-text-primary" type="button">3</button>
+<span class="px-1 text-text-muted">...</span>
+<button class="w-8 h-8 rounded-lg bg-surface-subtle hover:bg-surface-variant text-text-primary" type="button">69</button>
+<button class="px-3 py-1.5 rounded-lg bg-surface-subtle hover:bg-surface-variant text-text-primary font-semibold flex items-center gap-1 transition-colors" type="button">
+            Próxima <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</div>
+</footer>
+</section>
+<!-- 6. PAINEL INFERIOR: DIAGNÓSTICO DE LINKS & IMPACTO COMERCIAL NO CRM -->
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+<!-- Desempenho dos Links no E-mail (2 Cols) -->
+<div class="lg:col-span-2 bg-surface-card p-space-xl rounded-2xl shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between pb-space-md">
+<div>
+<h2 class="font-headline-sm text-headline-sm text-text-primary font-bold">Desempenho dos Links no E-mail</h2>
+<p class="font-body-sm text-body-sm text-text-secondary mt-0.5">Auditoria de rastreamento com parâmetros UTM e tokens dinâmicos</p>
+</div>
+<span class="font-label-sm text-label-sm text-text-secondary bg-surface-subtle px-2.5 py-1 rounded-full font-semibold">
+              Total: 72 cliques únicos
+            </span>
+</div>
+<div class="space-y-space-md pt-2">
+<!-- Link 1 -->
+<div class="p-space-md bg-surface-subtle rounded-xl flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">description</span>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-text-primary font-semibold">Acessar Minuta da Proposta Personalizada</span>
+<span class="text-[11px] text-text-muted truncate max-w-md">https://medguia.com.br/proposta/{token_cliente}</span>
+</div>
+</div>
+<div class="text-right">
+<span class="font-label-lg text-label-lg font-bold text-text-primary">58 cliques</span>
+<span class="text-[11px] font-semibold text-primary ml-1.5">(80.5%)</span>
+</div>
+</div>
+<div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 80.5%;"></div>
+</div>
+</div>
+<!-- Link 2 -->
+<div class="p-space-md bg-surface-subtle rounded-xl flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-success-text text-[20px]">chat</span>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-text-primary font-semibold">Falar com Consultor via WhatsApp Direto</span>
+<span class="text-[11px] text-text-muted truncate max-w-md">https://wa.me/5511998240011?text=Quero_conhecer_o_modulo_IA</span>
+</div>
+</div>
+<div class="text-right">
+<span class="font-label-lg text-label-lg font-bold text-text-primary">14 cliques</span>
+<span class="text-[11px] font-semibold text-success-text ml-1.5">(19.5%)</span>
+</div>
+</div>
+<div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="bg-success-text h-full rounded-full" style="width: 19.5%;"></div>
+</div>
+</div>
+<!-- Link 3 -->
+<div class="p-space-md bg-surface-subtle rounded-xl flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-text-muted text-[20px]">unsubscribe</span>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-text-secondary font-medium">Descadastrar / Preferências LGPD</span>
+<span class="text-[11px] text-text-muted truncate max-w-md">https://medguia.com.br/opt-out</span>
+</div>
+</div>
+<div class="text-right">
+<span class="font-label-sm text-label-sm font-bold text-success-text bg-success-surface px-2 py-0.5 rounded-full">
+                  0 descadastros (0.0% • Excelente Saúde de Base)
+                </span>
+</div>
+</div>
+</div>
+</div>
+<div class="pt-space-md flex items-center justify-between text-body-sm text-body-sm text-text-muted">
+<span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px] text-primary">security</span> Rastreamento anonimizado em conformidade com LGPD Médica</span>
+<button class="text-primary hover:underline font-semibold font-label-sm text-label-sm" type="button">Exportar Matriz de Cliques</button>
+</div>
+</div>
+<!-- Resumo de Impacto no CRM (1 Col) -->
+<div class="bg-primary text-on-primary p-space-xl rounded-2xl shadow-sm flex flex-col justify-between relative overflow-hidden">
+<!-- SVG Decorativo de Fundo -->
+<svg class="absolute -right-8 -bottom-8 w-48 h-48 opacity-10 text-on-primary pointer-events-none" fill="currentColor" viewbox="0 0 24 24">
+<path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"></path>
+</svg>
+<div class="space-y-space-md relative z-10">
+<div class="flex items-center justify-between">
+<span class="font-table-header text-table-header uppercase tracking-wider text-primary-fixed-dim font-bold">
+              Impacto Direto no Funil
+            </span>
+<span class="w-8 h-8 rounded-lg bg-on-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">trending_up</span>
+</span>
+</div>
+<div class="space-y-1">
+<div class="font-display-lg text-display-lg font-bold tracking-tight text-on-primary">
+              R$ 218.400
+            </div>
+<p class="font-body-sm text-body-sm text-primary-fixed-dim">
+              Valor de propostas com visualização confirmada nas últimas 2 horas de envio.
+            </p>
+</div>
+<div class="pt-space-sm space-y-2">
+<div class="p-3 rounded-xl bg-on-primary/10 flex items-center justify-between font-label-md text-label-md">
+<span class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-success-border">event_available</span>
+                Reuniões Antecipadas:
+              </span>
+<span class="font-bold text-on-primary">+4 agendamentos</span>
+</div>
+<div class="p-3 rounded-xl bg-on-primary/10 flex items-center justify-between font-label-md text-label-md">
+<span class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-warning-border">speed</span>
+                Aceleração do Ciclo:
+              </span>
+<span class="font-bold text-on-primary">-3.2 dias</span>
+</div>
+</div>
+</div>
+<div class="pt-space-lg relative z-10">
+<button class="w-full py-2.5 px-4 bg-surface-card text-primary font-label-lg text-label-lg font-bold rounded-xl shadow-sm hover:bg-surface-subtle transition-all flex items-center justify-center gap-2" type="button">
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+            Ver 4 Propostas no Funil
+          </button>
+</div>
+</div>
+</section>
+</div>
+</div></main></div></body></html>

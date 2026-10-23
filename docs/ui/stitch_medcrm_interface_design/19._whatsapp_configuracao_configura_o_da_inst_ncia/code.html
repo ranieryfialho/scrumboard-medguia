@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-subtle": "#F8FAFC", "info-border": "#BFDBFE", "danger-text": "#DC2626", "on-error-container": "#93000a", "surface-tint": "#1157cb", "on-secondary-fixed": "#131b30", "primary-fixed-dim": "#b1c5ff", "on-secondary-container": "#5a627b", "on-primary": "#ffffff", "inverse-on-surface": "#f0f0fa", "warning-surface": "#FEF3C7", "text-secondary": "#64748B", "surface-bright": "#faf8ff", "on-primary-fixed-variant": "#0040a0", "sidebar-surface": "#1E293B", "on-primary-fixed": "#001847", "success-border": "#A7F3D0", "on-tertiary-container": "#fffbff", "on-primary-container": "#fefcff", "secondary-fixed": "#dae2ff", "surface-container-lowest": "#ffffff", "on-tertiary-fixed": "#311300", "on-background": "#191b22", "text-muted": "#94A3B8", "background-canvas": "#F4F6FA", "tertiary-fixed-dim": "#ffb787", "warning-text": "#D97706", "sidebar-surface-active": "#2D3748", "on-secondary": "#ffffff", "border-subtle": "#E2E8F0", "outline": "#737785", "border-focus": "#93C5FD", "inverse-surface": "#2e3038", "on-tertiary": "#ffffff", "secondary-container": "#d7dffd", "inverse-primary": "#b1c5ff", "text-primary": "#0F172A", "error": "#ba1a1a", "info-text": "#2563EB", "success-surface": "#D1FAE5", "on-surface-variant": "#434654", "surface-container": "#ededf7", "on-secondary-fixed-variant": "#3e465e", "danger-surface": "#FEE2E2", "tertiary": "#924700", "primary-fixed": "#dae2ff", "success-text": "#059669", "warning-border": "#FDE68A", "surface-container-highest": "#e1e2ec", "error-container": "#ffdad6", "surface-dim": "#d9d9e3", "background": "#faf8ff", "tertiary-container": "#b85b00", "on-surface": "#191b22", "on-error": "#ffffff", "tertiary-fixed": "#ffdcc7", "secondary": "#565e77", "surface-container-low": "#f3f3fd", "surface-variant": "#e1e2ec", "info-surface": "#EFF6FF", "danger-border": "#FECACA", "surface-card": "#FFFFFF", "on-tertiary-fixed-variant": "#723600", "secondary-fixed-dim": "#bec6e3", "primary-container": "#366ee3", "primary": "#0954c9", "outline-variant": "#c3c6d6", "surface-container-high": "#e7e7f2", "surface": "#faf8ff" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "gutter-sm": "0.75rem", "gutter-lg": "1.5rem", "space-lg": "1.25rem", "space-sm": "0.5rem", "gutter": "1.25rem", "space-xs": "0.25rem", "space-md": "0.875rem", "margin": "1.75rem", "space-xl": "1.75rem", "margin-mobile": "1rem", "space-2xl": "2.5rem" }, "fontFamily": { "body-sm": ["Inter"], "headline-sm": ["Plus Jakarta Sans"], "body-lg": ["Inter"], "label-sm": ["Inter"], "body-md": ["Inter"], "headline-md": ["Plus Jakarta Sans"], "metric-stat": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "display-lg": ["Plus Jakarta Sans"], "label-md": ["Inter"], "display-lg-mobile": ["Plus Jakarta Sans"], "label-lg": ["Inter"], "table-header": ["Inter"] }, "fontSize": { "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }], "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }], "body-lg": ["15px", { "lineHeight": "22px", "fontWeight": "400" }], "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.03em", "fontWeight": "600" }], "body-md": ["13px", { "lineHeight": "20px", "fontWeight": "400" }], "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }], "metric-stat": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "500" }], "display-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "700" }], "label-lg": ["13px", { "lineHeight": "18px", "fontWeight": "600" }], "table-header": ["11px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }] } } } };</script></head><body class="bg-surface font-body-md text-text-primary antialiased selection:bg-primary-fixed selection:text-on-primary-fixed"><aside class="fixed left-0 top-0 h-full w-64 bg-sidebar-surface text-surface z-50 flex flex-col justify-between shadow-[0_4px_20px_-2px_rgba(0,0,0,0.08)] overflow-hidden"><div class="flex flex-col flex-1 min-h-0"><div class="h-16 px-space-lg flex items-center justify-between border-b border-sidebar-surface-active/60 bg-sidebar-surface"><div class="flex items-center gap-space-sm"><div class="w-9 h-9 rounded-xl bg-primary flex items-center justify-center shadow-md"><span class="material-symbols-outlined text-on-primary text-[20px]">local_hospital</span></div><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-surface-container-lowest leading-none tracking-tight">MedCRM</span><span class="font-label-sm text-label-sm text-text-muted mt-0.5">MedGuia B2B</span></div></div><span class="font-label-sm text-[10px] px-2 py-0.5 rounded-full bg-primary/25 border border-primary/40 text-primary-fixed-dim uppercase tracking-wider font-bold">COMUNICAÇÃO</span></div><div class="flex-1 overflow-y-auto px-space-sm py-space-md space-y-space-md scrollbar-none"><nav class="space-y-space-md" data-active-classes="bg-primary text-on-primary font-semibold rounded-lg shadow-sm"><div class="space-y-1"><div class="px-space-sm pb-1"><span class="font-table-header text-table-header text-text-muted uppercase tracking-wider">Operação</span></div><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="pipeline" href="#"><span class="font-body-md text-body-md">Funil Pipeline</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="pipeline-lista" href="#"><span class="font-body-md text-body-md">Lista</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="pipeline-arquivados" href="#"><span class="font-body-md text-body-md">Arquivados</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="tarefas" href="#"><span class="font-body-md text-body-md">Tarefas do Turno</span><span class="font-label-sm text-label-sm bg-primary-container text-on-primary px-2 py-0.5 rounded-full font-bold">12</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="tarefas-atrasadas" href="#"><span class="font-body-md text-body-md">Tarefas Atrasadas</span><span class="font-label-sm text-label-sm bg-danger-surface text-danger-text px-2 py-0.5 rounded-full font-bold">4</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="agenda" href="#"><span class="font-body-md text-body-md">Agenda</span></a></div><div class="space-y-1 p-1.5 rounded-xl bg-sidebar-surface-active/40 border border-primary/30"><div class="px-space-sm pb-1 flex items-center justify-between"><span class="font-table-header text-table-header text-primary-fixed-dim uppercase tracking-wider font-bold">Comunicação</span><span class="font-label-sm text-[10px] px-1.5 py-0.2 rounded bg-primary/30 text-primary-fixed-dim font-bold uppercase tracking-wider">Ativo</span></div><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="whatsapp" href="#"><span class="font-body-md text-body-md font-medium text-surface-container-lowest">WhatsApp Inbox</span><span class="font-label-sm text-label-sm bg-success-surface text-success-text px-2 py-0.5 rounded-full font-bold">5</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="whatsapp-conexao" href="#"><span class="font-body-md text-body-md">Conexão &amp; QR Code</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="whatsapp-configuracao" href="#"><span class="font-body-md text-body-md">Configuração Evolution</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="campanhas" href="#"><span class="font-body-md text-body-md">Campanhas</span></a></div><div class="space-y-1"><div class="px-space-sm pb-1"><span class="font-table-header text-table-header text-text-muted uppercase tracking-wider">Análises</span></div><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="indicadores" href="#"><span class="font-body-md text-body-md">Indicadores</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="relatorios" href="#"><span class="font-body-md text-body-md">Relatórios</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="relatorios-comerciais" href="#"><span class="font-body-md text-body-md">Comercial</span></a></div><div class="space-y-1"><div class="px-space-sm pb-1"><span class="font-table-header text-table-header text-text-muted uppercase tracking-wider">Administração</span></div><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="equipe" href="#"><span class="font-body-md text-body-md">Equipe</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="configuracoes-motivos-perda" href="#"><span class="font-body-md text-body-md">Motivos de Perda</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="admin-empresas" href="#"><span class="font-body-md text-body-md">Empresas</span></a></div></nav></div></div><div class="p-space-md border-t border-sidebar-surface-active/50 bg-sidebar-surface"><div class="flex items-center justify-between text-text-muted"><a class="flex items-center gap-2 hover:text-surface-container-lowest transition-colors font-label-md text-label-md" data-path="suporte-e-ajuda" href="#"><span>Ajuda &amp; Suporte</span></a><span class="font-label-sm text-label-sm text-text-muted/80 bg-sidebar-surface-active/80 px-2 py-0.5 rounded">v2.4.0</span></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface-card border-b border-border-subtle z-40 flex items-center justify-between px-gutter shadow-[0_1px_8px_rgba(0,0,0,0.02)]"><div class="flex items-center gap-space-lg flex-1 max-w-2xl"><div class="relative w-full max-w-lg"><span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[19px]">search</span><input class="w-full h-10 pl-9 pr-16 bg-surface-subtle border border-border-subtle rounded-lg font-body-md text-body-md text-text-primary placeholder:text-text-muted focus:outline-none focus:border-border-focus focus:bg-surface-card transition-all" placeholder="Buscar conversa, médico, telefone..." type="text"/><kbd class="absolute right-3 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[10px] font-label-sm bg-surface-card border border-border-subtle text-text-muted rounded shadow-sm">⌘K</kbd></div><div class="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border-subtle bg-surface-card text-text-primary shadow-sm hover:border-border-focus cursor-pointer transition-all"><span class="material-symbols-outlined text-primary text-[18px]">domain</span><div class="flex flex-col text-left"><span class="font-label-sm text-label-sm font-semibold leading-tight">Clínica São Lucas - Matriz</span><span class="font-label-sm text-[10px] text-success-text leading-none flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-success-text inline-block"></span>Ativo</span></div><span class="material-symbols-outlined text-text-muted text-[16px] ml-1">expand_more</span></div></div><div class="flex items-center gap-space-md"><div class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-success-surface border border-success-border"><span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success-text opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-success-text"></span></span><span class="font-label-sm text-label-sm text-success-text font-semibold">Tempo real conectado</span></div><button class="relative p-2 rounded-lg text-text-secondary hover:bg-surface-subtle hover:text-text-primary transition-colors" type="button"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-danger-text"></span></button><div class="h-6 w-px bg-border-subtle"></div><div class="flex items-center gap-space-sm pl-1 cursor-pointer"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><div class="hidden lg:flex flex-col text-left"><div class="flex items-center gap-1.5"><span class="font-label-lg text-label-lg font-semibold text-text-primary leading-tight">Dr. Roberto Mendes</span><span class="font-label-sm text-[10px] bg-primary-fixed text-on-primary-fixed px-1.5 py-0.2 rounded font-bold uppercase tracking-wider">MASTER</span></div><span class="font-label-sm text-label-sm text-text-muted leading-tight">roberto.mendes@medguia.com.br</span></div><span class="material-symbols-outlined text-text-muted text-[18px]">expand_more</span></div></div></header><main class="w-full pt-16 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<!-- Dynamic Notification Toast Container -->
+<div class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none" id="toast-notification">
+<div class="flex items-center gap-3 px-4 py-3 rounded-xl bg-sidebar-surface text-surface-container-lowest shadow-2xl border-none">
+<span class="material-symbols-outlined text-success-text text-[20px]" id="toast-icon">check_circle</span>
+<span class="font-body-md text-body-md font-medium text-surface-container-lowest" id="toast-message">Configurações sincronizadas com sucesso.</span>
+</div>
+</div>
+<div class="px-gutter-lg py-space-xl max-w-7xl w-full mx-auto space-y-space-xl">
+<!-- Top Bar: Breadcrumb, Titles, Quick Actions -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-space-lg">
+<div class="space-y-space-xs">
+<!-- Breadcrumb -->
+<div class="flex items-center gap-2 font-table-header text-table-header tracking-wider uppercase text-text-muted">
+<span>COMUNICAÇÃO</span>
+<span class="material-symbols-outlined text-[12px]">chevron_right</span>
+<span>WHATSAPP</span>
+<span class="material-symbols-outlined text-[12px]">chevron_right</span>
+<span class="text-primary font-bold">/WHATSAPP/CONFIGURACAO</span>
+</div>
+<!-- Primary Title & Subtitle -->
+<h1 class="font-headline-lg text-headline-lg text-text-primary tracking-tight">
+          Configurações Técnicas da Evolution API
+        </h1>
+<p class="font-body-md text-body-md text-text-secondary max-w-3xl">
+          Parâmetros do servidor de mensageria, chaves de autenticação, webhooks e regras de proteção contra banimento.
+        </p>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-space-sm flex-shrink-0">
+<button class="h-10 px-4 rounded-lg bg-surface-card hover:bg-surface-subtle text-text-primary font-label-md text-label-md transition-all shadow-sm flex items-center gap-2 active:scale-95" id="btn-test-webhook-top" type="button">
+<span class="material-symbols-outlined text-[18px] text-text-secondary">rss_feed</span>
+<span>Testar Disparo de Webhook</span>
+</button>
+<button class="h-10 px-5 rounded-lg bg-primary hover:bg-surface-tint text-on-primary font-label-md text-label-md transition-all shadow-[0_2px_8px_rgba(9,84,201,0.25)] flex items-center gap-2 active:scale-95" id="btn-save-top" type="button">
+<span class="material-symbols-outlined text-[18px]">save</span>
+<span>Salvar Alterações</span>
+</button>
+</div>
+</div>
+<!-- Security & High Availability Banner -->
+<div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-info-surface via-surface-container-low to-info-surface p-space-lg shadow-sm">
+<div class="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-space-md justify-between">
+<div class="flex items-start gap-space-md">
+<div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-primary text-[24px]">verified_user</span>
+</div>
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-headline-sm text-text-primary">Ambiente de Alta Disponibilidade</span>
+<span class="font-label-sm text-label-sm bg-info-surface text-info-text px-2.5 py-0.5 rounded-full font-bold">Produção Isolada</span>
+</div>
+<p class="font-body-md text-body-md text-text-secondary max-w-4xl">
+              As configurações aqui definidas impactam todas as cadências automáticas de 18 toques e o atendimento simultâneo via Inbox. Modificações na API Key exigem reinicialização suave das instâncias.
+            </p>
+</div>
+</div>
+<div class="flex items-center gap-2 pl-12 md:pl-0 flex-shrink-0">
+<div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-success-surface text-success-text">
+<span class="w-2 h-2 rounded-full bg-success-text animate-pulse"></span>
+<span class="font-label-sm text-label-sm font-semibold">Cluster Ativo (99.98% SLA)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Main Settings Form Grid (3 Structured Blocks) -->
+<div class="space-y-space-xl">
+<!-- BLOCO 1: Conexão com o Servidor Evolution API (US-048) -->
+<section class="bg-surface-card rounded-2xl p-space-xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.04)] space-y-space-lg">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm pb-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-primary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-fixed text-[18px]">dns</span>
+</div>
+<div>
+<h2 class="font-headline-md text-headline-md text-text-primary leading-tight">1. Conexão com o Servidor Evolution API</h2>
+<span class="font-label-sm text-label-sm text-text-muted">US-048 • Parâmetros de infraestrutura e tokens mestres</span>
+</div>
+</div>
+<div class="flex items-center gap-2 self-start sm:self-center">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-success-surface text-success-text font-label-sm text-label-sm font-semibold">
+<span class="w-2 h-2 rounded-full bg-success-text"></span>
+              Servidor Online (v2.4.1)
+            </span>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-space-lg">
+<!-- Campo 1: URL Base -->
+<div class="space-y-1.5 lg:col-span-1">
+<label class="block font-label-md text-label-md text-text-primary font-semibold">
+              URL Base do Servidor Evolution API <span class="text-danger-text">*</span>
+</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[18px]">link</span>
+<input class="w-full h-10 pl-9 pr-3 bg-surface-subtle focus:bg-surface-card rounded-lg font-body-md text-body-md text-text-primary placeholder:text-text-muted shadow-sm transition-all focus:outline-none" id="field-server-url" placeholder="https://sua-api.com.br" type="text" value="https://evolution-api.medguia.com.br"/>
+</div>
+<p class="font-label-sm text-[11px] text-text-muted">Endpoint do cluster MedGuia provisionado sob TLS v1.3.</p>
+</div>
+<!-- Campo 2: Global API Token / Master Key -->
+<div class="space-y-1.5 lg:col-span-1">
+<div class="flex items-center justify-between">
+<label class="block font-label-md text-label-md text-text-primary font-semibold">
+                Global API Token / Master Key <span class="text-danger-text">*</span>
+</label>
+<button class="font-label-sm text-[11px] text-primary hover:text-surface-tint font-semibold flex items-center gap-1 transition-colors" id="btn-regerar-chave" type="button">
+<span class="material-symbols-outlined text-[13px]">refresh</span>
+<span>Regerar Chave</span>
+</button>
+</div>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[18px]">key</span>
+<input class="w-full h-10 pl-9 pr-10 bg-surface-subtle font-mono text-body-md text-text-primary placeholder:text-text-muted rounded-lg shadow-sm focus:outline-none cursor-default select-all" id="field-api-token" readonly="" type="password" value="med_live_sec_789f2a41bc9048a129ef9f4a"/>
+<button class="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary p-1 rounded transition-colors" id="btn-toggle-token" title="Mostrar/Ocultar Chave" type="button">
+<span class="material-symbols-outlined text-[18px]" id="token-eye-icon">visibility_off</span>
+</button>
+</div>
+<p class="font-label-sm text-[11px] text-text-muted">Assinatura de segurança com hashing SHA-256 rotativa.</p>
+</div>
+<!-- Campo 3: Nome da Instância Ativa (Slug) -->
+<div class="space-y-1.5 lg:col-span-1">
+<label class="block font-label-md text-label-md text-text-primary font-semibold">
+              Nome da Instância Ativa (Slug) <span class="text-danger-text">*</span>
+</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[18px]">domain_verification</span>
+<input class="w-full h-10 pl-9 pr-3 bg-surface-subtle focus:bg-surface-card rounded-lg font-body-md text-body-md text-text-primary placeholder:text-text-muted shadow-sm transition-all focus:outline-none" id="field-instance-slug" placeholder="nome-da-instancia" type="text" value="clinica-saolucas-matriz"/>
+</div>
+<p class="font-label-sm text-[11px] text-text-muted">Identificador canônico multitenant para esta unidade.</p>
+</div>
+</div>
+<!-- Connection Test Box -->
+<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-space-md p-space-md bg-surface-subtle rounded-xl">
+<div class="flex items-center gap-space-sm">
+<button class="h-9 px-4 rounded-lg bg-surface-card hover:bg-surface-container-low text-text-primary font-label-md text-label-md shadow-sm transition-all flex items-center gap-2 active:scale-95" id="btn-verify-conn" type="button">
+<span class="material-symbols-outlined text-[18px] text-primary" id="icon-verify">network_ping</span>
+<span>Verificar Conexão com o Servidor</span>
+</button>
+<span class="font-label-sm text-label-sm text-text-muted hidden md:inline">Checagem de handshaking e latência DNS</span>
+</div>
+<div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-success-surface text-success-text shadow-sm transition-all" id="conn-status-badge">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span class="font-label-sm text-label-sm font-bold tracking-wide">HTTP 200 OK • 28ms</span>
+</div>
+</div>
+</section>
+<!-- BLOCO 2: Configuração de Webhooks & Eventos (US-049) -->
+<section class="bg-surface-card rounded-2xl p-space-xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.04)] space-y-space-lg">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm pb-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-secondary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-on-secondary-fixed text-[18px]">webhook</span>
+</div>
+<div>
+<h2 class="font-headline-md text-headline-md text-text-primary leading-tight">2. Configuração de Webhooks &amp; Eventos</h2>
+<span class="font-label-sm text-label-sm text-text-muted">US-049 • Sincronização em tempo real entre o WhatsApp e o MedCRM</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm bg-surface-subtle text-text-secondary px-3 py-1 rounded-full font-semibold">
+              Protocolo HTTP POST • Assinatura HMAC-SHA256
+            </span>
+</div>
+</div>
+<!-- URL do Webhook -->
+<div class="space-y-1.5">
+<label class="block font-label-md text-label-md text-text-primary font-semibold">
+            URL do Webhook do MedCRM <span class="text-danger-text">*</span>
+</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[18px]">cloud_sync</span>
+<input class="w-full h-10 pl-9 pr-28 bg-surface-subtle focus:bg-surface-card rounded-lg font-body-md text-body-md text-text-primary placeholder:text-text-muted shadow-sm transition-all focus:outline-none" id="field-webhook-url" placeholder="https://seu-dominio.com.br/webhook" type="text" value="https://crm.medguia.com.br/api/webhooks/evolution"/>
+<div class="absolute right-2 top-1/2 -translate-y-1/2 flex items-center">
+<span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-primary-fixed text-on-primary-fixed">SSL VÁLIDO</span>
+</div>
+</div>
+<p class="font-label-sm text-[11px] text-text-muted">As notificações de entrada e alteração de mensagem serão despachadas para este endpoint seguro.</p>
+</div>
+<!-- Checkboxes de Eventos Assinados -->
+<div class="space-y-space-sm pt-space-xs">
+<label class="block font-label-md text-label-md text-text-primary font-semibold">
+            Eventos Assinados para Despacho
+          </label>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-sm">
+<!-- Event 1: MESSAGES_UPSERT -->
+<label class="relative flex items-start gap-space-md p-space-md rounded-xl bg-surface-subtle hover:bg-surface-container-low cursor-pointer transition-all">
+<div class="flex items-center h-5">
+<input checked="" class="w-4 h-4 rounded text-primary focus:ring-0 cursor-pointer accent-primary" type="checkbox"/>
+</div>
+<div class="space-y-0.5">
+<div class="flex items-center gap-2">
+<span class="font-label-lg text-label-lg text-text-primary font-semibold">MESSAGES_UPSERT</span>
+<span class="font-label-sm text-[10px] bg-primary/10 text-primary font-bold px-1.5 rounded">Essencial</span>
+</div>
+<p class="font-body-sm text-body-sm text-text-secondary">
+                  Recebimento de novas mensagens em tempo real (texto, áudio, mídia e geolocalização).
+                </p>
+</div>
+</label>
+<!-- Event 2: MESSAGES_UPDATE -->
+<label class="relative flex items-start gap-space-md p-space-md rounded-xl bg-surface-subtle hover:bg-surface-container-low cursor-pointer transition-all">
+<div class="flex items-center h-5">
+<input checked="" class="w-4 h-4 rounded text-primary focus:ring-0 cursor-pointer accent-primary" type="checkbox"/>
+</div>
+<div class="space-y-0.5">
+<div class="flex items-center gap-2">
+<span class="font-label-lg text-label-lg text-text-primary font-semibold">MESSAGES_UPDATE</span>
+<span class="font-label-sm text-[10px] bg-primary/10 text-primary font-bold px-1.5 rounded">Rastreio</span>
+</div>
+<p class="font-body-sm text-body-sm text-text-secondary">
+                  Status de envio, confirmação de entrega no aparelho e leitura com double-check azul.
+                </p>
+</div>
+</label>
+<!-- Event 3: CONNECTION_UPDATE -->
+<label class="relative flex items-start gap-space-md p-space-md rounded-xl bg-surface-subtle hover:bg-surface-container-low cursor-pointer transition-all">
+<div class="flex items-center h-5">
+<input checked="" class="w-4 h-4 rounded text-primary focus:ring-0 cursor-pointer accent-primary" type="checkbox"/>
+</div>
+<div class="space-y-0.5">
+<div class="flex items-center gap-2">
+<span class="font-label-lg text-label-lg text-text-primary font-semibold">CONNECTION_UPDATE</span>
+<span class="font-label-sm text-[10px] bg-warning-surface text-warning-text font-bold px-1.5 rounded">Status</span>
+</div>
+<p class="font-body-sm text-body-sm text-text-secondary">
+                  Queda, desconexão, expiração de QR Code ou mudança de status da bateria do celular.
+                </p>
+</div>
+</label>
+<!-- Event 4: SEND_MESSAGE -->
+<label class="relative flex items-start gap-space-md p-space-md rounded-xl bg-surface-subtle hover:bg-surface-container-low cursor-pointer transition-all">
+<div class="flex items-center h-5">
+<input checked="" class="w-4 h-4 rounded text-primary focus:ring-0 cursor-pointer accent-primary" type="checkbox"/>
+</div>
+<div class="space-y-0.5">
+<div class="flex items-center gap-2">
+<span class="font-label-lg text-label-lg text-text-primary font-semibold">SEND_MESSAGE</span>
+<span class="font-label-sm text-[10px] bg-surface-container-high text-text-secondary font-bold px-1.5 rounded">Auditoria</span>
+</div>
+<p class="font-body-sm text-body-sm text-text-secondary">
+                  Auditoria interna de disparos disparados pelo CRM e cadências de 18 toques.
+                </p>
+</div>
+</label>
+</div>
+</div>
+<!-- Webhook Status Log and Ping Action -->
+<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-space-md p-space-md bg-surface-subtle rounded-xl">
+<div class="flex items-center gap-3">
+<span class="flex h-2.5 w-2.5 relative">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success-text opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-success-text"></span>
+</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-text-primary font-medium">Log do Último Teste de Webhook</span>
+<span class="font-body-sm text-body-sm text-text-secondary" id="webhook-log-text">
+                Último evento recebido com sucesso há 12 segundos (Código 200 - payload validado HMAC)
+              </span>
+</div>
+</div>
+<button class="h-9 px-4 rounded-lg bg-surface-card hover:bg-surface-container-low text-text-primary font-label-md text-label-md shadow-sm transition-all flex items-center gap-2 active:scale-95 flex-shrink-0" id="btn-simulate-ping" type="button">
+<span class="material-symbols-outlined text-[18px] text-text-secondary" id="icon-ping">cell_tower</span>
+<span>Simular Evento de Teste (Ping)</span>
+</button>
+</div>
+</section>
+<!-- BLOCO 3: Diretrizes de Segurança Anti-Ban & Cadência -->
+<section class="bg-surface-card rounded-2xl p-space-xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.04)] space-y-space-lg">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm pb-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-warning-surface flex items-center justify-center">
+<span class="material-symbols-outlined text-warning-text text-[18px]">security</span>
+</div>
+<div>
+<h2 class="font-headline-md text-headline-md text-text-primary leading-tight">3. Diretrizes de Segurança Anti-Ban &amp; Cadência</h2>
+<span class="font-label-sm text-label-sm text-text-muted">Proteção de chip comercial e aquecimento inteligente de disparos</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm bg-success-surface text-success-text px-3 py-1 rounded-full font-semibold flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[14px]">shield</span>
+            Modo Anti-Bloqueio Ativo
+          </span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-xl">
+<!-- Item 1: Intervalo Mínimo entre Mensagens da Cadência -->
+<div class="space-y-space-xs p-space-md rounded-xl bg-surface-subtle flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between">
+<label class="block font-label-md text-label-md text-text-primary font-semibold">
+                  Intervalo Mínimo entre Mensagens
+                </label>
+<span class="font-label-sm text-label-sm bg-info-surface text-info-text px-2 py-0.5 rounded font-semibold">Jitter Dinâmico</span>
+</div>
+<p class="font-body-sm text-body-sm text-text-secondary mt-1">
+                Atraso estocástico entre cada envio da régua de contato para mimetizar cadência humana.
+              </p>
+</div>
+<div class="mt-space-md">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[18px]">timer</span>
+<input class="w-full h-10 pl-9 pr-3 bg-surface-card rounded-lg font-body-md text-body-md text-text-primary shadow-sm focus:outline-none" type="text" value="15 a 45 segundos (Aleatorizado com jitter)"/>
+</div>
+</div>
+</div>
+<!-- Item 2: Digitação Humana Simulada (Switch) -->
+<div class="p-space-md rounded-xl bg-surface-subtle flex flex-col justify-between">
+<div class="flex items-start justify-between gap-4">
+<div class="space-y-1">
+<span class="block font-label-md text-label-md text-text-primary font-semibold">
+                  Digitação Humana Simulada
+                </span>
+<p class="font-body-sm text-body-sm text-text-secondary">
+                  Simular status "digitando..." e "gravando áudio..." antes do envio automático de cada mensagem.
+                </p>
+</div>
+<!-- Toggle Switch -->
+<label class="relative inline-flex items-center cursor-pointer flex-shrink-0 mt-1">
+<input checked="" class="sr-only peer" id="switch-human-typing" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="mt-space-md flex items-center gap-2 text-text-muted font-body-sm text-[12px]">
+<span class="material-symbols-outlined text-[16px] text-primary">psychology</span>
+<span>Duração calculada proporcionalmente ao tamanho do texto (2.5s a 7s).</span>
+</div>
+</div>
+<!-- Item 3: Limite de Disparos por Hora por Instância -->
+<div class="space-y-space-xs p-space-md rounded-xl bg-surface-subtle flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between">
+<label class="block font-label-md text-label-md text-text-primary font-semibold">
+                  Limite de Disparos por Hora
+                </label>
+<span class="font-label-sm text-label-sm bg-success-surface text-success-text px-2 py-0.5 rounded font-semibold">Recomendado</span>
+</div>
+<p class="font-body-sm text-body-sm text-text-secondary mt-1">
+                Teto de mensagens disparadas por lote para proteger a reputação do número perante a Meta.
+              </p>
+</div>
+<div class="mt-space-md">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[18px]">speed</span>
+<input class="w-full h-10 pl-9 pr-3 bg-surface-card rounded-lg font-body-md text-body-md text-text-primary shadow-sm focus:outline-none" type="text" value="120 mensagens/hora"/>
+</div>
+</div>
+</div>
+<!-- Item 4: Auto-Reconexão Inteligente (Switch) -->
+<div class="p-space-md rounded-xl bg-surface-subtle flex flex-col justify-between">
+<div class="flex items-start justify-between gap-4">
+<div class="space-y-1">
+<span class="block font-label-md text-label-md text-text-primary font-semibold">
+                  Auto-Reconexão Inteligente
+                </span>
+<p class="font-body-sm text-body-sm text-text-secondary">
+                  Tentar reconectar automaticamente em caso de oscilações de rede sem invalidar a sessão ativa.
+                </p>
+</div>
+<!-- Toggle Switch -->
+<label class="relative inline-flex items-center cursor-pointer flex-shrink-0 mt-1">
+<input checked="" class="sr-only peer" id="switch-auto-reconnect" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="mt-space-md flex items-center gap-2 text-text-muted font-body-sm text-[12px]">
+<span class="material-symbols-outlined text-[16px] text-success-text">replay</span>
+<span>Backoff exponencial ativado (3 tentativas: 5s, 15s, 60s).</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Bottom Card: Changelog, Meta Info and Confirmation Actions -->
+<div class="p-space-lg rounded-2xl bg-surface-container-low flex flex-col md:flex-row items-center justify-between gap-space-lg shadow-sm">
+<div class="flex items-center gap-space-md">
+<div class="w-10 h-10 rounded-xl bg-surface-card flex items-center justify-center flex-shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-text-secondary text-[20px]">info</span>
+</div>
+<div class="space-y-0.5">
+<p class="font-label-md text-label-md text-text-primary font-semibold">
+              Versão atual da integração: <span class="font-mono text-primary">Evolution Adapter v2.4.0-build.182</span>
+</p>
+<p class="font-body-sm text-body-sm text-text-secondary">
+              Próxima janela de manutenção programada: <strong class="text-text-primary">Domingo 02:00 BRT</strong> (Duração estimada: ~2 minutos)
+            </p>
+</div>
+</div>
+<div class="flex items-center gap-space-sm w-full md:w-auto justify-end">
+<button class="h-10 px-4 rounded-lg bg-surface-card hover:bg-danger-surface hover:text-danger-text text-text-secondary font-label-md text-label-md transition-all shadow-sm active:scale-95 flex items-center gap-1.5" id="btn-factory-reset" type="button">
+<span class="material-symbols-outlined text-[18px]">restore</span>
+<span>Restaurar Padrões de Fábrica</span>
+</button>
+<button class="h-10 px-6 rounded-lg bg-primary hover:bg-surface-tint text-on-primary font-label-md text-label-md transition-all shadow-[0_2px_8px_rgba(9,84,201,0.25)] flex items-center gap-2 active:scale-95" id="btn-save-bottom" type="button">
+<span class="material-symbols-outlined text-[18px]">check</span>
+<span>Salvar Configuração da Instância</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+  (function initEvolutionConfig() {
+    // Elements
+    const btnToggleToken = document.getElementById('btn-toggle-token');
+    const fieldApiToken = document.getElementById('field-api-token');
+    const tokenEyeIcon = document.getElementById('token-eye-icon');
+    const btnRegerarChave = document.getElementById('btn-regerar-chave');
+
+    const btnVerifyConn = document.getElementById('btn-verify-conn');
+    const connStatusBadge = document.getElementById('conn-status-badge');
+    const iconVerify = document.getElementById('icon-verify');
+
+    const btnSimulatePing = document.getElementById('btn-simulate-ping');
+    const btnTestWebhookTop = document.getElementById('btn-test-webhook-top');
+    const webhookLogText = document.getElementById('webhook-log-text');
+    const iconPing = document.getElementById('icon-ping');
+
+    const btnSaveTop = document.getElementById('btn-save-top');
+    const btnSaveBottom = document.getElementById('btn-save-bottom');
+    const btnFactoryReset = document.getElementById('btn-factory-reset');
+
+    const toast = document.getElementById('toast-notification');
+    const toastMessage = document.getElementById('toast-message');
+    const toastIcon = document.getElementById('toast-icon');
+
+    function showToast(msg, icon = 'check_circle', isError = false) {
+      if (!toast) return;
+      toastMessage.textContent = msg;
+      toastIcon.textContent = icon;
+      if (isError) {
+        toastIcon.classList.remove('text-success-text');
+        toastIcon.classList.add('text-danger-text');
+      } else {
+        toastIcon.classList.remove('text-danger-text');
+        toastIcon.classList.add('text-success-text');
+      }
+      toast.classList.remove('translate-y-24', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      setTimeout(() => {
+        toast.classList.add('translate-y-24', 'opacity-0');
+        toast.classList.remove('translate-y-0', 'opacity-100');
+      }, 3500);
+    }
+
+    // Toggle API Token visibility
+    if (btnToggleToken && fieldApiToken && tokenEyeIcon) {
+      btnToggleToken.addEventListener('click', () => {
+        if (fieldApiToken.type === 'password') {
+          fieldApiToken.type = 'text';
+          tokenEyeIcon.textContent = 'visibility';
+        } else {
+          fieldApiToken.type = 'password';
+          tokenEyeIcon.textContent = 'visibility_off';
+        }
+      });
+    }
+
+    // Regenerate Key Action
+    if (btnRegerarChave && fieldApiToken) {
+      btnRegerarChave.addEventListener('click', () => {
+        const confirmRegen = window.confirm(
+          'Atenção: Ao regerar a chave mestre da Evolution API, todas as chamadas em andamento deverão atualizar o header Authorization imediatamente. Deseja prosseguir?'
+        );
+        if (confirmRegen) {
+          const randHex = Math.random().toString(16).substring(2, 10) + Math.random().toString(16).substring(2, 10);
+          fieldApiToken.value = 'med_live_sec_' + randHex;
+          showToast('Nova chave mestre gerada com sucesso! Lembre-se de salvar.', 'vpn_key');
+        }
+      });
+    }
+
+    // Verify Server Connection
+    if (btnVerifyConn && connStatusBadge && iconVerify) {
+      btnVerifyConn.addEventListener('click', () => {
+        iconVerify.classList.add('animate-spin');
+        connStatusBadge.innerHTML = `
+          <span class="material-symbols-outlined text-[16px] animate-spin">sync</span>
+          <span class="font-label-sm text-label-sm font-bold">Verificando...</span>
+        `;
+        connStatusBadge.className = 'flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-container-high text-text-secondary shadow-sm transition-all';
+
+        setTimeout(() => {
+          iconVerify.classList.remove('animate-spin');
+          const ms = Math.floor(Math.random() * 20) + 18;
+          connStatusBadge.innerHTML = `
+            <span class="material-symbols-outlined text-[16px]">check_circle</span>
+            <span class="font-label-sm text-label-sm font-bold tracking-wide">HTTP 200 OK &bull; ${ms}ms</span>
+          `;
+          connStatusBadge.className = 'flex items-center gap-2 px-3 py-1.5 rounded-lg bg-success-surface text-success-text shadow-sm transition-all';
+          showToast('Conexão com o cluster Evolution API confirmada!', 'check_circle');
+        }, 800);
+      });
+    }
+
+    // Simulate Webhook Ping
+    function triggerWebhookPing() {
+      if (iconPing) iconPing.classList.add('animate-spin');
+      if (webhookLogText) {
+        webhookLogText.textContent = 'Enviando pacote de teste HMAC-SHA256...';
+      }
+
+      setTimeout(() => {
+        if (iconPing) iconPing.classList.remove('animate-spin');
+        if (webhookLogText) {
+          webhookLogText.textContent = 'Último evento recebido com sucesso agora há pouco (Código 200 - ping pong validado)';
+        }
+        showToast('Webhook acionado: resposta 200 OK recebida do MedCRM.', 'cell_tower');
+      }, 700);
+    }
+
+    if (btnSimulatePing) btnSimulatePing.addEventListener('click', triggerWebhookPing);
+    if (btnTestWebhookTop) btnTestWebhookTop.addEventListener('click', triggerWebhookPing);
+
+    // Save Handlers
+    function handleSave() {
+      showToast('Configurações da instância salvas e propagadas no cluster.', 'save');
+    }
+
+    if (btnSaveTop) btnSaveTop.addEventListener('click', handleSave);
+    if (btnSaveBottom) btnSaveBottom.addEventListener('click', handleSave);
+
+    // Factory Reset
+    if (btnFactoryReset) {
+      btnFactoryReset.addEventListener('click', () => {
+        const confirmReset = window.confirm('Deseja restaurar as taxas de cadência e configurações de webhook padrão de fábrica?');
+        if (confirmReset) {
+          showToast('Parâmetros restaurados para o baseline recomendado de segurança.', 'settings_backup_restore');
+        }
+      });
+    }
+  })();
+</script></main></div></body></html>

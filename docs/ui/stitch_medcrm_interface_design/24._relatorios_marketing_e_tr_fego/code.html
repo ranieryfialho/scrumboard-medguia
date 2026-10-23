@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-subtle": "#F8FAFC", "info-border": "#BFDBFE", "danger-text": "#DC2626", "on-error-container": "#93000a", "surface-tint": "#1157cb", "on-secondary-fixed": "#131b30", "primary-fixed-dim": "#b1c5ff", "on-secondary-container": "#5a627b", "on-primary": "#ffffff", "inverse-on-surface": "#f0f0fa", "warning-surface": "#FEF3C7", "text-secondary": "#64748B", "surface-bright": "#faf8ff", "on-primary-fixed-variant": "#0040a0", "sidebar-surface": "#1E293B", "on-primary-fixed": "#001847", "success-border": "#A7F3D0", "on-tertiary-container": "#fffbff", "on-primary-container": "#fefcff", "secondary-fixed": "#dae2ff", "surface-container-lowest": "#ffffff", "on-tertiary-fixed": "#311300", "on-background": "#191b22", "text-muted": "#94A3B8", "background-canvas": "#F4F6FA", "tertiary-fixed-dim": "#ffb787", "warning-text": "#D97706", "sidebar-surface-active": "#2D3748", "on-secondary": "#ffffff", "border-subtle": "#E2E8F0", "outline": "#737785", "border-focus": "#93C5FD", "inverse-surface": "#2e3038", "on-tertiary": "#ffffff", "secondary-container": "#d7dffd", "inverse-primary": "#b1c5ff", "text-primary": "#0F172A", "error": "#ba1a1a", "info-text": "#2563EB", "success-surface": "#D1FAE5", "on-surface-variant": "#434654", "surface-container": "#ededf7", "on-secondary-fixed-variant": "#3e465e", "danger-surface": "#FEE2E2", "tertiary": "#924700", "primary-fixed": "#dae2ff", "success-text": "#059669", "warning-border": "#FDE68A", "surface-container-highest": "#e1e2ec", "error-container": "#ffdad6", "surface-dim": "#d9d9e3", "background": "#faf8ff", "tertiary-container": "#b85b00", "on-surface": "#191b22", "on-error": "#ffffff", "tertiary-fixed": "#ffdcc7", "secondary": "#565e77", "surface-container-low": "#f3f3fd", "surface-variant": "#e1e2ec", "info-surface": "#EFF6FF", "danger-border": "#FECACA", "surface-card": "#FFFFFF", "on-tertiary-fixed-variant": "#723600", "secondary-fixed-dim": "#bec6e3", "primary-container": "#366ee3", "primary": "#0954c9", "outline-variant": "#c3c6d6", "surface-container-high": "#e7e7f2", "surface": "#faf8ff" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "gutter-sm": "0.75rem", "gutter-lg": "1.5rem", "space-lg": "1.25rem", "space-sm": "0.5rem", "gutter": "1.25rem", "space-xs": "0.25rem", "space-md": "0.875rem", "margin": "1.75rem", "space-xl": "1.75rem", "margin-mobile": "1rem", "space-2xl": "2.5rem" }, "fontFamily": { "body-sm": ["Inter"], "headline-sm": ["Plus Jakarta Sans"], "body-lg": ["Inter"], "label-sm": ["Inter"], "body-md": ["Inter"], "headline-md": ["Plus Jakarta Sans"], "metric-stat": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "display-lg": ["Plus Jakarta Sans"], "label-md": ["Inter"], "display-lg-mobile": ["Plus Jakarta Sans"], "label-lg": ["Inter"], "table-header": ["Inter"] }, "fontSize": { "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }], "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }], "body-lg": ["15px", { "lineHeight": "22px", "fontWeight": "400" }], "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.03em", "fontWeight": "600" }], "body-md": ["13px", { "lineHeight": "20px", "fontWeight": "400" }], "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }], "metric-stat": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "500" }], "display-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "700" }], "label-lg": ["13px", { "lineHeight": "18px", "fontWeight": "600" }], "table-header": ["11px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }] } } } };</script></head><body class="bg-surface font-body-md text-text-primary antialiased selection:bg-primary-fixed selection:text-on-primary-fixed"><aside class="fixed left-0 top-0 h-full w-64 bg-sidebar-surface text-surface z-50 flex flex-col justify-between shadow-[0_4px_20px_-2px_rgba(0,0,0,0.08)] overflow-hidden"><div class="flex flex-col flex-1 min-h-0"><div class="h-16 px-space-lg flex items-center justify-between border-b border-sidebar-surface-active/60 bg-sidebar-surface"><div class="flex items-center gap-space-sm"><div class="w-9 h-9 rounded-xl bg-primary flex items-center justify-center shadow-md"><span class="material-symbols-outlined text-on-primary text-[20px]">local_hospital</span></div><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-surface-container-lowest leading-none tracking-tight">MedCRM</span><span class="font-label-sm text-label-sm text-text-muted mt-0.5">MedGuia B2B</span></div></div><span class="font-label-sm text-[10px] px-2 py-0.5 rounded-full bg-primary/25 border border-primary/40 text-primary-fixed-dim uppercase tracking-wider font-bold">COMUNICAÇÃO</span></div><div class="flex-1 overflow-y-auto px-space-sm py-space-md space-y-space-md scrollbar-none"><nav class="space-y-space-md" data-active-classes="bg-primary text-on-primary font-semibold rounded-lg shadow-sm"><div class="space-y-1"><div class="px-space-sm pb-1"><span class="font-table-header text-table-header text-text-muted uppercase tracking-wider">Operação</span></div><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="pipeline" href="#"><span class="font-body-md text-body-md">Funil Pipeline</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="pipeline-lista" href="#"><span class="font-body-md text-body-md">Lista</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="pipeline-arquivados" href="#"><span class="font-body-md text-body-md">Arquivados</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="tarefas" href="#"><span class="font-body-md text-body-md">Tarefas do Turno</span><span class="font-label-sm text-label-sm bg-primary-container text-on-primary px-2 py-0.5 rounded-full font-bold">12</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="tarefas-atrasadas" href="#"><span class="font-body-md text-body-md">Tarefas Atrasadas</span><span class="font-label-sm text-label-sm bg-danger-surface text-danger-text px-2 py-0.5 rounded-full font-bold">4</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="agenda" href="#"><span class="font-body-md text-body-md">Agenda</span></a></div><div class="space-y-1 p-1.5 rounded-xl bg-sidebar-surface-active/40 border border-primary/30"><div class="px-space-sm pb-1 flex items-center justify-between"><span class="font-table-header text-table-header text-primary-fixed-dim uppercase tracking-wider font-bold">Comunicação</span><span class="font-label-sm text-[10px] px-1.5 py-0.2 rounded bg-primary/30 text-primary-fixed-dim font-bold uppercase tracking-wider">Ativo</span></div><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="whatsapp" href="#"><span class="font-body-md text-body-md font-medium text-surface-container-lowest">WhatsApp Inbox</span><span class="font-label-sm text-label-sm bg-success-surface text-success-text px-2 py-0.5 rounded-full font-bold">5</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="whatsapp-conexao" href="#"><span class="font-body-md text-body-md">Conexão &amp; QR Code</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="whatsapp-configuracao" href="#"><span class="font-body-md text-body-md">Configuração Evolution</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="campanhas" href="#"><span class="font-body-md text-body-md">Campanhas</span></a></div><div class="space-y-1"><div class="px-space-sm pb-1"><span class="font-table-header text-table-header text-text-muted uppercase tracking-wider">Análises</span></div><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="indicadores" href="#"><span class="font-body-md text-body-md">Indicadores</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg bg-primary text-on-primary font-semibold shadow-sm transition-colors" data-path="relatorios" href="#"><span class="font-body-md text-body-md">Relatórios</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="relatorios-comerciais" href="#"><span class="font-body-md text-body-md">Comercial</span></a></div><div class="space-y-1"><div class="px-space-sm pb-1"><span class="font-table-header text-table-header text-text-muted uppercase tracking-wider">Administração</span></div><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="equipe" href="#"><span class="font-body-md text-body-md">Equipe</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="configuracoes-motivos-perda" href="#"><span class="font-body-md text-body-md">Motivos de Perda</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="admin-empresas" href="#"><span class="font-body-md text-body-md">Empresas</span></a></div></nav></div></div><div class="p-space-md border-t border-sidebar-surface-active/50 bg-sidebar-surface"><div class="flex items-center justify-between text-text-muted"><a class="flex items-center gap-2 hover:text-surface-container-lowest transition-colors font-label-md text-label-md" data-path="suporte-e-ajuda" href="#"><span>Ajuda &amp; Suporte</span></a><span class="font-label-sm text-label-sm text-text-muted/80 bg-sidebar-surface-active/80 px-2 py-0.5 rounded">v2.4.0</span></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface-card border-b border-border-subtle z-40 flex items-center justify-between px-gutter shadow-[0_1px_8px_rgba(0,0,0,0.02)]"><div class="flex items-center gap-space-lg flex-1 max-w-2xl"><div class="relative w-full max-w-lg"><span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[19px]">search</span><input class="w-full h-10 pl-9 pr-16 bg-surface-subtle border border-border-subtle rounded-lg font-body-md text-body-md text-text-primary placeholder:text-text-muted focus:outline-none focus:border-border-focus focus:bg-surface-card transition-all" placeholder="Buscar conversa, médico, telefone..." type="text"/><kbd class="absolute right-3 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[10px] font-label-sm bg-surface-card border border-border-subtle text-text-muted rounded shadow-sm">⌘K</kbd></div><div class="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border-subtle bg-surface-card text-text-primary shadow-sm hover:border-border-focus cursor-pointer transition-all"><span class="material-symbols-outlined text-primary text-[18px]">domain</span><div class="flex flex-col text-left"><span class="font-label-sm text-label-sm font-semibold leading-tight">Clínica São Lucas - Matriz</span><span class="font-label-sm text-[10px] text-success-text leading-none flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-success-text inline-block"></span>Ativo</span></div><span class="material-symbols-outlined text-text-muted text-[16px] ml-1">expand_more</span></div></div><div class="flex items-center gap-space-md"><div class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-success-surface border border-success-border"><span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success-text opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-success-text"></span></span><span class="font-label-sm text-label-sm text-success-text font-semibold">Tempo real conectado</span></div><button class="relative p-2 rounded-lg text-text-secondary hover:bg-surface-subtle hover:text-text-primary transition-colors" type="button"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-danger-text"></span></button><div class="h-6 w-px bg-border-subtle"></div><div class="flex items-center gap-space-sm pl-1 cursor-pointer"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><div class="hidden lg:flex flex-col text-left"><div class="flex items-center gap-1.5"><span class="font-label-lg text-label-lg font-semibold text-text-primary leading-tight">Dr. Roberto Mendes</span><span class="font-label-sm text-[10px] bg-primary-fixed text-on-primary-fixed px-1.5 py-0.2 rounded font-bold uppercase tracking-wider">MASTER</span></div><span class="font-label-sm text-label-sm text-text-muted leading-tight">roberto.mendes@medguia.com.br</span></div><span class="material-symbols-outlined text-text-muted text-[18px]">expand_more</span></div></div></header><main class="w-full pt-16 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<!-- Top Breadcrumb & Quick Notification Header Strip -->
+<div class="px-gutter pt-space-lg pb-space-sm flex flex-col md:flex-row md:items-center md:justify-between gap-space-sm bg-surface">
+<div class="flex items-center gap-2">
+<span class="font-table-header text-table-header text-text-muted uppercase tracking-wider">Análises</span>
+<span class="material-symbols-outlined text-text-muted text-[14px]">chevron_right</span>
+<span class="font-table-header text-table-header text-text-muted uppercase tracking-wider">Marketing &amp; Tráfego</span>
+<span class="material-symbols-outlined text-text-muted text-[14px]">chevron_right</span>
+<span class="font-table-header text-table-header text-primary font-bold uppercase tracking-wider">/relatorios</span>
+</div>
+<div class="flex items-center gap-2 self-start md:self-auto">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-info-surface text-info-text font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">sync</span>
+        Atribuição Multitoque: Modelo Baseado em Posição (40/20/40)
+      </span>
+<span class="font-body-sm text-body-sm text-text-muted hidden sm:inline">• Atualizado há 6 min</span>
+</div>
+</div>
+<!-- Main Hero Title & Analytical Controller Section -->
+<div class="px-gutter pb-space-lg flex flex-col gap-space-md">
+<div class="flex flex-col lg:flex-row lg:items-end justify-between gap-space-md">
+<div class="max-w-3xl">
+<h1 class="font-headline-lg text-headline-lg text-text-primary tracking-tight font-bold">
+          Relatórios de Marketing, Tráfego e Atribuição
+        </h1>
+<p class="font-body-lg text-body-lg text-text-secondary mt-1">
+          Auditoria analítica de aquisição de clínicas e consultórios, investimento em mídia, CAC por canal, ROAS e taxas de conversão de ponta a ponta (Lead ao Contrato Fechado).
+        </p>
+</div>
+<!-- Action Buttons -->
+<div class="flex items-center gap-2.5 flex-wrap">
+<button class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-surface-card text-text-primary font-label-lg text-label-lg shadow-sm hover:bg-surface-subtle transition-all cursor-pointer" type="button">
+<span class="material-symbols-outlined text-text-secondary text-[18px]">cached</span>
+<span>Atualizar Dados em Tempo Real</span>
+</button>
+<button class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-on-primary font-label-lg text-label-lg shadow-md hover:bg-primary/90 transition-all cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span>Exportar Relatório Completo (CSV/PDF)</span>
+</button>
+</div>
+</div>
+<!-- Filter Control Bar -->
+<div class="p-space-md rounded-2xl bg-surface-card shadow-sm flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-space-md">
+<!-- Date Presets & Date Picker -->
+<div class="flex flex-wrap items-center gap-2">
+<div class="flex items-center gap-1.5 p-1 rounded-xl bg-surface-subtle">
+<button class="px-2.5 py-1 rounded-lg font-label-sm text-label-sm text-text-secondary hover:text-text-primary transition-colors" type="button">Hoje</button>
+<button class="px-2.5 py-1 rounded-lg font-label-sm text-label-sm text-text-secondary hover:text-text-primary transition-colors" type="button">Últimos 7 dias</button>
+<button class="px-2.5 py-1 rounded-lg font-label-sm text-label-sm bg-surface-card text-primary font-bold shadow-sm" type="button">Últimos 30 dias</button>
+<button class="px-2.5 py-1 rounded-lg font-label-sm text-label-sm text-text-secondary hover:text-text-primary transition-colors" type="button">Este Mês</button>
+<button class="px-2.5 py-1 rounded-lg font-label-sm text-label-sm text-text-secondary hover:text-text-primary transition-colors" type="button">Trimestre (Q2)</button>
+</div>
+<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-subtle text-text-primary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-text-secondary text-[16px]">calendar_today</span>
+<span class="font-semibold">01 Out, 2024 - 31 Out, 2024</span>
+</div>
+</div>
+<!-- Segment Dropdowns -->
+<div class="flex flex-wrap items-center gap-2.5">
+<!-- Channel Selector -->
+<div class="relative min-w-[240px]">
+<div class="flex items-center justify-between px-3 py-2 rounded-lg bg-surface-subtle text-text-primary cursor-pointer hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-2 truncate">
+<span class="material-symbols-outlined text-primary text-[18px]">hub</span>
+<span class="font-body-md text-body-md truncate">Todos os Canais de Aquisição</span>
+</div>
+<span class="material-symbols-outlined text-text-muted text-[18px] ml-2">expand_more</span>
+</div>
+</div>
+<!-- Specialty Selector -->
+<div class="relative min-w-[230px]">
+<div class="flex items-center justify-between px-3 py-2 rounded-lg bg-surface-subtle text-text-primary cursor-pointer hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-2 truncate">
+<span class="material-symbols-outlined text-primary text-[18px]">medical_services</span>
+<span class="font-body-md text-body-md truncate">Todas as Especialidades</span>
+</div>
+<span class="material-symbols-outlined text-text-muted text-[18px] ml-2">expand_more</span>
+</div>
+</div>
+<!-- Clear/Reset Filter Pill -->
+<button class="p-2 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-subtle transition-colors" title="Limpar Filtros" type="button">
+<span class="material-symbols-outlined text-[18px]">filter_alt_off</span>
+</button>
+</div>
+</div>
+</div>
+<!-- KPI Scorecards Grid -->
+<div class="px-gutter pb-space-lg grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-space-md">
+<!-- KPI 1 -->
+<div class="p-space-lg rounded-2xl bg-surface-card shadow-sm flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-shadow">
+<div class="absolute -right-3 -top-3 w-20 h-20 rounded-full bg-primary/5 -z-0 pointer-events-none group-hover:scale-110 transition-transform"></div>
+<div class="relative z-10">
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-sm text-label-sm text-text-secondary uppercase tracking-wider font-bold">Investimento Total em Tráfego</span>
+<span class="w-8 h-8 rounded-lg bg-info-surface text-info-text flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">payments</span>
+</span>
+</div>
+<div class="flex items-baseline gap-2 mb-1">
+<span class="font-metric-stat text-metric-stat text-text-primary font-bold">R$ 48.650,00</span>
+</div>
+<div class="flex items-center gap-1.5 mb-3">
+<span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-success-surface text-success-text font-label-sm text-label-sm font-bold">
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span>
+            +12.4%
+          </span>
+<span class="font-body-sm text-body-sm text-text-muted">vs mês anterior</span>
+</div>
+</div>
+<div class="relative z-10 pt-3 bg-surface-subtle/60 -mx-space-lg -mb-space-lg px-space-lg pb-space-md rounded-b-2xl">
+<div class="flex items-center justify-between font-body-sm text-body-sm">
+<span class="text-text-muted">Orçamento consumido: <strong class="text-text-primary font-semibold">92%</strong></span>
+<span class="text-text-muted">CPM Médio: <strong class="text-text-primary font-semibold">R$ 28,40</strong></span>
+</div>
+</div>
+</div>
+<!-- KPI 2 -->
+<div class="p-space-lg rounded-2xl bg-surface-card shadow-sm flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-shadow">
+<div class="absolute -right-3 -top-3 w-20 h-20 rounded-full bg-primary/5 -z-0 pointer-events-none group-hover:scale-110 transition-transform"></div>
+<div class="relative z-10">
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-sm text-label-sm text-text-secondary uppercase tracking-wider font-bold">Leads Médicos (MQL)</span>
+<span class="w-8 h-8 rounded-lg bg-primary-fixed text-on-primary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">group_add</span>
+</span>
+</div>
+<div class="flex items-baseline gap-2 mb-1">
+<span class="font-metric-stat text-metric-stat text-text-primary font-bold">1.240</span>
+<span class="font-body-sm text-body-sm text-text-muted">cadastros</span>
+</div>
+<div class="flex items-center gap-1.5 mb-3">
+<span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-success-surface text-success-text font-label-sm text-label-sm font-bold">
+<span class="material-symbols-outlined text-[14px]">trending_down</span>
+            -8.1% CPL
+          </span>
+<span class="font-body-sm text-body-sm text-text-secondary">CPL: <strong class="text-text-primary">R$ 39,23</strong></span>
+</div>
+</div>
+<div class="relative z-10 pt-3 bg-surface-subtle/60 -mx-space-lg -mb-space-lg px-space-lg pb-space-md rounded-b-2xl">
+<div class="flex items-center justify-between font-body-sm text-body-sm">
+<span class="text-text-muted">Qualificados SDR: <strong class="text-text-primary font-semibold">848</strong></span>
+<span class="inline-flex items-center text-success-text font-semibold">68.4% qualif.</span>
+</div>
+</div>
+</div>
+<!-- KPI 3 -->
+<div class="p-space-lg rounded-2xl bg-surface-card shadow-sm flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-shadow">
+<div class="absolute -right-3 -top-3 w-20 h-20 rounded-full bg-success-surface/50 -z-0 pointer-events-none group-hover:scale-110 transition-transform"></div>
+<div class="relative z-10">
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-sm text-label-sm text-text-secondary uppercase tracking-wider font-bold">CAC Médio Geral</span>
+<span class="w-8 h-8 rounded-lg bg-success-surface text-success-text flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+</span>
+</div>
+<div class="flex items-baseline gap-2 mb-1">
+<span class="font-metric-stat text-metric-stat text-text-primary font-bold">R$ 953,92</span>
+</div>
+<div class="flex items-center gap-1.5 mb-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-success-surface text-success-text font-label-sm text-label-sm font-bold">
+            Excelente
+          </span>
+<span class="font-body-sm text-body-sm text-text-muted">Benchmark Saúde: R$ 1.400</span>
+</div>
+</div>
+<div class="relative z-10 pt-3 bg-surface-subtle/60 -mx-space-lg -mb-space-lg px-space-lg pb-space-md rounded-b-2xl">
+<div class="flex items-center justify-between font-body-sm text-body-sm">
+<span class="text-text-muted">LTV/CAC: <strong class="text-text-primary font-semibold">8.8x</strong></span>
+<span class="text-text-muted">Payback: <strong class="text-text-primary font-semibold">1.4 meses</strong></span>
+</div>
+</div>
+</div>
+<!-- KPI 4 -->
+<div class="p-space-lg rounded-2xl bg-surface-card shadow-sm flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-shadow">
+<div class="absolute -right-3 -top-3 w-20 h-20 rounded-full bg-warning-surface/50 -z-0 pointer-events-none group-hover:scale-110 transition-transform"></div>
+<div class="relative z-10">
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-sm text-label-sm text-text-secondary uppercase tracking-wider font-bold">ROAS &amp; Receita Nova</span>
+<span class="w-8 h-8 rounded-lg bg-warning-surface text-warning-text flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">query_stats</span>
+</span>
+</div>
+<div class="flex items-baseline gap-2 mb-1">
+<span class="font-metric-stat text-metric-stat text-text-primary font-bold">8.79x</span>
+<span class="font-label-lg text-label-lg text-text-secondary font-semibold">ROAS Global</span>
+</div>
+<div class="flex items-center gap-1.5 mb-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm font-bold">
+            51 Contratos Fechados
+          </span>
+<span class="font-body-sm text-body-sm text-text-muted">em 30 dias</span>
+</div>
+</div>
+<div class="relative z-10 pt-3 bg-surface-subtle/60 -mx-space-lg -mb-space-lg px-space-lg pb-space-md rounded-b-2xl">
+<div class="flex items-center justify-between font-body-sm text-body-sm">
+<span class="text-text-muted">Receita: <strong class="text-text-primary font-semibold">R$ 428.000</strong></span>
+<span class="text-text-muted">Ticket Médio: <strong class="text-text-primary font-semibold">R$ 8.392</strong></span>
+</div>
+</div>
+</div>
+</div>
+<!-- Acquisition & Conversion Evolution Chart -->
+<div class="px-gutter pb-space-lg">
+<div class="p-space-lg rounded-2xl bg-surface-card shadow-sm flex flex-col gap-space-md">
+<!-- Chart Header with Toggle & Context -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm pb-space-sm">
+<div>
+<h2 class="font-headline-md text-headline-md text-text-primary font-bold">
+            Aquisição de Leads Médicos &amp; Conversão por Período
+          </h2>
+<p class="font-body-sm text-body-sm text-text-secondary">
+            Volume de captação diária no topo do funil versus reuniões/demonstrações validadas com corpo clínico.
+          </p>
+</div>
+<div class="flex items-center gap-space-md self-start sm:self-auto">
+<!-- Legend Badges -->
+<div class="hidden md:flex items-center gap-4">
+<div class="flex items-center gap-1.5">
+<span class="w-3 h-3 rounded-full bg-primary"></span>
+<span class="font-label-sm text-label-sm text-text-secondary">Leads Totais (MQL)</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-3 h-3 rounded-full bg-success-text"></span>
+<span class="font-label-sm text-label-sm text-text-secondary">Reuniões / Propostas (SQL)</span>
+</div>
+</div>
+<!-- Time Granularity Selector -->
+<div class="flex items-center p-1 rounded-xl bg-surface-subtle">
+<button class="px-3 py-1 rounded-lg font-label-sm text-label-sm bg-surface-card text-primary font-bold shadow-sm" type="button">Diário</button>
+<button class="px-3 py-1 rounded-lg font-label-sm text-label-sm text-text-secondary hover:text-text-primary transition-colors" type="button">Semanal</button>
+<button class="px-3 py-1 rounded-lg font-label-sm text-label-sm text-text-secondary hover:text-text-primary transition-colors" type="button">Mensal</button>
+</div>
+</div>
+</div>
+<!-- SVG Line/Area Chart Container -->
+<div class="relative w-full h-72 sm:h-80 overflow-hidden select-none">
+<svg class="w-full h-full overflow-visible" preserveaspectratio="none" viewbox="0 0 1000 320">
+<defs>
+<lineargradient id="mqlGradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#0954c9" stop-opacity="0.22"></stop>
+<stop offset="90%" stop-color="#0954c9" stop-opacity="0.0"></stop>
+</lineargradient>
+<lineargradient id="sqlGradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#059669" stop-opacity="0.18"></stop>
+<stop offset="95%" stop-color="#059669" stop-opacity="0.0"></stop>
+</lineargradient>
+<filter height="140%" id="cardShadow" width="140%" x="-20%" y="-20%">
+<fedropshadow dx="0" dy="4" flood-color="#0F172A" flood-opacity="0.12" stddeviation="6"></fedropshadow>
+</filter>
+</defs>
+<!-- Horizontal Grid Lines -->
+<line stroke="#E2E8F0" stroke-dasharray="3 3" stroke-width="1" x1="40" x2="980" y1="40" y2="40"></line>
+<line stroke="#E2E8F0" stroke-dasharray="3 3" stroke-width="1" x1="40" x2="980" y1="100" y2="100"></line>
+<line stroke="#E2E8F0" stroke-dasharray="3 3" stroke-width="1" x1="40" x2="980" y1="160" y2="160"></line>
+<line stroke="#E2E8F0" stroke-dasharray="3 3" stroke-width="1" x1="40" x2="980" y1="220" y2="220"></line>
+<line stroke="#CBD5E1" stroke-width="1" x1="40" x2="980" y1="280" y2="280"></line>
+<!-- Y-Axis Values -->
+<text fill="#94A3B8" font-family="Inter" font-size="11" text-anchor="end" x="30" y="44">80</text>
+<text fill="#94A3B8" font-family="Inter" font-size="11" text-anchor="end" x="30" y="104">60</text>
+<text fill="#94A3B8" font-family="Inter" font-size="11" text-anchor="end" x="30" y="164">40</text>
+<text fill="#94A3B8" font-family="Inter" font-size="11" text-anchor="end" x="30" y="224">20</text>
+<text fill="#94A3B8" font-family="Inter" font-size="11" text-anchor="end" x="30" y="284">0</text>
+<!-- MQL Area Fill -->
+<path d="M 60 210 Q 150 170, 210 180 T 360 140 T 510 110 T 660 70 T 810 120 T 960 90 L 960 280 L 60 280 Z" fill="url(#mqlGradient)"></path>
+<!-- SQL Area Fill -->
+<path d="M 60 260 Q 150 250, 210 240 T 360 230 T 510 200 T 660 175 T 810 210 T 960 190 L 960 280 L 60 280 Z" fill="url(#sqlGradient)"></path>
+<!-- MQL Line (Primary Blue) -->
+<path d="M 60 210 Q 150 170, 210 180 T 360 140 T 510 110 T 660 70 T 810 120 T 960 90" fill="none" stroke="#0954c9" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path>
+<!-- SQL Line (Emerald Accent) -->
+<path d="M 60 260 Q 150 250, 210 240 T 360 230 T 510 200 T 660 175 T 810 210 T 960 190" fill="none" stroke="#059669" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
+<!-- Data Points on Curve -->
+<circle cx="60" cy="210" fill="#FFFFFF" r="3.5" stroke="#0954c9" stroke-width="2"></circle>
+<circle cx="210" cy="180" fill="#FFFFFF" r="3.5" stroke="#0954c9" stroke-width="2"></circle>
+<circle cx="360" cy="140" fill="#FFFFFF" r="3.5" stroke="#0954c9" stroke-width="2"></circle>
+<circle cx="510" cy="110" fill="#FFFFFF" r="3.5" stroke="#0954c9" stroke-width="2"></circle>
+<circle cx="810" cy="120" fill="#FFFFFF" r="3.5" stroke="#0954c9" stroke-width="2"></circle>
+<circle cx="960" cy="90" fill="#FFFFFF" r="3.5" stroke="#0954c9" stroke-width="2"></circle>
+<!-- Highlight Marker at Day 20 Out (cx: 660) -->
+<line stroke="#0954c9" stroke-dasharray="4 4" stroke-width="1.5" x1="660" x2="660" y1="40" y2="280"></line>
+<circle cx="660" cy="70" fill="#0954c9" r="6" stroke="#FFFFFF" stroke-width="3"></circle>
+<circle cx="660" cy="175" fill="#059669" r="5" stroke="#FFFFFF" stroke-width="2.5"></circle>
+<!-- Tooltip Callout Box over 20 Out -->
+<g filter="url(#cardShadow)">
+<rect fill="#1E293B" height="52" rx="8" width="250" x="535" y="10"></rect>
+<polygon fill="#1E293B" points="655,62 665,62 660,67"></polygon>
+<text fill="#DAE2FF" font-family="Inter" font-size="11" font-weight="700" x="548" y="27">20 de Outubro (Pico da Campanha)</text>
+<text fill="#FFFFFF" font-family="Inter" font-size="10.5" x="548" y="44">
+              64 Leads • 18 Reuniões • <tspan fill="#A7F3D0" font-weight="700">3 Contratos Fechados</tspan>
+</text>
+</g>
+<!-- X-Axis Labels -->
+<text fill="#64748B" font-family="Inter" font-size="11" text-anchor="middle" x="60" y="302">01 Out</text>
+<text fill="#64748B" font-family="Inter" font-size="11" text-anchor="middle" x="210" y="302">05 Out</text>
+<text fill="#64748B" font-family="Inter" font-size="11" text-anchor="middle" x="360" y="302">10 Out</text>
+<text fill="#64748B" font-family="Inter" font-size="11" text-anchor="middle" x="510" y="302">15 Out</text>
+<text fill="#0954c9" font-family="Inter" font-size="11" font-weight="700" text-anchor="middle" x="660" y="302">20 Out</text>
+<text fill="#64748B" font-family="Inter" font-size="11" text-anchor="middle" x="810" y="302">25 Out</text>
+<text fill="#64748B" font-family="Inter" font-size="11" text-anchor="middle" x="960" y="302">30 Out</text>
+</svg>
+</div>
+<!-- Quick Micro-Summary under chart -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-space-sm pt-space-xs">
+<div class="p-3 rounded-xl bg-surface-subtle flex flex-col">
+<span class="font-label-sm text-label-sm text-text-muted">Dia com Maior Conversão</span>
+<span class="font-label-lg text-label-lg text-text-primary font-bold mt-0.5">20 Out (28.1% MQL/SQL)</span>
+</div>
+<div class="p-3 rounded-xl bg-surface-subtle flex flex-col">
+<span class="font-label-sm text-label-sm text-text-muted">Melhor Horário de Captação</span>
+<span class="font-label-lg text-label-lg text-text-primary font-bold mt-0.5">12h às 14h &amp; 19h às 21h</span>
+</div>
+<div class="p-3 rounded-xl bg-surface-subtle flex flex-col">
+<span class="font-label-sm text-label-sm text-text-muted">Velocidade Média 1º Contato</span>
+<span class="font-label-lg text-label-lg text-success-text font-bold mt-0.5">4 minutos (WhatsApp)</span>
+</div>
+<div class="p-3 rounded-xl bg-surface-subtle flex flex-col">
+<span class="font-label-sm text-label-sm text-text-muted">Taxa No-Show em Demonstrações</span>
+<span class="font-label-lg text-label-lg text-text-primary font-bold mt-0.5">11.4% (Queda de 6%)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Acquisition Channels Performance Table -->
+<div class="px-gutter pb-space-lg">
+<div class="rounded-2xl bg-surface-card shadow-sm overflow-hidden flex flex-col">
+<!-- Table Header & Controls -->
+<div class="p-space-lg flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+<div>
+<h2 class="font-headline-md text-headline-md text-text-primary font-bold">
+            Performance por Canal de Aquisição e Eficiência de Mídia
+          </h2>
+<p class="font-body-sm text-body-sm text-text-secondary">
+            Auditoria comparativa com rastreamento UTM, volume de qualificação e retorno real sobre gasto em anúncios.
+          </p>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm text-text-muted">Ordenado por:</span>
+<div class="px-2.5 py-1 rounded-lg bg-surface-subtle text-text-primary font-label-sm text-label-sm font-semibold flex items-center gap-1 cursor-pointer">
+<span>Maior ROAS</span>
+<span class="material-symbols-outlined text-[14px]">arrow_drop_down</span>
+</div>
+</div>
+</div>
+<!-- Responsive Table Canvas -->
+<div class="w-full overflow-x-auto">
+<table class="w-full text-left border-collapse min-w-[1020px]">
+<thead>
+<tr class="bg-surface-subtle">
+<th class="py-3 px-space-lg font-table-header text-table-header text-text-secondary uppercase tracking-wider">Canal / Origem de Tráfego</th>
+<th class="py-3 px-space-md font-table-header text-table-header text-text-secondary uppercase tracking-wider text-right">Investimento</th>
+<th class="py-3 px-space-md font-table-header text-table-header text-text-secondary uppercase tracking-wider text-right">Cliques / Visitas</th>
+<th class="py-3 px-space-md font-table-header text-table-header text-text-secondary uppercase tracking-wider text-right">Leads (MQL)</th>
+<th class="py-3 px-space-md font-table-header text-table-header text-text-secondary uppercase tracking-wider text-right">CPL Médio</th>
+<th class="py-3 px-space-md font-table-header text-table-header text-text-secondary uppercase tracking-wider text-right">Demos (SQL)</th>
+<th class="py-3 px-space-md font-table-header text-table-header text-text-secondary uppercase tracking-wider text-center">Fechados</th>
+<th class="py-3 px-space-md font-table-header text-table-header text-text-secondary uppercase tracking-wider text-right">Conv. Final</th>
+<th class="py-3 px-space-md font-table-header text-table-header text-text-secondary uppercase tracking-wider text-right">CAC Efetivo</th>
+<th class="py-3 px-space-lg font-table-header text-table-header text-text-secondary uppercase tracking-wider text-right">ROAS</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-subtle">
+<!-- Row 1: Google Ads -->
+<tr class="hover:bg-surface-subtle/80 transition-colors">
+<td class="py-3.5 px-space-lg">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-info-surface text-info-text flex items-center justify-center font-bold">
+<span class="material-symbols-outlined text-[18px]">travel_explore</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg font-semibold text-text-primary">Google Ads</span>
+<span class="font-body-sm text-body-sm text-text-muted">Fundo de Funil "CRM para Clínicas"</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-space-md font-body-md text-body-md text-text-primary text-right font-medium">R$ 22.400,00</td>
+<td class="py-3.5 px-space-md font-body-md text-body-md text-text-secondary text-right">4.820</td>
+<td class="py-3.5 px-space-md font-body-md text-body-md text-text-primary font-semibold text-right">480</td>
+<td class="py-3.5 px-space-md font-body-md text-body-md text-text-secondary text-right">R$ 46,66</td>
+<td class="py-3.5 px-space-md font-body-md text-body-md text-text-primary text-right">134</td>
+<td class="py-3.5 px-space-md text-center">
+<span class="inline-flex items-center justify-center px-2 py-0.5 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm font-bold">
+                  24
+                </span>
+</td>
+<td class="py-3.5 px-space-md font-label-md text-label-md text-text-primary text-right font-semibold">5.0%</td>
+<td class="py-3.5 px-space-md font-body-md text-body-md text-text-primary text-right">R$ 933,33</td>
+<td class="py-3.5 px-space-lg text-right">
+<span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-success-surface text-success-text font-label-sm text-label-sm font-bold">
+                  9.2x
+                </span>
+</td>
+</tr>
+<!-- Row 2: Meta Ads -->
+<tr class="hover:bg-surface-subtle/80 transition-colors">
+<td class="py-3.5 px-space-lg">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold">
+<span class="material-symbols-outlined text-[18px]">play_circle</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg font-semibold text-text-primary">Meta Ads (Instagram / FB)</span>
+<span class="font-body-sm text-body-sm text-text-muted">Vídeos Cases Clínicos Reels/Feed</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-space-md font-body-md text-body-md text-text-primary text-right font-medium">R$ 14.800,00</td>
+<td class="py-3.5 px-space-md font-body-md text-body-md text-text-secondary text-right">9.150</td>
+<td class="py-3.5 px-space-md font-body-md text-body-md text-text-primary font-semibold text-right">390</td>
+<td class="py-3.5 px-space-md font-body-md text-body-md text-text-secondary text-right">R$ 37,94</td>
+<td class="py-3.5 px-space-md font-body-md text-body-md text-text-primary text-right">88</td>
+<td class="py-3.5 px-space-md text-center">
+<span class="inline-flex items-center justify-center px-2 py-0.5 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm font-bold">
+                  13
+                </span>
+</td>
+<td class="py-3.5 px-space-md font-label-md text-label-md text-text-primary text-right font-semibold">3.3%</td>
+<td class="py-3.5 px-space-md font-body-md text-body-md text-text-primary text-right">R$ 1.138,46</td>
+<td class="py-3.5 px-space-lg text-right">
+<span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-success-surface text-success-text font-label-sm text-label-sm font-bold">
+                  7.4x
+                </span>
+</td>
+</tr>
+<!-- Row 3: Outbound -->
+<tr class="hover:bg-surface-subtle/80 transition-colors">
+<td class="py-3.5 px-space-lg">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high text-text-primary flex items-center justify-center font-bold">
+<span class="material-symbols-outlined text-[18px]">phone_in_talk</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg font-semibold text-text-primary">Prospecção Outbound Ativo</span>
+<span class="font-body-sm text-body-sm text-text-muted">SDR Listas Qualificadas CFM/CFO</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-space-md font-body-md text-body-md text-text-primary text-right font-medium">R$ 6.200,00</td>
+<td class="py-3.5 px-space-md font-body-md text-body-md text-text-muted text-right">—</td>
+<td class="py-3.5 px-space-md font-body-md text-body-md text-text-primary font-semibold text-right">210</td>
+<td class="py-3.5 px-space-md font-body-md text-body-md text-text-secondary text-right">R$ 29,52</td>
+<td class="py-3.5 px-space-md font-body-md text-body-md text-text-primary text-right">64</td>
+<td class="py-3.5 px-space-md text-center">
+<span class="inline-flex items-center justify-center px-2 py-0.5 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm font-bold">
+                  8
+                </span>
+</td>
+<td class="py-3.5 px-space-md font-label-md text-label-md text-text-primary text-right font-semibold">3.8%</td>
+<td class="py-3.5 px-space-md font-body-md text-body-md text-text-primary text-right">R$ 775,00</td>
+<td class="py-3.5 px-space-lg text-right">
+<span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-success-surface text-success-text font-label-sm text-label-sm font-bold">
+                  10.8x
+                </span>
+</td>
+</tr>
+<!-- Row 4: Indicação -->
+<tr class="hover:bg-surface-subtle/80 transition-colors">
+<td class="py-3.5 px-space-lg">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-success-surface text-success-text flex items-center justify-center font-bold">
+<span class="material-symbols-outlined text-[18px]">handshake</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg font-semibold text-text-primary">Indicação Médica (MGM)</span>
+<span class="font-body-sm text-body-sm text-text-muted">Member-Get-Member &amp; Sociedades</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-space-md font-body-md text-body-md text-text-primary text-right font-medium">R$ 2.450,00</td>
+<td class="py-3.5 px-space-md font-body-md text-body-md text-text-muted text-right">—</td>
+<td class="py-3.5 px-space-md font-body-md text-body-md text-text-primary font-semibold text-right">82</td>
+<td class="py-3.5 px-space-md font-body-md text-body-md text-text-secondary text-right">R$ 29,87</td>
+<td class="py-3.5 px-space-md font-body-md text-body-md text-text-primary text-right">32</td>
+<td class="py-3.5 px-space-md text-center">
+<span class="inline-flex items-center justify-center px-2 py-0.5 rounded-full bg-success-surface text-success-text font-label-sm text-label-sm font-bold">
+                  5
+                </span>
+</td>
+<td class="py-3.5 px-space-md font-label-md text-label-md text-success-text text-right font-bold">6.1%</td>
+<td class="py-3.5 px-space-md font-body-md text-body-md text-text-primary text-right font-semibold">R$ 490,00</td>
+<td class="py-3.5 px-space-lg text-right">
+<span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-success-surface text-success-text font-label-sm text-label-sm font-bold">
+                  17.1x
+                </span>
+</td>
+</tr>
+<!-- Row 5: SEO / Orgânico -->
+<tr class="hover:bg-surface-subtle/80 transition-colors">
+<td class="py-3.5 px-space-lg">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-warning-surface text-warning-text flex items-center justify-center font-bold">
+<span class="material-symbols-outlined text-[18px]">article</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg font-semibold text-text-primary">Orgânico / Blog &amp; Portal MedGuia</span>
+<span class="font-body-sm text-body-sm text-text-muted">SEO Clínico, Guias TISS e Calculadoras</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-space-md font-body-md text-body-md text-text-primary text-right font-medium">R$ 2.800,00</td>
+<td class="py-3.5 px-space-md font-body-md text-body-md text-text-secondary text-right">18.400</td>
+<td class="py-3.5 px-space-md font-body-md text-body-md text-text-primary font-semibold text-right">78</td>
+<td class="py-3.5 px-space-md font-body-md text-body-md text-text-secondary text-right">R$ 35,89</td>
+<td class="py-3.5 px-space-md font-body-md text-body-md text-text-primary text-right">19</td>
+<td class="py-3.5 px-space-md text-center">
+<span class="inline-flex items-center justify-center px-2 py-0.5 rounded-full bg-surface-container text-text-secondary font-label-sm text-label-sm font-bold">
+                  1
+                </span>
+</td>
+<td class="py-3.5 px-space-md font-label-md text-label-md text-text-secondary text-right font-semibold">1.3%</td>
+<td class="py-3.5 px-space-md font-body-md text-body-md text-text-primary text-right">R$ 2.800,00</td>
+<td class="py-3.5 px-space-lg text-right">
+<span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-surface-container text-text-primary font-label-sm text-label-sm font-semibold">
+                  3.0x
+                </span>
+</td>
+</tr>
+</tbody>
+<!-- Consolidated Footer Totals -->
+<tfoot>
+<tr class="bg-surface-subtle/90 font-bold">
+<td class="py-4 px-space-lg font-label-lg text-label-lg text-text-primary">Totais Consolidados (Outubro)</td>
+<td class="py-4 px-space-md text-right text-text-primary">R$ 48.650,00</td>
+<td class="py-4 px-space-md text-right text-text-secondary">32.370</td>
+<td class="py-4 px-space-md text-right text-primary">1.240 MQL</td>
+<td class="py-4 px-space-md text-right text-text-secondary">R$ 39,23</td>
+<td class="py-4 px-space-md text-right text-text-primary">337 SQL</td>
+<td class="py-4 px-space-md text-center text-primary">51</td>
+<td class="py-4 px-space-md text-right text-text-primary">4.1% méd.</td>
+<td class="py-4 px-space-md text-right text-text-primary">R$ 953,92</td>
+<td class="py-4 px-space-lg text-right text-success-text">8.79x</td>
+</tr>
+</tfoot>
+</table>
+</div>
+</div>
+</div>
+<!-- Bottom Two Columns: Specialties Distribution & Top Performing Creatives -->
+<div class="px-gutter pb-space-2xl grid grid-cols-1 lg:grid-cols-12 gap-space-md">
+<!-- Left Column: Medical Specialties Segmentation (7 cols) -->
+<div class="lg:col-span-7 p-space-lg rounded-2xl bg-surface-card shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between pb-space-sm mb-space-sm">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-text-primary font-bold">
+              Segmentação por Especialidade Médica (Demanda &amp; Conversão)
+            </h3>
+<p class="font-body-sm text-body-sm text-text-secondary">
+              Distribuição percentual do pipeline de acordo com a área clínica contratante.
+            </p>
+</div>
+<span class="w-8 h-8 rounded-lg bg-surface-subtle text-text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">pie_chart</span>
+</span>
+</div>
+<!-- Specialty 1: Oftalmo -->
+<div class="space-y-1.5 mb-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="font-label-lg text-label-lg font-semibold text-text-primary">Oftalmologia e Clínicas de Olhos</span>
+<span class="px-2 py-0.2 rounded-full bg-success-surface text-success-text font-label-sm text-[10px] font-bold">Alta Rentabilidade</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-body-sm text-body-sm text-text-secondary">Ticket Médio: <strong class="text-text-primary">R$ 9.800/mês</strong></span>
+<span class="font-label-lg text-label-lg text-text-primary font-bold">34%</span>
+</div>
+</div>
+<div class="w-full h-2.5 rounded-full bg-surface-subtle overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 34%"></div>
+</div>
+</div>
+<!-- Specialty 2: Dermato -->
+<div class="space-y-1.5 mb-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="font-label-lg text-label-lg font-semibold text-text-primary">Dermatologia e Estética Avançada</span>
+<span class="px-2 py-0.2 rounded-full bg-info-surface text-info-text font-label-sm text-[10px] font-bold">Ciclo Rápido (11 dias)</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-body-sm text-body-sm text-text-secondary">Ticket Médio: <strong class="text-text-primary">R$ 6.450/mês</strong></span>
+<span class="font-label-lg text-label-lg text-text-primary font-bold">26%</span>
+</div>
+</div>
+<div class="w-full h-2.5 rounded-full bg-surface-subtle overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 26%"></div>
+</div>
+</div>
+<!-- Specialty 3: Cardio -->
+<div class="space-y-1.5 mb-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="font-label-lg text-label-lg font-semibold text-text-primary">Cardiologia e Diagnóstico</span>
+<span class="px-2 py-0.2 rounded-full bg-warning-surface text-warning-text font-label-sm text-[10px] font-bold">Menor Churn (0.4%)</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-body-sm text-body-sm text-text-secondary">Ticket Médio: <strong class="text-text-primary">R$ 8.200/mês</strong></span>
+<span class="font-label-lg text-label-lg text-text-primary font-bold">18%</span>
+</div>
+</div>
+<div class="w-full h-2.5 rounded-full bg-surface-subtle overflow-hidden">
+<div class="h-full bg-primary-fixed-dim rounded-full" style="width: 18%"></div>
+</div>
+</div>
+<!-- Specialty 4: Ortopedia -->
+<div class="space-y-1.5 mb-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="font-label-lg text-label-lg font-semibold text-text-primary">Ortopedia e Traumatologia</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-body-sm text-body-sm text-text-secondary">Ticket Médio: <strong class="text-text-primary">R$ 7.100/mês</strong></span>
+<span class="font-label-lg text-label-lg text-text-primary font-bold">12%</span>
+</div>
+</div>
+<div class="w-full h-2.5 rounded-full bg-surface-subtle overflow-hidden">
+<div class="h-full bg-secondary-fixed rounded-full" style="width: 12%"></div>
+</div>
+</div>
+<!-- Specialty 5: Outras -->
+<div class="space-y-1.5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="font-label-lg text-label-lg font-semibold text-text-primary">Clínicas Médicas Gerais / Outras Especialidades</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-body-sm text-body-sm text-text-secondary">Ticket Médio: <strong class="text-text-primary">R$ 4.900/mês</strong></span>
+<span class="font-label-lg text-label-lg text-text-primary font-bold">10%</span>
+</div>
+</div>
+<div class="w-full h-2.5 rounded-full bg-surface-subtle overflow-hidden">
+<div class="h-full bg-surface-container-high rounded-full" style="width: 10%"></div>
+</div>
+</div>
+</div>
+<div class="mt-space-md pt-3 flex items-center justify-between bg-surface-subtle/80 -mx-space-lg -mb-space-lg px-space-lg py-3 rounded-b-2xl">
+<span class="font-body-sm text-body-sm text-text-secondary">
+          Recomendação: Realoque +15% de verba para <strong>Oftalmologia</strong> devido ao alto ticket de implantação.
+        </span>
+<button class="text-primary font-label-sm text-label-sm font-bold hover:underline cursor-pointer" type="button">
+          Ver Auditoria Completa
+        </button>
+</div>
+</div>
+<!-- Right Column: Top Performing Creatives & Ads (5 cols) -->
+<div class="lg:col-span-5 p-space-lg rounded-2xl bg-surface-card shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between pb-space-sm mb-space-sm">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-text-primary font-bold">
+              Top Campanhas e Anúncios com Maior Retorno
+            </h3>
+<p class="font-body-sm text-body-sm text-text-secondary">
+              Criativos de maior volume de contratos assinados no período.
+            </p>
+</div>
+<span class="w-8 h-8 rounded-lg bg-surface-subtle text-text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">local_fire_department</span>
+</span>
+</div>
+<div class="space-y-3">
+<!-- Ad 1 -->
+<div class="p-3 rounded-xl bg-surface-subtle hover:bg-surface-container/70 transition-colors flex items-start gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary-fixed text-on-primary-fixed flex-shrink-0 flex items-center justify-center font-bold">
+<span class="material-symbols-outlined text-[20px]">videocam</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between gap-1 mb-0.5">
+<span class="font-label-sm text-label-sm text-primary font-bold uppercase">Meta Video (Reels)</span>
+<span class="inline-flex items-center px-2 py-0.2 rounded-full bg-success-surface text-success-text font-label-sm text-label-sm font-bold">
+                  18 Contratos
+                </span>
+</div>
+<h4 class="font-label-md text-label-md text-text-primary font-semibold truncate">
+                Case de Sucesso: Como o Dr. Marcos reduziu glosas em 84% com MedCRM
+              </h4>
+<div class="flex items-center gap-3 mt-1 font-body-sm text-body-sm text-text-muted">
+<span>CTR: <strong class="text-text-primary">3.2%</strong></span>
+<span>•</span>
+<span>CPL: <strong class="text-text-primary">R$ 34,10</strong></span>
+<span>•</span>
+<span class="text-success-text font-semibold">ROAS 9.8x</span>
+</div>
+</div>
+</div>
+<!-- Ad 2 -->
+<div class="p-3 rounded-xl bg-surface-subtle hover:bg-surface-container/70 transition-colors flex items-start gap-3">
+<div class="w-10 h-10 rounded-lg bg-info-surface text-info-text flex-shrink-0 flex items-center justify-center font-bold">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between gap-1 mb-0.5">
+<span class="font-label-sm text-label-sm text-info-text font-bold uppercase">Google Search</span>
+<span class="inline-flex items-center px-2 py-0.2 rounded-full bg-success-surface text-success-text font-label-sm text-label-sm font-bold">
+                  14 Contratos
+                </span>
+</div>
+<h4 class="font-label-md text-label-md text-text-primary font-semibold truncate">
+                Barramento TISS e Prontuário em Nuvem para Clínicas Oftalmológicas
+              </h4>
+<div class="flex items-center gap-3 mt-1 font-body-sm text-body-sm text-text-muted">
+<span>CTR: <strong class="text-text-primary">8.9%</strong></span>
+<span>•</span>
+<span>CPL: <strong class="text-text-primary">R$ 48,20</strong></span>
+<span>•</span>
+<span class="text-success-text font-semibold">ROAS 11.2x</span>
+</div>
+</div>
+</div>
+<!-- Ad 3 -->
+<div class="p-3 rounded-xl bg-surface-subtle hover:bg-surface-container/70 transition-colors flex items-start gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary-fixed text-on-primary-fixed flex-shrink-0 flex items-center justify-center font-bold">
+<span class="material-symbols-outlined text-[20px]">view_carousel</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between gap-1 mb-0.5">
+<span class="font-label-sm text-label-sm text-primary font-bold uppercase">Meta Carrossel</span>
+<span class="inline-flex items-center px-2 py-0.2 rounded-full bg-success-surface text-success-text font-label-sm text-label-sm font-bold">
+                  9 Contratos
+                </span>
+</div>
+<h4 class="font-label-md text-label-md text-text-primary font-semibold truncate">
+                Régua Automatizada de 18 Toques anti-No Show no WhatsApp
+              </h4>
+<div class="flex items-center gap-3 mt-1 font-body-sm text-body-sm text-text-muted">
+<span>CTR: <strong class="text-text-primary">2.8%</strong></span>
+<span>•</span>
+<span>CPL: <strong class="text-text-primary">R$ 41,50</strong></span>
+<span>•</span>
+<span class="text-success-text font-semibold">ROAS 7.1x</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-space-md pt-3">
+<button class="w-full py-2.5 px-4 rounded-xl bg-surface-subtle hover:bg-primary hover:text-on-primary text-text-primary font-label-lg text-label-lg transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm group" type="button">
+<span>Ver Auditoria de Mídia no Google Ads / Meta Business</span>
+<span class="material-symbols-outlined text-[18px] group-hover:translate-x-0.5 transition-transform">open_in_new</span>
+</button>
+</div>
+</div>
+</div>
+</div></main></div></body></html>

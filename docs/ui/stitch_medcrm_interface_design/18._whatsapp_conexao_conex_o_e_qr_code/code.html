@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-subtle": "#F8FAFC", "info-border": "#BFDBFE", "danger-text": "#DC2626", "on-error-container": "#93000a", "surface-tint": "#1157cb", "on-secondary-fixed": "#131b30", "primary-fixed-dim": "#b1c5ff", "on-secondary-container": "#5a627b", "on-primary": "#ffffff", "inverse-on-surface": "#f0f0fa", "warning-surface": "#FEF3C7", "text-secondary": "#64748B", "surface-bright": "#faf8ff", "on-primary-fixed-variant": "#0040a0", "sidebar-surface": "#1E293B", "on-primary-fixed": "#001847", "success-border": "#A7F3D0", "on-tertiary-container": "#fffbff", "on-primary-container": "#fefcff", "secondary-fixed": "#dae2ff", "surface-container-lowest": "#ffffff", "on-tertiary-fixed": "#311300", "on-background": "#191b22", "text-muted": "#94A3B8", "background-canvas": "#F4F6FA", "tertiary-fixed-dim": "#ffb787", "warning-text": "#D97706", "sidebar-surface-active": "#2D3748", "on-secondary": "#ffffff", "border-subtle": "#E2E8F0", "outline": "#737785", "border-focus": "#93C5FD", "inverse-surface": "#2e3038", "on-tertiary": "#ffffff", "secondary-container": "#d7dffd", "inverse-primary": "#b1c5ff", "text-primary": "#0F172A", "error": "#ba1a1a", "info-text": "#2563EB", "success-surface": "#D1FAE5", "on-surface-variant": "#434654", "surface-container": "#ededf7", "on-secondary-fixed-variant": "#3e465e", "danger-surface": "#FEE2E2", "tertiary": "#924700", "primary-fixed": "#dae2ff", "success-text": "#059669", "warning-border": "#FDE68A", "surface-container-highest": "#e1e2ec", "error-container": "#ffdad6", "surface-dim": "#d9d9e3", "background": "#faf8ff", "tertiary-container": "#b85b00", "on-surface": "#191b22", "on-error": "#ffffff", "tertiary-fixed": "#ffdcc7", "secondary": "#565e77", "surface-container-low": "#f3f3fd", "surface-variant": "#e1e2ec", "info-surface": "#EFF6FF", "danger-border": "#FECACA", "surface-card": "#FFFFFF", "on-tertiary-fixed-variant": "#723600", "secondary-fixed-dim": "#bec6e3", "primary-container": "#366ee3", "primary": "#0954c9", "outline-variant": "#c3c6d6", "surface-container-high": "#e7e7f2", "surface": "#faf8ff" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "gutter-sm": "0.75rem", "gutter-lg": "1.5rem", "space-lg": "1.25rem", "space-sm": "0.5rem", "gutter": "1.25rem", "space-xs": "0.25rem", "space-md": "0.875rem", "margin": "1.75rem", "space-xl": "1.75rem", "margin-mobile": "1rem", "space-2xl": "2.5rem" }, "fontFamily": { "body-sm": ["Inter"], "headline-sm": ["Plus Jakarta Sans"], "body-lg": ["Inter"], "label-sm": ["Inter"], "body-md": ["Inter"], "headline-md": ["Plus Jakarta Sans"], "metric-stat": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "display-lg": ["Plus Jakarta Sans"], "label-md": ["Inter"], "display-lg-mobile": ["Plus Jakarta Sans"], "label-lg": ["Inter"], "table-header": ["Inter"] }, "fontSize": { "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }], "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }], "body-lg": ["15px", { "lineHeight": "22px", "fontWeight": "400" }], "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.03em", "fontWeight": "600" }], "body-md": ["13px", { "lineHeight": "20px", "fontWeight": "400" }], "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }], "metric-stat": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "500" }], "display-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "700" }], "label-lg": ["13px", { "lineHeight": "18px", "fontWeight": "600" }], "table-header": ["11px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }] } } } };</script></head><body class="bg-surface font-body-md text-text-primary antialiased selection:bg-primary-fixed selection:text-on-primary-fixed"><aside class="fixed left-0 top-0 h-full w-64 bg-sidebar-surface text-surface z-50 flex flex-col justify-between shadow-[0_4px_20px_-2px_rgba(0,0,0,0.08)] overflow-hidden"><div class="flex flex-col flex-1 min-h-0"><div class="h-16 px-space-lg flex items-center justify-between border-b border-sidebar-surface-active/60 bg-sidebar-surface"><div class="flex items-center gap-space-sm"><div class="w-9 h-9 rounded-xl bg-primary flex items-center justify-center shadow-md"><span class="material-symbols-outlined text-on-primary text-[20px]">local_hospital</span></div><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-surface-container-lowest leading-none tracking-tight">MedCRM</span><span class="font-label-sm text-label-sm text-text-muted mt-0.5">MedGuia B2B</span></div></div><span class="font-label-sm text-[10px] px-2 py-0.5 rounded-full bg-primary/25 border border-primary/40 text-primary-fixed-dim uppercase tracking-wider font-bold">COMUNICAÇÃO</span></div><div class="flex-1 overflow-y-auto px-space-sm py-space-md space-y-space-md scrollbar-none"><nav class="space-y-space-md" data-active-classes="bg-primary text-on-primary font-semibold rounded-lg shadow-sm"><div class="space-y-1"><div class="px-space-sm pb-1"><span class="font-table-header text-table-header text-text-muted uppercase tracking-wider">Operação</span></div><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="pipeline" href="#"><span class="font-body-md text-body-md">Funil Pipeline</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="pipeline-lista" href="#"><span class="font-body-md text-body-md">Lista</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="pipeline-arquivados" href="#"><span class="font-body-md text-body-md">Arquivados</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="tarefas" href="#"><span class="font-body-md text-body-md">Tarefas do Turno</span><span class="font-label-sm text-label-sm bg-primary-container text-on-primary px-2 py-0.5 rounded-full font-bold">12</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="tarefas-atrasadas" href="#"><span class="font-body-md text-body-md">Tarefas Atrasadas</span><span class="font-label-sm text-label-sm bg-danger-surface text-danger-text px-2 py-0.5 rounded-full font-bold">4</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="agenda" href="#"><span class="font-body-md text-body-md">Agenda</span></a></div><div class="space-y-1 p-1.5 rounded-xl bg-sidebar-surface-active/40 border border-primary/30"><div class="px-space-sm pb-1 flex items-center justify-between"><span class="font-table-header text-table-header text-primary-fixed-dim uppercase tracking-wider font-bold">Comunicação</span><span class="font-label-sm text-[10px] px-1.5 py-0.2 rounded bg-primary/30 text-primary-fixed-dim font-bold uppercase tracking-wider">Ativo</span></div><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="whatsapp" href="#"><span class="font-body-md text-body-md font-medium text-surface-container-lowest">WhatsApp Inbox</span><span class="font-label-sm text-label-sm bg-success-surface text-success-text px-2 py-0.5 rounded-full font-bold">5</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="whatsapp-conexao" href="#"><span class="font-body-md text-body-md">Conexão &amp; QR Code</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="whatsapp-configuracao" href="#"><span class="font-body-md text-body-md">Configuração Evolution</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="campanhas" href="#"><span class="font-body-md text-body-md">Campanhas</span></a></div><div class="space-y-1"><div class="px-space-sm pb-1"><span class="font-table-header text-table-header text-text-muted uppercase tracking-wider">Análises</span></div><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="indicadores" href="#"><span class="font-body-md text-body-md">Indicadores</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="relatorios" href="#"><span class="font-body-md text-body-md">Relatórios</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="relatorios-comerciais" href="#"><span class="font-body-md text-body-md">Comercial</span></a></div><div class="space-y-1"><div class="px-space-sm pb-1"><span class="font-table-header text-table-header text-text-muted uppercase tracking-wider">Administração</span></div><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="equipe" href="#"><span class="font-body-md text-body-md">Equipe</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="configuracoes-motivos-perda" href="#"><span class="font-body-md text-body-md">Motivos de Perda</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-container-lowest transition-colors" data-path="admin-empresas" href="#"><span class="font-body-md text-body-md">Empresas</span></a></div></nav></div></div><div class="p-space-md border-t border-sidebar-surface-active/50 bg-sidebar-surface"><div class="flex items-center justify-between text-text-muted"><a class="flex items-center gap-2 hover:text-surface-container-lowest transition-colors font-label-md text-label-md" data-path="suporte-e-ajuda" href="#"><span>Ajuda &amp; Suporte</span></a><span class="font-label-sm text-label-sm text-text-muted/80 bg-sidebar-surface-active/80 px-2 py-0.5 rounded">v2.4.0</span></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface-card border-b border-border-subtle z-40 flex items-center justify-between px-gutter shadow-[0_1px_8px_rgba(0,0,0,0.02)]"><div class="flex items-center gap-space-lg flex-1 max-w-2xl"><div class="relative w-full max-w-lg"><span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[19px]">search</span><input class="w-full h-10 pl-9 pr-16 bg-surface-subtle border border-border-subtle rounded-lg font-body-md text-body-md text-text-primary placeholder:text-text-muted focus:outline-none focus:border-border-focus focus:bg-surface-card transition-all" placeholder="Buscar conversa, médico, telefone..." type="text"/><kbd class="absolute right-3 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[10px] font-label-sm bg-surface-card border border-border-subtle text-text-muted rounded shadow-sm">⌘K</kbd></div><div class="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border-subtle bg-surface-card text-text-primary shadow-sm hover:border-border-focus cursor-pointer transition-all"><span class="material-symbols-outlined text-primary text-[18px]">domain</span><div class="flex flex-col text-left"><span class="font-label-sm text-label-sm font-semibold leading-tight">Clínica São Lucas - Matriz</span><span class="font-label-sm text-[10px] text-success-text leading-none flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-success-text inline-block"></span>Ativo</span></div><span class="material-symbols-outlined text-text-muted text-[16px] ml-1">expand_more</span></div></div><div class="flex items-center gap-space-md"><div class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-success-surface border border-success-border"><span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success-text opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-success-text"></span></span><span class="font-label-sm text-label-sm text-success-text font-semibold">Tempo real conectado</span></div><button class="relative p-2 rounded-lg text-text-secondary hover:bg-surface-subtle hover:text-text-primary transition-colors" type="button"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-danger-text"></span></button><div class="h-6 w-px bg-border-subtle"></div><div class="flex items-center gap-space-sm pl-1 cursor-pointer"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><div class="hidden lg:flex flex-col text-left"><div class="flex items-center gap-1.5"><span class="font-label-lg text-label-lg font-semibold text-text-primary leading-tight">Dr. Roberto Mendes</span><span class="font-label-sm text-[10px] bg-primary-fixed text-on-primary-fixed px-1.5 py-0.2 rounded font-bold uppercase tracking-wider">MASTER</span></div><span class="font-label-sm text-label-sm text-text-muted leading-tight">roberto.mendes@medguia.com.br</span></div><span class="material-symbols-outlined text-text-muted text-[18px]">expand_more</span></div></div></header><main class="w-full pt-16 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<!-- Sub-Header & Controls Strip -->
+<div class="px-margin pt-space-lg pb-space-md">
+<!-- Breadcrumb & Status Pill -->
+<div class="flex flex-wrap items-center justify-between gap-space-sm mb-space-sm">
+<nav class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-text-muted">Comunicação</span>
+<span class="material-symbols-outlined text-text-muted text-[14px]">chevron_right</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-text-muted">WhatsApp</span>
+<span class="material-symbols-outlined text-text-muted text-[14px]">chevron_right</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-primary font-bold">/whatsapp/conexao</span>
+</nav>
+<div class="flex items-center gap-space-sm">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-success-surface text-success-text shadow-sm">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success-text opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-success-text"></span>
+</span>
+<span class="font-label-sm text-label-sm font-semibold">Sessão Ativa: Instância Matriz</span>
+</div>
+<span class="font-label-sm text-label-sm px-2.5 py-0.5 rounded-full bg-surface-container-high text-secondary font-medium">Evolution API v2.4</span>
+</div>
+</div>
+<!-- Main Title & Operational Actions -->
+<div class="flex flex-col xl:flex-row xl:items-center justify-between gap-space-md">
+<div>
+<h1 class="font-headline-lg text-headline-lg text-text-primary tracking-tight">Conexão de Instância WhatsApp &amp; QR Code</h1>
+<p class="font-body-md text-body-md text-text-secondary mt-0.5">Gestão de pareamento em tempo real via Evolution API v2.4, status de websocket e sincronização de sessões clínicas</p>
+</div>
+<div class="flex items-center gap-space-sm self-start xl:self-auto">
+<button class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-surface-card hover:bg-surface-subtle text-text-primary shadow-sm transition-all duration-150 active:scale-95" id="btn-refresh">
+<span class="material-symbols-outlined text-[18px] text-primary transition-transform duration-500" id="refresh-icon">sync</span>
+<span class="font-label-lg text-label-lg">Atualizar Status</span>
+</button>
+<button class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-danger-surface hover:bg-danger-border/50 text-danger-text shadow-sm transition-colors duration-150 active:scale-95" id="btn-disconnect">
+<span class="material-symbols-outlined text-[18px]">power_settings_new</span>
+<span class="font-label-lg text-label-lg font-semibold">Desconectar Sessão</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Main Content Space -->
+<div class="px-margin pb-space-2xl space-y-space-lg">
+<!-- Top 4 KPIs Infrastructure Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- KPI 1: Status Conexão -->
+<div class="relative bg-surface-card rounded-xl p-space-md shadow-sm overflow-hidden group hover:shadow-md transition-shadow">
+<div class="flex items-start justify-between">
+<div class="w-10 h-10 rounded-lg bg-success-surface flex items-center justify-center">
+<span class="material-symbols-outlined text-success-text text-[22px]">wifi_tethering</span>
+</div>
+<span class="font-label-sm text-label-sm uppercase tracking-wider px-2 py-0.5 rounded-full bg-success-surface text-success-text font-bold">Online</span>
+</div>
+<div class="mt-space-md">
+<span class="font-table-header text-table-header text-text-muted uppercase">Status da Conexão</span>
+<h3 class="font-metric-stat text-metric-stat text-text-primary mt-1 leading-tight flex items-center gap-2">
+            Conectado
+            <span class="material-symbols-outlined text-success-text text-[24px]">verified</span>
+</h3>
+<p class="font-body-sm text-body-sm text-text-secondary mt-1 flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-success-text"></span>
+            14 dias 6 horas sem interrupções
+          </p>
+</div>
+<div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-success-text via-success-border to-transparent"></div>
+</div>
+<!-- KPI 2: Latência WebSocket -->
+<div class="relative bg-surface-card rounded-xl p-space-md shadow-sm overflow-hidden group hover:shadow-md transition-shadow">
+<div class="flex items-start justify-between">
+<div class="w-10 h-10 rounded-lg bg-info-surface flex items-center justify-center">
+<span class="material-symbols-outlined text-info-text text-[22px]">speed</span>
+</div>
+<span class="font-label-sm text-label-sm uppercase tracking-wider px-2 py-0.5 rounded-full bg-info-surface text-info-text font-bold">Excelente</span>
+</div>
+<div class="mt-space-md">
+<span class="font-table-header text-table-header text-text-muted uppercase">Latência WebSocket</span>
+<div class="flex items-baseline gap-2 mt-1">
+<h3 class="font-metric-stat text-metric-stat text-text-primary leading-tight" id="live-ping">34ms</h3>
+<span class="font-label-sm text-label-sm text-success-text flex items-center font-medium">
+<span class="material-symbols-outlined text-[14px]">arrow_downward</span> 2ms
+            </span>
+</div>
+<div class="flex items-center gap-2 mt-2">
+<!-- Inline Mini Sparkline Chart -->
+<svg class="w-24 h-4 text-info-text" fill="none" viewbox="0 0 100 20">
+<path d="M0 14 L15 11 L30 16 L45 8 L60 12 L75 6 L90 10 L100 8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
+</svg>
+<span class="font-body-sm text-body-sm text-text-muted">Ping contínuo</span>
+</div>
+</div>
+</div>
+<!-- KPI 3: Mensagens Sincronizadas -->
+<div class="relative bg-surface-card rounded-xl p-space-md shadow-sm overflow-hidden group hover:shadow-md transition-shadow">
+<div class="flex items-start justify-between">
+<div class="w-10 h-10 rounded-lg bg-secondary-container/50 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-[22px]">mark_chat_read</span>
+</div>
+<span class="font-label-sm text-label-sm uppercase tracking-wider px-2 py-0.5 rounded-full bg-surface-container-high text-secondary font-bold">Hoje</span>
+</div>
+<div class="mt-space-md">
+<span class="font-table-header text-table-header text-text-muted uppercase">Mensagens Sincronizadas</span>
+<h3 class="font-metric-stat text-metric-stat text-text-primary mt-1 leading-tight">1.428</h3>
+<p class="font-body-sm text-body-sm text-success-text mt-1 font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">done_all</span>
+            98.9% de entrega imediata
+          </p>
+</div>
+</div>
+<!-- KPI 4: Bateria do Aparelho -->
+<div class="relative bg-surface-card rounded-xl p-space-md shadow-sm overflow-hidden group hover:shadow-md transition-shadow">
+<div class="flex items-start justify-between">
+<div class="w-10 h-10 rounded-lg bg-warning-surface flex items-center justify-center">
+<span class="material-symbols-outlined text-warning-text text-[22px]">battery_charging_90</span>
+</div>
+<div class="flex items-center gap-1 px-2 py-0.5 rounded-full bg-warning-surface text-warning-text font-label-sm text-label-sm font-bold">
+<span class="material-symbols-outlined text-[13px]">bolt</span>
+            86%
+          </div>
+</div>
+<div class="mt-space-md">
+<span class="font-table-header text-table-header text-text-muted uppercase">Aparelho Pareado</span>
+<h3 class="font-headline-sm text-headline-sm text-text-primary mt-1 font-semibold truncate">+55 (11) 3214-5500</h3>
+<p class="font-body-sm text-body-sm text-text-secondary mt-1 truncate">WhatsApp Business Clínico</p>
+</div>
+</div>
+</div>
+<!-- Main Content 2-Column Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter-lg items-start">
+<!-- LEFT COLUMN: Gerenciador de Pareamento & QR Code (7 cols) -->
+<div class="lg:col-span-7 space-y-space-lg">
+<!-- QR Code & Fast Pairing Card -->
+<div class="bg-surface-card rounded-2xl p-space-xl shadow-md relative overflow-hidden">
+<div class="flex items-center justify-between pb-space-md">
+<div>
+<span class="font-label-sm text-label-sm text-primary uppercase tracking-wider font-bold">Pareamento Evolution</span>
+<h2 class="font-headline-md text-headline-md text-text-primary mt-0.5">Leitor de QR Code para Sincronização</h2>
+</div>
+<span class="font-label-sm text-label-sm bg-surface-subtle text-text-secondary px-3 py-1 rounded-full">v2.4.0 Engine</span>
+</div>
+<!-- Technical QR Frame Container -->
+<div class="flex flex-col sm:flex-row items-center gap-space-xl p-space-lg bg-surface-subtle rounded-xl mt-space-sm">
+<!-- QR Viewport Visual -->
+<div class="relative flex-shrink-0 flex flex-col items-center">
+<!-- Corner brackets decoration -->
+<div class="relative p-3 bg-surface-card rounded-2xl shadow-lg border-2 border-primary/20">
+<span class="absolute top-1 left-1 w-3.5 h-3.5 border-t-2 border-l-2 border-primary rounded-tl"></span>
+<span class="absolute top-1 right-1 w-3.5 h-3.5 border-t-2 border-r-2 border-primary rounded-tr"></span>
+<span class="absolute bottom-1 left-1 w-3.5 h-3.5 border-b-2 border-l-2 border-primary rounded-bl"></span>
+<span class="absolute bottom-1 right-1 w-3.5 h-3.5 border-b-2 border-r-2 border-primary rounded-br"></span>
+<!-- Stylized Crisp QR Code Graphic with Central WhatsApp Badge -->
+<div class="relative w-48 h-48 sm:w-52 sm:h-52 bg-surface-container-lowest rounded-lg flex items-center justify-center p-2">
+<svg class="w-full h-full text-text-primary" fill="currentColor" viewbox="0 0 140 140">
+<!-- Top-Left Target -->
+<rect fill="none" height="35" rx="4" stroke="currentColor" stroke-width="6" width="35" x="10" y="10"></rect>
+<rect height="15" rx="2" width="15" x="20" y="20"></rect>
+<!-- Top-Right Target -->
+<rect fill="none" height="35" rx="4" stroke="currentColor" stroke-width="6" width="35" x="95" y="10"></rect>
+<rect height="15" rx="2" width="15" x="105" y="20"></rect>
+<!-- Bottom-Left Target -->
+<rect fill="none" height="35" rx="4" stroke="currentColor" stroke-width="6" width="35" x="10" y="95"></rect>
+<rect height="15" rx="2" width="15" x="20" y="105"></rect>
+<!-- Simulated Data Grid Matrix -->
+<rect height="6" rx="1" width="6" x="52" y="12"></rect>
+<rect height="6" rx="1" width="8" x="64" y="12"></rect>
+<rect height="6" rx="1" width="6" x="78" y="12"></rect>
+<rect height="6" rx="1" width="10" x="52" y="24"></rect>
+<rect height="6" rx="1" width="14" x="70" y="24"></rect>
+<rect height="8" rx="1" width="6" x="52" y="36"></rect>
+<rect height="6" rx="1" width="6" x="64" y="36"></rect>
+<rect height="6" rx="1" width="8" x="76" y="36"></rect>
+<rect height="8" rx="1" width="6" x="12" y="52"></rect>
+<rect height="6" rx="1" width="8" x="24" y="52"></rect>
+<rect height="6" rx="1" width="6" x="38" y="52"></rect>
+<rect height="6" rx="1" width="8" x="12" y="66"></rect>
+<rect height="8" rx="1" width="6" x="26" y="66"></rect>
+<rect height="6" rx="1" width="8" x="38" y="66"></rect>
+<rect height="6" rx="1" width="6" x="12" y="78"></rect>
+<rect height="6" rx="1" width="10" x="26" y="78"></rect>
+<rect height="6" rx="1" width="8" x="96" y="52"></rect>
+<rect height="6" rx="1" width="6" x="110" y="52"></rect>
+<rect height="6" rx="1" width="8" x="122" y="52"></rect>
+<rect height="8" rx="1" width="6" x="96" y="66"></rect>
+<rect height="6" rx="1" width="10" x="108" y="66"></rect>
+<rect height="8" rx="1" width="6" x="124" y="66"></rect>
+<rect height="6" rx="1" width="8" x="96" y="80"></rect>
+<rect height="6" rx="1" width="6" x="112" y="80"></rect>
+<rect height="8" rx="1" width="6" x="52" y="96"></rect>
+<rect height="6" rx="1" width="10" x="64" y="96"></rect>
+<rect height="6" rx="1" width="6" x="80" y="96"></rect>
+<rect height="6" rx="1" width="8" x="52" y="110"></rect>
+<rect height="8" rx="1" width="6" x="66" y="110"></rect>
+<rect height="6" rx="1" width="8" x="78" y="110"></rect>
+<rect height="6" rx="1" width="6" x="52" y="124"></rect>
+<rect height="6" rx="1" width="12" x="64" y="124"></rect>
+<rect height="6" rx="1" width="6" x="82" y="124"></rect>
+<rect height="6" rx="1" width="6" x="96" y="96"></rect>
+<rect height="6" rx="1" width="10" x="108" y="96"></rect>
+<rect height="8" rx="1" width="6" x="124" y="96"></rect>
+<rect height="8" rx="1" width="8" x="96" y="110"></rect>
+<rect height="6" rx="1" width="6" x="110" y="110"></rect>
+<rect height="6" rx="1" width="8" x="122" y="110"></rect>
+<rect height="6" rx="1" width="12" x="96" y="124"></rect>
+<rect height="6" rx="1" width="8" x="114" y="124"></rect>
+<rect height="6" rx="1" width="6" x="128" y="124"></rect>
+</svg>
+<!-- Central App Icon Badge -->
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="w-10 h-10 rounded-xl bg-surface-card p-1 shadow-md flex items-center justify-center">
+<div class="w-full h-full rounded-lg bg-success-text flex items-center justify-center">
+<span class="material-symbols-outlined text-surface-card text-[20px]" style="font-variation-settings: 'FILL' 1;">forum</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Expiration Bar Indicator -->
+<div class="w-full mt-3 flex flex-col gap-1.5">
+<div class="flex items-center justify-between text-body-sm">
+<span class="font-body-sm text-text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-text-muted text-[15px]">timer</span>
+                    Expira em <span class="font-bold text-primary" id="countdown-timer">24s</span>
+</span>
+<span class="font-label-sm text-label-sm text-text-muted">Auto-refresh</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full transition-all duration-1000" id="progress-bar" style="width: 72%;"></div>
+</div>
+</div>
+</div>
+<!-- Instructions & Secondary Actions -->
+<div class="flex-1 space-y-space-md">
+<div class="space-y-3">
+<div class="flex items-start gap-3">
+<div class="w-6 h-6 rounded-full bg-primary text-on-primary font-label-sm text-label-sm flex items-center justify-center font-bold flex-shrink-0 mt-0.5">1</div>
+<div>
+<h4 class="font-label-lg text-label-lg text-text-primary">Abra o WhatsApp no celular clínico</h4>
+<p class="font-body-sm text-body-sm text-text-secondary">Utilize o smartphone dedicado da recepção ou triagem médica.</p>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<div class="w-6 h-6 rounded-full bg-primary text-on-primary font-label-sm text-label-sm flex items-center justify-center font-bold flex-shrink-0 mt-0.5">2</div>
+<div>
+<h4 class="font-label-lg text-label-lg text-text-primary">Toque em Aparelhos Conectados</h4>
+<p class="font-body-sm text-body-sm text-text-secondary">No Android: Menu (⋮) &gt; Aparelhos conectados. No iOS: Ajustes &gt; Aparelhos conectados.</p>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<div class="w-6 h-6 rounded-full bg-primary text-on-primary font-label-sm text-label-sm flex items-center justify-center font-bold flex-shrink-0 mt-0.5">3</div>
+<div>
+<h4 class="font-label-lg text-label-lg text-text-primary">Aponte a câmera para esta tela</h4>
+<p class="font-body-sm text-body-sm text-text-secondary">O pareamento é instantâneo e a fila de mensagens será sincronizada com o MedCRM.</p>
+</div>
+</div>
+</div>
+<!-- Buttons Container -->
+<div class="pt-space-sm flex flex-col sm:flex-row gap-2">
+<button class="inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-primary hover:bg-surface-tint text-on-primary font-label-lg text-label-lg shadow-sm transition-all duration-150 active:scale-95" id="btn-new-qr">
+<span class="material-symbols-outlined text-[17px]">qr_code_2</span>
+<span>Gerar Novo QR Code</span>
+</button>
+<button class="inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-surface-card hover:bg-surface-subtle text-text-primary font-label-lg text-label-lg shadow-sm transition-all duration-150 active:scale-95" id="btn-copy-code">
+<span class="material-symbols-outlined text-[17px] text-text-secondary">pin</span>
+<span>Código Numérico (Pairing)</span>
+</button>
+</div>
+<div class="hidden items-center gap-2 px-3 py-1.5 rounded-lg bg-success-surface text-success-text font-body-sm text-body-sm" id="copy-toast">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span>Código de pareamento <b>849-102-MED</b> copiado para a área de transferência!</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Technical Audit & Session Details Card -->
+<div class="bg-surface-card rounded-2xl p-space-lg shadow-sm">
+<div class="flex items-center justify-between pb-space-sm">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-text-secondary text-[20px]">security</span>
+<h3 class="font-headline-sm text-headline-sm text-text-primary">Auditoria e Criptografia da Sessão Ativa</h3>
+</div>
+<span class="inline-flex items-center gap-1 font-label-sm text-label-sm text-success-text bg-success-surface px-2.5 py-0.5 rounded-full font-semibold">
+<span class="material-symbols-outlined text-[14px]">lock</span>
+              E2E Encrypted
+            </span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md pt-space-xs">
+<div class="p-space-sm rounded-xl bg-surface-subtle flex items-center gap-space-sm">
+<div class="w-9 h-9 rounded-lg bg-surface-card shadow-sm flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">phone_android</span>
+</div>
+<div class="min-w-0">
+<span class="font-label-sm text-label-sm text-text-muted uppercase">Dispositivo Pareado</span>
+<p class="font-label-lg text-label-lg text-text-primary truncate">Samsung Galaxy S23 Ultra</p>
+<span class="font-body-sm text-body-sm text-text-secondary">Android 14 (OneUI 6.1)</span>
+</div>
+</div>
+<div class="p-space-sm rounded-xl bg-surface-subtle flex items-center gap-space-sm">
+<div class="w-9 h-9 rounded-lg bg-surface-card shadow-sm flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">hub</span>
+</div>
+<div class="min-w-0">
+<span class="font-label-sm text-label-sm text-text-muted uppercase">Protocolo WhatsApp Web</span>
+<p class="font-label-lg text-label-lg text-text-primary font-mono">v2.3000.101.x</p>
+<span class="font-body-sm text-body-sm text-text-secondary">Baileys Multidevice Engine</span>
+</div>
+</div>
+<div class="p-space-sm rounded-xl bg-surface-subtle flex items-center gap-space-sm">
+<div class="w-9 h-9 rounded-lg bg-surface-card shadow-sm flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">public</span>
+</div>
+<div class="min-w-0">
+<span class="font-label-sm text-label-sm text-text-muted uppercase">IP de Conexão</span>
+<p class="font-label-lg text-label-lg text-text-primary font-mono">177.136.24.102</p>
+<span class="font-body-sm text-body-sm text-text-secondary">São Paulo, SP - Dedicado Clínico</span>
+</div>
+</div>
+<div class="p-space-sm rounded-xl bg-surface-subtle flex items-center gap-space-sm">
+<div class="w-9 h-9 rounded-lg bg-surface-card shadow-sm flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">verified_user</span>
+</div>
+<div class="min-w-0">
+<span class="font-label-sm text-label-sm text-text-muted uppercase">Certificado TLS / SSL</span>
+<p class="font-label-lg text-label-lg text-success-text font-semibold flex items-center gap-1">
+                  Ativo &amp; Válido
+                  <span class="material-symbols-outlined text-[14px]">check</span>
+</p>
+<span class="font-body-sm text-body-sm text-text-secondary">Expira em 288 dias (Let's Encrypt)</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- RIGHT COLUMN: Multi-Instâncias & Diagnóstico em Tempo Real (5 cols) -->
+<div class="lg:col-span-5 space-y-space-lg">
+<!-- Multi-Instance Manager Card -->
+<div class="bg-surface-card rounded-2xl p-space-lg shadow-sm">
+<div class="flex items-center justify-between pb-space-sm">
+<div>
+<span class="font-label-sm text-label-sm text-text-muted uppercase tracking-wider">Multi-Linhas</span>
+<h3 class="font-headline-sm text-headline-sm text-text-primary">Instâncias da Clínica</h3>
+</div>
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary hover:bg-surface-tint text-on-primary font-label-sm text-label-sm font-semibold transition-all shadow-sm">
+<span class="material-symbols-outlined text-[16px]">add</span>
+<span>Nova Instância</span>
+</button>
+</div>
+<!-- Instances List -->
+<div class="space-y-3 pt-space-xs">
+<!-- Instance 1: Matriz (Connected) -->
+<div class="p-space-md rounded-xl bg-surface-subtle hover:bg-surface-container-low transition-colors shadow-sm">
+<div class="flex items-start justify-between gap-2">
+<div class="flex items-center gap-2.5">
+<div class="w-2.5 h-2.5 rounded-full bg-success-text ring-4 ring-success-surface flex-shrink-0"></div>
+<div>
+<h4 class="font-label-lg text-label-lg text-text-primary font-bold">Instância Matriz São Lucas</h4>
+<span class="font-label-sm text-[10px] uppercase font-bold text-primary bg-primary-fixed px-1.5 py-0.2 rounded">Principal</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm bg-success-surface text-success-text px-2 py-0.5 rounded-full font-bold">Conectado</span>
+</div>
+<div class="mt-2.5 pt-2 flex items-center justify-between text-body-sm">
+<div class="flex items-center gap-1.5 text-text-secondary">
+<span class="material-symbols-outlined text-[16px]">call</span>
+<span class="font-mono">+55 (11) 3214-5500</span>
+</div>
+<div class="flex items-center gap-1 text-text-muted">
+<span class="material-symbols-outlined text-[15px]">groups</span>
+<span>8 operadores ativos</span>
+</div>
+</div>
+</div>
+<!-- Instance 2: Recepção & No-Show (Waiting QR) -->
+<div class="p-space-md rounded-xl bg-surface-subtle hover:bg-surface-container-low transition-colors shadow-sm">
+<div class="flex items-start justify-between gap-2">
+<div class="flex items-center gap-2.5">
+<div class="w-2.5 h-2.5 rounded-full bg-warning-text ring-4 ring-warning-surface flex-shrink-0 animate-pulse"></div>
+<div>
+<h4 class="font-label-lg text-label-lg text-text-primary font-bold">Instância Recepção &amp; No-Show</h4>
+<span class="font-body-sm text-body-sm text-text-muted">Disparador de Confirmação</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm bg-warning-surface text-warning-text px-2 py-0.5 rounded-full font-bold">Aguardando QR</span>
+</div>
+<div class="mt-2.5 pt-2 flex items-center justify-between text-body-sm">
+<div class="flex items-center gap-1.5 text-text-secondary">
+<span class="material-symbols-outlined text-[16px]">call</span>
+<span class="font-mono">+55 (11) 98711-2200</span>
+</div>
+<button class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-surface-card hover:bg-surface-subtle text-primary font-label-sm text-label-sm font-semibold shadow-sm transition-colors">
+<span class="material-symbols-outlined text-[14px]">qr_code_scanner</span>
+<span>Ler QR Code</span>
+</button>
+</div>
+</div>
+<!-- Instance 3: Plantão (Disconnected) -->
+<div class="p-space-md rounded-xl bg-surface-subtle hover:bg-surface-container-low transition-colors shadow-sm">
+<div class="flex items-start justify-between gap-2">
+<div class="flex items-center gap-2.5">
+<div class="w-2.5 h-2.5 rounded-full bg-outline-variant flex-shrink-0"></div>
+<div>
+<h4 class="font-label-lg text-label-lg text-text-secondary font-bold">Plantão Oftalmológico</h4>
+<span class="font-body-sm text-body-sm text-text-muted">Canal de Emergência 24h</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm bg-surface-container-high text-secondary px-2 py-0.5 rounded-full font-bold">Desconectado</span>
+</div>
+<div class="mt-2.5 pt-2 flex items-center justify-between text-body-sm">
+<div class="flex items-center gap-1.5 text-text-muted">
+<span class="material-symbols-outlined text-[16px]">phone_disabled</span>
+<span class="font-mono">+55 (11) 97722-1144</span>
+</div>
+<button class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-surface-card hover:bg-surface-subtle text-text-primary font-label-sm text-label-sm font-semibold shadow-sm transition-colors">
+<span class="material-symbols-outlined text-[14px]">refresh</span>
+<span>Reconectar</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Realtime Diagnostic Panel -->
+<div class="bg-surface-card rounded-2xl p-space-lg shadow-sm">
+<div class="flex items-center justify-between pb-space-sm">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">monitor_heart</span>
+<h3 class="font-headline-sm text-headline-sm text-text-primary">Diagnóstico em Tempo Real</h3>
+</div>
+<span class="w-2 h-2 rounded-full bg-success-text"></span>
+</div>
+<div class="space-y-3 pt-space-xs">
+<!-- Diagnostics Row 1 -->
+<div class="p-space-sm rounded-xl bg-surface-subtle flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-success-text text-[18px]">check_circle</span>
+<div>
+<p class="font-label-lg text-label-lg text-text-primary leading-tight">Handshake Evolution API</p>
+<span class="font-body-sm text-body-sm text-text-muted">Endpoint /instance/connect</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm bg-success-surface text-success-text px-2 py-0.5 rounded font-mono font-bold">HTTP 200 OK</span>
+</div>
+<!-- Diagnostics Row 2 -->
+<div class="p-space-sm rounded-xl bg-surface-subtle flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-success-text text-[18px]">webhook</span>
+<div>
+<p class="font-label-lg text-label-lg text-text-primary leading-tight">Webhook Stream</p>
+<span class="font-body-sm text-body-sm text-text-muted">messages.upsert, connection.update</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-success-text font-bold flex items-center gap-1">
+                100% Ativo
+              </span>
+</div>
+<!-- Diagnostics Row 3 -->
+<div class="p-space-sm rounded-xl bg-surface-subtle flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-info-text text-[18px]">storage</span>
+<div>
+<p class="font-label-lg text-label-lg text-text-primary leading-tight">Fila Redis Mensageria</p>
+<span class="font-body-sm text-body-sm text-text-muted">Buffer de envio em segundo plano</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm bg-info-surface text-info-text px-2 py-0.5 rounded font-mono font-semibold">0 pendentes</span>
+</div>
+</div>
+<!-- Bottom Config Navigation Link -->
+<div class="mt-space-md pt-space-sm flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-text-secondary">Deseja alterar URL de webhook ou Token?</span>
+<a class="font-label-sm text-label-sm text-primary hover:text-surface-tint font-bold inline-flex items-center gap-1" data-path="whatsapp-configuracao" href="#">
+<span>Configurações Evolution</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+  (function() {
+    // Countdown Timer Micro-interaction
+    let secondsLeft = 24;
+    const countdownEl = document.getElementById('countdown-timer');
+    const progressBar = document.getElementById('progress-bar');
+    const livePing = document.getElementById('live-ping');
+
+    setInterval(() => {
+      if (secondsLeft > 1) {
+        secondsLeft--;
+      } else {
+        secondsLeft = 30; // reset
+      }
+      if (countdownEl) {
+        countdownEl.textContent = secondsLeft + 's';
+      }
+      if (progressBar) {
+        progressBar.style.width = ((secondsLeft / 30) * 100) + '%';
+      }
+    }, 1000);
+
+    // Random slight latency jitter to feel live
+    setInterval(() => {
+      if (livePing) {
+        const ping = Math.floor(Math.random() * 8) + 31;
+        livePing.textContent = ping + 'ms';
+      }
+    }, 4500);
+
+    // Refresh button spinner
+    const btnRefresh = document.getElementById('btn-refresh');
+    const refreshIcon = document.getElementById('refresh-icon');
+    if (btnRefresh && refreshIcon) {
+      btnRefresh.addEventListener('click', () => {
+        refreshIcon.classList.add('rotate-180');
+        setTimeout(() => {
+          refreshIcon.classList.remove('rotate-180');
+        }, 600);
+      });
+    }
+
+    // Copy pairing code toast trigger
+    const btnCopyCode = document.getElementById('btn-copy-code');
+    const copyToast = document.getElementById('copy-toast');
+    if (btnCopyCode && copyToast) {
+      btnCopyCode.addEventListener('click', () => {
+        copyToast.classList.remove('hidden');
+        copyToast.classList.add('flex');
+        setTimeout(() => {
+          copyToast.classList.add('hidden');
+          copyToast.classList.remove('flex');
+        }, 3500);
+      });
+    }
+
+    // New QR trigger simulation
+    const btnNewQr = document.getElementById('btn-new-qr');
+    if (btnNewQr) {
+      btnNewQr.addEventListener('click', () => {
+        secondsLeft = 30;
+        if (countdownEl) countdownEl.textContent = '30s';
+        if (progressBar) progressBar.style.width = '100%';
+      });
+    }
+  })();
+</script></main></div></body></html>

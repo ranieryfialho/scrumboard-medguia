@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"border-focus":"#93C5FD","tertiary-container":"#b85b00","sidebar-surface":"#1E293B","surface-subtle":"#F8FAFC","outline-variant":"#c3c6d6","surface-dim":"#d9d9e3","primary-fixed":"#dae2ff","danger-text":"#DC2626","danger-border":"#FECACA","on-error":"#ffffff","on-primary":"#ffffff","tertiary-fixed-dim":"#ffb787","inverse-primary":"#b1c5ff","secondary-container":"#d7dffd","surface":"#faf8ff","warning-surface":"#FEF3C7","sidebar-surface-active":"#2D3748","error-container":"#ffdad6","surface-tint":"#1157cb","warning-border":"#FDE68A","on-primary-fixed-variant":"#0040a0","surface-bright":"#faf8ff","background":"#faf8ff","on-primary-container":"#fefcff","success-surface":"#D1FAE5","text-secondary":"#64748B","surface-container":"#ededf7","primary-fixed-dim":"#b1c5ff","surface-container-low":"#f3f3fd","secondary-fixed-dim":"#bec6e3","success-text":"#059669","primary":"#0954c9","info-border":"#BFDBFE","inverse-surface":"#2e3038","on-secondary-fixed-variant":"#3e465e","error":"#ba1a1a","info-surface":"#EFF6FF","outline":"#737785","border-subtle":"#E2E8F0","on-secondary-fixed":"#131b30","on-surface-variant":"#434654","on-surface":"#191b22","text-primary":"#0F172A","primary-container":"#366ee3","info-text":"#2563EB","on-secondary":"#ffffff","surface-container-high":"#e7e7f2","on-error-container":"#93000a","on-tertiary-fixed":"#311300","on-background":"#191b22","on-tertiary-container":"#fffbff","tertiary-fixed":"#ffdcc7","on-tertiary":"#ffffff","warning-text":"#D97706","surface-card":"#FFFFFF","inverse-on-surface":"#f0f0fa","tertiary":"#924700","text-muted":"#94A3B8","on-secondary-container":"#5a627b","on-tertiary-fixed-variant":"#723600","secondary":"#565e77","on-primary-fixed":"#001847","secondary-fixed":"#dae2ff","surface-container-lowest":"#ffffff","success-border":"#A7F3D0","background-canvas":"#F4F6FA","surface-container-highest":"#e1e2ec","danger-surface":"#FEE2E2","surface-variant":"#e1e2ec"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"space-lg":"1.25rem","space-xl":"1.75rem","space-xs":"0.25rem","margin":"1.75rem","space-sm":"0.5rem","space-2xl":"2.5rem","gutter-sm":"0.75rem","margin-mobile":"1rem","space-md":"0.875rem","gutter-lg":"1.5rem","gutter":"1.25rem"},"fontFamily":{"body-lg":["Inter"],"display-lg-mobile":["Plus Jakarta Sans"],"label-lg":["Inter"],"metric-stat":["Plus Jakarta Sans"],"body-sm":["Inter"],"headline-md":["Plus Jakarta Sans"],"table-header":["Inter"],"label-sm":["Inter"],"headline-lg":["Plus Jakarta Sans"],"label-md":["Inter"],"body-md":["Inter"],"headline-sm":["Plus Jakarta Sans"],"display-lg":["Plus Jakarta Sans"]},"fontSize":{"body-lg":["15px",{"lineHeight":"22px","fontWeight":"400"}],"display-lg-mobile":["26px",{"lineHeight":"34px","letterSpacing":"-0.01em","fontWeight":"700"}],"label-lg":["13px",{"lineHeight":"18px","fontWeight":"600"}],"metric-stat":["28px",{"lineHeight":"36px","letterSpacing":"-0.02em","fontWeight":"700"}],"body-sm":["12px",{"lineHeight":"16px","fontWeight":"400"}],"headline-md":["20px",{"lineHeight":"28px","fontWeight":"600"}],"table-header":["11px",{"lineHeight":"16px","letterSpacing":"0.05em","fontWeight":"600"}],"label-sm":["11px",{"lineHeight":"14px","letterSpacing":"0.03em","fontWeight":"600"}],"headline-lg":["24px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"600"}],"label-md":["12px",{"lineHeight":"16px","fontWeight":"500"}],"body-md":["13px",{"lineHeight":"20px","fontWeight":"400"}],"headline-sm":["16px",{"lineHeight":"24px","fontWeight":"600"}],"display-lg":["32px",{"lineHeight":"40px","letterSpacing":"-0.02em","fontWeight":"700"}]}}}}</script></head><body class="bg-background-canvas font-body-md text-text-primary antialiased min-h-screen"><aside class="fixed left-0 top-0 h-full w-64 bg-sidebar-surface z-50 flex flex-col justify-between shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex flex-col h-full overflow-hidden"><div class="h-16 flex items-center px-space-lg gap-space-sm bg-sidebar-surface"><div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[20px]">local_hospital</span></div><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-surface-card leading-tight tracking-tight">MedCRM</span><span class="font-label-sm text-label-sm text-text-muted">MedGuia B2B Health</span></div></div><div class="overflow-y-auto flex-1 px-space-sm py-space-sm space-y-space-md"><div class="space-y-space-xs"><span class="px-space-md font-table-header text-table-header text-text-muted uppercase tracking-wider block">Operação</span><nav class="space-y-1" data-active-classes="bg-primary text-on-primary font-label-md rounded-lg shadow-sm"><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="funil-pipeline" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">view_kanban</span><span class="font-label-md text-label-md">Funil Pipeline</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="lista" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">view_list</span><span class="font-label-md text-label-md">Lista</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="arquivados" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">archive</span><span class="font-label-md text-label-md">Arquivados</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="tarefas-do-turno" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">assignment</span><span class="font-label-md text-label-md">Tarefas do Turno</span></div><span class="px-2 py-0.5 rounded-full font-label-sm text-label-sm bg-info-surface text-info-text">12</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="tarefas-atrasadas" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">warning</span><span class="font-label-md text-label-md">Tarefas Atrasadas</span></div><span class="px-2 py-0.5 rounded-full font-label-sm text-label-sm bg-danger-surface text-danger-text">4</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="agenda" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">calendar_today</span><span class="font-label-md text-label-md">Agenda</span></div></a></nav></div><div class="space-y-space-xs"><span class="px-space-md font-table-header text-table-header text-text-muted uppercase tracking-wider block">Comunicação</span><nav class="space-y-1" data-active-classes="bg-primary text-on-primary font-label-md rounded-lg shadow-sm"><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="whatsapp-inbox" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">chat</span><span class="font-label-md text-label-md">WhatsApp Inbox</span></div><span class="px-2 py-0.5 rounded-full font-label-sm text-label-sm bg-success-surface text-success-text">5</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="conexao-qr-code" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">qr_code_2</span><span class="font-label-md text-label-md">Conexão &amp; QR Code</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="configuracao-evolution" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">settings_ethernet</span><span class="font-label-md text-label-md">Configuração Evolution</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="campanhas" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">campaign</span><span class="font-label-md text-label-md">Campanhas</span></div></a></nav></div><div class="space-y-space-xs"><span class="px-space-md font-table-header text-table-header text-text-muted uppercase tracking-wider block">Análises</span><nav class="space-y-1" data-active-classes="bg-primary text-on-primary font-label-md rounded-lg shadow-sm"><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="indicadores" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">query_stats</span><span class="font-label-md text-label-md">Indicadores</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="relatorios" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">analytics</span><span class="font-label-md text-label-md">Relatórios</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="relatorios-comerciais" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">assessment</span><span class="font-label-md text-label-md">Comercial</span></div></a></nav></div><div class="space-y-space-xs"><span class="px-space-md font-table-header text-table-header text-primary-fixed uppercase tracking-wider block">Administração</span><nav class="space-y-1" data-active-classes="bg-primary text-on-primary font-label-md rounded-lg shadow-sm"><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="equipe" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">group</span><span class="font-label-md text-label-md">Equipe</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="motivos-de-perda" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">rule</span><span class="font-label-md text-label-md">Motivos de Perda</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="empresas" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">domain</span><span class="font-label-md text-label-md">Empresas</span></div><span class="px-2 py-0.5 rounded-full font-label-sm text-label-sm bg-warning-surface text-warning-text">Super Admin</span></a></nav></div></div><div class="p-space-md bg-sidebar-surface flex items-center justify-between text-text-muted"><a class="flex items-center gap-space-xs hover:text-surface-card transition-colors" data-path="ajuda-e-suporte" href="#"><span class="material-symbols-outlined text-[16px]">help</span><span class="font-body-sm text-body-sm">Ajuda &amp; Suporte</span></a><span class="font-label-sm text-label-sm text-outline">v2.4.0</span></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface-card/90 backdrop-blur-xl z-40 shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="w-full h-16 px-space-lg flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-sm px-space-md py-space-xs bg-surface-subtle rounded-xl"><div class="w-2 h-2 rounded-full bg-success-text"></div><span class="font-label-md text-label-md text-text-primary font-medium">Clínica São Lucas - Matriz</span><span class="font-label-sm text-label-sm text-success-text bg-success-surface px-1.5 py-0.5 rounded-full font-semibold">Ativo</span><span class="material-symbols-outlined text-text-secondary text-[16px]">expand_more</span></div><div class="flex items-center gap-space-xs px-space-sm py-1 bg-surface-subtle rounded-full"><span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success-text opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-success-text"></span></span><span class="font-label-sm text-label-sm text-text-secondary hidden xl:inline-block">Tempo real conectado</span></div></div><div class="flex-1 max-w-md mx-space-md"><div class="relative flex items-center"><span class="material-symbols-outlined absolute left-space-md text-text-muted text-[18px]">search</span><input class="w-full h-10 pl-10 pr-12 rounded-lg bg-surface-subtle text-text-primary placeholder:text-text-muted font-body-sm text-body-sm focus:outline-none focus:ring-2 focus:ring-border-focus transition-all" placeholder="Buscar usuário, e-mail, papel..." type="text"/><kbd class="absolute right-space-md px-1.5 py-0.5 bg-surface-card text-text-muted font-label-sm text-label-sm rounded shadow-[0_1px_2px_rgba(0,0,0,0.05)]">⌘K</kbd></div></div><div class="flex items-center gap-space-md"><button class="relative p-2 rounded-lg hover:bg-surface-subtle text-text-secondary hover:text-text-primary transition-colors"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-1.5 right-1.5 w-4 h-4 bg-danger-text text-on-error font-label-sm text-[10px] leading-4 flex items-center justify-center rounded-full font-bold">1</span></button><div class="flex items-center gap-space-sm pl-space-sm"><div class="flex flex-col text-right hidden sm:flex"><div class="flex items-center justify-end gap-1"><span class="font-label-md text-label-md text-text-primary font-semibold">Dr. Roberto Mendes</span><span class="px-1.5 py-0.2 rounded font-label-sm text-[10px] bg-primary-fixed text-on-primary-fixed-variant font-bold uppercase tracking-wider">Master</span></div><span class="font-body-sm text-body-sm text-text-muted">roberto.mendes@medguia.com.br</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></div></header><main class="w-full pt-16 bg-background-canvas min-h-[calc(100vh-4rem)] p-margin"><div class="flex flex-col w-full">
+<!-- Script de Sincronização do Menu Lateral do Shell -->
+<script>
+    (function syncSidebarShell() {
+      try {
+        const empresasLink = document.querySelector('a[data-path="empresas"]');
+        if (empresasLink) {
+          empresasLink.classList.remove('text-text-muted', 'hover:bg-sidebar-surface-active');
+          empresasLink.classList.add('bg-primary', 'text-on-primary', 'font-label-md', 'rounded-lg', 'shadow-sm');
+          const badge = empresasLink.parentElement?.nextElementSibling;
+          if (badge && badge.classList.contains('bg-warning-surface')) {
+            badge.classList.remove('bg-warning-surface', 'text-warning-text');
+            badge.classList.add('bg-primary-fixed', 'text-on-primary-fixed-variant', 'font-bold');
+          }
+        }
+      } catch (e) {
+        console.error('Sidebar sync failed:', e);
+      }
+    })();
+  </script>
+<!-- Top Banner / Super Admin Context Bar -->
+<div class="relative overflow-hidden rounded-2xl bg-sidebar-surface text-surface-card p-space-lg shadow-sm mb-space-lg">
+<div class="absolute -right-12 -bottom-12 w-64 h-64 bg-primary/20 rounded-full blur-3xl pointer-events-none"></div>
+<div class="absolute right-32 top-0 w-32 h-32 bg-warning-surface/10 rounded-full blur-2xl pointer-events-none"></div>
+<div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-space-md">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-space-sm flex-wrap">
+<span class="font-table-header text-table-header uppercase tracking-widest text-text-muted">Administração</span>
+<span class="text-text-muted font-label-sm">/</span>
+<span class="font-table-header text-table-header uppercase tracking-widest text-primary-fixed">Gestão de Empresas Multi-tenant</span>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full font-label-sm text-label-sm bg-warning-surface text-warning-text font-bold">
+<span class="material-symbols-outlined text-[13px]">shield</span>
+            Modo Super Administrador Ativo
+          </span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-surface-card tracking-tight">
+          Rede de Organizações &amp; Franquias
+        </h1>
+<p class="font-body-sm text-body-sm text-text-muted max-w-2xl">
+          Controle centralizado de instâncias multi-tenant MedGuia. Governança de isolamento de dados, cotas de licenças e chaveamento direto entre ambientes de saúde.
+        </p>
+</div>
+<!-- Action Buttons & Badge -->
+<div class="flex flex-wrap items-center gap-space-sm self-start lg:self-center">
+<div class="flex items-center gap-2 bg-sidebar-surface-active px-3 py-2 rounded-xl text-surface-card font-label-sm text-label-sm">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success-text opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-success-text"></span>
+</span>
+<span class="font-semibold text-success-text">7 Clínicas Ativas</span>
+<span class="text-text-muted">| 9 Total</span>
+</div>
+<button class="flex items-center gap-1.5 px-space-md py-2 bg-sidebar-surface-active hover:bg-slate-700 text-surface-card rounded-lg font-label-md text-label-md transition-colors shadow-sm" onclick="exportCSVModal()">
+<span class="material-symbols-outlined text-[18px]">cloud_download</span>
+<span>Exportar Base (CSV)</span>
+</button>
+<button class="flex items-center gap-1.5 px-space-md py-2 bg-primary hover:bg-primary-container text-on-primary rounded-lg font-label-md text-label-md transition-all shadow-sm" onclick="openNewTenantModal()">
+<span class="material-symbols-outlined text-[18px]">add_business</span>
+<span>+ Nova Empresa / Clínica</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Quick Switcher Bar -->
+<div class="bg-surface-card p-space-md rounded-xl shadow-sm mb-space-lg flex flex-col md:flex-row md:items-center justify-between gap-space-md">
+<div class="flex items-center gap-space-sm">
+<div class="w-9 h-9 rounded-lg bg-info-surface text-info-text flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">swap_horiz</span>
+</div>
+<div>
+<div class="font-label-md text-label-md text-text-primary font-semibold flex items-center gap-2">
+          Trocar de Empresa Ativa em Tempo Real
+          <span class="px-2 py-0.5 rounded-full font-label-sm text-[10px] bg-primary-fixed text-on-primary-fixed-variant uppercase tracking-wider font-bold">Impersonate Context</span>
+</div>
+<div class="font-body-sm text-body-sm text-text-muted">
+          Selecione a clínica para alternar imediatamente seu painel operacional mantendo seus privilégios Super Admin.
+        </div>
+</div>
+</div>
+<div class="flex items-center gap-space-sm">
+<div class="relative min-w-[260px]">
+<select class="w-full h-10 pl-3 pr-8 rounded-lg bg-surface-subtle font-body-sm text-body-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-border-focus transition-all appearance-none cursor-pointer" id="quickTenantSelect" onchange="handleContextSwitch(this.value)">
+<option selected="" value="saolucas">✓ Clínica São Lucas - Matriz (Atual)</option>
+<option value="dermacare">DermaCare Centro Estético (Campinas)</option>
+<option value="cardiovida">Instituto CardioVida (Belo Horizonte)</option>
+<option value="santaclara">Hospital Dia Santa Clara (Curitiba)</option>
+<option value="ccpmed">Centro Cirúrgico Paulista (Em setup)</option>
+<option value="bastosorto">Clínica Bastos Orto (Rio de Janeiro)</option>
+<option value="oftalmocentro">OftalmoCentro SP (Santos)</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-2.5 text-text-secondary pointer-events-none text-[18px]">unfold_more</span>
+</div>
+<button class="h-10 px-space-md bg-surface-subtle hover:bg-slate-200 text-text-primary rounded-lg font-label-md text-label-md flex items-center gap-1.5 transition-colors" onclick="handleContextSwitch(document.getElementById('quickTenantSelect').value)">
+<span class="material-symbols-outlined text-[16px]">login</span>
+<span>Acessar</span>
+</button>
+</div>
+</div>
+<!-- KPIs Multiempresa Bento Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-space-md mb-space-lg">
+<!-- Card 1 -->
+<div class="bg-surface-card p-space-lg rounded-2xl shadow-sm flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-text-muted">Empresas na Rede</span>
+<div class="w-8 h-8 rounded-lg bg-info-surface text-info-text flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">domain</span>
+</div>
+</div>
+<div class="flex items-baseline gap-2 mb-1">
+<span class="font-metric-stat text-metric-stat text-text-primary">9</span>
+<span class="font-body-sm text-body-sm text-text-muted">organizações</span>
+</div>
+<div class="flex items-center gap-2 mt-2 pt-2">
+<span class="inline-flex items-center gap-1 font-label-sm text-label-sm text-success-text font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-success-text"></span> 7 ativas
+        </span>
+<span class="text-text-muted text-[10px]">•</span>
+<span class="inline-flex items-center gap-1 font-label-sm text-label-sm text-warning-text font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-warning-text"></span> 1 setup
+        </span>
+<span class="text-text-muted text-[10px]">•</span>
+<span class="inline-flex items-center gap-1 font-label-sm text-label-sm text-danger-text font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-danger-text"></span> 1 suspensa
+        </span>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-card p-space-lg rounded-2xl shadow-sm flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-text-muted">Usuários &amp; Licenças</span>
+<div class="w-8 h-8 rounded-lg bg-success-surface text-success-text flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">badge</span>
+</div>
+</div>
+<div class="flex items-baseline gap-2 mb-1">
+<span class="font-metric-stat text-metric-stat text-text-primary">142</span>
+<span class="font-body-sm text-body-sm text-text-muted">/ 175 assentos</span>
+</div>
+<div class="w-full bg-surface-subtle h-2 rounded-full overflow-hidden mt-2">
+<div class="bg-primary h-full rounded-full" style="width: 81%;"></div>
+</div>
+<div class="flex justify-between items-center text-text-muted font-label-sm text-label-sm mt-1.5">
+<span>81.1% taxa de ocupação</span>
+<span class="text-info-text font-semibold">33 disponíveis</span>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-card p-space-lg rounded-2xl shadow-sm flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-text-muted">Pipeline Consolidado</span>
+<div class="w-8 h-8 rounded-lg bg-primary-fixed text-on-primary-fixed-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">payments</span>
+</div>
+</div>
+<div class="flex items-baseline gap-2 mb-1">
+<span class="font-metric-stat text-metric-stat text-text-primary">R$ 4.890.000</span>
+</div>
+<div class="flex items-center justify-between mt-2 pt-2">
+<div class="flex items-center gap-1 text-success-text font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+          +14.8% este mês
+        </div>
+<span class="font-body-sm text-body-sm text-text-muted">382 negócios</span>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="bg-surface-card p-space-lg rounded-2xl shadow-sm flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-text-muted">WhatsApp Evolution API</span>
+<div class="w-8 h-8 rounded-lg bg-success-surface text-success-text flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">settings_ethernet</span>
+</div>
+</div>
+<div class="flex items-baseline gap-2 mb-1">
+<span class="font-metric-stat text-metric-stat text-text-primary">18</span>
+<span class="font-body-sm text-body-sm text-text-muted">instâncias ativas</span>
+</div>
+<div class="flex items-center justify-between mt-2 pt-2">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full font-label-sm text-label-sm bg-success-surface text-success-text font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-success-text"></span> 99.8% Uptime
+        </span>
+<span class="font-body-sm text-body-sm text-text-muted">2.418 msgs/dia</span>
+</div>
+</div>
+</div>
+<!-- Tabela de Gestão de Empresas -->
+<div class="bg-surface-card rounded-2xl shadow-sm overflow-hidden mb-space-lg">
+<!-- Header da Tabela com Filtros -->
+<div class="p-space-lg flex flex-col lg:flex-row lg:items-center justify-between gap-space-md">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<h2 class="font-headline-md text-headline-md text-text-primary">Organizações Cadastradas</h2>
+<span class="px-2.5 py-0.5 rounded-full font-label-sm text-label-sm bg-surface-subtle text-text-secondary font-semibold" id="tenantCountBadge">7 exibidas</span>
+</div>
+<p class="font-body-sm text-body-sm text-text-muted">Diretório de tenants autorizados com segregação lógica e governança dedicada</p>
+</div>
+<!-- Barra de Ferramentas / Filtros -->
+<div class="flex flex-wrap items-center gap-space-sm">
+<!-- Campo de Busca -->
+<div class="relative w-full sm:w-64">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-text-muted text-[18px]">search</span>
+<input class="w-full h-10 pl-9 pr-3 rounded-lg bg-surface-subtle text-text-primary placeholder:text-text-muted font-body-sm text-body-sm focus:outline-none focus:ring-2 focus:ring-border-focus transition-all" id="searchInput" oninput="filterTable()" placeholder="Buscar clínica, slug ou CNPJ..." type="text"/>
+</div>
+<!-- Filtro de Plano -->
+<select class="h-10 px-3 rounded-lg bg-surface-subtle font-body-sm text-body-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-border-focus transition-all" id="planFilter" onchange="filterTable()">
+<option value="ALL">Todos os Planos</option>
+<option value="Enterprise Pro">Enterprise Pro</option>
+<option value="Clínica Growth">Clínica Growth</option>
+<option value="Starter">Starter</option>
+</select>
+<!-- Filtro de Status -->
+<select class="h-10 px-3 rounded-lg bg-surface-subtle font-body-sm text-body-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-border-focus transition-all" id="statusFilter" onchange="filterTable()">
+<option value="ALL">Todos os Status</option>
+<option value="Ativa">Ativas</option>
+<option value="Em Implantação">Em Implantação</option>
+<option value="Suspensa">Suspensas</option>
+</select>
+</div>
+</div>
+<!-- Tabela Responsiva -->
+<div class="overflow-x-auto">
+<table class="w-full text-left" id="tenantsTable">
+<thead>
+<tr class="bg-surface-subtle text-text-secondary font-table-header text-table-header uppercase tracking-wider">
+<th class="py-3 px-space-lg">Organização / Clínica</th>
+<th class="py-3 px-space-md">CNPJ &amp; Localização</th>
+<th class="py-3 px-space-md">Plano &amp; Licenças</th>
+<th class="py-3 px-space-md">Administrador Master</th>
+<th class="py-3 px-space-md">Pipeline Ativo</th>
+<th class="py-3 px-space-md">Status</th>
+<th class="py-3 px-space-lg text-right">Ações Rápidas</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-subtle font-body-md text-body-md text-text-primary" id="tableBody">
+<!-- 1. Clínica São Lucas - Matriz (Empresa Atual) -->
+<tr class="hover:bg-info-surface/30 transition-colors group bg-info-surface/10" data-plan="Enterprise Pro" data-status="Ativa">
+<td class="py-4 px-space-lg">
+<div class="flex items-center gap-space-sm">
+<div class="relative">
+<div class="w-10 h-10 rounded-xl bg-primary text-on-primary flex items-center justify-center font-headline-sm text-headline-sm font-bold shadow-sm">
+                    SL
+                  </div>
+<span class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-success-text rounded-full ring-2 ring-surface-card" title="Ambiente Operante"></span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-headline-sm font-semibold text-text-primary truncate">Clínica São Lucas</span>
+<span class="px-2 py-0.5 rounded-full font-label-sm text-[10px] bg-primary text-on-primary font-bold uppercase tracking-wider">Atual</span>
+</div>
+<span class="font-body-sm text-body-sm text-text-muted truncate">São Lucas Diagnósticos &amp; Especialidades S/S</span>
+<span class="font-label-sm text-[11px] text-primary font-mono tracking-tight">tenant: saolucas</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm text-text-primary font-mono">14.288.940/0001-34</span>
+<span class="font-body-sm text-body-sm text-text-muted flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">location_on</span>
+                  São Paulo, SP - Jardins
+                </span>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between gap-2">
+<span class="font-label-md text-label-md font-semibold text-text-primary">Enterprise Pro</span>
+<span class="font-label-sm text-label-sm text-text-secondary font-mono">24/32</span>
+</div>
+<div class="w-28 bg-surface-subtle h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 75%;"></div>
+</div>
+<span class="font-body-sm text-[11px] text-text-muted">75% alocado</span>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-slate-200 text-text-primary flex items-center justify-center font-label-sm font-semibold text-[11px]">
+                  RM
+                </div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md font-semibold text-text-primary truncate">Dr. Roberto Mendes</span>
+<span class="font-body-sm text-[11px] text-text-muted truncate">roberto.mendes@medguia.com.br</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm font-semibold text-text-primary">R$ 1.124.500</span>
+<span class="font-body-sm text-[11px] text-text-muted">74 negócios em aberto</span>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-label-sm text-label-sm bg-success-surface text-success-text font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-success-text animate-pulse"></span>
+                Ativa
+              </span>
+</td>
+<td class="py-4 px-space-lg text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="px-2.5 py-1.5 bg-surface-subtle text-text-muted rounded-lg font-label-sm text-label-sm flex items-center gap-1 cursor-not-allowed" disabled="" title="Você já está operando nesta organização">
+<span class="material-symbols-outlined text-[15px]">check_circle</span>
+<span>Ambiente Ativo</span>
+</button>
+<button class="p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-subtle transition-colors" onclick="editTenantModal('saolucas', 'Clínica São Lucas')" title="Editar Configurações">
+<span class="material-symbols-outlined text-[18px]">settings</span>
+</button>
+<div class="relative inline-block text-left">
+<button class="p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-subtle transition-colors" onclick="toggleActionMenu(event, 'menu-saolucas')">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+<div class="hidden absolute right-0 mt-2 w-48 bg-surface-card rounded-xl shadow-xl z-20 py-1.5 font-label-md text-label-md text-text-primary" id="menu-saolucas">
+<a class="flex items-center gap-2 px-3 py-2 hover:bg-surface-subtle" href="#licencas" onclick="manageLicenses('Clínica São Lucas')">
+<span class="material-symbols-outlined text-[16px]">tune</span> Gerenciar Licenças
+                    </a>
+<a class="flex items-center gap-2 px-3 py-2 hover:bg-surface-subtle" href="#auditoria" onclick="viewAuditLogs('saolucas')">
+<span class="material-symbols-outlined text-[16px]">history</span> Logs de Auditoria
+                    </a>
+<a class="flex items-center gap-2 px-3 py-2 text-danger-text hover:bg-danger-surface" href="#suspender" onclick="suspendTenant('saolucas')">
+<span class="material-symbols-outlined text-[16px]">block</span> Suspender Acesso
+                    </a>
+</div>
+</div>
+</div>
+</td>
+</tr>
+<!-- 2. DermaCare Centro Estético -->
+<tr class="hover:bg-surface-subtle transition-colors group" data-plan="Clínica Growth" data-status="Ativa">
+<td class="py-4 px-space-lg">
+<div class="flex items-center gap-space-sm">
+<div class="relative">
+<div class="w-10 h-10 rounded-xl bg-purple-600 text-on-primary flex items-center justify-center font-headline-sm text-headline-sm font-bold shadow-sm">
+                    DC
+                  </div>
+<span class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-success-text rounded-full ring-2 ring-surface-card"></span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-headline-sm font-semibold text-text-primary truncate">DermaCare Centro Estético</span>
+<span class="font-body-sm text-body-sm text-text-muted truncate">DermaCare Dermatologia Avançada Ltda</span>
+<span class="font-label-sm text-[11px] text-text-muted font-mono tracking-tight">tenant: dermacare</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm text-text-primary font-mono">28.451.782/0001-90</span>
+<span class="font-body-sm text-body-sm text-text-muted flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">location_on</span>
+                  Campinas, SP - Cambuí
+                </span>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between gap-2">
+<span class="font-label-md text-label-md font-semibold text-text-primary">Clínica Growth</span>
+<span class="font-label-sm text-label-sm text-text-secondary font-mono">12/15</span>
+</div>
+<div class="w-28 bg-surface-subtle h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 80%;"></div>
+</div>
+<span class="font-body-sm text-[11px] text-text-muted">80% alocado</span>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-slate-200 text-text-primary flex items-center justify-center font-label-sm font-semibold text-[11px]">
+                  CE
+                </div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md font-semibold text-text-primary truncate">Dra. Carla Esteves</span>
+<span class="font-body-sm text-[11px] text-text-muted truncate">carla.esteves@dermacare.com.br</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm font-semibold text-text-primary">R$ 680.000</span>
+<span class="font-body-sm text-[11px] text-text-muted">45 negócios em aberto</span>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-label-sm text-label-sm bg-success-surface text-success-text font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-success-text"></span>
+                Ativa
+              </span>
+</td>
+<td class="py-4 px-space-lg text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="px-2.5 py-1.5 bg-primary/10 hover:bg-primary text-primary hover:text-on-primary rounded-lg font-label-sm text-label-sm flex items-center gap-1 transition-colors" onclick="handleContextSwitch('dermacare')">
+<span class="material-symbols-outlined text-[15px]">login</span>
+<span>Acessar</span>
+</button>
+<button class="p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-subtle transition-colors" onclick="editTenantModal('dermacare', 'DermaCare')" title="Editar Configurações">
+<span class="material-symbols-outlined text-[18px]">settings</span>
+</button>
+<div class="relative inline-block text-left">
+<button class="p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-subtle transition-colors" onclick="toggleActionMenu(event, 'menu-dermacare')">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+<div class="hidden absolute right-0 mt-2 w-48 bg-surface-card rounded-xl shadow-xl z-20 py-1.5 font-label-md text-label-md text-text-primary" id="menu-dermacare">
+<a class="flex items-center gap-2 px-3 py-2 hover:bg-surface-subtle" href="#licencas" onclick="manageLicenses('DermaCare')">
+<span class="material-symbols-outlined text-[16px]">tune</span> Gerenciar Licenças
+                    </a>
+<a class="flex items-center gap-2 px-3 py-2 hover:bg-surface-subtle" href="#auditoria" onclick="viewAuditLogs('dermacare')">
+<span class="material-symbols-outlined text-[16px]">history</span> Logs de Auditoria
+                    </a>
+<a class="flex items-center gap-2 px-3 py-2 text-danger-text hover:bg-danger-surface" href="#suspender" onclick="suspendTenant('dermacare')">
+<span class="material-symbols-outlined text-[16px]">block</span> Suspender Acesso
+                    </a>
+</div>
+</div>
+</div>
+</td>
+</tr>
+<!-- 3. Instituto CardioVida -->
+<tr class="hover:bg-surface-subtle transition-colors group" data-plan="Enterprise Pro" data-status="Ativa">
+<td class="py-4 px-space-lg">
+<div class="flex items-center gap-space-sm">
+<div class="relative">
+<div class="w-10 h-10 rounded-xl bg-rose-600 text-on-primary flex items-center justify-center font-headline-sm text-headline-sm font-bold shadow-sm">
+                    CV
+                  </div>
+<span class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-success-text rounded-full ring-2 ring-surface-card"></span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-headline-sm font-semibold text-text-primary truncate">Instituto CardioVida</span>
+<span class="font-body-sm text-body-sm text-text-muted truncate">Instituto CardioVida de Cardiologia S.A.</span>
+<span class="font-label-sm text-[11px] text-text-muted font-mono tracking-tight">tenant: cardiovida</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm text-text-primary font-mono">09.112.433/0001-11</span>
+<span class="font-body-sm text-body-sm text-text-muted flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">location_on</span>
+                  Belo Horizonte, MG - Funcionários
+                </span>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between gap-2">
+<span class="font-label-md text-label-md font-semibold text-text-primary">Enterprise Pro</span>
+<span class="font-label-sm text-label-sm text-text-secondary font-mono">18/20</span>
+</div>
+<div class="w-28 bg-surface-subtle h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 90%;"></div>
+</div>
+<span class="font-body-sm text-[11px] text-warning-text font-semibold">90% alocado (limite próx.)</span>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-slate-200 text-text-primary flex items-center justify-center font-label-sm font-semibold text-[11px]">
+                  PF
+                </div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md font-semibold text-text-primary truncate">Dr. Paulo Fontes</span>
+<span class="font-body-sm text-[11px] text-text-muted truncate">dr.paulo@cardiovida.med.br</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm font-semibold text-text-primary">R$ 890.000</span>
+<span class="font-body-sm text-[11px] text-text-muted">61 negócios em aberto</span>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-label-sm text-label-sm bg-success-surface text-success-text font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-success-text"></span>
+                Ativa
+              </span>
+</td>
+<td class="py-4 px-space-lg text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="px-2.5 py-1.5 bg-primary/10 hover:bg-primary text-primary hover:text-on-primary rounded-lg font-label-sm text-label-sm flex items-center gap-1 transition-colors" onclick="handleContextSwitch('cardiovida')">
+<span class="material-symbols-outlined text-[15px]">login</span>
+<span>Acessar</span>
+</button>
+<button class="p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-subtle transition-colors" onclick="editTenantModal('cardiovida', 'Instituto CardioVida')">
+<span class="material-symbols-outlined text-[18px]">settings</span>
+</button>
+<div class="relative inline-block text-left">
+<button class="p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-subtle transition-colors" onclick="toggleActionMenu(event, 'menu-cardiovida')">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+<div class="hidden absolute right-0 mt-2 w-48 bg-surface-card rounded-xl shadow-xl z-20 py-1.5 font-label-md text-label-md text-text-primary" id="menu-cardiovida">
+<a class="flex items-center gap-2 px-3 py-2 hover:bg-surface-subtle" href="#licencas" onclick="manageLicenses('Instituto CardioVida')">
+<span class="material-symbols-outlined text-[16px]">tune</span> Gerenciar Licenças
+                    </a>
+<a class="flex items-center gap-2 px-3 py-2 hover:bg-surface-subtle" href="#auditoria" onclick="viewAuditLogs('cardiovida')">
+<span class="material-symbols-outlined text-[16px]">history</span> Logs de Auditoria
+                    </a>
+<a class="flex items-center gap-2 px-3 py-2 text-danger-text hover:bg-danger-surface" href="#suspender" onclick="suspendTenant('cardiovida')">
+<span class="material-symbols-outlined text-[16px]">block</span> Suspender Acesso
+                    </a>
+</div>
+</div>
+</div>
+</td>
+</tr>
+<!-- 4. Hospital Dia Santa Clara -->
+<tr class="hover:bg-surface-subtle transition-colors group" data-plan="Enterprise Pro" data-status="Ativa">
+<td class="py-4 px-space-lg">
+<div class="flex items-center gap-space-sm">
+<div class="relative">
+<div class="w-10 h-10 rounded-xl bg-teal-600 text-on-primary flex items-center justify-center font-headline-sm text-headline-sm font-bold shadow-sm">
+                    SC
+                  </div>
+<span class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-success-text rounded-full ring-2 ring-surface-card"></span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-headline-sm font-semibold text-text-primary truncate">Hospital Dia Santa Clara</span>
+<span class="font-body-sm text-body-sm text-text-muted truncate">Complexo Hospitalar Santa Clara Ltda</span>
+<span class="font-label-sm text-[11px] text-text-muted font-mono tracking-tight">tenant: santaclara</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm text-text-primary font-mono">03.940.184/0001-52</span>
+<span class="font-body-sm text-body-sm text-text-muted flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">location_on</span>
+                  Curitiba, PR - Batel
+                </span>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between gap-2">
+<span class="font-label-md text-label-md font-semibold text-text-primary">Enterprise Pro</span>
+<span class="font-label-sm text-label-sm text-text-secondary font-mono">28/40</span>
+</div>
+<div class="w-28 bg-surface-subtle h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 70%;"></div>
+</div>
+<span class="font-body-sm text-[11px] text-text-muted">70% alocado</span>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-slate-200 text-text-primary flex items-center justify-center font-label-sm font-semibold text-[11px]">
+                  ML
+                </div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md font-semibold text-text-primary truncate">Dra. Mariana Luz</span>
+<span class="font-body-sm text-[11px] text-text-muted truncate">mariana.luz@santaclarahosp.com.br</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm font-semibold text-text-primary">R$ 1.450.000</span>
+<span class="font-body-sm text-[11px] text-text-muted">98 negócios em aberto</span>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-label-sm text-label-sm bg-success-surface text-success-text font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-success-text"></span>
+                Ativa
+              </span>
+</td>
+<td class="py-4 px-space-lg text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="px-2.5 py-1.5 bg-primary/10 hover:bg-primary text-primary hover:text-on-primary rounded-lg font-label-sm text-label-sm flex items-center gap-1 transition-colors" onclick="handleContextSwitch('santaclara')">
+<span class="material-symbols-outlined text-[15px]">login</span>
+<span>Acessar</span>
+</button>
+<button class="p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-subtle transition-colors" onclick="editTenantModal('santaclara', 'Santa Clara')">
+<span class="material-symbols-outlined text-[18px]">settings</span>
+</button>
+<div class="relative inline-block text-left">
+<button class="p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-subtle transition-colors" onclick="toggleActionMenu(event, 'menu-santaclara')">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+<div class="hidden absolute right-0 mt-2 w-48 bg-surface-card rounded-xl shadow-xl z-20 py-1.5 font-label-md text-label-md text-text-primary" id="menu-santaclara">
+<a class="flex items-center gap-2 px-3 py-2 hover:bg-surface-subtle" href="#licencas" onclick="manageLicenses('Santa Clara')">
+<span class="material-symbols-outlined text-[16px]">tune</span> Gerenciar Licenças
+                    </a>
+<a class="flex items-center gap-2 px-3 py-2 hover:bg-surface-subtle" href="#auditoria" onclick="viewAuditLogs('santaclara')">
+<span class="material-symbols-outlined text-[16px]">history</span> Logs de Auditoria
+                    </a>
+<a class="flex items-center gap-2 px-3 py-2 text-danger-text hover:bg-danger-surface" href="#suspender" onclick="suspendTenant('santaclara')">
+<span class="material-symbols-outlined text-[16px]">block</span> Suspender Acesso
+                    </a>
+</div>
+</div>
+</div>
+</td>
+</tr>
+<!-- 5. Centro Cirúrgico Paulista (Em Implantação) -->
+<tr class="hover:bg-warning-surface/20 transition-colors group bg-warning-surface/5" data-plan="Clínica Growth" data-status="Em Implantação">
+<td class="py-4 px-space-lg">
+<div class="flex items-center gap-space-sm">
+<div class="relative">
+<div class="w-10 h-10 rounded-xl bg-amber-600 text-on-primary flex items-center justify-center font-headline-sm text-headline-sm font-bold shadow-sm">
+                    CP
+                  </div>
+<span class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-warning-text rounded-full ring-2 ring-surface-card"></span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-headline-sm font-semibold text-text-primary truncate">Centro Cirúrgico Paulista</span>
+<span class="font-body-sm text-body-sm text-text-muted truncate">CCP Day Hospital Especializado Ltda</span>
+<span class="font-label-sm text-[11px] text-text-muted font-mono tracking-tight">tenant: ccpmed</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm text-text-primary font-mono">31.002.819/0001-44</span>
+<span class="font-body-sm text-body-sm text-text-muted flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">location_on</span>
+                  São Paulo, SP - Moema
+                </span>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between gap-2">
+<span class="font-label-md text-label-md font-semibold text-text-primary">Clínica Growth</span>
+<span class="font-label-sm text-label-sm text-text-secondary font-mono">8/10</span>
+</div>
+<div class="w-28 bg-surface-subtle h-1.5 rounded-full overflow-hidden">
+<div class="bg-warning-text h-full rounded-full" style="width: 80%;"></div>
+</div>
+<span class="font-body-sm text-[11px] text-text-muted">Onboarding Ativo</span>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-slate-200 text-text-primary flex items-center justify-center font-label-sm font-semibold text-[11px]">
+                  HV
+                </div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md font-semibold text-text-primary truncate">Dr. Henrique Vilela</span>
+<span class="font-body-sm text-[11px] text-text-muted truncate">henrique.vilela@ccpmed.com.br</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm font-semibold text-text-primary">R$ 420.000</span>
+<span class="font-body-sm text-[11px] text-text-muted">26 negócios carregados</span>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex flex-col gap-1">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full font-label-sm text-label-sm bg-warning-surface text-warning-text font-semibold">
+<span class="material-symbols-outlined text-[13px]">pending</span>
+                  Em Implantação
+                </span>
+<div class="flex items-center gap-1">
+<div class="w-16 bg-surface-subtle h-1.5 rounded-full overflow-hidden">
+<div class="bg-warning-text h-full rounded-full" style="width: 85%;"></div>
+</div>
+<span class="font-label-sm text-[10px] text-text-muted">85%</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-space-lg text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="px-2.5 py-1.5 bg-primary/10 hover:bg-primary text-primary hover:text-on-primary rounded-lg font-label-sm text-label-sm flex items-center gap-1 transition-colors" onclick="handleContextSwitch('ccpmed')">
+<span class="material-symbols-outlined text-[15px]">login</span>
+<span>Acessar</span>
+</button>
+<button class="p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-subtle transition-colors" onclick="editTenantModal('ccpmed', 'CCP Med')">
+<span class="material-symbols-outlined text-[18px]">settings</span>
+</button>
+<div class="relative inline-block text-left">
+<button class="p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-subtle transition-colors" onclick="toggleActionMenu(event, 'menu-ccpmed')">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+<div class="hidden absolute right-0 mt-2 w-48 bg-surface-card rounded-xl shadow-xl z-20 py-1.5 font-label-md text-label-md text-text-primary" id="menu-ccpmed">
+<a class="flex items-center gap-2 px-3 py-2 hover:bg-surface-subtle" href="#licencas" onclick="manageLicenses('Centro Cirúrgico Paulista')">
+<span class="material-symbols-outlined text-[16px]">tune</span> Gerenciar Licenças
+                    </a>
+<a class="flex items-center gap-2 px-3 py-2 hover:bg-surface-subtle" href="#auditoria" onclick="viewAuditLogs('ccpmed')">
+<span class="material-symbols-outlined text-[16px]">history</span> Logs de Auditoria
+                    </a>
+<a class="flex items-center gap-2 px-3 py-2 text-danger-text hover:bg-danger-surface" href="#suspender" onclick="suspendTenant('ccpmed')">
+<span class="material-symbols-outlined text-[16px]">block</span> Suspender Acesso
+                    </a>
+</div>
+</div>
+</div>
+</td>
+</tr>
+<!-- 6. Clínica Bastos Orto -->
+<tr class="hover:bg-surface-subtle transition-colors group" data-plan="Starter" data-status="Ativa">
+<td class="py-4 px-space-lg">
+<div class="flex items-center gap-space-sm">
+<div class="relative">
+<div class="w-10 h-10 rounded-xl bg-indigo-600 text-on-primary flex items-center justify-center font-headline-sm text-headline-sm font-bold shadow-sm">
+                    BO
+                  </div>
+<span class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-success-text rounded-full ring-2 ring-surface-card"></span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-headline-sm font-semibold text-text-primary truncate">Clínica Bastos Orto</span>
+<span class="font-body-sm text-body-sm text-text-muted truncate">Bastos Ortopedia e Fisiatria S/S</span>
+<span class="font-label-sm text-[11px] text-text-muted font-mono tracking-tight">tenant: bastosorto</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm text-text-primary font-mono">42.190.722/0001-83</span>
+<span class="font-body-sm text-body-sm text-text-muted flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">location_on</span>
+                  Rio de Janeiro, RJ - Barra
+                </span>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between gap-2">
+<span class="font-label-md text-label-md font-semibold text-text-primary">Starter</span>
+<span class="font-label-sm text-label-sm text-text-secondary font-mono">4/5</span>
+</div>
+<div class="w-28 bg-surface-subtle h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 80%;"></div>
+</div>
+<span class="font-body-sm text-[11px] text-text-muted">80% alocado</span>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-slate-200 text-text-primary flex items-center justify-center font-label-sm font-semibold text-[11px]">
+                  FB
+                </div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md font-semibold text-text-primary truncate">Dr. Fernando Bastos</span>
+<span class="font-body-sm text-[11px] text-text-muted truncate">contato@bastosorto.com.br</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm font-semibold text-text-primary">R$ 180.000</span>
+<span class="font-body-sm text-[11px] text-text-muted">19 negócios em aberto</span>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-label-sm text-label-sm bg-success-surface text-success-text font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-success-text"></span>
+                Ativa
+              </span>
+</td>
+<td class="py-4 px-space-lg text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="px-2.5 py-1.5 bg-primary/10 hover:bg-primary text-primary hover:text-on-primary rounded-lg font-label-sm text-label-sm flex items-center gap-1 transition-colors" onclick="handleContextSwitch('bastosorto')">
+<span class="material-symbols-outlined text-[15px]">login</span>
+<span>Acessar</span>
+</button>
+<button class="p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-subtle transition-colors" onclick="editTenantModal('bastosorto', 'Bastos Orto')">
+<span class="material-symbols-outlined text-[18px]">settings</span>
+</button>
+<div class="relative inline-block text-left">
+<button class="p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-subtle transition-colors" onclick="toggleActionMenu(event, 'menu-bastosorto')">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+<div class="hidden absolute right-0 mt-2 w-48 bg-surface-card rounded-xl shadow-xl z-20 py-1.5 font-label-md text-label-md text-text-primary" id="menu-bastosorto">
+<a class="flex items-center gap-2 px-3 py-2 hover:bg-surface-subtle" href="#licencas" onclick="manageLicenses('Clínica Bastos Orto')">
+<span class="material-symbols-outlined text-[16px]">tune</span> Gerenciar Licenças
+                    </a>
+<a class="flex items-center gap-2 px-3 py-2 hover:bg-surface-subtle" href="#auditoria" onclick="viewAuditLogs('bastosorto')">
+<span class="material-symbols-outlined text-[16px]">history</span> Logs de Auditoria
+                    </a>
+<a class="flex items-center gap-2 px-3 py-2 text-danger-text hover:bg-danger-surface" href="#suspender" onclick="suspendTenant('bastosorto')">
+<span class="material-symbols-outlined text-[16px]">block</span> Suspender Acesso
+                    </a>
+</div>
+</div>
+</div>
+</td>
+</tr>
+<!-- 7. OftalmoCentro SP -->
+<tr class="hover:bg-surface-subtle transition-colors group" data-plan="Clínica Growth" data-status="Ativa">
+<td class="py-4 px-space-lg">
+<div class="flex items-center gap-space-sm">
+<div class="relative">
+<div class="w-10 h-10 rounded-xl bg-cyan-600 text-on-primary flex items-center justify-center font-headline-sm text-headline-sm font-bold shadow-sm">
+                    OC
+                  </div>
+<span class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-success-text rounded-full ring-2 ring-surface-card"></span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-headline-sm font-semibold text-text-primary truncate">OftalmoCentro SP</span>
+<span class="font-body-sm text-body-sm text-text-muted truncate">OftalmoCentro Cirurgia &amp; Laser S/S</span>
+<span class="font-label-sm text-[11px] text-text-muted font-mono tracking-tight">tenant: oftalmocentro</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm text-text-primary font-mono">19.330.144/0001-20</span>
+<span class="font-body-sm text-body-sm text-text-muted flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">location_on</span>
+                  Santos, SP - Gonzaga
+                </span>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between gap-2">
+<span class="font-label-md text-label-md font-semibold text-text-primary">Clínica Growth</span>
+<span class="font-label-sm text-label-sm text-text-secondary font-mono">6/10</span>
+</div>
+<div class="w-28 bg-surface-subtle h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 60%;"></div>
+</div>
+<span class="font-body-sm text-[11px] text-text-muted">60% alocado</span>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-slate-200 text-text-primary flex items-center justify-center font-label-sm font-semibold text-[11px]">
+                  CS
+                </div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md font-semibold text-text-primary truncate">Dr. Carlos Silveira</span>
+<span class="font-body-sm text-[11px] text-text-muted truncate">carlos.silveira@oftalmocentro.com.br</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm font-semibold text-text-primary">R$ 145.500</span>
+<span class="font-body-sm text-[11px] text-text-muted">21 negócios em aberto</span>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-label-sm text-label-sm bg-success-surface text-success-text font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-success-text"></span>
+                Ativa
+              </span>
+</td>
+<td class="py-4 px-space-lg text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="px-2.5 py-1.5 bg-primary/10 hover:bg-primary text-primary hover:text-on-primary rounded-lg font-label-sm text-label-sm flex items-center gap-1 transition-colors" onclick="handleContextSwitch('oftalmocentro')">
+<span class="material-symbols-outlined text-[15px]">login</span>
+<span>Acessar</span>
+</button>
+<button class="p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-subtle transition-colors" onclick="editTenantModal('oftalmocentro', 'OftalmoCentro')">
+<span class="material-symbols-outlined text-[18px]">settings</span>
+</button>
+<div class="relative inline-block text-left">
+<button class="p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-subtle transition-colors" onclick="toggleActionMenu(event, 'menu-oftalmocentro')">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+<div class="hidden absolute right-0 mt-2 w-48 bg-surface-card rounded-xl shadow-xl z-20 py-1.5 font-label-md text-label-md text-text-primary" id="menu-oftalmocentro">
+<a class="flex items-center gap-2 px-3 py-2 hover:bg-surface-subtle" href="#licencas" onclick="manageLicenses('OftalmoCentro SP')">
+<span class="material-symbols-outlined text-[16px]">tune</span> Gerenciar Licenças
+                    </a>
+<a class="flex items-center gap-2 px-3 py-2 hover:bg-surface-subtle" href="#auditoria" onclick="viewAuditLogs('oftalmocentro')">
+<span class="material-symbols-outlined text-[16px]">history</span> Logs de Auditoria
+                    </a>
+<a class="flex items-center gap-2 px-3 py-2 text-danger-text hover:bg-danger-surface" href="#suspender" onclick="suspendTenant('oftalmocentro')">
+<span class="material-symbols-outlined text-[16px]">block</span> Suspender Acesso
+                    </a>
+</div>
+</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Tabela Footer / Paginação e Contadores -->
+<div class="p-space-md bg-surface-subtle flex flex-col sm:flex-row items-center justify-between gap-space-sm font-body-sm text-body-sm text-text-secondary">
+<div class="flex items-center gap-2">
+<span>Mostrando <strong>7</strong> de <strong>9</strong> empresas registradas</span>
+<span class="text-text-muted">|</span>
+<span class="font-mono text-[11px] text-text-muted">Database Multi-tenant Postgres v16.2 (Cluster Isolado)</span>
+</div>
+<div class="flex items-center gap-1">
+<button class="px-3 py-1 rounded bg-surface-card text-text-muted cursor-not-allowed text-xs font-semibold shadow-sm">Anterior</button>
+<button class="px-3 py-1 rounded bg-primary text-on-primary text-xs font-semibold shadow-sm">1</button>
+<button class="px-3 py-1 rounded bg-surface-card text-text-secondary hover:bg-white text-xs font-semibold shadow-sm">Próximo</button>
+</div>
+</div>
+</div>
+<!-- Banner de Governança, Isolamento e Conformidade LGPD Saúde -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-space-md mb-space-lg">
+<!-- Bloco 1: Isolamento de Dados -->
+<div class="bg-surface-card p-space-lg rounded-2xl shadow-sm flex gap-space-md">
+<div class="w-10 h-10 rounded-xl bg-info-surface text-info-text shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]">database</span>
+</div>
+<div class="flex flex-col gap-1">
+<div class="font-headline-sm text-headline-sm text-text-primary">Segregação Lógica por Tenant ID</div>
+<p class="font-body-sm text-body-sm text-text-muted">
+          Todas as consultas PostgreSQL utilizam políticas de <strong class="text-text-secondary font-medium">Row-Level Security (RLS)</strong> estrito. Nenhum operador ou médico de uma clínica tem acesso visual a prontuários ou negócios de outra entidade.
+        </p>
+</div>
+</div>
+<!-- Bloco 2: Webhooks Evolution WhatsApp -->
+<div class="bg-surface-card p-space-lg rounded-2xl shadow-sm flex gap-space-md">
+<div class="w-10 h-10 rounded-xl bg-success-surface text-success-text shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]">webhook</span>
+</div>
+<div class="flex flex-col gap-1">
+<div class="font-headline-sm text-headline-sm text-text-primary">Webhooks &amp; Evolution API Isolados</div>
+<p class="font-body-sm text-body-sm text-text-muted">
+          Cada clínica possui seus próprios tokens de sessão WhatsApp e rotas dedicadas de webhook. Fila de disparo de alta vazão com isolamento de reputação anti-bloqueio Meta.
+        </p>
+</div>
+</div>
+<!-- Bloco 3: LGPD & Auditoria de Acesso -->
+<div class="bg-surface-card p-space-lg rounded-2xl shadow-sm flex gap-space-md">
+<div class="w-10 h-10 rounded-xl bg-warning-surface text-warning-text shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]">security</span>
+</div>
+<div class="flex flex-col gap-1">
+<div class="font-headline-sm text-headline-sm text-text-primary">Conformidade LGPD &amp; Auditoria Master</div>
+<p class="font-body-sm text-body-sm text-text-muted">
+          Toda alternância de contexto via impersonação Super Admin é registrada com timestamp imutável, IP do operador e justificativa técnica no log central de governança.
+        </p>
+</div>
+</div>
+</div>
+<!-- Modal Interativo: Nova Empresa / Clínica -->
+<div class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4" id="newTenantModal">
+<div class="bg-surface-card rounded-2xl shadow-2xl max-w-xl w-full p-space-xl overflow-hidden flex flex-col gap-space-md">
+<div class="flex items-center justify-between pb-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-xl bg-primary text-on-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">add_business</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-text-primary font-bold">Cadastrar Nova Empresa / Tenant</h3>
+<p class="font-body-sm text-body-sm text-text-muted">Provisione uma nova clínica no ecossistema multi-tenant MedCRM</p>
+</div>
+</div>
+<button class="text-text-muted hover:text-text-primary p-1 rounded-lg hover:bg-surface-subtle" onclick="closeNewTenantModal()">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<form class="space-y-4" id="newTenantForm" onsubmit="handleCreateTenant(event)">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
+<div>
+<label class="block font-label-sm text-label-sm text-text-secondary uppercase mb-1">Nome Fantasia *</label>
+<input class="w-full h-10 px-3 rounded-lg bg-surface-subtle text-text-primary font-body-sm text-body-sm focus:outline-none focus:ring-2 focus:ring-border-focus" placeholder="Ex: Clínica Alpha Saúde" required="" type="text"/>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-text-secondary uppercase mb-1">Slug Institucional *</label>
+<input class="w-full h-10 px-3 rounded-lg bg-surface-subtle text-text-primary font-body-sm text-body-sm font-mono focus:outline-none focus:ring-2 focus:ring-border-focus" placeholder="alphasaude" required="" type="text"/>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
+<div>
+<label class="block font-label-sm text-label-sm text-text-secondary uppercase mb-1">CNPJ da Organização *</label>
+<input class="w-full h-10 px-3 rounded-lg bg-surface-subtle text-text-primary font-body-sm text-body-sm font-mono focus:outline-none focus:ring-2 focus:ring-border-focus" placeholder="00.000.000/0001-00" required="" type="text"/>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-text-secondary uppercase mb-1">Cidade / UF *</label>
+<input class="w-full h-10 px-3 rounded-lg bg-surface-subtle text-text-primary font-body-sm text-body-sm focus:outline-none focus:ring-2 focus:ring-border-focus" placeholder="Ex: São Paulo, SP" required="" type="text"/>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
+<div>
+<label class="block font-label-sm text-label-sm text-text-secondary uppercase mb-1">Plano Comercial</label>
+<select class="w-full h-10 px-3 rounded-lg bg-surface-subtle text-text-primary font-body-sm text-body-sm focus:outline-none focus:ring-2 focus:ring-border-focus">
+<option value="enterprise">Enterprise Pro (Até 40 usuários)</option>
+<option value="growth">Clínica Growth (Até 15 usuários)</option>
+<option value="starter">Starter (Até 5 usuários)</option>
+</select>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-text-secondary uppercase mb-1">Assentos / Licenças</label>
+<input class="w-full h-10 px-3 rounded-lg bg-surface-subtle text-text-primary font-body-sm text-body-sm focus:outline-none focus:ring-2 focus:ring-border-focus" max="100" min="1" type="number" value="10"/>
+</div>
+</div>
+<div class="pt-2">
+<label class="block font-label-sm text-label-sm text-text-secondary uppercase mb-1">E-mail do Administrador Master Inicial *</label>
+<input class="w-full h-10 px-3 rounded-lg bg-surface-subtle text-text-primary font-body-sm text-body-sm focus:outline-none focus:ring-2 focus:ring-border-focus" placeholder="diretor.clinica@exemplo.com.br" required="" type="email"/>
+</div>
+<div class="p-3 rounded-xl bg-info-surface text-info-text text-xs flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">info</span>
+          Um e-mail de ativação de credenciais com senha temporária e link de autenticação será disparado automaticamente.
+        </div>
+<div class="flex items-center justify-end gap-space-sm pt-space-sm">
+<button class="px-space-md py-2 rounded-lg bg-surface-subtle text-text-secondary hover:text-text-primary font-label-md text-label-md" onclick="closeNewTenantModal()" type="button">
+            Cancelar
+          </button>
+<button class="px-space-lg py-2 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md shadow-sm flex items-center gap-1.5" type="submit">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+            Criar &amp; Provisionar
+          </button>
+</div>
+</form>
+</div>
+</div>
+<!-- Toast de Notificação Super Admin -->
+<div class="fixed bottom-6 right-6 z-50 hidden bg-sidebar-surface text-surface-card px-space-md py-space-sm rounded-xl shadow-2xl flex items-center gap-space-sm transition-all transform duration-300" id="toastNotification">
+<div class="w-7 h-7 rounded-lg bg-primary text-on-primary flex items-center justify-center" id="toastIcon">
+<span class="material-symbols-outlined text-[16px]">check</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-surface-card" id="toastTitle">Contexto Alterado</span>
+<span class="font-body-sm text-body-sm text-text-muted" id="toastDesc">Alternando ambiente de tenant...</span>
+</div>
+</div>
+<!-- Inline Script para Ações e Filtros -->
+<script>
+    // Filtro da Tabela
+    function filterTable() {
+      const searchVal = document.getElementById('searchInput').value.toLowerCase();
+      const planVal = document.getElementById('planFilter').value;
+      const statusVal = document.getElementById('statusFilter').value;
+      const rows = document.querySelectorAll('#tableBody tr');
+      let visibleCount = 0;
+
+      rows.forEach(row => {
+        const textContent = row.textContent.toLowerCase();
+        const rowPlan = row.getAttribute('data-plan');
+        const rowStatus = row.getAttribute('data-status');
+
+        const matchesSearch = textContent.includes(searchVal);
+        const matchesPlan = (planVal === 'ALL') || (rowPlan === planVal);
+        const matchesStatus = (statusVal === 'ALL') || (rowStatus === statusVal);
+
+        if (matchesSearch && matchesPlan && matchesStatus) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      const badge = document.getElementById('tenantCountBadge');
+      if (badge) {
+        badge.innerText = `${visibleCount} exibidas`;
+      }
+    }
+
+    // Alternância de Contexto / Impersonação
+    function handleContextSwitch(slug) {
+      const names = {
+        'saolucas': 'Clínica São Lucas - Matriz',
+        'dermacare': 'DermaCare Centro Estético',
+        'cardiovida': 'Instituto CardioVida',
+        'santaclara': 'Hospital Dia Santa Clara',
+        'ccpmed': 'Centro Cirúrgico Paulista',
+        'bastosorto': 'Clínica Bastos Orto',
+        'oftalmocentro': 'OftalmoCentro SP'
+      };
+
+      const selectedName = names[slug] || slug;
+
+      // Atualiza o pill do App Shell se estiver acessível
+      const shellClinicPill = document.querySelector('header span.font-label-md');
+      if (shellClinicPill) {
+        shellClinicPill.innerText = selectedName;
+      }
+
+      showToast('Contexto Alterado', `Agora operando como Super Admin em: ${selectedName}`);
+    }
+
+    // Menus Dropdown
+    function toggleActionMenu(event, menuId) {
+      event.stopPropagation();
+      // Fechar outros menus abertos
+      document.querySelectorAll('[id^="menu-"]').forEach(menu => {
+        if (menu.id !== menuId) menu.classList.add('hidden');
+      });
+      const menu = document.getElementById(menuId);
+      if (menu) menu.classList.toggle('hidden');
+    }
+
+    // Fechar menus ao clicar fora
+    document.addEventListener('click', () => {
+      document.querySelectorAll('[id^="menu-"]').forEach(menu => menu.classList.add('hidden'));
+    });
+
+    // Modais
+    function openNewTenantModal() {
+      document.getElementById('newTenantModal').classList.remove('hidden');
+    }
+
+    function closeNewTenantModal() {
+      document.getElementById('newTenantModal').classList.add('hidden');
+    }
+
+    function handleCreateTenant(e) {
+      e.preventDefault();
+      closeNewTenantModal();
+      showToast('Empresa Criada', 'Nova clínica provisionada com isolamento e banco RLS configurado.');
+    }
+
+    function exportCSVModal() {
+      showToast('Exportação Iniciada', 'Gerando arquivo CSV consolidado de 9 tenants da rede MedCRM...');
+    }
+
+    function editTenantModal(slug, name) {
+      showToast('Edição de Tenant', `Abrindo painel administrativo de parâmetros para ${name} (/admin/empresas/${slug}).`);
+    }
+
+    function manageLicenses(name) {
+      showToast('Gestão de Licenças', `Ajustando cotas e limites de assentos para ${name}.`);
+    }
+
+    function viewAuditLogs(slug) {
+      showToast('Logs de Auditoria', `Carregando registros imutáveis de acesso para tenant: ${slug}`);
+    }
+
+    function suspendTenant(slug) {
+      if (confirm(`Tem certeza que deseja suspender o acesso da organização '${slug}'? Todos os operadores serão deslogados imediatamente.`)) {
+        showToast('Organização Suspensa', `O acesso do tenant ${slug} foi bloqueado temporariamente.`);
+      }
+    }
+
+    // Feedback Toast
+    function showToast(title, desc) {
+      const toast = document.getElementById('toastNotification');
+      const toastTitle = document.getElementById('toastTitle');
+      const toastDesc = document.getElementById('toastDesc');
+      if (!toast) return;
+
+      toastTitle.innerText = title;
+      toastDesc.innerText = desc;
+
+      toast.classList.remove('hidden');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 3500);
+    }
+  </script>
+</div></main></div></body></html>

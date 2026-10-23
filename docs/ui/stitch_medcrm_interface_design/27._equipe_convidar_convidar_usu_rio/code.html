@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"border-focus":"#93C5FD","tertiary-container":"#b85b00","sidebar-surface":"#1E293B","surface-subtle":"#F8FAFC","outline-variant":"#c3c6d6","surface-dim":"#d9d9e3","primary-fixed":"#dae2ff","danger-text":"#DC2626","danger-border":"#FECACA","on-error":"#ffffff","on-primary":"#ffffff","tertiary-fixed-dim":"#ffb787","inverse-primary":"#b1c5ff","secondary-container":"#d7dffd","surface":"#faf8ff","warning-surface":"#FEF3C7","sidebar-surface-active":"#2D3748","error-container":"#ffdad6","surface-tint":"#1157cb","warning-border":"#FDE68A","on-primary-fixed-variant":"#0040a0","surface-bright":"#faf8ff","background":"#faf8ff","on-primary-container":"#fefcff","success-surface":"#D1FAE5","text-secondary":"#64748B","surface-container":"#ededf7","primary-fixed-dim":"#b1c5ff","surface-container-low":"#f3f3fd","secondary-fixed-dim":"#bec6e3","success-text":"#059669","primary":"#0954c9","info-border":"#BFDBFE","inverse-surface":"#2e3038","on-secondary-fixed-variant":"#3e465e","error":"#ba1a1a","info-surface":"#EFF6FF","outline":"#737785","border-subtle":"#E2E8F0","on-secondary-fixed":"#131b30","on-surface-variant":"#434654","on-surface":"#191b22","text-primary":"#0F172A","primary-container":"#366ee3","info-text":"#2563EB","on-secondary":"#ffffff","surface-container-high":"#e7e7f2","on-error-container":"#93000a","on-tertiary-fixed":"#311300","on-background":"#191b22","on-tertiary-container":"#fffbff","tertiary-fixed":"#ffdcc7","on-tertiary":"#ffffff","warning-text":"#D97706","surface-card":"#FFFFFF","inverse-on-surface":"#f0f0fa","tertiary":"#924700","text-muted":"#94A3B8","on-secondary-container":"#5a627b","on-tertiary-fixed-variant":"#723600","secondary":"#565e77","on-primary-fixed":"#001847","secondary-fixed":"#dae2ff","surface-container-lowest":"#ffffff","success-border":"#A7F3D0","background-canvas":"#F4F6FA","surface-container-highest":"#e1e2ec","danger-surface":"#FEE2E2","surface-variant":"#e1e2ec"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"space-lg":"1.25rem","space-xl":"1.75rem","space-xs":"0.25rem","margin":"1.75rem","space-sm":"0.5rem","space-2xl":"2.5rem","gutter-sm":"0.75rem","margin-mobile":"1rem","space-md":"0.875rem","gutter-lg":"1.5rem","gutter":"1.25rem"},"fontFamily":{"body-lg":["Inter"],"display-lg-mobile":["Plus Jakarta Sans"],"label-lg":["Inter"],"metric-stat":["Plus Jakarta Sans"],"body-sm":["Inter"],"headline-md":["Plus Jakarta Sans"],"table-header":["Inter"],"label-sm":["Inter"],"headline-lg":["Plus Jakarta Sans"],"label-md":["Inter"],"body-md":["Inter"],"headline-sm":["Plus Jakarta Sans"],"display-lg":["Plus Jakarta Sans"]},"fontSize":{"body-lg":["15px",{"lineHeight":"22px","fontWeight":"400"}],"display-lg-mobile":["26px",{"lineHeight":"34px","letterSpacing":"-0.01em","fontWeight":"700"}],"label-lg":["13px",{"lineHeight":"18px","fontWeight":"600"}],"metric-stat":["28px",{"lineHeight":"36px","letterSpacing":"-0.02em","fontWeight":"700"}],"body-sm":["12px",{"lineHeight":"16px","fontWeight":"400"}],"headline-md":["20px",{"lineHeight":"28px","fontWeight":"600"}],"table-header":["11px",{"lineHeight":"16px","letterSpacing":"0.05em","fontWeight":"600"}],"label-sm":["11px",{"lineHeight":"14px","letterSpacing":"0.03em","fontWeight":"600"}],"headline-lg":["24px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"600"}],"label-md":["12px",{"lineHeight":"16px","fontWeight":"500"}],"body-md":["13px",{"lineHeight":"20px","fontWeight":"400"}],"headline-sm":["16px",{"lineHeight":"24px","fontWeight":"600"}],"display-lg":["32px",{"lineHeight":"40px","letterSpacing":"-0.02em","fontWeight":"700"}]}}}}</script></head><body class="bg-background-canvas font-body-md text-text-primary antialiased min-h-screen"><aside class="fixed left-0 top-0 h-full w-64 bg-sidebar-surface z-50 flex flex-col justify-between shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex flex-col h-full overflow-hidden"><div class="h-16 flex items-center px-space-lg gap-space-sm bg-sidebar-surface"><div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[20px]">local_hospital</span></div><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-surface-card leading-tight tracking-tight">MedCRM</span><span class="font-label-sm text-label-sm text-text-muted">MedGuia B2B Health</span></div></div><div class="overflow-y-auto flex-1 px-space-sm py-space-sm space-y-space-md"><div class="space-y-space-xs"><span class="px-space-md font-table-header text-table-header text-text-muted uppercase tracking-wider block">Operação</span><nav class="space-y-1" data-active-classes="bg-primary text-on-primary font-label-md rounded-lg shadow-sm"><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="funil-pipeline" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">view_kanban</span><span class="font-label-md text-label-md">Funil Pipeline</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="lista" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">view_list</span><span class="font-label-md text-label-md">Lista</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="arquivados" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">archive</span><span class="font-label-md text-label-md">Arquivados</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="tarefas-do-turno" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">assignment</span><span class="font-label-md text-label-md">Tarefas do Turno</span></div><span class="px-2 py-0.5 rounded-full font-label-sm text-label-sm bg-info-surface text-info-text">12</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="tarefas-atrasadas" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">warning</span><span class="font-label-md text-label-md">Tarefas Atrasadas</span></div><span class="px-2 py-0.5 rounded-full font-label-sm text-label-sm bg-danger-surface text-danger-text">4</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="agenda" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">calendar_today</span><span class="font-label-md text-label-md">Agenda</span></div></a></nav></div><div class="space-y-space-xs"><span class="px-space-md font-table-header text-table-header text-text-muted uppercase tracking-wider block">Comunicação</span><nav class="space-y-1" data-active-classes="bg-primary text-on-primary font-label-md rounded-lg shadow-sm"><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="whatsapp-inbox" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">chat</span><span class="font-label-md text-label-md">WhatsApp Inbox</span></div><span class="px-2 py-0.5 rounded-full font-label-sm text-label-sm bg-success-surface text-success-text">5</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="conexao-qr-code" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">qr_code_2</span><span class="font-label-md text-label-md">Conexão &amp; QR Code</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="configuracao-evolution" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">settings_ethernet</span><span class="font-label-md text-label-md">Configuração Evolution</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="campanhas" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">campaign</span><span class="font-label-md text-label-md">Campanhas</span></div></a></nav></div><div class="space-y-space-xs"><span class="px-space-md font-table-header text-table-header text-text-muted uppercase tracking-wider block">Análises</span><nav class="space-y-1" data-active-classes="bg-primary text-on-primary font-label-md rounded-lg shadow-sm"><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="indicadores" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">query_stats</span><span class="font-label-md text-label-md">Indicadores</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="relatorios" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">analytics</span><span class="font-label-md text-label-md">Relatórios</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="relatorios-comerciais" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">assessment</span><span class="font-label-md text-label-md">Comercial</span></div></a></nav></div><div class="space-y-space-xs"><span class="px-space-md font-table-header text-table-header text-primary-fixed uppercase tracking-wider block">Administração</span><nav class="space-y-1" data-active-classes="bg-primary text-on-primary font-label-md rounded-lg shadow-sm"><a aria-current="page" class="flex items-center justify-between px-space-md py-space-sm transition-colors bg-primary text-on-primary font-label-md rounded-lg shadow-sm" data-path="equipe" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">group</span><span class="font-label-md text-label-md">Equipe</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="motivos-de-perda" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">rule</span><span class="font-label-md text-label-md">Motivos de Perda</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="empresas" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">domain</span><span class="font-label-md text-label-md">Empresas</span></div><span class="px-2 py-0.5 rounded-full font-label-sm text-label-sm bg-warning-surface text-warning-text">Super Admin</span></a></nav></div></div><div class="p-space-md bg-sidebar-surface flex items-center justify-between text-text-muted"><a class="flex items-center gap-space-xs hover:text-surface-card transition-colors" data-path="ajuda-e-suporte" href="#"><span class="material-symbols-outlined text-[16px]">help</span><span class="font-body-sm text-body-sm">Ajuda &amp; Suporte</span></a><span class="font-label-sm text-label-sm text-outline">v2.4.0</span></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface-card/90 backdrop-blur-xl z-40 shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="w-full h-16 px-space-lg flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-sm px-space-md py-space-xs bg-surface-subtle rounded-xl"><div class="w-2 h-2 rounded-full bg-success-text"></div><span class="font-label-md text-label-md text-text-primary font-medium">Clínica São Lucas - Matriz</span><span class="font-label-sm text-label-sm text-success-text bg-success-surface px-1.5 py-0.5 rounded-full font-semibold">Ativo</span><span class="material-symbols-outlined text-text-secondary text-[16px]">expand_more</span></div><div class="flex items-center gap-space-xs px-space-sm py-1 bg-surface-subtle rounded-full"><span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success-text opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-success-text"></span></span><span class="font-label-sm text-label-sm text-text-secondary hidden xl:inline-block">Tempo real conectado</span></div></div><div class="flex-1 max-w-md mx-space-md"><div class="relative flex items-center"><span class="material-symbols-outlined absolute left-space-md text-text-muted text-[18px]">search</span><input class="w-full h-10 pl-10 pr-12 rounded-lg bg-surface-subtle text-text-primary placeholder:text-text-muted font-body-sm text-body-sm focus:outline-none focus:ring-2 focus:ring-border-focus transition-all" placeholder="Buscar usuário, e-mail, papel..." type="text"/><kbd class="absolute right-space-md px-1.5 py-0.5 bg-surface-card text-text-muted font-label-sm text-label-sm rounded shadow-[0_1px_2px_rgba(0,0,0,0.05)]">⌘K</kbd></div></div><div class="flex items-center gap-space-md"><button class="relative p-2 rounded-lg hover:bg-surface-subtle text-text-secondary hover:text-text-primary transition-colors"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-1.5 right-1.5 w-4 h-4 bg-danger-text text-on-error font-label-sm text-[10px] leading-4 flex items-center justify-center rounded-full font-bold">1</span></button><div class="flex items-center gap-space-sm pl-space-sm"><div class="flex flex-col text-right hidden sm:flex"><div class="flex items-center justify-end gap-1"><span class="font-label-md text-label-md text-text-primary font-semibold">Dr. Roberto Mendes</span><span class="px-1.5 py-0.2 rounded font-label-sm text-[10px] bg-primary-fixed text-on-primary-fixed-variant font-bold uppercase tracking-wider">Master</span></div><span class="font-body-sm text-body-sm text-text-muted">roberto.mendes@medguia.com.br</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></div></header><main class="w-full pt-16 bg-background-canvas min-h-[calc(100vh-4rem)] p-margin"><div class="flex flex-col w-full">
+<!-- Top Navigation & Breadcrumb -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm mb-space-md">
+<div class="flex items-center gap-space-xs text-text-muted font-label-sm text-label-sm tracking-wide uppercase">
+<span>Administração</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<a class="hover:text-primary transition-colors" data-path="equipe" href="#">Equipe</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-primary font-semibold">/equipe/convidar</span>
+</div>
+<a class="inline-flex items-center gap-1.5 text-text-secondary hover:text-primary transition-colors font-label-md text-label-md self-start sm:self-auto group" data-path="equipe" href="#">
+<span class="material-symbols-outlined text-[18px] group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
+<span>Voltar para Gestão da Equipe</span>
+</a>
+</div>
+<!-- Page Header Banner -->
+<div class="bg-surface-card rounded-2xl p-space-lg shadow-sm mb-space-xl flex flex-col lg:flex-row lg:items-center justify-between gap-space-lg relative overflow-hidden">
+<div class="absolute -right-12 -top-12 w-64 h-64 bg-primary-fixed/30 rounded-full blur-3xl pointer-events-none"></div>
+<div class="space-y-space-xs relative z-10 max-w-2xl">
+<div class="inline-flex items-center gap-space-xs px-2.5 py-1 rounded-full bg-info-surface text-info-text font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[15px]">person_add</span>
+<span>Provisionamento Clínico US-015</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-text-primary tracking-tight">
+        Convidar Novo Usuário para a Equipe
+      </h1>
+<p class="font-body-md text-body-md text-text-secondary">
+        Envie um link de convite com validade de 48 horas para habilitar o acesso com perfil e permissões pré-configurados no ambiente da matriz.
+      </p>
+</div>
+<div class="flex items-center gap-space-sm relative z-10 shrink-0">
+<button class="px-space-lg py-2.5 rounded-lg bg-surface-subtle hover:bg-surface-container-high text-text-primary font-label-md text-label-md transition-colors shadow-sm" type="button">
+        Cancelar
+      </button>
+<button class="inline-flex items-center gap-space-xs px-space-lg py-2.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md transition-all shadow-md active:scale-98" id="btn-submit-header" type="button">
+<span class="material-symbols-outlined text-[18px]">send</span>
+<span>Enviar Convite por E-mail</span>
+</button>
+</div>
+</div>
+<!-- 2-Column Content Layout (7 / 5 Grid) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-start">
+<!-- LEFT COLUMN: Structured Form (7 Cols) -->
+<div class="lg:col-span-7 space-y-space-lg">
+<!-- Form Section 1: Dados do Colaborador -->
+<div class="bg-surface-card rounded-2xl p-space-lg shadow-sm">
+<div class="flex items-center gap-space-sm mb-space-lg">
+<div class="w-9 h-9 rounded-xl bg-info-surface text-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]">badge</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-text-primary">1. Dados Cadastrais do Colaborador</h2>
+<p class="font-body-sm text-body-sm text-text-muted">Informações principais para identificação em auditorias clínicas.</p>
+</div>
+</div>
+<div class="space-y-space-md">
+<!-- Nome Completo -->
+<div class="space-y-1.5">
+<label class="block font-label-md text-label-md text-text-primary">
+              Nome Completo <span class="text-danger-text">*</span>
+</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[18px]">person</span>
+<input class="w-full h-10 pl-10 pr-3 rounded-lg bg-surface-subtle text-text-primary placeholder:text-text-muted font-body-sm text-body-sm focus:outline-none focus:bg-surface-card focus:ring-2 focus:ring-border-focus transition-all" id="input-name" placeholder="Ex: Dra. Mariana Vasconcelos" type="text" value="Dra. Mariana Vasconcelos"/>
+</div>
+</div>
+<!-- Email Corporativo -->
+<div class="space-y-1.5">
+<label class="block font-label-md text-label-md text-text-primary">
+              E-mail Corporativo <span class="text-danger-text">*</span>
+</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[18px]">mail</span>
+<input class="w-full h-10 pl-10 pr-3 rounded-lg bg-surface-subtle text-text-primary placeholder:text-text-muted font-body-sm text-body-sm focus:outline-none focus:bg-surface-card focus:ring-2 focus:ring-border-focus transition-all" id="input-email" placeholder="mariana.vasconcelos@saolucas.med.br" type="email" value="mariana.vasconcelos@saolucas.med.br"/>
+</div>
+<p class="font-body-sm text-body-sm text-text-muted flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-info-text">verified_user</span>
+              O convite será enviado para este endereço com link criptografado único.
+            </p>
+</div>
+<!-- Telefone & Squad Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
+<div class="space-y-1.5">
+<label class="block font-label-md text-label-md text-text-primary">
+                WhatsApp Corporativo
+              </label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[18px]">call</span>
+<input class="w-full h-10 pl-10 pr-3 rounded-lg bg-surface-subtle text-text-primary placeholder:text-text-muted font-body-sm text-body-sm focus:outline-none focus:bg-surface-card focus:ring-2 focus:ring-border-focus transition-all" id="input-phone" placeholder="+55 (11) 98765-4321" type="text" value="+55 (11) 98765-4321"/>
+</div>
+<p class="font-body-sm text-[11px] text-text-muted">Notificações e 2FA via SMS/WhatsApp.</p>
+</div>
+<div class="space-y-1.5">
+<label class="block font-label-md text-label-md text-text-primary">
+                Departamento / Squad
+              </label>
+<div class="relative">
+<select class="w-full h-10 pl-3 pr-8 rounded-lg bg-surface-subtle text-text-primary font-body-sm text-body-sm focus:outline-none focus:bg-surface-card focus:ring-2 focus:ring-border-focus transition-all appearance-none cursor-pointer">
+<option selected="">Vendas Closer B2B</option>
+<option>SDR &amp; Pré-Vendas</option>
+<option>Operações e CS</option>
+<option>Diretoria Médica</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-text-secondary pointer-events-none text-[18px]">expand_more</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Form Section 2: Definição de Papel e Permissões (US-015) -->
+<div class="bg-surface-card rounded-2xl p-space-lg shadow-sm">
+<div class="flex items-center justify-between mb-space-md">
+<div class="flex items-center gap-space-sm">
+<div class="w-9 h-9 rounded-xl bg-primary-fixed text-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]">admin_panel_settings</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-text-primary">2. Definição de Papel e Permissões (US-015)</h2>
+<p class="font-body-sm text-body-sm text-text-muted">Determina o escopo de atuação, limites de exportação e fluxos de atendimento.</p>
+</div>
+</div>
+<span class="px-2 py-1 rounded-full font-label-sm text-label-sm bg-surface-subtle text-text-secondary">Obrigatório</span>
+</div>
+<!-- Role Selector Radios -->
+<div class="space-y-space-sm" id="role-selection-group">
+<!-- ATENDENTE (Default Checked) -->
+<label class="role-card relative flex items-start p-space-md rounded-xl bg-info-surface/60 hover:bg-info-surface cursor-pointer transition-all transition-shadow">
+<input checked="" class="mt-1 text-primary focus:ring-primary focus:ring-offset-0 shrink-0 w-4 h-4 cursor-pointer" name="user_role" type="radio" value="atendente"/>
+<div class="ml-space-md flex-1">
+<div class="flex flex-wrap items-center justify-between gap-2 mb-1">
+<span class="font-headline-sm text-headline-sm text-text-primary font-bold">ATENDENTE</span>
+<span class="px-2.5 py-0.5 rounded-full font-label-sm text-label-sm bg-info-surface text-info-text font-semibold">Operação Comercial</span>
+</div>
+<p class="font-body-sm text-body-sm text-text-secondary leading-relaxed">
+                Acesso ao funil de pipeline, execução da régua de 18 toques, tarefas do turno e conversas no WhatsApp dos seus próprios leads.
+              </p>
+</div>
+</label>
+<!-- GERENTE -->
+<label class="role-card relative flex items-start p-space-md rounded-xl bg-surface-subtle hover:bg-surface-container-high/40 cursor-pointer transition-all">
+<input class="mt-1 text-primary focus:ring-primary focus:ring-offset-0 shrink-0 w-4 h-4 cursor-pointer" name="user_role" type="radio" value="gerente"/>
+<div class="ml-space-md flex-1">
+<div class="flex flex-wrap items-center justify-between gap-2 mb-1">
+<span class="font-headline-sm text-headline-sm text-text-primary font-bold">GERENTE</span>
+<span class="px-2.5 py-0.5 rounded-full font-label-sm text-label-sm bg-warning-surface text-warning-text font-semibold">Gestão e Liderança</span>
+</div>
+<p class="font-body-sm text-body-sm text-text-secondary leading-relaxed">
+                Acesso total à operação, indicadores do funil, relatórios de tráfego e vendas, redistribuição de leads e visualização de metas da equipe.
+              </p>
+</div>
+</label>
+<!-- MASTER -->
+<label class="role-card relative flex items-start p-space-md rounded-xl bg-surface-subtle hover:bg-surface-container-high/40 cursor-pointer transition-all">
+<input class="mt-1 text-primary focus:ring-primary focus:ring-offset-0 shrink-0 w-4 h-4 cursor-pointer" name="user_role" type="radio" value="master"/>
+<div class="ml-space-md flex-1">
+<div class="flex flex-wrap items-center justify-between gap-2 mb-1">
+<span class="font-headline-sm text-headline-sm text-text-primary font-bold">MASTER</span>
+<span class="px-2.5 py-0.5 rounded-full font-label-sm text-label-sm bg-primary-fixed text-on-primary-fixed-variant font-semibold">Administrador Geral</span>
+</div>
+<p class="font-body-sm text-body-sm text-text-secondary leading-relaxed">
+                Acesso irrestrito a todas as áreas, exportações ilimitadas, convite de novos usuários, conexões WhatsApp Evolution e integrações de API.
+              </p>
+</div>
+</label>
+</div>
+</div>
+<!-- Form Section 3: Parâmetros de Acesso e Segurança -->
+<div class="bg-surface-card rounded-2xl p-space-lg shadow-sm">
+<div class="flex items-center gap-space-sm mb-space-lg">
+<div class="w-9 h-9 rounded-xl bg-success-surface text-success-text flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]">security</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-text-primary">3. Parâmetros de Acesso e Automação</h2>
+<p class="font-body-sm text-body-sm text-text-muted">Requisitos de entrada, validade da chave temporária e boas-vindas.</p>
+</div>
+</div>
+<div class="space-y-space-md">
+<!-- Checkboxes Security Policy -->
+<div class="space-y-space-sm bg-surface-subtle p-space-md rounded-xl">
+<label class="flex items-start gap-space-sm cursor-pointer group">
+<input checked="" class="mt-0.5 rounded text-primary focus:ring-primary h-4 w-4 shrink-0 cursor-pointer" type="checkbox"/>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-text-primary group-hover:text-primary transition-colors">
+                  Exigir autenticação em duas etapas (2FA) no primeiro acesso
+                </span>
+<span class="font-body-sm text-body-sm text-text-muted">Recomendado para conformidade médica HIPAA / LGPD.</span>
+</div>
+</label>
+<label class="flex items-start gap-space-sm cursor-pointer group">
+<input class="mt-0.5 rounded text-primary focus:ring-primary h-4 w-4 shrink-0 cursor-pointer" type="checkbox"/>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-text-primary group-hover:text-primary transition-colors">
+                  Atribuir automaticamente leads não distribuídos da esteira Inbound
+                </span>
+<span class="font-body-sm text-body-sm text-text-muted">O corretor/médico entra no round-robin de triagem imediatamente ao ativar a conta.</span>
+</div>
+</label>
+</div>
+<!-- Token Validity Selector -->
+<div class="space-y-1.5">
+<label class="block font-label-md text-label-md text-text-primary">
+              Validade do Token de Convite
+            </label>
+<div class="relative">
+<select class="w-full h-10 pl-3 pr-8 rounded-lg bg-surface-subtle text-text-primary font-body-sm text-body-sm focus:outline-none focus:bg-surface-card focus:ring-2 focus:ring-border-focus transition-all appearance-none cursor-pointer">
+<option selected="">48 horas (Padrão de Segurança Recomendado)</option>
+<option>24 horas (Acesso Urgente)</option>
+<option>72 horas (Fins de semana e plantões)</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-text-secondary pointer-events-none text-[18px]">expand_more</span>
+</div>
+</div>
+<!-- Mensagem Personalizada -->
+<div class="space-y-1.5">
+<div class="flex items-center justify-between">
+<label class="block font-label-md text-label-md text-text-primary">
+                Mensagem Personalizada de Boas-Vindas <span class="text-text-muted font-normal">(opcional)</span>
+</label>
+<span class="font-label-sm text-label-sm text-text-muted">Disparado no e-mail</span>
+</div>
+<textarea class="w-full p-3 rounded-lg bg-surface-subtle text-text-primary placeholder:text-text-muted font-body-sm text-body-sm focus:outline-none focus:bg-surface-card focus:ring-2 focus:ring-border-focus transition-all" rows="3">Olá! Você foi convidado para integrar o time comercial do MedCRM da Clínica São Lucas. Clique no link para criar sua senha e iniciar seus atendimentos.</textarea>
+</div>
+</div>
+</div>
+</div>
+<!-- RIGHT COLUMN: Live Role Preview & Permission Matrix (5 Cols) -->
+<div class="lg:col-span-5 space-y-space-lg lg:sticky lg:top-20">
+<!-- Card 1: Live Card Preview -->
+<div class="bg-surface-card rounded-2xl p-space-lg shadow-sm overflow-hidden relative">
+<div class="flex items-center justify-between mb-space-md">
+<div class="flex items-center gap-1.5 text-text-secondary font-label-md text-label-md uppercase tracking-wider">
+<span class="material-symbols-outlined text-[16px] text-primary">visibility</span>
+<span>Prévia do Card de Usuário</span>
+</div>
+<span class="px-2 py-0.5 rounded-full font-label-sm text-label-sm bg-warning-surface text-warning-text font-medium flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-warning-text animate-pulse"></span>
+            Pendente
+          </span>
+</div>
+<!-- Simulated CRM User Card -->
+<div class="bg-surface-subtle rounded-xl p-space-md space-y-space-md">
+<div class="flex items-center gap-space-md">
+<div class="w-12 h-12 rounded-2xl bg-primary text-on-primary font-headline-md text-headline-md flex items-center justify-center shrink-0 shadow-sm" id="preview-avatar">
+              MV
+            </div>
+<div class="flex-1 min-w-0">
+<h3 class="font-headline-sm text-headline-sm text-text-primary truncate" id="preview-name">
+                Dra. Mariana Vasconcelos
+              </h3>
+<p class="font-body-sm text-body-sm text-text-secondary truncate" id="preview-email">
+                mariana.vasconcelos@saolucas.med.br
+              </p>
+</div>
+</div>
+<div class="pt-space-xs flex flex-wrap items-center gap-2">
+<span class="px-2.5 py-0.5 rounded-full font-label-sm text-label-sm bg-info-surface text-info-text font-semibold inline-flex items-center gap-1" id="preview-role-badge">
+<span class="material-symbols-outlined text-[14px]">support_agent</span>
+              ATENDENTE
+            </span>
+<span class="px-2.5 py-0.5 rounded-full font-label-sm text-label-sm bg-surface-card text-text-secondary shadow-sm inline-flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-success-text">domain</span>
+              Clínica São Lucas - Matriz
+            </span>
+</div>
+<div class="bg-surface-card p-space-sm rounded-lg flex items-center justify-between font-label-sm text-label-sm">
+<span class="text-text-muted flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">timer</span>
+              Expiração do token
+            </span>
+<span class="text-text-primary font-semibold">48h após envio</span>
+</div>
+</div>
+</div>
+<!-- Card 2: Permission Matrix -->
+<div class="bg-surface-card rounded-2xl p-space-lg shadow-sm">
+<div class="flex items-center justify-between mb-space-md">
+<h3 class="font-headline-sm text-headline-sm text-text-primary flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-primary">rule</span>
+            Matriz de Acessos Específica
+          </h3>
+<span class="font-label-sm text-label-sm text-primary font-bold" id="matrix-role-label">ATENDENTE</span>
+</div>
+<div class="space-y-space-md">
+<!-- Active Permissions -->
+<div class="space-y-2">
+<div class="font-table-header text-table-header text-success-text uppercase tracking-wider flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+              Acessos Permitidos
+            </div>
+<ul class="space-y-2 font-body-sm text-body-sm text-text-primary" id="active-permissions-list">
+<li class="flex items-start gap-2 bg-success-surface/40 p-2 rounded-lg">
+<span class="material-symbols-outlined text-success-text text-[16px] shrink-0 mt-0.5">check</span>
+<span>Pipeline e visualização de cards atribuídos</span>
+</li>
+<li class="flex items-start gap-2 bg-success-surface/40 p-2 rounded-lg">
+<span class="material-symbols-outlined text-success-text text-[16px] shrink-0 mt-0.5">check</span>
+<span>Execução de fila de tarefas e cadência de 18 toques</span>
+</li>
+<li class="flex items-start gap-2 bg-success-surface/40 p-2 rounded-lg">
+<span class="material-symbols-outlined text-success-text text-[16px] shrink-0 mt-0.5">check</span>
+<span>Envio e recebimento de mensagens no WhatsApp Inbox</span>
+</li>
+<li class="flex items-start gap-2 bg-success-surface/40 p-2 rounded-lg">
+<span class="material-symbols-outlined text-success-text text-[16px] shrink-0 mt-0.5">check</span>
+<span>Anexar prints e evidências de fechamento</span>
+</li>
+<li class="flex items-start gap-2 bg-success-surface/40 p-2 rounded-lg">
+<span class="material-symbols-outlined text-success-text text-[16px] shrink-0 mt-0.5">check</span>
+<span>Acesso ao calendário de reuniões (/agenda)</span>
+</li>
+</ul>
+</div>
+<!-- Restricted Permissions -->
+<div class="space-y-2 pt-space-xs">
+<div class="font-table-header text-table-header text-text-muted uppercase tracking-wider flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-danger-text">block</span>
+              Acessos Bloqueados
+            </div>
+<ul class="space-y-1.5 font-body-sm text-body-sm text-text-muted" id="restricted-permissions-list">
+<li class="flex items-start gap-2 bg-surface-subtle p-2 rounded-lg line-through">
+<span class="material-symbols-outlined text-danger-text text-[16px] shrink-0 mt-0.5">close</span>
+<span>Acesso a relatórios financeiros e de tráfego (/relatorios)</span>
+</li>
+<li class="flex items-start gap-2 bg-surface-subtle p-2 rounded-lg line-through">
+<span class="material-symbols-outlined text-danger-text text-[16px] shrink-0 mt-0.5">close</span>
+<span>Configuração de instâncias e webhooks Evolution</span>
+</li>
+<li class="flex items-start gap-2 bg-surface-subtle p-2 rounded-lg line-through">
+<span class="material-symbols-outlined text-danger-text text-[16px] shrink-0 mt-0.5">close</span>
+<span>Convidar ou desativar colaboradores</span>
+</li>
+<li class="flex items-start gap-2 bg-surface-subtle p-2 rounded-lg line-through">
+<span class="material-symbols-outlined text-danger-text text-[16px] shrink-0 mt-0.5">close</span>
+<span>Acesso a configurações de empresas (Multiempresa)</span>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<!-- Card 3: Garantias de Governança Médica -->
+<div class="bg-surface-subtle rounded-2xl p-space-md shadow-sm flex items-start gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[20px] shrink-0 mt-0.5">shield</span>
+<div class="space-y-1">
+<h4 class="font-label-md text-label-md text-text-primary font-bold">Garantias de Governança Médica (US-016)</h4>
+<p class="font-body-sm text-[11px] text-text-secondary leading-normal">
+            O usuário receberá instruções para criar uma senha forte (mínimo 8 dígitos, maiúscula, número e caractere especial conforme US-016). Após 5 tentativas incorretas, o login será bloqueado temporariamente por 15 minutos.
+          </p>
+</div>
+</div>
+</div>
+</div>
+<!-- Sticky Bottom Global Action Bar -->
+<div class="mt-space-xl bg-surface-card rounded-2xl p-space-md sm:p-space-lg shadow-md flex flex-col md:flex-row items-center justify-between gap-space-md">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-info-surface text-info-text flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-text-primary">
+          Dúvidas sobre licenciamento da equipe?
+        </p>
+<p class="font-body-sm text-body-sm text-text-muted">
+          Restam <span class="font-semibold text-primary">8 licenças ativas</span> disponíveis no contrato da Clínica São Lucas.
+        </p>
+</div>
+</div>
+<div class="flex items-center gap-space-sm w-full md:w-auto justify-end">
+<button class="px-space-lg py-2.5 rounded-lg bg-surface-subtle hover:bg-surface-container-high text-text-primary font-label-md text-label-md transition-colors shadow-sm" type="button">
+        Cancelar
+      </button>
+<button class="inline-flex items-center gap-space-xs px-space-lg py-2.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md transition-all shadow-md active:scale-98" id="btn-submit-footer" type="button">
+<span class="material-symbols-outlined text-[18px]">forward_to_inbox</span>
+<span>Enviar Convite por E-mail (US-015)</span>
+</button>
+</div>
+</div>
+<!-- Interactive JavaScript for Live Matrix Preview & Inputs Sync -->
+<script>
+    (function() {
+      const nameInput = document.getElementById('input-name');
+      const emailInput = document.getElementById('input-email');
+      const previewName = document.getElementById('preview-name');
+      const previewEmail = document.getElementById('preview-email');
+      const previewAvatar = document.getElementById('preview-avatar');
+      const previewRoleBadge = document.getElementById('preview-role-badge');
+      const matrixRoleLabel = document.getElementById('matrix-role-label');
+      const activeList = document.getElementById('active-permissions-list');
+      const restrictedList = document.getElementById('restricted-permissions-list');
+      const roleRadios = document.querySelectorAll('input[name="user_role"]');
+
+      // Sync name & avatar initials
+      if (nameInput && previewName && previewAvatar) {
+        nameInput.addEventListener('input', (e) => {
+          const val = e.target.value.trim();
+          previewName.textContent = val || 'Novo Colaborador';
+          
+          if (!val) {
+            previewAvatar.textContent = '--';
+            return;
+          }
+          const parts = val.replace(/^(Dr\.|Dra\.|Prof\.|Enf\.)\s+/i, '').split(' ');
+          if (parts.length >= 2) {
+            previewAvatar.textContent = (parts[0][0] + parts[1][0]).toUpperCase();
+          } else if (parts.length === 1 && parts[0].length > 0) {
+            previewAvatar.textContent = parts[0].substring(0, 2).toUpperCase();
+          } else {
+            previewAvatar.textContent = 'US';
+          }
+        });
+      }
+
+      // Sync email
+      if (emailInput && previewEmail) {
+        emailInput.addEventListener('input', (e) => {
+          previewEmail.textContent = e.target.value.trim() || 'email@empresa.med.br';
+        });
+      }
+
+      // Role Definitions & Matrix Data
+      const roleData = {
+        atendente: {
+          badgeText: 'ATENDENTE (Operação Comercial)',
+          badgeClass: 'bg-info-surface text-info-text',
+          badgeIcon: 'support_agent',
+          matrixTitle: 'ATENDENTE',
+          allowed: [
+            'Pipeline e visualização de cards atribuídos',
+            'Execução de fila de tarefas e cadência de 18 toques',
+            'Envio e recebimento de mensagens no WhatsApp Inbox',
+            'Anexar prints e evidências de fechamento',
+            'Acesso ao calendário de reuniões (/agenda)'
+          ],
+          restricted: [
+            'Acesso a relatórios financeiros e de tráfego (/relatorios)',
+            'Configuração de instâncias e webhooks Evolution',
+            'Convidar ou desativar colaboradores',
+            'Acesso a configurações de empresas (Multiempresa)'
+          ]
+        },
+        gerente: {
+          badgeText: 'GERENTE (Gestão e Liderança)',
+          badgeClass: 'bg-warning-surface text-warning-text',
+          badgeIcon: 'supervisor_account',
+          matrixTitle: 'GERENTE',
+          allowed: [
+            'Pipeline integral e visualização de toda a equipe',
+            'Redistribuição dinâmica de leads e troca de responsável',
+            'Acesso completo a relatórios comerciais e conversão de tráfego',
+            'Visualização e ajuste de metas do time comercial',
+            'Gestão de motivos de perda e auditoria de conversas WhatsApp'
+          ],
+          restricted: [
+            'Configuração técnica de instâncias Evolution e tokens de API',
+            'Desativação de administradores Master',
+            'Acesso a dados de faturamento global multiempresa'
+          ]
+        },
+        master: {
+          badgeText: 'MASTER (Administrador Geral)',
+          badgeClass: 'bg-primary-fixed text-on-primary-fixed-variant',
+          badgeIcon: 'admin_panel_settings',
+          matrixTitle: 'MASTER',
+          allowed: [
+            'Acesso irrestrito a todos os pipelines e clínicas filiais',
+            'Exportação irrestrita de base de dados e relatórios em CSV/XLS',
+            'Configuração de instâncias WhatsApp Evolution e Webhooks',
+            'Convidar, promover e revogar credenciais de usuários',
+            'Gerenciamento Multiempresa, auditoria de 2FA e logs US-016'
+          ],
+          restricted: []
+        }
+      };
+
+      // Handle Role Change
+      roleRadios.forEach(radio => {
+        radio.addEventListener('change', (e) => {
+          const selected = e.target.value;
+          const conf = roleData[selected];
+          if (!conf) return;
+
+          // Update Preview Badge
+          previewRoleBadge.className = `px-2.5 py-0.5 rounded-full font-label-sm text-label-sm font-semibold inline-flex items-center gap-1 ${conf.badgeClass}`;
+          previewRoleBadge.innerHTML = `<span class="material-symbols-outlined text-[14px]">${conf.badgeIcon}</span> ${conf.badgeText}`;
+
+          // Update Matrix Title
+          matrixRoleLabel.textContent = conf.matrixTitle;
+
+          // Render Allowed
+          activeList.innerHTML = conf.allowed.map(item => `
+            <li class="flex items-start gap-2 bg-success-surface/40 p-2 rounded-lg transition-all animate-fadeIn">
+              <span class="material-symbols-outlined text-success-text text-[16px] shrink-0 mt-0.5">check</span>
+              <span>${item}</span>
+            </li>
+          `).join('');
+
+          // Render Restricted
+          if (conf.restricted.length === 0) {
+            restrictedList.innerHTML = `
+              <li class="flex items-center gap-2 bg-surface-subtle p-2 rounded-lg text-success-text font-label-sm">
+                <span class="material-symbols-outlined text-[16px]">verified</span>
+                <span>Nenhuma restrição aplicada. Perfil com acesso irrestrito.</span>
+              </li>
+            `;
+          } else {
+            restrictedList.innerHTML = conf.restricted.map(item => `
+              <li class="flex items-start gap-2 bg-surface-subtle p-2 rounded-lg line-through text-text-muted transition-all">
+                <span class="material-symbols-outlined text-danger-text text-[16px] shrink-0 mt-0.5">close</span>
+                <span>${item}</span>
+              </li>
+            `).join('');
+          }
+
+          // Visual highlight on selected card
+          document.querySelectorAll('.role-card').forEach(card => {
+            card.classList.remove('bg-info-surface/60', 'bg-info-surface');
+            card.classList.add('bg-surface-subtle');
+          });
+          const parentCard = e.target.closest('.role-card');
+          if (parentCard) {
+            parentCard.classList.remove('bg-surface-subtle');
+            parentCard.classList.add('bg-info-surface/60');
+          }
+        });
+      });
+
+      // Submit feedback simulation
+      const submitButtons = [document.getElementById('btn-submit-header'), document.getElementById('btn-submit-footer')];
+      submitButtons.forEach(btn => {
+        if (!btn) return;
+        btn.addEventListener('click', () => {
+          btn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">progress_activity</span><span>Enviando Convite...</span>';
+          btn.disabled = true;
+          setTimeout(() => {
+            btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">check_circle</span><span>Convite Enviado!</span>';
+            btn.classList.remove('bg-primary');
+            btn.classList.add('bg-success-text');
+            setTimeout(() => {
+              window.location.hash = '#equipe';
+            }, 1200);
+          }, 1000);
+        });
+      });
+
+    })();
+  </script>
+</div></main></div></body></html>
