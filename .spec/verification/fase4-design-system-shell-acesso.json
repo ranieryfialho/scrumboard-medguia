@@ -1,0 +1,112 @@
+{
+  "feature": "fase4-design-system-shell-acesso",
+  "timestamp": "2026-10-23T18:06:16.935Z",
+  "gitRev": "e6635ab",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
+  "reporter": "vitest-json",
+  "exitCode": 1,
+  "testsParsed": 1042,
+  "results": {
+    "AC-345": {
+      "status": "pass",
+      "testName": "T-140: tokens de tema do protótipo (AC-345) bg-primary resolve para a cor primária do protótipo (#0954c9) @spec:AC-345 bg-primary resolve para a cor primária do protótipo (#0954c9) @spec:AC-345",
+      "method": "vitest-json"
+    },
+    "AC-346": {
+      "status": "pass",
+      "testName": "T-140: fontes e ícones do protótipo (AC-346) Plus Jakarta Sans e Inter são carregadas por next/font/google @spec:AC-346 Plus Jakarta Sans e Inter são carregadas por next/font/google @spec:AC-346",
+      "method": "vitest-json"
+    },
+    "AC-353": {
+      "status": "pass",
+      "testName": "T-144: rotas HTTP de autenticação, /api/me e empresa ativa AC-353: só o super admin vê e usa o seletor de empresa MASTER não recebe a lista de empresas em /api/me @spec:AC-353 MASTER não recebe a lista de empresas em /api/me @spec:AC-353",
+      "method": "vitest-json"
+    },
+    "AC-357": {
+      "status": "pass",
+      "testName": "T-144: rotas HTTP de autenticação, /api/me e empresa ativa AC-357: sair encerra a sessão após \"Sair\", a linha de sessoes é apagada e a sessão antiga não mostra mais dados da empresa @spec:AC-357 após \"Sair\", a linha de sessoes é apagada e a sessão antiga não mostra mais dados da empresa @spec:AC-357",
+      "method": "vitest-json"
+    },
+    "AC-364": {
+      "status": "pass",
+      "testName": "T-145: APIs das telas públicas: esqueci, redefinir e convite AC-364/AC-365: esqueci-senha e-mail cadastrado e ativo: responde igual ao de e-mail inexistente e envia o e-mail de verdade @spec:AC-364 @spec:AC-365 e-mail cadastrado e ativo: responde igual ao de e-mail inexistente e envia o e-mail de verdade @spec:AC-364 @spec:AC-365",
+      "method": "vitest-json"
+    },
+    "AC-365": {
+      "status": "pass",
+      "testName": "T-145: APIs das telas públicas: esqueci, redefinir e convite AC-364/AC-365: esqueci-senha e-mail cadastrado e ativo: responde igual ao de e-mail inexistente e envia o e-mail de verdade @spec:AC-364 @spec:AC-365 e-mail cadastrado e ativo: responde igual ao de e-mail inexistente e envia o e-mail de verdade @spec:AC-364 @spec:AC-365",
+      "method": "vitest-json"
+    },
+    "AC-369": {
+      "status": "pass",
+      "testName": "T-145: APIs das telas públicas: esqueci, redefinir e convite AC-369/AC-370: redefinir-senha token válido e senha dentro da política trocam a senha, revogam sessões antigas e já entram no sistema @spec:AC-369 token válido e senha dentro da política trocam a senha, revogam sessões antigas e já entram no sistema @spec:AC-369",
+      "method": "vitest-json"
+    },
+    "AC-370": {
+      "status": "pass",
+      "testName": "T-145: APIs das telas públicas: esqueci, redefinir e convite AC-369/AC-370: redefinir-senha token expirado: TOKEN_INVALIDO sem pedir senha, e abrir a página não consome o token @spec:AC-370 token expirado: TOKEN_INVALIDO sem pedir senha, e abrir a página não consome o token @spec:AC-370",
+      "method": "vitest-json"
+    },
+    "AC-371": {
+      "status": "pass",
+      "testName": "T-145: APIs das telas públicas: esqueci, redefinir e convite AC-371/AC-373/AC-374: convite convite válido mostra para quem é: empresa, papel e e-mail @spec:AC-371 convite válido mostra para quem é: empresa, papel e e-mail @spec:AC-371",
+      "method": "vitest-json"
+    },
+    "AC-373": {
+      "status": "pass",
+      "testName": "T-145: APIs das telas públicas: esqueci, redefinir e convite AC-371/AC-373/AC-374: convite ativar com nome e senha válidos consome o convite, grava o nome e já entra no sistema @spec:AC-373 ativar com nome e senha válidos consome o convite, grava o nome e já entra no sistema @spec:AC-373",
+      "method": "vitest-json"
+    },
+    "AC-374": {
+      "status": "pass",
+      "testName": "T-145: APIs das telas públicas: esqueci, redefinir e convite AC-371/AC-373/AC-374: convite convite inexistente, expirado ou já utilizado mostra o erro sem vazar empresa, nome ou e-mail @spec:AC-374 convite inexistente, expirado ou já utilizado mostra o erro sem vazar empresa, nome ou e-mail @spec:AC-374",
+      "method": "vitest-json"
+    },
+    "AC-378": {
+      "status": "pass",
+      "testName": "T-144: rotas HTTP de autenticação, /api/me e empresa ativa AC-378: as rotas do Better Auth atendem pelo navegador POST /api/auth/sign-in/email cria a sessão e devolve cookie HttpOnly/Secure/SameSite=Lax @spec:AC-378 POST /api/auth/sign-in/email cria a sessão e devolve cookie HttpOnly/Secure/SameSite=Lax @spec:AC-378",
+      "method": "vitest-json"
+    },
+    "AC-379": {
+      "status": "pass",
+      "testName": "T-143: middleware do Better Auth, permissões por rota e raiz AC-379: sem sessão, páginas vão para o login e APIs respondem 401 página protegida sem cookie redireciona para /login preservando o destino @spec:AC-379 página protegida sem cookie redireciona para /login preservando o destino @spec:AC-379",
+      "method": "vitest-json"
+    },
+    "AC-380": {
+      "status": "pass",
+      "testName": "T-143: middleware do Better Auth, permissões por rota e raiz AC-380: o que precisa ser público continua público http://localhost/login passa sem sessão, sem redirecionar nem bloquear @spec:AC-380 http://localhost/login passa sem sessão, sem redirecionar nem bloquear @spec:AC-380",
+      "method": "vitest-json"
+    },
+    "AC-381": {
+      "status": "pass",
+      "testName": "T-143: middleware do Better Auth, permissões por rota e raiz AC-381: papel sem permissão vai para a tela de sem acesso ATENDENTE logado é redirecionado de /indicadores para /sem-acesso @spec:AC-381 ATENDENTE logado é redirecionado de /indicadores para /sem-acesso @spec:AC-381",
+      "method": "vitest-json"
+    },
+    "AC-382": {
+      "status": "pass",
+      "testName": "T-143: middleware do Better Auth, permissões por rota e raiz AC-382: a raiz leva ao lugar certo visitante sem sessão em / vai para /login @spec:AC-382 visitante sem sessão em / vai para /login @spec:AC-382",
+      "method": "vitest-json"
+    },
+    "AC-383": {
+      "status": "pass",
+      "testName": "T-144: rotas HTTP de autenticação, /api/me e empresa ativa AC-383: /api/me entrega o necessário para a casca sem sessão: 401 @spec:AC-383 sem sessão: 401 @spec:AC-383",
+      "method": "vitest-json"
+    },
+    "AC-384": {
+      "status": "pass",
+      "testName": "T-143: middleware do Better Auth, permissões por rota e raiz AC-384: o middleware já não consulta o Supabase decide pela sessão do Better Auth sem NEXT_PUBLIC_SUPABASE_URL definida @spec:AC-384 decide pela sessão do Better Auth sem NEXT_PUBLIC_SUPABASE_URL definida @spec:AC-384",
+      "method": "vitest-json"
+    },
+    "AC-385": {
+      "status": "pass",
+      "testName": "T-141: política de senha única AC-385: o servidor recusa senha fora da política senha com menos de 8 caracteres é recusada @spec:AC-385 senha com menos de 8 caracteres é recusada @spec:AC-385",
+      "method": "vitest-json"
+    },
+    "AC-386": {
+      "status": "pass",
+      "testName": "T-141: política de senha única AC-386: as duas telas mostram exatamente as regras que o servidor aplica avaliarSenha e validarSenha usam o mesmo módulo de política e concordam @spec:AC-386 avaliarSenha e validarSenha usam o mesmo módulo de política e concordam @spec:AC-386",
+      "method": "vitest-json"
+    }
+  },
+  "principles": {}
+}
