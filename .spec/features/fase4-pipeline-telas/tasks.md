@@ -54,8 +54,7 @@
 - Esforço: medio
 - Notas: o hook atual já escuta `oportunidade.movida` para o funil antigo; passa a aceitar um callback genérico (o funil move o card, lista e arquivados recarregam a página atual e os indicadores) e a expor o estado da conexão para o aviso "tempo real desconectado". Não pode quebrar o uso atual em `board-kanban.tsx` até T-160 trocá-lo. Eventos de outra empresa nunca chegam (isolamento já vem do barramento; o teste prova).
 
-## T-160 — Tela do funil (Kanban) com indicadores, filtros e novo lead [pendente]
-
+## T-160 — Tela do funil (Kanban) com indicadores, filtros e novo lead [concluida]
 - Refs: AC-387, AC-388, AC-390, AC-391, AC-392, AC-393
 - Arquivos: src/app/(app)/pipeline/page.tsx, src/components/pipeline/board-kanban.tsx, src/components/pipeline/coluna-etapa.tsx, src/components/pipeline/card-oportunidade.tsx, src/components/pipeline/filtros-funil.tsx, src/components/pipeline/modal-novo-lead.tsx, src/components/pipeline/indicadores-funil.tsx, test/components/pipeline/funil.test.tsx, test/components/pipeline/modal-novo-lead.test.tsx
 - Esforço: xalto
