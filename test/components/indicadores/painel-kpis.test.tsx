@@ -14,6 +14,13 @@ import { NextRequest } from 'next/server';
 
 const getUserMock = vi.fn();
 
+// O middleware (T-143, fase4) decide pela sessão do Better Auth: aqui o teste só
+// precisa de "sem sessão" para checar o redirecionamento ao login, sem banco
+// (a prova com Postgres real dessa regra é test/auth/middleware.test.ts, AC-379).
+vi.mock('@/lib/auth/instancia', () => ({
+  getAuth: () => ({ api: { getSession: async () => null } }),
+}));
+
 vi.mock('@supabase/ssr', () => ({
   createServerClient: () => ({
     auth: { getUser: async () => ({ data: { user: null } }) },
