@@ -87,8 +87,7 @@
 - Esforço: alto
 - Notas: fonte visual `3._redefinir_senha_token_nova_senha/code.html`. Usa `criterios-senha.tsx` de T-147. O estado de link inválido é o do protótipo (AC-370, servido por T-145).
 
-## T-151 — Tela de convite [pendente]
-
+## T-151 — Tela de convite [concluida]
 - Refs: AC-372
 - Arquivos: src/app/(auth)/convite/[token]/page.tsx, src/components/auth/formulario-convite.tsx, test/components/auth/convite.test.tsx
 - Esforço: alto
