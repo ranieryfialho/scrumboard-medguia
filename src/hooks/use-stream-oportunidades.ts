@@ -10,6 +10,15 @@
 // (e `stream.reconectado`, e o próprio `aoPolling` do fallback) como os três
 // gatilhos para recarregar a fila; este hook não decide o que recarregar,
 // só entrega o evento.
+//
+// T-159 (fase4-pipeline-telas, AC-416): além de `modo` (sse/polling do
+// fallback acima), expõe `estadoConexao` — 'conectado'/'reconectando' a
+// cada `open`/`error` do `EventSource`, sem esperar os 3 erros do fallback —
+// para as telas do pipeline mostrarem o aviso "tempo real desconectado"
+// (`AvisoTempoReal`, `src/components/pipeline/pecas/aviso-tempo-real.tsx`)
+// assim que a conexão cai, e escondê-lo de volta ao primeiro `open`. O
+// isolamento por empresa dos eventos já vem do barramento/rota `/api/stream`
+// (`test/sse/stream-route.test.ts`); este hook só repassa o que recebe.
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
@@ -54,9 +63,14 @@ export interface UseStreamOportunidadesOpcoes {
   intervaloPollingMs?: number;
 }
 
+/** 'conectado' a partir do primeiro `open`; 'reconectando' em qualquer `error` (AC-416), sem esperar o fallback de polling. */
+export type EstadoConexaoStream = 'conectado' | 'reconectando';
+
 export interface UseStreamOportunidadesResultado {
   /** 'sse' com o EventSource saudável, 'polling' durante o fallback (AC-118). */
   modo: ModoConexaoStream;
+  /** Estado real da conexão, para o aviso "tempo real desconectado" (AC-416). */
+  estadoConexao: EstadoConexaoStream;
 }
 
 const LIMITE_ERROS_PADRAO = 3;
@@ -84,6 +98,7 @@ export function useStreamOportunidades(
   } = opcoes;
 
   const [modo, setModo] = useState<ModoConexaoStream>('sse');
+  const [estadoConexao, setEstadoConexao] = useState<EstadoConexaoStream>('reconectando');
 
   // Callbacks em ref: evita recriar o EventSource a cada render por causa de
   // uma nova identidade de função vinda do chamador.
@@ -126,10 +141,12 @@ export function useStreamOportunidades(
     origem.addEventListener('open', () => {
       errosConsecutivos = 0;
       pararPolling();
+      setEstadoConexao('conectado');
     });
 
     origem.addEventListener('error', () => {
       errosConsecutivos += 1;
+      setEstadoConexao('reconectando');
       if (errosConsecutivos >= limiteErrosConsecutivos) {
         iniciarPolling();
       }
@@ -155,5 +172,5 @@ export function useStreamOportunidades(
     };
   }, [url, limiteErrosConsecutivos, intervaloPollingMs]);
 
-  return { modo };
+  return { modo, estadoConexao };
 }
