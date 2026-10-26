@@ -1,11 +1,11 @@
 {
   "feature": "fase4-design-system-shell-acesso",
-  "timestamp": "2026-10-23T19:51:45.316Z",
-  "gitRev": "1f4df65",
+  "timestamp": "2026-10-26T12:41:37.314Z",
+  "gitRev": "335cf4a",
   "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
   "exitCode": 1,
-  "testsParsed": 1064,
+  "testsParsed": 1100,
   "results": {
     "AC-345": {
       "status": "pass",
@@ -15,6 +15,11 @@
     "AC-346": {
       "status": "pass",
       "testName": "T-140: fontes e ícones do protótipo (AC-346) Plus Jakarta Sans e Inter são carregadas por next/font/google @spec:AC-346 Plus Jakarta Sans e Inter são carregadas por next/font/google @spec:AC-346",
+      "method": "vitest-json"
+    },
+    "AC-347": {
+      "status": "pass",
+      "testName": "T-153: nenhuma tela de acesso traz artefato do protótipo AC-347: as telas de acesso não trazem artefatos do protótipo tela de login não traz artefato do protótipo @spec:AC-347 tela de login não traz artefato do protótipo @spec:AC-347",
       "method": "vitest-json"
     },
     "AC-348": {
@@ -67,6 +72,31 @@
       "testName": "T-144: rotas HTTP de autenticação, /api/me e empresa ativa AC-357: sair encerra a sessão após \"Sair\", a linha de sessoes é apagada e a sessão antiga não mostra mais dados da empresa @spec:AC-357 após \"Sair\", a linha de sessoes é apagada e a sessão antiga não mostra mais dados da empresa @spec:AC-357",
       "method": "vitest-json"
     },
+    "AC-358": {
+      "status": "pass",
+      "testName": "T-148: tela de login AC-358: login correto leva ao sistema com e-mail e senha corretos e `next` do mesmo site, vai para o `next` @spec:AC-358 com e-mail e senha corretos e `next` do mesmo site, vai para o `next` @spec:AC-358",
+      "method": "vitest-json"
+    },
+    "AC-359": {
+      "status": "pass",
+      "testName": "T-148: tela de login AC-359: credenciais erradas mostram o aviso com as tentativas que restam na 2ª tentativa dentro da janela, mostra \"Credenciais Inválidas\" dizendo que restam 3 tentativas, com realce vermelho nos campos @spec:AC-359 na 2ª tentativa dentro da janela, mostra \"Credenciais Inválidas\" dizendo que restam 3 tentativas, com realce vermelho nos campos @spec:AC-359",
+      "method": "vitest-json"
+    },
+    "AC-360": {
+      "status": "pass",
+      "testName": "T-148: tela de login AC-360: excesso de tentativas bloqueia a tela com contagem regressiva na 5ª tentativa incorreta, mostra \"Acesso Temporariamente Suspenso\" com contagem mm:ss e desabilita campos e botão @spec:AC-360 na 5ª tentativa incorreta, mostra \"Acesso Temporariamente Suspenso\" com contagem mm:ss e desabilita campos e botão @spec:AC-360",
+      "method": "vitest-json"
+    },
+    "AC-361": {
+      "status": "pass",
+      "testName": "T-148: tela de login AC-361: enquanto envia, o botão não aceita novo clique clicar de novo em \"Entrar na Plataforma\" durante o envio não dispara um segundo envio @spec:AC-361 clicar de novo em \"Entrar na Plataforma\" durante o envio não dispara um segundo envio @spec:AC-361",
+      "method": "vitest-json"
+    },
+    "AC-363": {
+      "status": "pass",
+      "testName": "T-149: tela de esqueci minha senha AC-363: e-mail inválido é recusado na própria tela texto que não é e-mail mostra o erro em vermelho e nada é enviado ao servidor @spec:AC-363 texto que não é e-mail mostra o erro em vermelho e nada é enviado ao servidor @spec:AC-363",
+      "method": "vitest-json"
+    },
     "AC-364": {
       "status": "pass",
       "testName": "T-145: APIs das telas públicas: esqueci, redefinir e convite AC-364: a confirmação é a mesma para qualquer e-mail e-mail cadastrado e inexistente recebem a mesma resposta @spec:AC-364 e-mail cadastrado e inexistente recebem a mesma resposta @spec:AC-364",
@@ -75,6 +105,21 @@
     "AC-365": {
       "status": "pass",
       "testName": "T-145: APIs das telas públicas: esqueci, redefinir e convite AC-365: o e-mail só é enviado quando a conta existe conta cadastrada e ativa: envia o e-mail marcado MedCRM com o link do token @spec:AC-365 conta cadastrada e ativa: envia o e-mail marcado MedCRM com o link do token @spec:AC-365",
+      "method": "vitest-json"
+    },
+    "AC-366": {
+      "status": "pass",
+      "testName": "T-149: tela de esqueci minha senha AC-366: dá para tentar outro e-mail na tela de confirmação, \"Tentar outro e-mail\" volta o formulário vazio @spec:AC-366 na tela de confirmação, \"Tentar outro e-mail\" volta o formulário vazio @spec:AC-366",
+      "method": "vitest-json"
+    },
+    "AC-367": {
+      "status": "pass",
+      "testName": "T-150: tela de redefinir senha AC-367: os critérios de senha acendem enquanto o usuário digita cada critério troca de círculo cinza para marca verde conforme é atendido, e volta a cinza se deixar de ser @spec:AC-367 cada critério troca de círculo cinza para marca verde conforme é atendido, e volta a cinza se deixar de ser @spec:AC-367",
+      "method": "vitest-json"
+    },
+    "AC-368": {
+      "status": "pass",
+      "testName": "T-150: tela de redefinir senha AC-368: senhas diferentes impedem o envio confirmação diferente mostra o aviso e mantém o botão desabilitado até coincidirem e a política ser atendida @spec:AC-368 confirmação diferente mostra o aviso e mantém o botão desabilitado até coincidirem e a política ser atendida @spec:AC-368",
       "method": "vitest-json"
     },
     "AC-369": {
@@ -92,6 +137,11 @@
       "testName": "T-145: APIs das telas públicas: esqueci, redefinir e convite AC-371: a tela mostra para quem é o convite GET com convite válido mostra a empresa, o papel e o e-mail, sem consumir o token @spec:AC-371 GET com convite válido mostra a empresa, o papel e o e-mail, sem consumir o token @spec:AC-371",
       "method": "vitest-json"
     },
+    "AC-372": {
+      "status": "pass",
+      "testName": "T-151: tela de convite AC-372: ativar exige nome, senha válida e aceite dos termos o botão \"Ativar minha conta\" começa desabilitado @spec:AC-372 o botão \"Ativar minha conta\" começa desabilitado @spec:AC-372",
+      "method": "vitest-json"
+    },
     "AC-373": {
       "status": "pass",
       "testName": "T-145: APIs das telas públicas: esqueci, redefinir e convite AC-373: ativar cria a senha, grava o nome e entra convite válido com nome e senha ativa a conta, grava o nome e cria a sessão @spec:AC-373 convite válido com nome e senha ativa a conta, grava o nome e cria a sessão @spec:AC-373",
@@ -100,6 +150,21 @@
     "AC-374": {
       "status": "pass",
       "testName": "T-145: APIs das telas públicas: esqueci, redefinir e convite AC-374: convite inválido mostra o erro sem vazar dados da empresa GET com convite expirado mostra o erro genérico, sem empresa nem e-mail @spec:AC-374 GET com convite expirado mostra o erro genérico, sem empresa nem e-mail @spec:AC-374",
+      "method": "vitest-json"
+    },
+    "AC-375": {
+      "status": "pass",
+      "testName": "T-152: painel de sem acesso e sessão expirada AC-375: a tela mostra o perfil e o que foi pedido mostra \"Código 403\", o perfil autenticado e o recurso com nome legível @spec:AC-375 mostra \"Código 403\", o perfil autenticado e o recurso com nome legível @spec:AC-375",
+      "method": "vitest-json"
+    },
+    "AC-376": {
+      "status": "pass",
+      "testName": "T-152: painel de sem acesso e sessão expirada AC-376: as ações da tela levam aonde dizem os links e o botão \"em breve\" apontam para os destinos certos @spec:AC-376 os links e o botão \"em breve\" apontam para os destinos certos @spec:AC-376",
+      "method": "vitest-json"
+    },
+    "AC-377": {
+      "status": "pass",
+      "testName": "T-152: painel de sem acesso e sessão expirada AC-377: sem sessão, a tela se apresenta como sessão expirada título \"Sessão Expirada\", sem perfil nem recurso, botão principal \"Entrar novamente\" @spec:AC-377 título \"Sessão Expirada\", sem perfil nem recurso, botão principal \"Entrar novamente\" @spec:AC-377",
       "method": "vitest-json"
     },
     "AC-378": {

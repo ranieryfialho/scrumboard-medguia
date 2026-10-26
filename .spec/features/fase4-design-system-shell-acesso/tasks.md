@@ -99,8 +99,7 @@
 - Esforço: medio
 - Notas: fonte visual `5._sem_acesso_permiss_o_e_sess_o/code.html`. Reusa os nomes legíveis de rota do menu (`menu-config.ts` de T-146) via `nomes-de-rotas.ts`, que T-146 não toca; ao integrar, T-152 importa o menu, não o altera.
 
-## T-153 — Garantia transversal: nenhuma tela de acesso traz artefato do protótipo [pendente]
-
+## T-153 — Garantia transversal: nenhuma tela de acesso traz artefato do protótipo [concluida]
 - Refs: AC-347
 - Arquivos: test/components/auth/sem-artefatos.test.tsx
 - Esforço: baixo
