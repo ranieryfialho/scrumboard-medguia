@@ -1,7 +1,7 @@
 {
   "feature": "fase4-pipeline-telas",
-  "timestamp": "2026-10-26T17:40:46.897Z",
-  "gitRev": "23fc4a3",
+  "timestamp": "2026-10-26T18:55:15.656Z",
+  "gitRev": "1caafa9",
   "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
   "exitCode": 0,
