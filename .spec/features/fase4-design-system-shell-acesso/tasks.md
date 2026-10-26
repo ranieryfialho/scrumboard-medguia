@@ -63,8 +63,7 @@
 - Esforço: xalto
 - Notas: fonte visual: `13._tarefas_fila_do_turno_atual/code.html` (`<aside>` e `<header>`). Contadores usam `/api/atividades` e `/api/whatsapp/unread`; tempo real usa o SSE existente (`/api/stream`). As páginas `/pipeline`, `/tarefas` e `/indicadores` passam a ficar sob `(app)` (grupo de rotas, a URL não muda) em tarefa da feature 2. Depende de T-140, T-143 e T-144.
 
-## T-147 — Moldura das telas de acesso (fundo, cartão e rodapé) [pendente]
-
+## T-147 — Moldura das telas de acesso (fundo, cartão e rodapé) [concluida]
 - Refs: AC-347, AC-362
 - Arquivos: src/components/auth/moldura-acesso.tsx, src/components/auth/criterios-senha.tsx, src/app/(auth)/layout.tsx, test/components/auth/moldura.test.tsx
 - Esforço: medio
