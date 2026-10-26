@@ -75,8 +75,7 @@
 - Esforço: alto
 - Notas: fonte visual `1._login_acesso_plataforma/code.html`. Estados reais: padrão, enviando (spinner), erro com tentativas restantes, bloqueado com contagem regressiva. `next` só aceita caminho do mesmo site. O arquivo legado `src/app/login/page.tsx` é substituído. O campo "Lembrar de mim por 30 dias" do protótipo **não entra** (Q-044).
 
-## T-149 — Tela de esqueci minha senha [pendente]
-
+## T-149 — Tela de esqueci minha senha [concluida]
 - Refs: AC-363, AC-366
 - Arquivos: src/app/(auth)/esqueci-senha/page.tsx, src/components/auth/formulario-esqueci-senha.tsx, test/components/auth/esqueci-senha.test.tsx
 - Esforço: medio
