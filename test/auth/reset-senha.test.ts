@@ -91,7 +91,7 @@ describe('T-030: reset de senha', () => {
         expiraEm: new Date(Date.now() + 60 * 60 * 1000),
       });
 
-      const resultado = await resetarSenhaComToken(db, token, 'senha-nova');
+      const resultado = await resetarSenhaComToken(db, token, 'Senha-nova1');
 
       expect(resultado.usuarioId).toBe(usuarioId);
       expect(resultado.email).toBe(email);
@@ -99,7 +99,7 @@ describe('T-030: reset de senha', () => {
 
       const credenciais = await db.select().from(contas).where(eq(contas.usuarioId, usuarioId));
       expect(credenciais).toHaveLength(1);
-      expect(verificarSenha('senha-nova', credenciais[0].senha!)).toBe(true);
+      expect(verificarSenha('Senha-nova1', credenciais[0].senha!)).toBe(true);
       expect(verificarSenha('senha-antiga', credenciais[0].senha!)).toBe(false);
 
       const sessoesDepois = await db.select().from(sessoes).where(eq(sessoes.usuarioId, usuarioId));
@@ -124,7 +124,7 @@ describe('T-030: reset de senha', () => {
         expiraEm: new Date(Date.now() - 60_000),
       });
 
-      await expect(resetarSenhaComToken(db, token, 'senha-nova')).rejects.toThrow(
+      await expect(resetarSenhaComToken(db, token, 'Senha-nova1')).rejects.toThrow(
         ErroTokenResetInvalido
       );
 
@@ -146,20 +146,20 @@ describe('T-030: reset de senha', () => {
         expiraEm: new Date(Date.now() + 60 * 60 * 1000),
       });
 
-      await resetarSenhaComToken(db, token, 'senha-nova');
+      await resetarSenhaComToken(db, token, 'Senha-nova1');
 
-      await expect(resetarSenhaComToken(db, token, 'senha-nova-2')).rejects.toThrow(
+      await expect(resetarSenhaComToken(db, token, 'Senha-nova2')).rejects.toThrow(
         ErroTokenResetInvalido
       );
 
       const credenciais = await db.select().from(contas).where(eq(contas.usuarioId, usuarioId));
-      expect(verificarSenha('senha-nova', credenciais[0].senha!)).toBe(true);
-      expect(verificarSenha('senha-nova-2', credenciais[0].senha!)).toBe(false);
+      expect(verificarSenha('Senha-nova1', credenciais[0].senha!)).toBe(true);
+      expect(verificarSenha('Senha-nova2', credenciais[0].senha!)).toBe(false);
     });
 
     test('token inexistente é recusado @spec:AC-041', async () => {
       await expect(
-        resetarSenhaComToken(db, 'token-de-reset-que-nunca-existiu', 'qualquer-senha')
+        resetarSenhaComToken(db, 'token-de-reset-que-nunca-existiu', 'Qualquer-senha1')
       ).rejects.toThrow(ErroTokenResetInvalido);
     });
   });

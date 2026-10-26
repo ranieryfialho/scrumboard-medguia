@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-subtle": "#F8FAFC", "info-border": "#BFDBFE", "danger-text": "#DC2626", "on-error-container": "#93000a", "surface-tint": "#1157cb", "on-secondary-fixed": "#131b30", "primary-fixed-dim": "#b1c5ff", "on-secondary-container": "#5a627b", "on-primary": "#ffffff", "inverse-on-surface": "#f0f0fa", "warning-surface": "#FEF3C7", "text-secondary": "#64748B", "surface-bright": "#faf8ff", "on-primary-fixed-variant": "#0040a0", "sidebar-surface": "#1E293B", "on-primary-fixed": "#001847", "success-border": "#A7F3D0", "on-tertiary-container": "#fffbff", "on-primary-container": "#fefcff", "secondary-fixed": "#dae2ff", "surface-container-lowest": "#ffffff", "on-tertiary-fixed": "#311300", "on-background": "#191b22", "text-muted": "#94A3B8", "background-canvas": "#F4F6FA", "tertiary-fixed-dim": "#ffb787", "warning-text": "#D97706", "sidebar-surface-active": "#2D3748", "on-secondary": "#ffffff", "border-subtle": "#E2E8F0", "outline": "#737785", "border-focus": "#93C5FD", "inverse-surface": "#2e3038", "on-tertiary": "#ffffff", "secondary-container": "#d7dffd", "inverse-primary": "#b1c5ff", "text-primary": "#0F172A", "error": "#ba1a1a", "info-text": "#2563EB", "success-surface": "#D1FAE5", "on-surface-variant": "#434654", "surface-container": "#ededf7", "on-secondary-fixed-variant": "#3e465e", "danger-surface": "#FEE2E2", "tertiary": "#924700", "primary-fixed": "#dae2ff", "success-text": "#059669", "warning-border": "#FDE68A", "surface-container-highest": "#e1e2ec", "error-container": "#ffdad6", "surface-dim": "#d9d9e3", "background": "#faf8ff", "tertiary-container": "#b85b00", "on-surface": "#191b22", "on-error": "#ffffff", "tertiary-fixed": "#ffdcc7", "secondary": "#565e77", "surface-container-low": "#f3f3fd", "surface-variant": "#e1e2ec", "info-surface": "#EFF6FF", "danger-border": "#FECACA", "surface-card": "#FFFFFF", "on-tertiary-fixed-variant": "#723600", "secondary-fixed-dim": "#bec6e3", "primary-container": "#366ee3", "primary": "#0954c9", "outline-variant": "#c3c6d6", "surface-container-high": "#e7e7f2", "surface": "#faf8ff" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "gutter-sm": "0.75rem", "gutter-lg": "1.5rem", "space-lg": "1.25rem", "space-sm": "0.5rem", "gutter": "1.25rem", "space-xs": "0.25rem", "space-md": "0.875rem", "margin": "1.75rem", "space-xl": "1.75rem", "margin-mobile": "1rem", "space-2xl": "2.5rem" }, "fontFamily": { "body-sm": ["Inter"], "headline-sm": ["Plus Jakarta Sans"], "body-lg": ["Inter"], "label-sm": ["Inter"], "body-md": ["Inter"], "headline-md": ["Plus Jakarta Sans"], "metric-stat": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "display-lg": ["Plus Jakarta Sans"], "label-md": ["Inter"], "display-lg-mobile": ["Plus Jakarta Sans"], "label-lg": ["Inter"], "table-header": ["Inter"] }, "fontSize": { "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }], "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }], "body-lg": ["15px", { "lineHeight": "22px", "fontWeight": "400" }], "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.03em", "fontWeight": "600" }], "body-md": ["13px", { "lineHeight": "20px", "fontWeight": "400" }], "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }], "metric-stat": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "500" }], "display-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "700" }], "label-lg": ["13px", { "lineHeight": "18px", "fontWeight": "600" }], "table-header": ["11px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }] } } } };</script></head><body class="bg-background-canvas font-body-md text-text-primary antialiased selection:bg-primary-fixed selection:text-on-primary-fixed"><aside class="fixed left-0 top-0 h-full w-64 bg-sidebar-surface text-surface z-50 flex flex-col justify-between shadow-[0_4px_20px_-2px_rgba(0,0,0,0.08)] overflow-hidden"><div class="flex flex-col flex-1 min-h-0"><div class="h-16 px-space-lg flex items-center justify-between border-b border-sidebar-surface-active/60 bg-sidebar-surface"><div class="flex items-center gap-space-sm"><div class="w-9 h-9 rounded-xl bg-primary flex items-center justify-center shadow-md"><span class="material-symbols-outlined text-on-primary text-[20px]">local_hospital</span></div><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-surface-container-lowest leading-none tracking-tight">MedCRM</span><span class="font-label-sm text-label-sm text-text-muted mt-0.5">MedGuia B2B</span></div></div><span class="font-label-sm text-[10px] px-1.5 py-0.5 rounded-full bg-primary-container/30 text-primary-fixed-dim uppercase tracking-wider font-semibold">Pipeline</span></div><div class="flex-1 overflow-y-auto px-space-sm py-space-md space-y-space-lg scrollbar-none"><nav class="space-y-space-md" data-active-classes="bg-sidebar-surface-active text-surface-container-lowest font-semibold rounded-lg shadow-sm"><div class="space-y-1"><div class="px-space-sm pb-1"><span class="font-table-header text-table-header text-text-muted uppercase tracking-wider">Operação</span></div><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="funil-pipeline" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">view_kanban</span><span class="font-body-md text-body-md">Funil Pipeline</span></div></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="lista-de-leads" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">format_list_bulleted</span><span class="font-body-md text-body-md">Lista</span></div></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="arquivados" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">archive</span><span class="font-body-md text-body-md">Arquivados</span></div></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="tarefas-do-turno" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">check_circle</span><span class="font-body-md text-body-md">Tarefas do Turno</span></div><span class="font-label-sm text-label-sm bg-primary-container text-on-primary px-2 py-0.5 rounded-full font-bold">12</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="tarefas-atrasadas" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px] text-danger-text">warning</span><span class="font-body-md text-body-md text-danger-text font-medium">Tarefas Atrasadas</span></div><span class="font-label-sm text-label-sm bg-danger-surface text-danger-text px-2 py-0.5 rounded-full font-bold">4</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="agenda" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">calendar_month</span><span class="font-body-md text-body-md">Agenda</span></div></a></div><div class="space-y-1"><div class="px-space-sm pb-1"><span class="font-table-header text-table-header text-text-muted uppercase tracking-wider">Comunicação</span></div><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="whatsapp-inbox" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">chat</span><span class="font-body-md text-body-md">WhatsApp Inbox</span></div><span class="font-label-sm text-label-sm bg-success-surface text-success-text px-2 py-0.5 rounded-full font-bold">5</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="campanhas" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">send</span><span class="font-body-md text-body-md">Campanhas</span></div></a></div><div class="space-y-1"><div class="px-space-sm pb-1"><span class="font-table-header text-table-header text-text-muted uppercase tracking-wider">Análises</span></div><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="indicadores" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">monitoring</span><span class="font-body-md text-body-md">Indicadores</span></div></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="relatorios" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">description</span><span class="font-body-md text-body-md">Relatórios</span></div></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="comercial" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">query_stats</span><span class="font-body-md text-body-md">Comercial</span></div></a></div><div class="space-y-1"><div class="px-space-sm pb-1"><span class="font-table-header text-table-header text-text-muted uppercase tracking-wider">Administração</span></div><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="equipe" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">groups</span><span class="font-body-md text-body-md">Equipe</span></div></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="motivos-de-perda" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">cancel</span><span class="font-body-md text-body-md">Motivos de Perda</span></div></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="empresas" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">apartment</span><span class="font-body-md text-body-md">Empresas</span></div></a></div></nav></div></div><div class="p-space-md border-t border-sidebar-surface-active/50 bg-sidebar-surface"><div class="flex items-center justify-between text-text-muted"><a class="flex items-center gap-2 hover:text-surface-container-lowest transition-colors font-label-md text-label-md" data-path="suporte-e-ajuda" href="#"><span class="material-symbols-outlined text-[18px]">help</span><span>Ajuda &amp; Suporte</span></a><span class="font-label-sm text-label-sm text-text-muted/80 bg-sidebar-surface-active/80 px-2 py-0.5 rounded">v2.4.0</span></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface-card border-b border-border-subtle z-40 flex items-center justify-between px-gutter shadow-[0_1px_8px_rgba(0,0,0,0.02)]"><div class="flex items-center gap-space-lg flex-1 max-w-2xl"><div class="relative w-full max-w-lg"><span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[19px]">search</span><input class="w-full h-10 pl-9 pr-16 bg-surface-subtle border border-border-subtle rounded-lg font-body-md text-body-md text-text-primary placeholder:text-text-muted focus:outline-none focus:border-border-focus focus:bg-surface-card transition-all" placeholder="Buscar lead, clínica, telefone ou responsável... (Ctrl + K)" type="text"/><kbd class="absolute right-3 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[10px] font-label-sm bg-surface-card border border-border-subtle text-text-muted rounded shadow-sm">⌘K</kbd></div><div class="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border-subtle bg-surface-card text-text-primary shadow-sm hover:border-border-focus cursor-pointer transition-all"><span class="material-symbols-outlined text-primary text-[18px]">domain</span><div class="flex flex-col text-left"><span class="font-label-sm text-label-sm font-semibold leading-tight">Clínica São Lucas - Matriz</span><span class="font-label-sm text-[10px] text-success-text leading-none flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-success-text inline-block"></span>Ativo</span></div><span class="material-symbols-outlined text-text-muted text-[16px] ml-1">expand_more</span></div></div><div class="flex items-center gap-space-md"><div class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-success-surface border border-success-border"><span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success-text opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-success-text"></span></span><span class="font-label-sm text-label-sm text-success-text font-semibold">Tempo real conectado</span></div><button class="relative p-2 rounded-lg text-text-secondary hover:bg-surface-subtle hover:text-text-primary transition-colors" type="button"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-danger-text"></span></button><div class="h-6 w-px bg-border-subtle"></div><div class="flex items-center gap-space-sm pl-1 cursor-pointer"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><div class="hidden lg:flex flex-col text-left"><div class="flex items-center gap-1.5"><span class="font-label-lg text-label-lg font-semibold text-text-primary leading-tight">Dr. Roberto Mendes</span><span class="font-label-sm text-[10px] bg-primary-fixed text-on-primary-fixed px-1.5 py-0.2 rounded font-bold uppercase tracking-wider">MASTER</span></div><span class="font-label-sm text-label-sm text-text-muted leading-tight">roberto.mendes@medguia.com.br</span></div><span class="material-symbols-outlined text-text-muted text-[18px]">expand_more</span></div></div></header><main class="w-full pt-16 bg-background-canvas min-h-screen"><div class="flex flex-col w-full">
+<div class="px-margin py-gutter-lg space-y-gutter-lg max-w-[1720px] mx-auto w-full">
+<!-- Top Bar Navigation & Page Header -->
+<div class="flex flex-col xl:flex-row xl:items-center justify-between gap-space-md">
+<div>
+<div class="flex items-center gap-space-xs text-text-muted font-label-sm text-label-sm mb-1">
+<span>Comercial</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span>Pipeline</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-primary font-semibold">Visão Lista</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-text-primary tracking-tight">Pipeline em Lista</h1>
+<p class="font-body-md text-body-md text-text-secondary mt-0.5">Gerenciamento estruturado de leads e clínicas em prospecção com visão tabular e ações em lote.</p>
+</div>
+<div class="flex flex-wrap items-center gap-space-sm">
+<!-- Visual Ref Pill indicator -->
+<div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-card shadow-sm text-text-secondary font-label-md text-label-md">
+<span class="w-2 h-2 rounded-full bg-primary inline-block"></span>
+<span>Total: <strong>148 clínicas</strong> (R$ 842.300/mês)</span>
+</div>
+<button class="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-surface-card hover:bg-surface-subtle text-text-primary font-label-lg text-label-lg shadow-sm transition-all" type="button">
+<span class="material-symbols-outlined text-[18px] text-text-secondary">file_download</span>
+<span>Exportar CSV/XLS</span>
+</button>
+<a class="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-surface-card hover:bg-surface-subtle text-text-primary font-label-lg text-label-lg shadow-sm transition-all" data-path="funil-pipeline" href="#">
+<span class="material-symbols-outlined text-[18px] text-text-secondary">view_kanban</span>
+<span>Alternar para Funil Kanban</span>
+</a>
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-lg text-label-lg shadow-md transition-all active:scale-[0.98]" onclick="document.getElementById('modal-novo-lead').classList.remove('hidden')" type="button">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span>Novo Card</span>
+</button>
+</div>
+</div>
+<!-- Quick Metric Ribbons (Visual Richness & Clinical Density) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter-sm">
+<div class="p-space-md rounded-xl bg-surface-card shadow-sm flex items-center justify-between">
+<div>
+<span class="font-table-header text-table-header uppercase text-text-muted">Leads em Negociação</span>
+<div class="flex items-baseline gap-2 mt-1">
+<span class="font-metric-stat text-metric-stat text-text-primary">28</span>
+<span class="font-label-sm text-label-sm text-success-text font-bold">+14% vs mês ant.</span>
+</div>
+<span class="font-label-sm text-[11px] text-text-secondary">R$ 184.200 pipeline quente</span>
+</div>
+<div class="w-11 h-11 rounded-xl bg-info-surface flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[24px]">handshake</span>
+</div>
+</div>
+<div class="p-space-md rounded-xl bg-surface-card shadow-sm flex items-center justify-between">
+<div>
+<span class="font-table-header text-table-header uppercase text-text-muted">Toques em Atraso</span>
+<div class="flex items-baseline gap-2 mt-1">
+<span class="font-metric-stat text-metric-stat text-danger-text">9</span>
+<span class="font-label-sm text-label-sm text-danger-text font-bold">Ação Imediata</span>
+</div>
+<span class="font-label-sm text-[11px] text-text-secondary">6 cadências travadas</span>
+</div>
+<div class="w-11 h-11 rounded-xl bg-danger-surface flex items-center justify-center text-danger-text">
+<span class="material-symbols-outlined text-[24px]">alarm_on</span>
+</div>
+</div>
+<div class="p-space-md rounded-xl bg-surface-card shadow-sm flex items-center justify-between">
+<div>
+<span class="font-table-header text-table-header uppercase text-text-muted">Propostas Ativas</span>
+<div class="flex items-baseline gap-2 mt-1">
+<span class="font-metric-stat text-metric-stat text-text-primary">42</span>
+<span class="font-label-sm text-label-sm text-info-text font-bold">Ticket Médio R$ 7.2k</span>
+</div>
+<span class="font-label-sm text-[11px] text-text-secondary">Tempo médio etapa: 4.2 dias</span>
+</div>
+<div class="w-11 h-11 rounded-xl bg-secondary-fixed flex items-center justify-center text-on-secondary-fixed">
+<span class="material-symbols-outlined text-[24px]">request_quote</span>
+</div>
+</div>
+<div class="p-space-md rounded-xl bg-surface-card shadow-sm flex items-center justify-between">
+<div>
+<span class="font-table-header text-table-header uppercase text-text-muted">Taxa de Conversão</span>
+<div class="flex items-baseline gap-2 mt-1">
+<span class="font-metric-stat text-metric-stat text-success-text">24.6%</span>
+<span class="font-label-sm text-label-sm text-success-text font-bold">Meta 22%</span>
+</div>
+<span class="font-label-sm text-[11px] text-text-secondary">19 contratos assinados mês</span>
+</div>
+<div class="w-11 h-11 rounded-xl bg-success-surface flex items-center justify-center text-success-text">
+<span class="material-symbols-outlined text-[24px]">trending_up</span>
+</div>
+</div>
+</div>
+<!-- Filters & Search Toolbar Card -->
+<div class="p-space-md rounded-xl bg-surface-card shadow-sm space-y-space-md">
+<div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-space-sm">
+<!-- Search text input -->
+<div class="relative flex-1 max-w-xl">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[19px]">search</span>
+<input class="w-full h-10 pl-9 pr-4 rounded-lg bg-surface-subtle text-text-primary placeholder:text-text-muted font-body-md text-body-md focus:bg-surface-card focus:outline-none shadow-sm transition-all" placeholder="Buscar por clínica, médico responsável, e-mail ou telefone..." type="text"/>
+</div>
+<!-- Filter Dropdowns Group -->
+<div class="flex flex-wrap items-center gap-space-xs">
+<!-- Etapa Dropdown -->
+<div class="relative">
+<select class="h-10 px-3 pr-8 rounded-lg bg-surface-subtle text-text-primary font-label-md text-label-md appearance-none focus:outline-none cursor-pointer shadow-sm">
+<option value="">Todas as Etapas (15 etapas)</option>
+<option value="1">1. Entrada de Leads</option>
+<option value="2">2. Tentativa de Contato 1</option>
+<option value="3">3. Tentativa de Contato 2</option>
+<option value="4">4. Tentativa de Contato 3</option>
+<option value="5">5. Qualificação Técnica</option>
+<option value="6">6. Reunião Agendada</option>
+<option value="7">7. Reunião Realizada (Demo)</option>
+<option value="8">8. Follow-up Pós-Demo</option>
+<option value="9">9. Proposta Enviada</option>
+<option value="10">10. Em Negociação</option>
+<option value="11">11. Fechamento / Contrato</option>
+<option value="12">12. Onboarding Iniciado</option>
+<option value="13">13. Ativação Técnica</option>
+<option value="14">14. Ganho (Won)</option>
+<option value="15">15. Perdido (Lost)</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-text-muted text-[18px]">expand_more</span>
+</div>
+<!-- Responsável Comercial -->
+<div class="relative">
+<select class="h-10 px-3 pr-8 rounded-lg bg-surface-subtle text-text-primary font-label-md text-label-md appearance-none focus:outline-none cursor-pointer shadow-sm">
+<option value="">Responsável Comercial (Todos)</option>
+<option value="juliana">Dra. Juliana Rocha</option>
+<option value="carlos">Carlos Mendes</option>
+<option value="patricia">Patrícia Alvarenga</option>
+<option value="roberto">Dr. Roberto Mendes</option>
+<option value="felipe">Felipe Siqueira</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-text-muted text-[18px]">expand_more</span>
+</div>
+<!-- Origem -->
+<div class="relative">
+<select class="h-10 px-3 pr-8 rounded-lg bg-surface-subtle text-text-primary font-label-md text-label-md appearance-none focus:outline-none cursor-pointer shadow-sm">
+<option value="">Origem (Todas)</option>
+<option value="google">Google Ads (Search)</option>
+<option value="meta">Meta Ads (Instagram)</option>
+<option value="indicacao">Indicação Médica</option>
+<option value="outbound">Outbound / LinkedIn</option>
+<option value="congresso">Congresso CBOT / Oftalmo</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-text-muted text-[18px]">expand_more</span>
+</div>
+<!-- Período de Criação -->
+<div class="relative">
+<select class="h-10 px-3 pr-8 rounded-lg bg-surface-subtle text-text-primary font-label-md text-label-md appearance-none focus:outline-none cursor-pointer shadow-sm">
+<option value="30">Últimos 30 dias</option>
+<option value="7">Últimos 7 dias</option>
+<option value="hoje">Criados Hoje</option>
+<option value="mes">Mês Atual (Fevereiro)</option>
+<option value="custom">Personalizado...</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-text-muted text-[18px]">calendar_today</span>
+</div>
+<!-- Clear Filters Button -->
+<button class="h-10 px-3 rounded-lg bg-surface-subtle hover:bg-surface-container text-text-secondary hover:text-text-primary flex items-center justify-center transition-colors" title="Limpar Filtros" type="button">
+<span class="material-symbols-outlined text-[18px]">filter_alt_off</span>
+</button>
+</div>
+</div>
+<!-- Batch Actions Bar (Dynamic appearance when items selected) -->
+<div class="flex flex-wrap items-center justify-between px-3 py-2 rounded-lg bg-info-surface text-info-text text-label-md font-label-md" id="batch-actions-bar">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">checklist</span>
+<span><strong>2 clínicas selecionadas</strong> no grid</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-2.5 py-1 rounded bg-surface-card hover:bg-surface-subtle text-text-primary shadow-sm flex items-center gap-1 transition-colors" onclick="document.getElementById('modal-mover-etapa').classList.remove('hidden')" type="button">
+<span class="material-symbols-outlined text-[16px] text-primary">drive_file_move</span>
+<span>Mover Etapa em Lote</span>
+</button>
+<button class="px-2.5 py-1 rounded bg-surface-card hover:bg-surface-subtle text-text-primary shadow-sm flex items-center gap-1 transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px] text-secondary">person_add</span>
+<span>Reatribuir Comercial</span>
+</button>
+<button class="px-2.5 py-1 rounded bg-surface-card hover:bg-surface-subtle text-text-primary shadow-sm flex items-center gap-1 transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px] text-success-text">send</span>
+<span>Disparar WhatsApp</span>
+</button>
+<button class="px-2.5 py-1 rounded bg-danger-surface hover:bg-danger-border text-danger-text flex items-center gap-1 transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">archive</span>
+<span>Arquivar</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Main High-Density Pipeline Data Table Card -->
+<div class="rounded-xl bg-surface-card shadow-sm overflow-hidden flex flex-col">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-subtle text-text-secondary font-table-header text-table-header uppercase tracking-wider h-11">
+<th class="w-12 px-4 py-2 text-center">
+<input checked="" class="rounded text-primary focus:ring-0 cursor-pointer w-4 h-4" type="checkbox"/>
+</th>
+<th class="px-4 py-2 min-w-[240px]">Lead / Clínica &amp; Especialidade</th>
+<th class="px-4 py-2 min-w-[190px]">Etapa Atual</th>
+<th class="px-4 py-2 min-w-[170px]">Responsável Comercial</th>
+<th class="px-4 py-2 min-w-[130px] text-right">Valor Estimado</th>
+<th class="px-4 py-2 min-w-[220px]">Próxima Ação / Cadência</th>
+<th class="px-4 py-2 min-w-[130px]">Origem</th>
+<th class="px-4 py-2 min-w-[110px]">Data Criação</th>
+<th class="px-4 py-2 w-16 text-center">Ações</th>
+</tr>
+</thead>
+<tbody class="divide-y-0 text-text-primary font-body-md text-body-md">
+<!-- Linha 1: Clínica Santa Luzia (Selected) -->
+<tr class="hover:bg-surface-subtle bg-info-surface/30 transition-colors h-14 group">
+<td class="px-4 py-2 text-center">
+<input checked="" class="rounded text-primary focus:ring-0 cursor-pointer w-4 h-4" type="checkbox"/>
+</td>
+<td class="px-4 py-2">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-xl bg-primary-fixed flex items-center justify-center text-primary font-bold shadow-xs">
+<span class="material-symbols-outlined text-[18px]">local_hospital</span>
+</div>
+<div class="flex flex-col">
+<a class="font-headline-sm text-[14px] text-text-primary hover:text-primary font-semibold transition-colors flex items-center gap-1.5" href="#">
+                      Clínica Santa Luzia
+                      <span class="material-symbols-outlined text-[14px] text-text-muted">open_in_new</span>
+</a>
+<div class="flex items-center gap-2 text-text-muted font-body-sm text-[12px]">
+<span>Oftalmologia Cirúrgica</span>
+<span>•</span>
+<span>Dr. Marcos Albuquerque</span>
+</div>
+</div>
+</div>
+</td>
+<td class="px-4 py-2">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-warning-surface text-warning-text font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-warning-text"></span>
+                  9. Proposta Enviada
+                </span>
+</td>
+<td class="px-4 py-2">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center font-bold text-[11px]">
+                    JR
+                  </div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-text-primary">Dra. Juliana Rocha</span>
+<span class="font-label-sm text-[10px] text-text-muted">Inside Sales</span>
+</div>
+</div>
+</td>
+<td class="px-4 py-2 text-right">
+<span class="font-headline-sm text-[14px] font-bold text-text-primary">R$ 6.500</span>
+<span class="block text-text-muted font-label-sm text-[10px]">/mês recorrente</span>
+</td>
+<td class="px-4 py-2">
+<div class="flex items-center gap-2">
+<span class="p-1.5 rounded-md bg-success-surface text-success-text">
+<span class="material-symbols-outlined text-[16px]">chat</span>
+</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-text-primary">WhatsApp amanhã 10:00</span>
+<span class="font-label-sm text-[11px] text-text-muted">Toque 7/18 (Retorno de minuta)</span>
+</div>
+</div>
+</td>
+<td class="px-4 py-2">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-surface-subtle text-text-secondary font-label-sm text-[11px]">
+<span class="material-symbols-outlined text-[13px] text-primary">search</span>
+                  Google Ads
+                </span>
+</td>
+<td class="px-4 py-2 text-text-secondary font-label-md text-label-md">
+                14/02/2025
+              </td>
+<td class="px-4 py-2 text-center relative">
+<button class="p-1 rounded hover:bg-surface-container text-text-secondary hover:text-text-primary transition-colors" onclick="document.getElementById('modal-mover-etapa').classList.remove('hidden')" title="Mover etapa / Ações" type="button">
+<span class="material-symbols-outlined text-[19px]">more_horiz</span>
+</button>
+</td>
+</tr>
+<!-- Linha 2: DermaCare Estética Avançada (Selected) -->
+<tr class="hover:bg-surface-subtle bg-info-surface/30 transition-colors h-14 group">
+<td class="px-4 py-2 text-center">
+<input checked="" class="rounded text-primary focus:ring-0 cursor-pointer w-4 h-4" type="checkbox"/>
+</td>
+<td class="px-4 py-2">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-xl bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center font-bold shadow-xs">
+<span class="material-symbols-outlined text-[18px]">spa</span>
+</div>
+<div class="flex flex-col">
+<a class="font-headline-sm text-[14px] text-text-primary hover:text-primary font-semibold transition-colors flex items-center gap-1.5" href="#">
+                      DermaCare Estética Avançada
+                      <span class="material-symbols-outlined text-[14px] text-text-muted">open_in_new</span>
+</a>
+<div class="flex items-center gap-2 text-text-muted font-body-sm text-[12px]">
+<span>Dermatologia / Laser</span>
+<span>•</span>
+<span>Dra. Carla Esteves</span>
+</div>
+</div>
+</div>
+</td>
+<td class="px-4 py-2">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-info-surface text-info-text font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-info-text"></span>
+                  10. Em Negociação
+                </span>
+</td>
+<td class="px-4 py-2">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-[11px]">
+                    CM
+                  </div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-text-primary">Carlos Mendes</span>
+<span class="font-label-sm text-[10px] text-text-muted">Key Account</span>
+</div>
+</div>
+</td>
+<td class="px-4 py-2 text-right">
+<span class="font-headline-sm text-[14px] font-bold text-text-primary">R$ 12.000</span>
+<span class="block text-text-muted font-label-sm text-[10px]">/mês (3 unidades)</span>
+</td>
+<td class="px-4 py-2">
+<div class="flex items-center gap-2">
+<span class="p-1.5 rounded-md bg-info-surface text-info-text">
+<span class="material-symbols-outlined text-[16px]">call</span>
+</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-text-primary">Ligação hoje 15:30</span>
+<span class="font-label-sm text-[11px] text-text-muted">Toque 11/18 (Alinhamento financeiro)</span>
+</div>
+</div>
+</td>
+<td class="px-4 py-2">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-surface-subtle text-text-secondary font-label-sm text-[11px]">
+<span class="material-symbols-outlined text-[13px] text-primary">public</span>
+                  Meta Ads
+                </span>
+</td>
+<td class="px-4 py-2 text-text-secondary font-label-md text-label-md">
+                10/02/2025
+              </td>
+<td class="px-4 py-2 text-center relative">
+<button class="p-1 rounded hover:bg-surface-container text-text-secondary hover:text-text-primary transition-colors" onclick="document.getElementById('modal-mover-etapa').classList.remove('hidden')" type="button">
+<span class="material-symbols-outlined text-[19px]">more_horiz</span>
+</button>
+</td>
+</tr>
+<!-- Linha 3: Instituto CardioVida (Com atraso de cadência) -->
+<tr class="hover:bg-surface-subtle transition-colors h-14 group">
+<td class="px-4 py-2 text-center">
+<input class="rounded text-primary focus:ring-0 cursor-pointer w-4 h-4" type="checkbox"/>
+</td>
+<td class="px-4 py-2">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-xl bg-danger-surface text-danger-text flex items-center justify-center font-bold shadow-xs">
+<span class="material-symbols-outlined text-[18px]">favorite</span>
+</div>
+<div class="flex flex-col">
+<a class="font-headline-sm text-[14px] text-text-primary hover:text-primary font-semibold transition-colors flex items-center gap-1.5" href="#">
+                      Instituto CardioVida
+                      <span class="material-symbols-outlined text-[14px] text-text-muted">open_in_new</span>
+</a>
+<div class="flex items-center gap-2 text-text-muted font-body-sm text-[12px]">
+<span>Cardiologia Clínica &amp; Hemodinâmica</span>
+<span>•</span>
+<span>Dr. Paulo Fontes</span>
+</div>
+</div>
+</div>
+</td>
+<td class="px-4 py-2">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container text-text-secondary font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-text-secondary"></span>
+                  3. Tentativa de Contato 2
+                </span>
+</td>
+<td class="px-4 py-2">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-warning-surface text-warning-text flex items-center justify-center font-bold text-[11px]">
+                    PA
+                  </div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-text-primary">Patrícia Alvarenga</span>
+<span class="font-label-sm text-[10px] text-text-muted">SDR Pleno</span>
+</div>
+</div>
+</td>
+<td class="px-4 py-2 text-right">
+<span class="font-headline-sm text-[14px] font-bold text-text-primary">R$ 8.900</span>
+<span class="block text-text-muted font-label-sm text-[10px]">/mês</span>
+</td>
+<td class="px-4 py-2">
+<div class="flex items-center gap-2">
+<span class="p-1.5 rounded-md bg-danger-surface text-danger-text animate-pulse">
+<span class="material-symbols-outlined text-[16px]">priority_high</span>
+</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-bold text-danger-text flex items-center gap-1">
+                      Atrasado há 2h
+                      <span class="font-label-sm text-[10px] font-normal text-text-muted">(Ligação Lead)</span>
+</span>
+<span class="font-label-sm text-[11px] text-text-secondary">Toque 2/18 (Secretária pediu retorno)</span>
+</div>
+</div>
+</td>
+<td class="px-4 py-2">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-surface-subtle text-text-secondary font-label-sm text-[11px]">
+<span class="material-symbols-outlined text-[13px] text-success-text">handshake</span>
+                  Indicação Médica
+                </span>
+</td>
+<td class="px-4 py-2 text-text-secondary font-label-md text-label-md">
+                16/02/2025
+              </td>
+<td class="px-4 py-2 text-center relative">
+<button class="p-1 rounded hover:bg-surface-container text-text-secondary hover:text-text-primary transition-colors" onclick="document.getElementById('modal-mover-etapa').classList.remove('hidden')" type="button">
+<span class="material-symbols-outlined text-[19px]">more_horiz</span>
+</button>
+</td>
+</tr>
+<!-- Linha 4: OftalmoCenter Jardins -->
+<tr class="hover:bg-surface-subtle transition-colors h-14 group">
+<td class="px-4 py-2 text-center">
+<input class="rounded text-primary focus:ring-0 cursor-pointer w-4 h-4" type="checkbox"/>
+</td>
+<td class="px-4 py-2">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-xl bg-info-surface text-info-text flex items-center justify-center font-bold shadow-xs">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</div>
+<div class="flex flex-col">
+<a class="font-headline-sm text-[14px] text-text-primary hover:text-primary font-semibold transition-colors flex items-center gap-1.5" href="#">
+                      OftalmoCenter Jardins
+                      <span class="material-symbols-outlined text-[14px] text-text-muted">open_in_new</span>
+</a>
+<div class="flex items-center gap-2 text-text-muted font-body-sm text-[12px]">
+<span>Cirurgia Refrativa &amp; Lentes</span>
+<span>•</span>
+<span>Dra. Beatriz Nogueira</span>
+</div>
+</div>
+</div>
+</td>
+<td class="px-4 py-2">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                  7. Reunião Realizada (Demo)
+                </span>
+</td>
+<td class="px-4 py-2">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center font-bold text-[11px]">
+                    JR
+                  </div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-text-primary">Dra. Juliana Rocha</span>
+<span class="font-label-sm text-[10px] text-text-muted">Inside Sales</span>
+</div>
+</div>
+</td>
+<td class="px-4 py-2 text-right">
+<span class="font-headline-sm text-[14px] font-bold text-text-primary">R$ 5.400</span>
+<span class="block text-text-muted font-label-sm text-[10px]">/mês</span>
+</td>
+<td class="px-4 py-2">
+<div class="flex items-center gap-2">
+<span class="p-1.5 rounded-md bg-surface-subtle text-text-secondary">
+<span class="material-symbols-outlined text-[16px]">mail</span>
+</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-text-primary">E-mail amanhã 09:00</span>
+<span class="font-label-sm text-[11px] text-text-muted">Envio da gravação demo e checklist</span>
+</div>
+</div>
+</td>
+<td class="px-4 py-2">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-surface-subtle text-text-secondary font-label-sm text-[11px]">
+<span class="material-symbols-outlined text-[13px] text-primary">groups</span>
+                  Outbound / LinkedIn
+                </span>
+</td>
+<td class="px-4 py-2 text-text-secondary font-label-md text-label-md">
+                08/02/2025
+              </td>
+<td class="px-4 py-2 text-center relative">
+<button class="p-1 rounded hover:bg-surface-container text-text-secondary hover:text-text-primary transition-colors" onclick="document.getElementById('modal-mover-etapa').classList.remove('hidden')" type="button">
+<span class="material-symbols-outlined text-[19px]">more_horiz</span>
+</button>
+</td>
+</tr>
+<!-- Linha 5: Pediatria BemEstar -->
+<tr class="hover:bg-surface-subtle transition-colors h-14 group">
+<td class="px-4 py-2 text-center">
+<input class="rounded text-primary focus:ring-0 cursor-pointer w-4 h-4" type="checkbox"/>
+</td>
+<td class="px-4 py-2">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-xl bg-success-surface text-success-text flex items-center justify-center font-bold shadow-xs">
+<span class="material-symbols-outlined text-[18px]">child_care</span>
+</div>
+<div class="flex flex-col">
+<a class="font-headline-sm text-[14px] text-text-primary hover:text-primary font-semibold transition-colors flex items-center gap-1.5" href="#">
+                      Pediatria BemEstar
+                      <span class="material-symbols-outlined text-[14px] text-text-muted">open_in_new</span>
+</a>
+<div class="flex items-center gap-2 text-text-muted font-body-sm text-[12px]">
+<span>Pediatria &amp; Vacinação</span>
+<span>•</span>
+<span>Dr. Henrique Sampaio</span>
+</div>
+</div>
+</div>
+</td>
+<td class="px-4 py-2">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-success-surface text-success-text font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-success-text"></span>
+                  11. Fechamento / Contrato
+                </span>
+</td>
+<td class="px-4 py-2">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-[11px]">
+                    FS
+                  </div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-text-primary">Felipe Siqueira</span>
+<span class="font-label-sm text-[10px] text-text-muted">Closer Sênior</span>
+</div>
+</div>
+</td>
+<td class="px-4 py-2 text-right">
+<span class="font-headline-sm text-[14px] font-bold text-text-primary">R$ 4.800</span>
+<span class="block text-text-muted font-label-sm text-[10px]">/mês anual</span>
+</td>
+<td class="px-4 py-2">
+<div class="flex items-center gap-2">
+<span class="p-1.5 rounded-md bg-success-surface text-success-text">
+<span class="material-symbols-outlined text-[16px]">draw</span>
+</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-text-primary">Coleta de Assinatura DocuSign</span>
+<span class="font-label-sm text-[11px] text-text-muted">Prazo: Hoje até 18:00</span>
+</div>
+</div>
+</td>
+<td class="px-4 py-2">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-surface-subtle text-text-secondary font-label-sm text-[11px]">
+<span class="material-symbols-outlined text-[13px] text-primary">campaign</span>
+                  Congresso Pediatria
+                </span>
+</td>
+<td class="px-4 py-2 text-text-secondary font-label-md text-label-md">
+                02/02/2025
+              </td>
+<td class="px-4 py-2 text-center relative">
+<button class="p-1 rounded hover:bg-surface-container text-text-secondary hover:text-text-primary transition-colors" onclick="document.getElementById('modal-mover-etapa').classList.remove('hidden')" type="button">
+<span class="material-symbols-outlined text-[19px]">more_horiz</span>
+</button>
+</td>
+</tr>
+<!-- Linha 6: Ortocentro Trauma & Fisio -->
+<tr class="hover:bg-surface-subtle transition-colors h-14 group">
+<td class="px-4 py-2 text-center">
+<input class="rounded text-primary focus:ring-0 cursor-pointer w-4 h-4" type="checkbox"/>
+</td>
+<td class="px-4 py-2">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-xl bg-surface-container text-text-secondary flex items-center justify-center font-bold shadow-xs">
+<span class="material-symbols-outlined text-[18px]">healing</span>
+</div>
+<div class="flex flex-col">
+<a class="font-headline-sm text-[14px] text-text-primary hover:text-primary font-semibold transition-colors flex items-center gap-1.5" href="#">
+                      Ortocentro Trauma &amp; Fisio
+                      <span class="material-symbols-outlined text-[14px] text-text-muted">open_in_new</span>
+</a>
+<div class="flex items-center gap-2 text-text-muted font-body-sm text-[12px]">
+<span>Ortopedia &amp; Reabilitação</span>
+<span>•</span>
+<span>Dr. Wagner Camargo</span>
+</div>
+</div>
+</div>
+</td>
+<td class="px-4 py-2">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-info-surface text-info-text font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-info-text"></span>
+                  5. Qualificação Técnica
+                </span>
+</td>
+<td class="px-4 py-2">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-warning-surface text-warning-text flex items-center justify-center font-bold text-[11px]">
+                    PA
+                  </div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-text-primary">Patrícia Alvarenga</span>
+<span class="font-label-sm text-[10px] text-text-muted">SDR Pleno</span>
+</div>
+</div>
+</td>
+<td class="px-4 py-2 text-right">
+<span class="font-headline-sm text-[14px] font-bold text-text-primary">R$ 7.900</span>
+<span class="block text-text-muted font-label-sm text-[10px]">/mês</span>
+</td>
+<td class="px-4 py-2">
+<div class="flex items-center gap-2">
+<span class="p-1.5 rounded-md bg-info-surface text-info-text">
+<span class="material-symbols-outlined text-[16px]">video_call</span>
+</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-text-primary">Google Meet sex 14:00</span>
+<span class="font-label-sm text-[11px] text-text-muted">Alinhamento de Integração TISS</span>
+</div>
+</div>
+</td>
+<td class="px-4 py-2">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-surface-subtle text-text-secondary font-label-sm text-[11px]">
+<span class="material-symbols-outlined text-[13px] text-primary">search</span>
+                  Google Ads
+                </span>
+</td>
+<td class="px-4 py-2 text-text-secondary font-label-md text-label-md">
+                12/02/2025
+              </td>
+<td class="px-4 py-2 text-center relative">
+<button class="p-1 rounded hover:bg-surface-container text-text-secondary hover:text-text-primary transition-colors" onclick="document.getElementById('modal-mover-etapa').classList.remove('hidden')" type="button">
+<span class="material-symbols-outlined text-[19px]">more_horiz</span>
+</button>
+</td>
+</tr>
+<!-- Linha 7: Centro Diagnóstico Morumbi -->
+<tr class="hover:bg-surface-subtle transition-colors h-14 group">
+<td class="px-4 py-2 text-center">
+<input class="rounded text-primary focus:ring-0 cursor-pointer w-4 h-4" type="checkbox"/>
+</td>
+<td class="px-4 py-2">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-xl bg-primary-fixed-dim text-on-primary-fixed flex items-center justify-center font-bold shadow-xs">
+<span class="material-symbols-outlined text-[18px]">radiology</span>
+</div>
+<div class="flex flex-col">
+<a class="font-headline-sm text-[14px] text-text-primary hover:text-primary font-semibold transition-colors flex items-center gap-1.5" href="#">
+                      Centro Diagnóstico Morumbi
+                      <span class="material-symbols-outlined text-[14px] text-text-muted">open_in_new</span>
+</a>
+<div class="flex items-center gap-2 text-text-muted font-body-sm text-[12px]">
+<span>Ressonância &amp; Ultrassonografia</span>
+<span>•</span>
+<span>Dr. André Vasconcelos</span>
+</div>
+</div>
+</div>
+</td>
+<td class="px-4 py-2">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-warning-surface text-warning-text font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-warning-text"></span>
+                  9. Proposta Enviada
+                </span>
+</td>
+<td class="px-4 py-2">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-[11px]">
+                    CM
+                  </div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-text-primary">Carlos Mendes</span>
+<span class="font-label-sm text-[10px] text-text-muted">Key Account</span>
+</div>
+</div>
+</td>
+<td class="px-4 py-2 text-right">
+<span class="font-headline-sm text-[14px] font-bold text-text-primary">R$ 15.500</span>
+<span class="block text-text-muted font-label-sm text-[10px]">/mês (PACS integrado)</span>
+</td>
+<td class="px-4 py-2">
+<div class="flex items-center gap-2">
+<span class="p-1.5 rounded-md bg-warning-surface text-warning-text">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-text-primary">Follow-up comercial quinta 11h</span>
+<span class="font-label-sm text-[11px] text-text-muted">Revisão de SLAs de suporte</span>
+</div>
+</div>
+</td>
+<td class="px-4 py-2">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-surface-subtle text-text-secondary font-label-sm text-[11px]">
+<span class="material-symbols-outlined text-[13px] text-success-text">handshake</span>
+                  Indicação Médica
+                </span>
+</td>
+<td class="px-4 py-2 text-text-secondary font-label-md text-label-md">
+                04/02/2025
+              </td>
+<td class="px-4 py-2 text-center relative">
+<button class="p-1 rounded hover:bg-surface-container text-text-secondary hover:text-text-primary transition-colors" onclick="document.getElementById('modal-mover-etapa').classList.remove('hidden')" type="button">
+<span class="material-symbols-outlined text-[19px]">more_horiz</span>
+</button>
+</td>
+</tr>
+<!-- Linha 8: GastroVita Especialistas -->
+<tr class="hover:bg-surface-subtle transition-colors h-14 group">
+<td class="px-4 py-2 text-center">
+<input class="rounded text-primary focus:ring-0 cursor-pointer w-4 h-4" type="checkbox"/>
+</td>
+<td class="px-4 py-2">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-xl bg-info-surface text-info-text flex items-center justify-center font-bold shadow-xs">
+<span class="material-symbols-outlined text-[18px]">medical_services</span>
+</div>
+<div class="flex flex-col">
+<a class="font-headline-sm text-[14px] text-text-primary hover:text-primary font-semibold transition-colors flex items-center gap-1.5" href="#">
+                      GastroVita Especialistas
+                      <span class="material-symbols-outlined text-[14px] text-text-muted">open_in_new</span>
+</a>
+<div class="flex items-center gap-2 text-text-muted font-body-sm text-[12px]">
+<span>Gastroenterologia &amp; Endoscopia</span>
+<span>•</span>
+<span>Dra. Regina Toledo</span>
+</div>
+</div>
+</div>
+</td>
+<td class="px-4 py-2">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container text-text-secondary font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-text-secondary"></span>
+                  1. Entrada de Leads
+                </span>
+</td>
+<td class="px-4 py-2">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-warning-surface text-warning-text flex items-center justify-center font-bold text-[11px]">
+                    PA
+                  </div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-text-primary">Patrícia Alvarenga</span>
+<span class="font-label-sm text-[10px] text-text-muted">SDR Pleno</span>
+</div>
+</div>
+</td>
+<td class="px-4 py-2 text-right">
+<span class="font-headline-sm text-[14px] font-bold text-text-primary">R$ 5.100</span>
+<span class="block text-text-muted font-label-sm text-[10px]">/mês</span>
+</td>
+<td class="px-4 py-2">
+<div class="flex items-center gap-2">
+<span class="p-1.5 rounded-md bg-info-surface text-info-text">
+<span class="material-symbols-outlined text-[16px]">phone_forwarded</span>
+</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-text-primary">Primeiro Contato (SLA 15m)</span>
+<span class="font-label-sm text-[11px] text-text-muted">Toque 1/18 (Entrada recente)</span>
+</div>
+</div>
+</td>
+<td class="px-4 py-2">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-surface-subtle text-text-secondary font-label-sm text-[11px]">
+<span class="material-symbols-outlined text-[13px] text-primary">search</span>
+                  Google Ads
+                </span>
+</td>
+<td class="px-4 py-2 text-text-secondary font-label-md text-label-md">
+                Hoje, 11:24
+              </td>
+<td class="px-4 py-2 text-center relative">
+<button class="p-1 rounded hover:bg-surface-container text-text-secondary hover:text-text-primary transition-colors" onclick="document.getElementById('modal-mover-etapa').classList.remove('hidden')" type="button">
+<span class="material-symbols-outlined text-[19px]">more_horiz</span>
+</button>
+</td>
+</tr>
+<!-- Linha 9: Clinica Psiquiatrica MenteSã -->
+<tr class="hover:bg-surface-subtle transition-colors h-14 group">
+<td class="px-4 py-2 text-center">
+<input class="rounded text-primary focus:ring-0 cursor-pointer w-4 h-4" type="checkbox"/>
+</td>
+<td class="px-4 py-2">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-xl bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center font-bold shadow-xs">
+<span class="material-symbols-outlined text-[18px]">psychology</span>
+</div>
+<div class="flex flex-col">
+<a class="font-headline-sm text-[14px] text-text-primary hover:text-primary font-semibold transition-colors flex items-center gap-1.5" href="#">
+                      Clínica Psiquiátrica MenteSã
+                      <span class="material-symbols-outlined text-[14px] text-text-muted">open_in_new</span>
+</a>
+<div class="flex items-center gap-2 text-text-muted font-body-sm text-[12px]">
+<span>Saúde Mental &amp; Neurologia</span>
+<span>•</span>
+<span>Dr. Bruno Fontoura</span>
+</div>
+</div>
+</div>
+</td>
+<td class="px-4 py-2">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                  6. Reunião Agendada
+                </span>
+</td>
+<td class="px-4 py-2">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center font-bold text-[11px]">
+                    JR
+                  </div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-text-primary">Dra. Juliana Rocha</span>
+<span class="font-label-sm text-[10px] text-text-muted">Inside Sales</span>
+</div>
+</div>
+</td>
+<td class="px-4 py-2 text-right">
+<span class="font-headline-sm text-[14px] font-bold text-text-primary">R$ 6.200</span>
+<span class="block text-text-muted font-label-sm text-[10px]">/mês</span>
+</td>
+<td class="px-4 py-2">
+<div class="flex items-center gap-2">
+<span class="p-1.5 rounded-md bg-info-surface text-info-text">
+<span class="material-symbols-outlined text-[16px]">calendar_month</span>
+</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-text-primary">Apresentação MedCRM amanhã 16h</span>
+<span class="font-label-sm text-[11px] text-text-muted">Link de sala enviado via WhatsApp</span>
+</div>
+</div>
+</td>
+<td class="px-4 py-2">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-surface-subtle text-text-secondary font-label-sm text-[11px]">
+<span class="material-symbols-outlined text-[13px] text-primary">public</span>
+                  Meta Ads
+                </span>
+</td>
+<td class="px-4 py-2 text-text-secondary font-label-md text-label-md">
+                11/02/2025
+              </td>
+<td class="px-4 py-2 text-center relative">
+<button class="p-1 rounded hover:bg-surface-container text-text-secondary hover:text-text-primary transition-colors" onclick="document.getElementById('modal-mover-etapa').classList.remove('hidden')" type="button">
+<span class="material-symbols-outlined text-[19px]">more_horiz</span>
+</button>
+</td>
+</tr>
+<!-- Linha 10: OdontoPrime Moema -->
+<tr class="hover:bg-surface-subtle transition-colors h-14 group">
+<td class="px-4 py-2 text-center">
+<input class="rounded text-primary focus:ring-0 cursor-pointer w-4 h-4" type="checkbox"/>
+</td>
+<td class="px-4 py-2">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-xl bg-surface-container text-text-secondary flex items-center justify-center font-bold shadow-xs">
+<span class="material-symbols-outlined text-[18px]">dentistry</span>
+</div>
+<div class="flex flex-col">
+<a class="font-headline-sm text-[14px] text-text-primary hover:text-primary font-semibold transition-colors flex items-center gap-1.5" href="#">
+                      OdontoPrime Moema
+                      <span class="material-symbols-outlined text-[14px] text-text-muted">open_in_new</span>
+</a>
+<div class="flex items-center gap-2 text-text-muted font-body-sm text-[12px]">
+<span>Odontologia Integrada &amp; Implantes</span>
+<span>•</span>
+<span>Dra. Fernanda Lins</span>
+</div>
+</div>
+</div>
+</td>
+<td class="px-4 py-2">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-info-surface text-info-text font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-info-text"></span>
+                  8. Follow-up Pós-Demo
+                </span>
+</td>
+<td class="px-4 py-2">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-[11px]">
+                    FS
+                  </div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-text-primary">Felipe Siqueira</span>
+<span class="font-label-sm text-[10px] text-text-muted">Closer Sênior</span>
+</div>
+</div>
+</td>
+<td class="px-4 py-2 text-right">
+<span class="font-headline-sm text-[14px] font-bold text-text-primary">R$ 4.200</span>
+<span class="block text-text-muted font-label-sm text-[10px]">/mês</span>
+</td>
+<td class="px-4 py-2">
+<div class="flex items-center gap-2">
+<span class="p-1.5 rounded-md bg-success-surface text-success-text">
+<span class="material-symbols-outlined text-[16px]">chat</span>
+</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-text-primary">WhatsApp pós-proposta (Toque 8)</span>
+<span class="font-label-sm text-[11px] text-text-muted">Dúvidas sobre módulos de confirmação</span>
+</div>
+</div>
+</td>
+<td class="px-4 py-2">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-surface-subtle text-text-secondary font-label-sm text-[11px]">
+<span class="material-symbols-outlined text-[13px] text-primary">groups</span>
+                  Outbound / LinkedIn
+                </span>
+</td>
+<td class="px-4 py-2 text-text-secondary font-label-md text-label-md">
+                06/02/2025
+              </td>
+<td class="px-4 py-2 text-center relative">
+<button class="p-1 rounded hover:bg-surface-container text-text-secondary hover:text-text-primary transition-colors" onclick="document.getElementById('modal-mover-etapa').classList.remove('hidden')" type="button">
+<span class="material-symbols-outlined text-[19px]">more_horiz</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footer & Pagination -->
+<div class="px-space-md py-3 bg-surface-card flex flex-col sm:flex-row items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-md">
+<span class="font-body-sm text-body-sm text-text-secondary">
+            Exibindo <strong>1 a 10</strong> de <strong>148</strong> leads
+          </span>
+<div class="flex items-center gap-1.5">
+<span class="font-body-sm text-body-sm text-text-muted">Exibir:</span>
+<select class="h-7 px-2 rounded bg-surface-subtle text-text-primary font-label-sm text-label-sm focus:outline-none">
+<option selected="" value="10">10 por página</option>
+<option value="25">25 por página</option>
+<option value="50">50 por página</option>
+<option value="100">100 por página</option>
+</select>
+</div>
+</div>
+<div class="flex items-center gap-1">
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-text-muted hover:bg-surface-subtle transition-colors disabled:opacity-40" disabled="" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center bg-primary text-on-primary font-label-md text-label-md font-semibold shadow-xs" type="button">
+            1
+          </button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-text-secondary hover:bg-surface-subtle font-label-md text-label-md transition-colors" type="button">
+            2
+          </button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-text-secondary hover:bg-surface-subtle font-label-md text-label-md transition-colors" type="button">
+            3
+          </button>
+<span class="w-6 text-center text-text-muted font-body-sm text-body-sm">...</span>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-text-secondary hover:bg-surface-subtle font-label-md text-label-md transition-colors" type="button">
+            15
+          </button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-text-secondary hover:bg-surface-subtle transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Reference Visual Layout Anchor (Displaying contextual design cohesion) -->
+<div class="p-space-md rounded-xl bg-surface-card shadow-sm flex flex-col md:flex-row items-center justify-between gap-space-md">
+<div class="flex items-center gap-space-md">
+<div class="w-12 h-16 overflow-hidden rounded-lg shadow-sm flex-shrink-0">
+<img alt="Referência Visual do Funil Pipeline MedCRM com colunas Kanban e cards padronizados" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAY6wa_U76mR2SlXyWahE-eBh68T5zWErzU_hSHpwG2qGQIJsHhnMpMd43FAEF515f80oDw4-AGL1NrOn75HjUJepXliqrWIH7ywZmPqz0JEGkoKmliI_e-Cwqe1ByzvHFCrtAJTf8PERhvhpjCmZMeVtUHiU4QfjI8VMbdjRE29w3KIKezVNFtiN9nadvMBAwSGcCfDl76mqvgTAgCZxnnujVEM3fPyv85hiQPhOyq5TMx6k5dV_1C9NhAnEBxJwMpVw"/>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-text-primary">Conexão em Tempo Real com o Funil Visual</span>
+<p class="font-body-sm text-body-sm text-text-secondary">Qualquer alteração efetuada nesta visão de lista sincroniza instantaneamente as 15 etapas do Pipeline Kanban e os gatilhos da régua de 18 toques.</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-3 py-1 rounded-full bg-success-surface text-success-text font-label-sm text-label-sm font-semibold flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-success-text animate-ping"></span>
+          Websocket Ativo
+        </span>
+</div>
+</div>
+</div>
+<!-- MODAL / GAVETA SUTIL: MOVER ETAPA & VALIDAÇÃO DE DADOS FALTANTES (US-032) -->
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-inverse-surface/40 backdrop-blur-xs hidden" id="modal-mover-etapa">
+<div class="bg-surface-card rounded-2xl shadow-xl w-full max-w-lg p-space-xl space-y-space-md animate-in fade-in zoom-in-95 duration-150">
+<!-- Modal Header -->
+<div class="flex items-center justify-between pb-space-sm">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">drive_file_move</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-text-primary">Avançar Etapa do Lead</h3>
+<span class="font-label-sm text-label-sm text-text-muted">Lead: <strong>Clínica Santa Luzia</strong></span>
+</div>
+</div>
+<button class="p-1 rounded-lg text-text-muted hover:text-text-primary hover:bg-surface-subtle transition-colors" onclick="document.getElementById('modal-mover-etapa').classList.add('hidden')" type="button">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<!-- Blocking validation alert (US-032: Dados obrigatórios antes de mover) -->
+<div class="p-space-sm rounded-xl bg-warning-surface text-warning-text flex items-start gap-2.5">
+<span class="material-symbols-outlined text-[20px] text-warning-text mt-0.5">verified_user</span>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg font-bold">Validação Obrigatória para Avanço</span>
+<span class="font-body-sm text-[12px] text-warning-text/90">Para avançar da etapa <strong>9. Proposta Enviada</strong> para <strong>10. Negociação</strong>, preencha os dados do tomador de decisão e o valor final revisado.</span>
+</div>
+</div>
+<!-- Form Inputs -->
+<div class="space-y-space-sm">
+<div>
+<label class="block font-label-md text-label-md text-text-secondary mb-1">Nova Etapa de Destino</label>
+<select class="w-full h-10 px-3 rounded-lg bg-surface-subtle text-text-primary font-body-md text-body-md focus:bg-surface-card focus:outline-none">
+<option selected="" value="10">10. Em Negociação</option>
+<option value="11">11. Fechamento / Contrato</option>
+<option value="15">15. Perdido (Lost) - Exige Motivo</option>
+</select>
+</div>
+<div class="grid grid-cols-2 gap-space-sm">
+<div>
+<label class="block font-label-md text-label-md text-text-secondary mb-1">Tomador de Decisão Validado *</label>
+<input class="w-full h-10 px-3 rounded-lg bg-surface-subtle text-text-primary font-body-md text-body-md focus:bg-surface-card focus:outline-none" type="text" value="Dr. Marcos Albuquerque (Sócio)"/>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-text-secondary mb-1">Valor Proposta Final (R$) *</label>
+<input class="w-full h-10 px-3 rounded-lg bg-surface-subtle text-text-primary font-body-md text-body-md focus:bg-surface-card focus:outline-none" type="text" value="6.500,00"/>
+</div>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-text-secondary mb-1">Agendar Próximo Toque da Cadência</label>
+<div class="flex items-center gap-2">
+<input class="w-full h-10 px-3 rounded-lg bg-surface-subtle text-text-primary font-body-md text-body-md focus:bg-surface-card focus:outline-none" type="datetime-local" value="2025-02-18T10:00"/>
+<select class="w-48 h-10 px-3 rounded-lg bg-surface-subtle text-text-primary font-body-md text-body-md focus:bg-surface-card focus:outline-none">
+<option value="whatsapp">WhatsApp</option>
+<option value="call">Ligação</option>
+<option value="meet">Google Meet</option>
+</select>
+</div>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-text-secondary mb-1">Nota de Alinhamento Comercial</label>
+<textarea class="w-full p-2.5 rounded-lg bg-surface-subtle text-text-primary font-body-md text-body-md focus:bg-surface-card focus:outline-none resize-none" placeholder="Descreva objeções tratadas ou acordos do avanço de etapa..." rows="2">Lead aprovou proposta financeira. Aguardando apenas envio de minutas contratuais para assinatura.</textarea>
+</div>
+</div>
+<!-- Modal Footer Actions -->
+<div class="flex items-center justify-end gap-space-sm pt-space-sm">
+<button class="px-4 py-2 rounded-lg bg-surface-subtle hover:bg-surface-container text-text-secondary hover:text-text-primary font-label-lg text-label-lg transition-colors" onclick="document.getElementById('modal-mover-etapa').classList.add('hidden')" type="button">
+          Cancelar
+        </button>
+<button class="px-4 py-2 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-lg text-label-lg shadow-md transition-all" onclick="document.getElementById('modal-mover-etapa').classList.add('hidden')" type="button">
+          Confirmar e Avançar Etapa
+        </button>
+</div>
+</div>
+</div>
+<!-- MODAL SECUNDÁRIO: NOVO CARD (US-029) -->
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-inverse-surface/40 backdrop-blur-xs hidden" id="modal-novo-lead">
+<div class="bg-surface-card rounded-2xl shadow-xl w-full max-w-lg p-space-xl space-y-space-md animate-in fade-in zoom-in-95 duration-150">
+<div class="flex items-center justify-between pb-space-sm">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">add_circle</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-text-primary">Cadastrar Novo Card no Pipeline</h3>
+<span class="font-label-sm text-label-sm text-text-muted">Adicione clínica ou consultório com dados iniciais</span>
+</div>
+</div>
+<button class="p-1 rounded-lg text-text-muted hover:text-text-primary hover:bg-surface-subtle transition-colors" onclick="document.getElementById('modal-novo-lead').classList.add('hidden')" type="button">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<div class="space-y-space-sm">
+<div>
+<label class="block font-label-md text-label-md text-text-secondary mb-1">Nome da Clínica ou Consultório *</label>
+<input class="w-full h-10 px-3 rounded-lg bg-surface-subtle text-text-primary font-body-md text-body-md focus:bg-surface-card focus:outline-none" placeholder="Ex: Clínica Vascular Paulista" type="text"/>
+</div>
+<div class="grid grid-cols-2 gap-space-sm">
+<div>
+<label class="block font-label-md text-label-md text-text-secondary mb-1">Médico Responsável *</label>
+<input class="w-full h-10 px-3 rounded-lg bg-surface-subtle text-text-primary font-body-md text-body-md focus:bg-surface-card focus:outline-none" placeholder="Ex: Dr. Marcelo Ramos" type="text"/>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-text-secondary mb-1">Especialidade Principal</label>
+<input class="w-full h-10 px-3 rounded-lg bg-surface-subtle text-text-primary font-body-md text-body-md focus:bg-surface-card focus:outline-none" placeholder="Ex: Angiologia / Cirurgia Vascular" type="text"/>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-space-sm">
+<div>
+<label class="block font-label-md text-label-md text-text-secondary mb-1">Telefone WhatsApp *</label>
+<input class="w-full h-10 px-3 rounded-lg bg-surface-subtle text-text-primary font-body-md text-body-md focus:bg-surface-card focus:outline-none" placeholder="(11) 98765-4321" type="text"/>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-text-secondary mb-1">Valor Estimado Mensal (R$)</label>
+<input class="w-full h-10 px-3 rounded-lg bg-surface-subtle text-text-primary font-body-md text-body-md focus:bg-surface-card focus:outline-none" placeholder="5.500,00" type="text"/>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-space-sm">
+<div>
+<label class="block font-label-md text-label-md text-text-secondary mb-1">Etapa Inicial</label>
+<select class="w-full h-10 px-3 rounded-lg bg-surface-subtle text-text-primary font-body-md text-body-md focus:bg-surface-card focus:outline-none">
+<option value="1">1. Entrada de Leads</option>
+<option value="2">2. Tentativa de Contato 1</option>
+<option value="5">5. Qualificação Técnica</option>
+</select>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-text-secondary mb-1">Responsável Comercial</label>
+<select class="w-full h-10 px-3 rounded-lg bg-surface-subtle text-text-primary font-body-md text-body-md focus:bg-surface-card focus:outline-none">
+<option value="juliana">Dra. Juliana Rocha</option>
+<option value="carlos">Carlos Mendes</option>
+<option value="patricia">Patrícia Alvarenga</option>
+</select>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-end gap-space-sm pt-space-sm">
+<button class="px-4 py-2 rounded-lg bg-surface-subtle hover:bg-surface-container text-text-secondary hover:text-text-primary font-label-lg text-label-lg transition-colors" onclick="document.getElementById('modal-novo-lead').classList.add('hidden')" type="button">
+          Cancelar
+        </button>
+<button class="px-4 py-2 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-lg text-label-lg shadow-md transition-all" onclick="document.getElementById('modal-novo-lead').classList.add('hidden')" type="button">
+          Criar e Iniciar Cadência
+        </button>
+</div>
+</div>
+</div>
+</div></main></div></body></html>

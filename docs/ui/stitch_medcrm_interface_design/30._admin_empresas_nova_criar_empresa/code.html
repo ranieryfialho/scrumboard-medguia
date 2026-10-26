@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"border-focus":"#93C5FD","tertiary-container":"#b85b00","sidebar-surface":"#1E293B","surface-subtle":"#F8FAFC","outline-variant":"#c3c6d6","surface-dim":"#d9d9e3","primary-fixed":"#dae2ff","danger-text":"#DC2626","danger-border":"#FECACA","on-error":"#ffffff","on-primary":"#ffffff","tertiary-fixed-dim":"#ffb787","inverse-primary":"#b1c5ff","secondary-container":"#d7dffd","surface":"#faf8ff","warning-surface":"#FEF3C7","sidebar-surface-active":"#2D3748","error-container":"#ffdad6","surface-tint":"#1157cb","warning-border":"#FDE68A","on-primary-fixed-variant":"#0040a0","surface-bright":"#faf8ff","background":"#faf8ff","on-primary-container":"#fefcff","success-surface":"#D1FAE5","text-secondary":"#64748B","surface-container":"#ededf7","primary-fixed-dim":"#b1c5ff","surface-container-low":"#f3f3fd","secondary-fixed-dim":"#bec6e3","success-text":"#059669","primary":"#0954c9","info-border":"#BFDBFE","inverse-surface":"#2e3038","on-secondary-fixed-variant":"#3e465e","error":"#ba1a1a","info-surface":"#EFF6FF","outline":"#737785","border-subtle":"#E2E8F0","on-secondary-fixed":"#131b30","on-surface-variant":"#434654","on-surface":"#191b22","text-primary":"#0F172A","primary-container":"#366ee3","info-text":"#2563EB","on-secondary":"#ffffff","surface-container-high":"#e7e7f2","on-error-container":"#93000a","on-tertiary-fixed":"#311300","on-background":"#191b22","on-tertiary-container":"#fffbff","tertiary-fixed":"#ffdcc7","on-tertiary":"#ffffff","warning-text":"#D97706","surface-card":"#FFFFFF","inverse-on-surface":"#f0f0fa","tertiary":"#924700","text-muted":"#94A3B8","on-secondary-container":"#5a627b","on-tertiary-fixed-variant":"#723600","secondary":"#565e77","on-primary-fixed":"#001847","secondary-fixed":"#dae2ff","surface-container-lowest":"#ffffff","success-border":"#A7F3D0","background-canvas":"#F4F6FA","surface-container-highest":"#e1e2ec","danger-surface":"#FEE2E2","surface-variant":"#e1e2ec"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"space-lg":"1.25rem","space-xl":"1.75rem","space-xs":"0.25rem","margin":"1.75rem","space-sm":"0.5rem","space-2xl":"2.5rem","gutter-sm":"0.75rem","margin-mobile":"1rem","space-md":"0.875rem","gutter-lg":"1.5rem","gutter":"1.25rem"},"fontFamily":{"body-lg":["Inter"],"display-lg-mobile":["Plus Jakarta Sans"],"label-lg":["Inter"],"metric-stat":["Plus Jakarta Sans"],"body-sm":["Inter"],"headline-md":["Plus Jakarta Sans"],"table-header":["Inter"],"label-sm":["Inter"],"headline-lg":["Plus Jakarta Sans"],"label-md":["Inter"],"body-md":["Inter"],"headline-sm":["Plus Jakarta Sans"],"display-lg":["Plus Jakarta Sans"]},"fontSize":{"body-lg":["15px",{"lineHeight":"22px","fontWeight":"400"}],"display-lg-mobile":["26px",{"lineHeight":"34px","letterSpacing":"-0.01em","fontWeight":"700"}],"label-lg":["13px",{"lineHeight":"18px","fontWeight":"600"}],"metric-stat":["28px",{"lineHeight":"36px","letterSpacing":"-0.02em","fontWeight":"700"}],"body-sm":["12px",{"lineHeight":"16px","fontWeight":"400"}],"headline-md":["20px",{"lineHeight":"28px","fontWeight":"600"}],"table-header":["11px",{"lineHeight":"16px","letterSpacing":"0.05em","fontWeight":"600"}],"label-sm":["11px",{"lineHeight":"14px","letterSpacing":"0.03em","fontWeight":"600"}],"headline-lg":["24px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"600"}],"label-md":["12px",{"lineHeight":"16px","fontWeight":"500"}],"body-md":["13px",{"lineHeight":"20px","fontWeight":"400"}],"headline-sm":["16px",{"lineHeight":"24px","fontWeight":"600"}],"display-lg":["32px",{"lineHeight":"40px","letterSpacing":"-0.02em","fontWeight":"700"}]}}}}</script></head><body class="bg-background-canvas font-body-md text-text-primary antialiased min-h-screen"><aside class="fixed left-0 top-0 h-full w-64 bg-sidebar-surface z-50 flex flex-col justify-between shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex flex-col h-full overflow-hidden"><div class="h-16 flex items-center px-space-lg gap-space-sm bg-sidebar-surface"><div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[20px]">local_hospital</span></div><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-surface-card leading-tight tracking-tight">MedCRM</span><span class="font-label-sm text-label-sm text-text-muted">MedGuia B2B Health</span></div></div><div class="overflow-y-auto flex-1 px-space-sm py-space-sm space-y-space-md"><div class="space-y-space-xs"><span class="px-space-md font-table-header text-table-header text-text-muted uppercase tracking-wider block">Operação</span><nav class="space-y-1" data-active-classes="bg-primary text-on-primary font-label-md rounded-lg shadow-sm"><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="funil-pipeline" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">view_kanban</span><span class="font-label-md text-label-md">Funil Pipeline</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="lista" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">view_list</span><span class="font-label-md text-label-md">Lista</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="arquivados" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">archive</span><span class="font-label-md text-label-md">Arquivados</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="tarefas-do-turno" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">assignment</span><span class="font-label-md text-label-md">Tarefas do Turno</span></div><span class="px-2 py-0.5 rounded-full font-label-sm text-label-sm bg-info-surface text-info-text">12</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="tarefas-atrasadas" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">warning</span><span class="font-label-md text-label-md">Tarefas Atrasadas</span></div><span class="px-2 py-0.5 rounded-full font-label-sm text-label-sm bg-danger-surface text-danger-text">4</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="agenda" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">calendar_today</span><span class="font-label-md text-label-md">Agenda</span></div></a></nav></div><div class="space-y-space-xs"><span class="px-space-md font-table-header text-table-header text-text-muted uppercase tracking-wider block">Comunicação</span><nav class="space-y-1" data-active-classes="bg-primary text-on-primary font-label-md rounded-lg shadow-sm"><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="whatsapp-inbox" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">chat</span><span class="font-label-md text-label-md">WhatsApp Inbox</span></div><span class="px-2 py-0.5 rounded-full font-label-sm text-label-sm bg-success-surface text-success-text">5</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="conexao-qr-code" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">qr_code_2</span><span class="font-label-md text-label-md">Conexão &amp; QR Code</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="configuracao-evolution" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">settings_ethernet</span><span class="font-label-md text-label-md">Configuração Evolution</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="campanhas" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">campaign</span><span class="font-label-md text-label-md">Campanhas</span></div></a></nav></div><div class="space-y-space-xs"><span class="px-space-md font-table-header text-table-header text-text-muted uppercase tracking-wider block">Análises</span><nav class="space-y-1" data-active-classes="bg-primary text-on-primary font-label-md rounded-lg shadow-sm"><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="indicadores" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">query_stats</span><span class="font-label-md text-label-md">Indicadores</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="relatorios" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">analytics</span><span class="font-label-md text-label-md">Relatórios</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="relatorios-comerciais" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">assessment</span><span class="font-label-md text-label-md">Comercial</span></div></a></nav></div><div class="space-y-space-xs"><span class="px-space-md font-table-header text-table-header text-primary-fixed uppercase tracking-wider block">Administração</span><nav class="space-y-1" data-active-classes="bg-primary text-on-primary font-label-md rounded-lg shadow-sm"><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="equipe" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">group</span><span class="font-label-md text-label-md">Equipe</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="motivos-de-perda" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">rule</span><span class="font-label-md text-label-md">Motivos de Perda</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="empresas" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">domain</span><span class="font-label-md text-label-md">Empresas</span></div><span class="px-2 py-0.5 rounded-full font-label-sm text-label-sm bg-warning-surface text-warning-text">Super Admin</span></a></nav></div></div><div class="p-space-md bg-sidebar-surface flex items-center justify-between text-text-muted"><a class="flex items-center gap-space-xs hover:text-surface-card transition-colors" data-path="ajuda-e-suporte" href="#"><span class="material-symbols-outlined text-[16px]">help</span><span class="font-body-sm text-body-sm">Ajuda &amp; Suporte</span></a><span class="font-label-sm text-label-sm text-outline">v2.4.0</span></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface-card/90 backdrop-blur-xl z-40 shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="w-full h-16 px-space-lg flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-sm px-space-md py-space-xs bg-surface-subtle rounded-xl"><div class="w-2 h-2 rounded-full bg-success-text"></div><span class="font-label-md text-label-md text-text-primary font-medium">Clínica São Lucas - Matriz</span><span class="font-label-sm text-label-sm text-success-text bg-success-surface px-1.5 py-0.5 rounded-full font-semibold">Ativo</span><span class="material-symbols-outlined text-text-secondary text-[16px]">expand_more</span></div><div class="flex items-center gap-space-xs px-space-sm py-1 bg-surface-subtle rounded-full"><span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success-text opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-success-text"></span></span><span class="font-label-sm text-label-sm text-text-secondary hidden xl:inline-block">Tempo real conectado</span></div></div><div class="flex-1 max-w-md mx-space-md"><div class="relative flex items-center"><span class="material-symbols-outlined absolute left-space-md text-text-muted text-[18px]">search</span><input class="w-full h-10 pl-10 pr-12 rounded-lg bg-surface-subtle text-text-primary placeholder:text-text-muted font-body-sm text-body-sm focus:outline-none focus:ring-2 focus:ring-border-focus transition-all" placeholder="Buscar usuário, e-mail, papel..." type="text"/><kbd class="absolute right-space-md px-1.5 py-0.5 bg-surface-card text-text-muted font-label-sm text-label-sm rounded shadow-[0_1px_2px_rgba(0,0,0,0.05)]">⌘K</kbd></div></div><div class="flex items-center gap-space-md"><button class="relative p-2 rounded-lg hover:bg-surface-subtle text-text-secondary hover:text-text-primary transition-colors"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-1.5 right-1.5 w-4 h-4 bg-danger-text text-on-error font-label-sm text-[10px] leading-4 flex items-center justify-center rounded-full font-bold">1</span></button><div class="flex items-center gap-space-sm pl-space-sm"><div class="flex flex-col text-right hidden sm:flex"><div class="flex items-center justify-end gap-1"><span class="font-label-md text-label-md text-text-primary font-semibold">Dr. Roberto Mendes</span><span class="px-1.5 py-0.2 rounded font-label-sm text-[10px] bg-primary-fixed text-on-primary-fixed-variant font-bold uppercase tracking-wider">Master</span></div><span class="font-body-sm text-body-sm text-text-muted">roberto.mendes@medguia.com.br</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></div></header><main class="w-full pt-16 bg-background-canvas min-h-[calc(100vh-4rem)] p-margin"><div class="flex flex-col w-full">
+<!-- BREADCRUMB & CONTEXT HEADER -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-md mb-space-xl">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-space-xs font-table-header text-table-header uppercase tracking-wider text-text-muted">
+<a class="hover:text-primary transition-colors" href="#">Administração</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<a class="hover:text-primary transition-colors" href="#">Empresas</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-primary font-bold">Nova Empresa</span>
+</div>
+<div class="flex items-center gap-space-sm mt-1">
+<a class="inline-flex items-center gap-1 text-text-secondary hover:text-primary transition-colors font-label-md text-label-md py-1" href="#">
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+<span>Voltar para Gestão de Empresas</span>
+</a>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-text-primary tracking-tight mt-1 flex items-center gap-space-sm">
+<span>Cadastrar Nova Empresa ou Filial</span>
+<span class="px-2.5 py-0.5 rounded-full font-label-sm text-label-sm bg-primary-fixed text-on-primary-fixed-variant font-semibold tracking-normal">
+          Multi-tenant RLS
+        </span>
+</h1>
+<p class="font-body-md text-body-md text-text-secondary max-w-3xl">
+        Provisionamento automatizado de tenant médico com isolamento lógico de banco de dados (Row-Level Security), alocação prévia de instâncias Evolution API e concessão de credenciais Master.
+      </p>
+</div>
+<!-- HEADER TOP-RIGHT ACTIONS -->
+<div class="flex items-center gap-space-sm self-start md:self-center shrink-0">
+<button class="px-space-md py-2 rounded-lg bg-surface-card hover:bg-surface-subtle text-text-primary font-label-md text-label-md shadow-sm transition-all flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[18px]">close</span>
+<span>Cancelar</span>
+</button>
+<button class="px-space-lg py-2.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-lg text-label-lg shadow-sm transition-all flex items-center gap-2 transform active:scale-[0.98]" id="btnProvisionar" type="button">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">cloud_done</span>
+<span>Criar e Provisionar Empresa</span>
+</button>
+</div>
+</div>
+<!-- MAIN 2-COLUMN GRID (65% / 35%) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-start">
+<!-- LEFT COLUMN: MULTI-STEP / MODULAR FORM CARDS (8 COLS) -->
+<div class="lg:col-span-8 flex flex-col gap-space-xl">
+<!-- CARD 1: IDENTIFICAÇÃO CADASTRAL DA CLÍNICA -->
+<section class="bg-surface-card rounded-xl p-space-xl shadow-sm transition-all hover:shadow-md">
+<div class="flex items-center justify-between pb-space-md mb-space-lg">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-info-surface text-info-text flex items-center justify-center font-headline-sm text-headline-sm font-bold">
+              1
+            </div>
+<div>
+<h2 class="font-headline-md text-headline-md text-text-primary">Identificação Cadastral da Clínica</h2>
+<p class="font-body-sm text-body-sm text-text-muted">Dados formais, registro fiscal e roteamento do tenant médico</p>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-surface-subtle text-text-secondary font-label-sm text-table-header uppercase">Obrigatório</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+<!-- RAZÃO SOCIAL -->
+<div class="md:col-span-2 flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-text-primary flex items-center justify-between">
+<span>Razão Social <span class="text-error">*</span></span>
+<span class="font-body-sm text-body-sm text-text-muted">Conforme Cartão CNPJ</span>
+</label>
+<input class="w-full h-10 px-3 rounded-lg bg-surface-subtle text-text-primary font-body-md text-body-md placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-border-focus focus:bg-surface-card transition-all" id="inputRazao" placeholder="Ex: Clínica São Judas Tadeu Oftalmologia S/S" type="text" value="Hospital Santa Helena Diagnósticos Médicos Ltda"/>
+</div>
+<!-- NOME FANTASIA -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-text-primary">
+              Nome Fantasia <span class="text-error">*</span>
+</label>
+<input class="w-full h-10 px-3 rounded-lg bg-surface-subtle text-text-primary font-body-md text-body-md placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-border-focus focus:bg-surface-card transition-all" id="inputFantasia" placeholder="Ex: Santa Helena Saúde" type="text" value="Hospital Santa Helena"/>
+</div>
+<!-- CNPJ COM VALIDADOR -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-text-primary flex items-center justify-between">
+<span>CNPJ <span class="text-error">*</span></span>
+<span class="inline-flex items-center gap-1 font-label-sm text-label-sm text-success-text bg-success-surface px-2 py-0.5 rounded-full font-medium">
+<span class="material-symbols-outlined text-[13px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                CNPJ Válido (Receita Federal)
+              </span>
+</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-text-muted text-[18px]">badge</span>
+<input class="w-full h-10 pl-10 pr-10 rounded-lg bg-surface-subtle text-text-primary font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-border-focus focus:bg-surface-card transition-all font-mono" placeholder="00.000.000/0000-00" type="text" value="14.285.912/0001-84"/>
+<button class="absolute right-2 p-1.5 rounded-md hover:bg-surface-card text-text-secondary hover:text-primary transition-colors" title="Atualizar dados cadastrais via CNPJ">
+<span class="material-symbols-outlined text-[18px]">sync</span>
+</button>
+</div>
+</div>
+<!-- TENANT SLUG / IDENTIFICADOR DE URL -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-text-primary flex items-center justify-between">
+<span>Identificador do Tenant (Slug) <span class="text-error">*</span></span>
+<span class="font-body-sm text-body-sm text-text-muted">Inalterável após criação</span>
+</label>
+<div class="relative flex items-center rounded-lg bg-surface-subtle overflow-hidden focus-within:ring-2 focus-within:ring-border-focus">
+<span class="px-3 text-text-muted font-body-sm text-body-sm select-none bg-surface-container/60 h-10 flex items-center">app.medguia.com.br/</span>
+<input class="w-full h-10 px-3 bg-transparent text-text-primary font-label-md text-label-md font-semibold focus:outline-none" id="tenantSlugInput" placeholder="nome-da-clinica" type="text" value="santahelena"/>
+<span class="pr-3 text-success-text flex items-center" title="Subdomínio e slug disponíveis">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+</span>
+</div>
+</div>
+<!-- ESPECIALIDADE PRINCIPAL -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-text-primary">
+              Especialidade Médica Principal <span class="text-error">*</span>
+</label>
+<div class="relative flex items-center">
+<select class="w-full h-10 pl-3 pr-10 rounded-lg bg-surface-subtle text-text-primary font-body-md text-body-md appearance-none focus:outline-none focus:ring-2 focus:ring-border-focus focus:bg-surface-card transition-all cursor-pointer">
+<option selected="" value="multi">Multiespecialidades Hospitalares</option>
+<option value="oftalmo">Oftalmologia Cirúrgica</option>
+<option value="dermato">Dermatologia &amp; Cosmiatria</option>
+<option value="ortopedia">Ortopedia e Traumatologia</option>
+<option value="cardio">Cardiologia &amp; Hemodinâmica</option>
+<option value="onco">Oncologia e Quimioterapia</option>
+<option value="odonto">Odontologia &amp; Bucomaxilofacial</option>
+<option value="reprod">Reprodução Assistida e Fertilidade</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 text-text-muted text-[18px] pointer-events-none">expand_more</span>
+</div>
+</div>
+</div>
+</section>
+<!-- CARD 2: LOCALIZAÇÃO & CONTATO INSTITUCIONAL -->
+<section class="bg-surface-card rounded-xl p-space-xl shadow-sm transition-all hover:shadow-md">
+<div class="flex items-center justify-between pb-space-md mb-space-lg">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-info-surface text-info-text flex items-center justify-center font-headline-sm text-headline-sm font-bold">
+              2
+            </div>
+<div>
+<h2 class="font-headline-md text-headline-md text-text-primary">Localização &amp; Contato Institucional</h2>
+<p class="font-body-sm text-body-sm text-text-muted">Sede operacional, e-mail oficial de governança LGPD e PABX</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-text-muted text-[20px]">pin_drop</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-6 gap-space-md">
+<!-- CEP -->
+<div class="md:col-span-2 flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-text-primary">CEP</label>
+<div class="relative flex items-center">
+<input class="w-full h-10 pl-3 pr-9 rounded-lg bg-surface-subtle text-text-primary font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-border-focus focus:bg-surface-card transition-all font-mono" placeholder="00000-000" type="text" value="01310-200"/>
+<span class="material-symbols-outlined absolute right-2.5 text-text-muted text-[18px]">search</span>
+</div>
+</div>
+<!-- ENDEREÇO -->
+<div class="md:col-span-4 flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-text-primary">Logradouro / Avenida</label>
+<input class="w-full h-10 px-3 rounded-lg bg-surface-subtle text-text-primary font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-border-focus focus:bg-surface-card transition-all" placeholder="Ex: Av. Brigadeiro Faria Lima" type="text" value="Avenida Paulista"/>
+</div>
+<!-- NÚMERO -->
+<div class="md:col-span-2 flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-text-primary">Número</label>
+<input class="w-full h-10 px-3 rounded-lg bg-surface-subtle text-text-primary font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-border-focus focus:bg-surface-card transition-all" placeholder="123" type="text" value="1842"/>
+</div>
+<!-- COMPLEMENTO -->
+<div class="md:col-span-2 flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-text-primary">Complemento</label>
+<input class="w-full h-10 px-3 rounded-lg bg-surface-subtle text-text-primary font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-border-focus focus:bg-surface-card transition-all" placeholder="Andar, Bloco, Sala" type="text" value="Torre Sul - Conjunto 1401"/>
+</div>
+<!-- BAIRRO -->
+<div class="md:col-span-2 flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-text-primary">Bairro</label>
+<input class="w-full h-10 px-3 rounded-lg bg-surface-subtle text-text-primary font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-border-focus focus:bg-surface-card transition-all" placeholder="Bairro" type="text" value="Bela Vista"/>
+</div>
+<!-- CIDADE -->
+<div class="md:col-span-4 flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-text-primary">Cidade</label>
+<input class="w-full h-10 px-3 rounded-lg bg-surface-subtle text-text-primary font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-border-focus focus:bg-surface-card transition-all" placeholder="São Paulo" type="text" value="São Paulo"/>
+</div>
+<!-- UF -->
+<div class="md:col-span-2 flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-text-primary">UF</label>
+<div class="relative flex items-center">
+<select class="w-full h-10 pl-3 pr-8 rounded-lg bg-surface-subtle text-text-primary font-body-md text-body-md appearance-none focus:outline-none focus:ring-2 focus:ring-border-focus focus:bg-surface-card transition-all">
+<option selected="" value="SP">SP - São Paulo</option>
+<option value="RJ">RJ - Rio de Janeiro</option>
+<option value="MG">MG - Minas Gerais</option>
+<option value="PR">PR - Paraná</option>
+<option value="RS">RS - Rio Grande do Sul</option>
+<option value="DF">DF - Distrito Federal</option>
+</select>
+<span class="material-symbols-outlined absolute right-2 text-text-muted text-[18px] pointer-events-none">expand_more</span>
+</div>
+</div>
+<!-- EMAIL DPO / INSTITUCIONAL -->
+<div class="md:col-span-3 flex flex-col gap-1.5 mt-1">
+<label class="font-label-md text-label-md text-text-primary">E-mail Institucional / DPO Governança</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-text-muted text-[18px]">mail</span>
+<input class="w-full h-10 pl-10 pr-3 rounded-lg bg-surface-subtle text-text-primary font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-border-focus focus:bg-surface-card transition-all" placeholder="contato@clinica.com.br" type="email" value="diretoria@hospitalstahelena.com.br"/>
+</div>
+</div>
+<!-- TELEFONE PABX -->
+<div class="md:col-span-3 flex flex-col gap-1.5 mt-1">
+<label class="font-label-md text-label-md text-text-primary">Telefone Institucional / PABX Central</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-text-muted text-[18px]">call</span>
+<input class="w-full h-10 pl-10 pr-3 rounded-lg bg-surface-subtle text-text-primary font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-border-focus focus:bg-surface-card transition-all font-mono" placeholder="(00) 0000-0000" type="tel" value="(11) 3450-8900"/>
+</div>
+</div>
+</div>
+</section>
+<!-- CARD 3: PLANO DE ASSINATURA & COTAS DE RECURSOS -->
+<section class="bg-surface-card rounded-xl p-space-xl shadow-sm transition-all hover:shadow-md">
+<div class="flex items-center justify-between pb-space-md mb-space-lg">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-info-surface text-info-text flex items-center justify-center font-headline-sm text-headline-sm font-bold">
+              3
+            </div>
+<div>
+<h2 class="font-headline-md text-headline-md text-text-primary">Plano de Assinatura &amp; Cotas de Recursos</h2>
+<p class="font-body-sm text-body-sm text-text-muted">Dimensionamento de licenças médicas, conexões de mensageria e automação</p>
+</div>
+</div>
+<span class="px-2.5 py-1 rounded bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-semibold">
+            Faturamento B2B Mensal
+          </span>
+</div>
+<!-- SELEÇÃO DE PLANOS (3 CARDS INTERATIVOS) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-md mb-space-lg">
+<!-- PLANO STARTER -->
+<label class="cursor-pointer relative flex flex-col p-space-md rounded-xl bg-surface-subtle hover:bg-surface-container-low transition-all group">
+<input class="sr-only peer" name="plano" type="radio" value="starter"/>
+<div class="absolute inset-0 rounded-xl peer-checked:ring-2 peer-checked:ring-primary pointer-events-none transition-all"></div>
+<div class="flex items-center justify-between mb-2">
+<span class="font-headline-sm text-headline-sm text-text-primary font-bold">Starter</span>
+<span class="w-5 h-5 rounded-full bg-surface-card flex items-center justify-center peer-checked:bg-primary text-on-primary">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</span>
+</div>
+<div class="mb-3">
+<span class="font-metric-stat text-metric-stat text-text-primary font-bold">R$ 1.890</span>
+<span class="font-body-sm text-body-sm text-text-muted">/mês</span>
+</div>
+<ul class="space-y-1.5 font-body-sm text-body-sm text-text-secondary mt-auto pt-2">
+<li class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-success-text text-[16px]">done</span>
+<span>Até 5 licenças ativas</span>
+</li>
+<li class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-success-text text-[16px]">done</span>
+<span>1 Instância WhatsApp</span>
+</li>
+<li class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-success-text text-[16px]">done</span>
+<span>Funil básico 8 etapas</span>
+</li>
+</ul>
+</label>
+<!-- PLANO CLINICA GROWTH -->
+<label class="cursor-pointer relative flex flex-col p-space-md rounded-xl bg-surface-subtle hover:bg-surface-container-low transition-all group">
+<input class="sr-only peer" name="plano" type="radio" value="growth"/>
+<div class="absolute inset-0 rounded-xl peer-checked:ring-2 peer-checked:ring-primary pointer-events-none transition-all"></div>
+<div class="flex items-center justify-between mb-2">
+<span class="font-headline-sm text-headline-sm text-text-primary font-bold">Clínica Growth</span>
+<span class="w-5 h-5 rounded-full bg-surface-card flex items-center justify-center peer-checked:bg-primary text-on-primary">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</span>
+</div>
+<div class="mb-3">
+<span class="font-metric-stat text-metric-stat text-text-primary font-bold">R$ 3.890</span>
+<span class="font-body-sm text-body-sm text-text-muted">/mês</span>
+</div>
+<ul class="space-y-1.5 font-body-sm text-body-sm text-text-secondary mt-auto pt-2">
+<li class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-success-text text-[16px]">done</span>
+<span>Até 15 licenças ativas</span>
+</li>
+<li class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-success-text text-[16px]">done</span>
+<span>3 Instâncias WhatsApp</span>
+</li>
+<li class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-success-text text-[16px]">done</span>
+<span>Régua completa 18 toques</span>
+</li>
+</ul>
+</label>
+<!-- PLANO ENTERPRISE PRO (DEFAULT SELECIONADO) -->
+<label class="cursor-pointer relative flex flex-col p-space-md rounded-xl bg-primary/5 hover:bg-primary/10 transition-all group shadow-sm">
+<input checked="" class="sr-only peer" name="plano" type="radio" value="enterprise"/>
+<div class="absolute inset-0 rounded-xl ring-2 ring-primary peer-checked:ring-primary pointer-events-none transition-all"></div>
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-1.5">
+<span class="font-headline-sm text-headline-sm text-text-primary font-bold">Enterprise Pro</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-primary text-on-primary font-label-sm text-label-sm font-bold uppercase tracking-wider text-[9px]">
+                Recomendado
+              </span>
+</div>
+<div class="mb-3">
+<span class="font-metric-stat text-metric-stat text-primary font-bold">R$ 7.490</span>
+<span class="font-body-sm text-body-sm text-text-muted">/mês</span>
+</div>
+<ul class="space-y-1.5 font-body-sm text-body-sm text-text-primary mt-auto pt-2">
+<li class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[16px]">verified</span>
+<span class="font-semibold">30 licenças inclusas</span>
+</li>
+<li class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[16px]">verified</span>
+<span>Instâncias Evolution ilimitadas</span>
+</li>
+<li class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[16px]">verified</span>
+<span>Suporte Clínico SLA 1h dedicado</span>
+</li>
+</ul>
+</label>
+</div>
+<!-- COTAS E FLAGS ADICIONAIS -->
+<div class="p-space-md bg-surface-subtle rounded-xl flex flex-col gap-space-md">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-md">
+<div>
+<label class="font-label-md text-label-md text-text-primary font-semibold block">Assentos / Usuários Médicos Inicialmente Contratados</label>
+<span class="font-body-sm text-body-sm text-text-muted">Número máximo de logins ativos concorrentes alocados para o tenant</span>
+</div>
+<div class="flex items-center gap-2 self-start sm:self-center">
+<button class="w-9 h-9 rounded-lg bg-surface-card hover:bg-surface-container flex items-center justify-center text-text-primary shadow-sm font-bold" type="button">-</button>
+<input class="w-16 h-9 text-center rounded-lg bg-surface-card text-text-primary font-headline-sm text-headline-sm font-bold focus:outline-none focus:ring-2 focus:ring-border-focus" max="250" min="1" type="number" value="20"/>
+<button class="w-9 h-9 rounded-lg bg-surface-card hover:bg-surface-container flex items-center justify-center text-text-primary shadow-sm font-bold" type="button">+</button>
+<span class="font-label-md text-label-md text-text-secondary pl-1">licenças</span>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md pt-space-sm">
+<!-- TOGGLE 1 -->
+<label class="flex items-start gap-space-sm cursor-pointer select-none">
+<input checked="" class="mt-1 rounded text-primary focus:ring-primary w-4 h-4 cursor-pointer accent-primary" type="checkbox"/>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-text-primary font-semibold">Habilitar Módulo de Mala Direta &amp; Campanhas em Massa</span>
+<span class="font-body-sm text-body-sm text-text-muted">Permite broadcast via WhatsApp com warmup automatizado de chips</span>
+</div>
+</label>
+<!-- TOGGLE 2 -->
+<label class="flex items-start gap-space-sm cursor-pointer select-none">
+<input checked="" class="mt-1 rounded text-primary focus:ring-primary w-4 h-4 cursor-pointer accent-primary" type="checkbox"/>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-text-primary font-semibold">Sincronizar Motivos de Perda Globais com o novo tenant</span>
+<span class="font-body-sm text-body-sm text-text-muted">Herda catálogo de 12 motivos padrão (ex: Preço, Convênio, Falta de Agenda)</span>
+</div>
+</label>
+</div>
+</div>
+</section>
+<!-- CARD 4: ADMINISTRADOR MASTER INICIAL -->
+<section class="bg-surface-card rounded-xl p-space-xl shadow-sm transition-all hover:shadow-md">
+<div class="flex items-center justify-between pb-space-md mb-space-lg">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-info-surface text-info-text flex items-center justify-center font-headline-sm text-headline-sm font-bold">
+              4
+            </div>
+<div>
+<h2 class="font-headline-md text-headline-md text-text-primary">Administrador Master Inicial (Acesso Raiz do Tenant)</h2>
+<p class="font-body-sm text-body-sm text-text-muted">Credenciais do Diretor Clínico ou Gestor com permissão máxima de gerenciamento</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-text-muted text-[20px]">admin_panel_settings</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md mb-space-md">
+<!-- NOME MASTER -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-text-primary">
+              Nome Completo do Gestor Master <span class="text-error">*</span>
+</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-text-muted text-[18px]">person</span>
+<input class="w-full h-10 pl-10 pr-3 rounded-lg bg-surface-subtle text-text-primary font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-border-focus focus:bg-surface-card transition-all" placeholder="Ex: Dra. Mariana Costa" type="text" value="Dr. Eduardo Sampaio"/>
+</div>
+</div>
+<!-- CARGO / CRM -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-text-primary">Cargo Clínico / CRM (Opcional)</label>
+<input class="w-full h-10 px-3 rounded-lg bg-surface-subtle text-text-primary font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-border-focus focus:bg-surface-card transition-all" placeholder="Ex: Gestor de Operações" type="text" value="Diretor Técnico Médico - CRM/SP 128.940"/>
+</div>
+<!-- EMAIL MASTER -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-text-primary">
+              E-mail Corporativo do Master <span class="text-error">*</span>
+</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-text-muted text-[18px]">alternate_email</span>
+<input class="w-full h-10 pl-10 pr-3 rounded-lg bg-surface-subtle text-text-primary font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-border-focus focus:bg-surface-card transition-all" placeholder="nome@clinica.com.br" type="email" value="eduardo.sampaio@hospitalstahelena.com.br"/>
+</div>
+</div>
+<!-- CELULAR / WHATSAPP PARA 2FA -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-text-primary flex items-center justify-between">
+<span>Celular / WhatsApp (2FA Obrigatório) <span class="text-error">*</span></span>
+<span class="font-body-sm text-body-sm text-text-muted">SMS &amp; WhatsApp OTP</span>
+</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-text-muted text-[18px]">smartphone</span>
+<input class="w-full h-10 pl-10 pr-3 rounded-lg bg-surface-subtle text-text-primary font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-border-focus focus:bg-surface-card transition-all font-mono" placeholder="(00) 90000-0000" type="tel" value="(11) 98721-0044"/>
+</div>
+</div>
+</div>
+<div class="p-space-md bg-info-surface/60 rounded-xl flex items-start gap-space-sm">
+<input checked="" class="mt-1 rounded text-primary focus:ring-primary w-4 h-4 cursor-pointer accent-primary" id="checkConvite" type="checkbox"/>
+<label class="cursor-pointer select-none" for="checkConvite">
+<span class="font-label-md text-label-md text-text-primary font-semibold block">
+              Enviar convite com token criptográfico de primeiro acesso imediatamente por e-mail
+            </span>
+<span class="font-body-sm text-body-sm text-text-secondary">
+              O link gerado tem validade de 48 horas e exigirá a definição de senha forte (mínimo 10 dígitos) acompanhada da ativação de Autenticação em Duas Etapas (2FA).
+            </span>
+</label>
+</div>
+</section>
+</div>
+<!-- RIGHT COLUMN: SIDEBAR DASHBOARD RESUMO & CHECKLIST (4 COLS) -->
+<div class="lg:col-span-4 flex flex-col gap-space-lg sticky top-20">
+<!-- CARD: RESUMO DO PROVISIONAMENTO CLÍNICO -->
+<div class="bg-surface-card rounded-xl p-space-lg shadow-sm transition-all hover:shadow-md">
+<div class="flex items-center justify-between pb-space-sm mb-space-md">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[20px]">hub</span>
+<h3 class="font-headline-sm text-headline-sm text-text-primary">Resumo do Provisionamento</h3>
+</div>
+<span class="px-2 py-0.5 rounded-full font-label-sm text-label-sm bg-warning-surface text-warning-text font-bold uppercase tracking-wider">
+            Rascunho
+          </span>
+</div>
+<!-- VISUAL BLUEPRINT METRICS -->
+<div class="space-y-space-md">
+<!-- ROTEAMENTO -->
+<div class="p-space-sm bg-surface-subtle rounded-lg flex flex-col gap-1">
+<span class="font-table-header text-table-header uppercase text-text-muted">Domínio e Roteamento Dedicado</span>
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-primary font-mono font-bold truncate">app.medguia.com.br/santahelena</span>
+<span class="material-symbols-outlined text-success-text text-[18px]">link</span>
+</div>
+</div>
+<!-- ARQUITETURA DE BANCO DE DADOS -->
+<div class="flex items-start gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-text-secondary shrink-0">
+<span class="material-symbols-outlined text-[18px]">database</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-text-primary font-semibold">Isolamento Multi-tenant (RLS)</span>
+<span class="font-body-sm text-body-sm text-text-muted">PostgreSQL com SHA-256 tenant hashing. Políticas de linha impedem cruzamento de prontuários.</span>
+</div>
+</div>
+<!-- ASSENTOS -->
+<div class="flex items-center justify-between py-1">
+<span class="font-body-md text-body-md text-text-secondary">Assentos Contratados</span>
+<span class="font-headline-sm text-headline-sm text-text-primary font-bold">20 Usuários</span>
+</div>
+<!-- INSTÂNCIAS EVOLUTION WHATSAPP -->
+<div class="flex items-center justify-between py-1">
+<span class="font-body-md text-body-md text-text-secondary">Instâncias Evolution API</span>
+<span class="font-label-lg text-label-lg text-success-text font-bold">3 Reservadas</span>
+</div>
+<!-- RECURSOS DO PIPELINE -->
+<div class="flex items-center justify-between py-1">
+<span class="font-body-md text-body-md text-text-secondary">Pipeline Médico</span>
+<span class="font-label-md text-label-md text-text-primary font-medium">15 Etapas &amp; Régua 18 Toques</span>
+</div>
+<!-- VALOR MENSAL ESTIMADO -->
+<div class="p-space-md bg-surface-subtle rounded-xl flex items-center justify-between mt-2">
+<div>
+<span class="font-table-header text-table-header text-text-muted uppercase block">Assinatura Mensal</span>
+<span class="font-headline-md text-headline-md text-primary font-bold">R$ 7.490</span>
+<span class="font-body-sm text-body-sm text-text-muted">/mês faturado</span>
+</div>
+<span class="px-2.5 py-1 rounded bg-success-surface text-success-text font-label-sm text-label-sm font-semibold">
+              30 dias trial ativo
+            </span>
+</div>
+</div>
+<!-- BOTÃO DE AÇÃO DIRETO NO SIDEBAR -->
+<button class="w-full mt-space-lg py-2.5 px-space-md rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-lg text-label-lg shadow-sm transition-all flex items-center justify-center gap-2" type="button">
+<span class="material-symbols-outlined text-[18px]">rocket_launch</span>
+<span>Executar Provisionamento</span>
+</button>
+</div>
+<!-- CARD: LGPD & CONFORMIDADE CFM -->
+<div class="bg-surface-card rounded-xl p-space-lg shadow-sm">
+<div class="flex items-center gap-space-sm mb-space-md">
+<div class="w-7 h-7 rounded-lg bg-success-surface text-success-text flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">shield</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-text-primary">Conformidade CFM &amp; LGPD Saúde</h3>
+</div>
+<ul class="space-y-space-sm font-body-sm text-body-sm text-text-secondary">
+<li class="flex items-start gap-2">
+<span class="material-symbols-outlined text-success-text text-[18px] shrink-0 mt-0.5">check_circle</span>
+<span><strong>DPA Automático:</strong> Termo de Processamento de Dados gerado com base no CNPJ informado.</span>
+</li>
+<li class="flex items-start gap-2">
+<span class="material-symbols-outlined text-success-text text-[18px] shrink-0 mt-0.5">check_circle</span>
+<span><strong>Criptografia em Repouso:</strong> Dados médicos, anamneses e exames assinados com chave AES-256 bits.</span>
+</li>
+<li class="flex items-start gap-2">
+<span class="material-symbols-outlined text-success-text text-[18px] shrink-0 mt-0.5">check_circle</span>
+<span><strong>Log de Auditoria Imutável:</strong> Rastreabilidade de acessos por IP, MAC e Carimbo de Tempo UTC-3.</span>
+</li>
+</ul>
+</div>
+<!-- CARD: ATALHOS & SUPORTE SUPER ADMIN -->
+<div class="p-space-md bg-surface-subtle rounded-xl flex items-center justify-between text-text-secondary">
+<div class="flex items-center gap-space-xs font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[18px] text-text-muted">help</span>
+<span>Dúvidas no provisionamento?</span>
+</div>
+<a class="font-label-sm text-label-sm text-primary hover:underline font-semibold flex items-center gap-0.5" href="#">
+<span>Manual Técnico</span>
+<span class="material-symbols-outlined text-[14px]">open_in_new</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+<script>
+  (function() {
+    // Interação simples para sincronizar slug com nome fantasia em tempo real
+    const inputFantasia = document.getElementById('inputFantasia');
+    const tenantSlugInput = document.getElementById('tenantSlugInput');
+
+    if (inputFantasia && tenantSlugInput) {
+      inputFantasia.addEventListener('input', function(e) {
+        // Apenas sincroniza se o usuário não alterou manualmente o slug
+        if (tenantSlugInput.dataset.manual !== 'true') {
+          const slug = e.target.value
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/[^a-z0-9]/g, '');
+          tenantSlugInput.value = slug;
+        }
+      });
+
+      tenantSlugInput.addEventListener('focus', function() {
+        tenantSlugInput.dataset.manual = 'true';
+      });
+    }
+
+    // Feedback de clique no botão principal
+    const btn = document.getElementById('btnProvisionar');
+    if (btn) {
+      btn.addEventListener('click', function() {
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-[20px]">sync</span><span>Provisionando Tenant...</span>';
+        btn.classList.add('opacity-80', 'pointer-events-none');
+        setTimeout(() => {
+          btn.innerHTML = '<span class="material-symbols-outlined text-[20px]">check</span><span>Tenant Criado com Sucesso!</span>';
+          btn.classList.remove('bg-primary');
+          btn.classList.add('bg-success-text');
+        }, 1200);
+      });
+    }
+  })();
+</script></main></div></body></html>

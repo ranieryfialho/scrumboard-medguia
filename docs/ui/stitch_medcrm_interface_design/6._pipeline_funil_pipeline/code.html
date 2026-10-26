@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-subtle": "#F8FAFC", "info-border": "#BFDBFE", "danger-text": "#DC2626", "on-error-container": "#93000a", "surface-tint": "#1157cb", "on-secondary-fixed": "#131b30", "primary-fixed-dim": "#b1c5ff", "on-secondary-container": "#5a627b", "on-primary": "#ffffff", "inverse-on-surface": "#f0f0fa", "warning-surface": "#FEF3C7", "text-secondary": "#64748B", "surface-bright": "#faf8ff", "on-primary-fixed-variant": "#0040a0", "sidebar-surface": "#1E293B", "on-primary-fixed": "#001847", "success-border": "#A7F3D0", "on-tertiary-container": "#fffbff", "on-primary-container": "#fefcff", "secondary-fixed": "#dae2ff", "surface-container-lowest": "#ffffff", "on-tertiary-fixed": "#311300", "on-background": "#191b22", "text-muted": "#94A3B8", "background-canvas": "#F4F6FA", "tertiary-fixed-dim": "#ffb787", "warning-text": "#D97706", "sidebar-surface-active": "#2D3748", "on-secondary": "#ffffff", "border-subtle": "#E2E8F0", "outline": "#737785", "border-focus": "#93C5FD", "inverse-surface": "#2e3038", "on-tertiary": "#ffffff", "secondary-container": "#d7dffd", "inverse-primary": "#b1c5ff", "text-primary": "#0F172A", "error": "#ba1a1a", "info-text": "#2563EB", "success-surface": "#D1FAE5", "on-surface-variant": "#434654", "surface-container": "#ededf7", "on-secondary-fixed-variant": "#3e465e", "danger-surface": "#FEE2E2", "tertiary": "#924700", "primary-fixed": "#dae2ff", "success-text": "#059669", "warning-border": "#FDE68A", "surface-container-highest": "#e1e2ec", "error-container": "#ffdad6", "surface-dim": "#d9d9e3", "background": "#faf8ff", "tertiary-container": "#b85b00", "on-surface": "#191b22", "on-error": "#ffffff", "tertiary-fixed": "#ffdcc7", "secondary": "#565e77", "surface-container-low": "#f3f3fd", "surface-variant": "#e1e2ec", "info-surface": "#EFF6FF", "danger-border": "#FECACA", "surface-card": "#FFFFFF", "on-tertiary-fixed-variant": "#723600", "secondary-fixed-dim": "#bec6e3", "primary-container": "#366ee3", "primary": "#0954c9", "outline-variant": "#c3c6d6", "surface-container-high": "#e7e7f2", "surface": "#faf8ff" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "gutter-sm": "0.75rem", "gutter-lg": "1.5rem", "space-lg": "1.25rem", "space-sm": "0.5rem", "gutter": "1.25rem", "space-xs": "0.25rem", "space-md": "0.875rem", "margin": "1.75rem", "space-xl": "1.75rem", "margin-mobile": "1rem", "space-2xl": "2.5rem" }, "fontFamily": { "body-sm": ["Inter"], "headline-sm": ["Plus Jakarta Sans"], "body-lg": ["Inter"], "label-sm": ["Inter"], "body-md": ["Inter"], "headline-md": ["Plus Jakarta Sans"], "metric-stat": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "display-lg": ["Plus Jakarta Sans"], "label-md": ["Inter"], "display-lg-mobile": ["Plus Jakarta Sans"], "label-lg": ["Inter"], "table-header": ["Inter"] }, "fontSize": { "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }], "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }], "body-lg": ["15px", { "lineHeight": "22px", "fontWeight": "400" }], "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.03em", "fontWeight": "600" }], "body-md": ["13px", { "lineHeight": "20px", "fontWeight": "400" }], "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }], "metric-stat": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "500" }], "display-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "700" }], "label-lg": ["13px", { "lineHeight": "18px", "fontWeight": "600" }], "table-header": ["11px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }] } } } };</script></head><body class="bg-background-canvas font-body-md text-text-primary antialiased selection:bg-primary-fixed selection:text-on-primary-fixed"><aside class="fixed left-0 top-0 h-full w-64 bg-sidebar-surface text-surface z-50 flex flex-col justify-between shadow-[0_4px_20px_-2px_rgba(0,0,0,0.08)] overflow-hidden"><div class="flex flex-col flex-1 min-h-0"><div class="h-16 px-space-lg flex items-center justify-between border-b border-sidebar-surface-active/60 bg-sidebar-surface"><div class="flex items-center gap-space-sm"><div class="w-9 h-9 rounded-xl bg-primary flex items-center justify-center shadow-md"><span class="material-symbols-outlined text-on-primary text-[20px]">local_hospital</span></div><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-surface-container-lowest leading-none tracking-tight">MedCRM</span><span class="font-label-sm text-label-sm text-text-muted mt-0.5">MedGuia B2B</span></div></div><span class="font-label-sm text-[10px] px-1.5 py-0.5 rounded-full bg-primary-container/30 text-primary-fixed-dim uppercase tracking-wider font-semibold">Pipeline</span></div><div class="flex-1 overflow-y-auto px-space-sm py-space-md space-y-space-lg scrollbar-none"><nav class="space-y-space-md" data-active-classes="bg-sidebar-surface-active text-surface-container-lowest font-semibold rounded-lg shadow-sm"><div class="space-y-1"><div class="px-space-sm pb-1"><span class="font-table-header text-table-header text-text-muted uppercase tracking-wider">Operação</span></div><a aria-current="page" class="flex items-center justify-between px-space-sm py-2 transition-colors bg-sidebar-surface-active text-surface-container-lowest font-semibold rounded-lg shadow-sm" data-path="funil-pipeline" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">view_kanban</span><span class="font-body-md text-body-md">Funil Pipeline</span></div></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="lista-de-leads" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">format_list_bulleted</span><span class="font-body-md text-body-md">Lista</span></div></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="arquivados" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">archive</span><span class="font-body-md text-body-md">Arquivados</span></div></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="tarefas-do-turno" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">check_circle</span><span class="font-body-md text-body-md">Tarefas do Turno</span></div><span class="font-label-sm text-label-sm bg-primary-container text-on-primary px-2 py-0.5 rounded-full font-bold">12</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="tarefas-atrasadas" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px] text-danger-text">warning</span><span class="font-body-md text-body-md text-danger-text font-medium">Tarefas Atrasadas</span></div><span class="font-label-sm text-label-sm bg-danger-surface text-danger-text px-2 py-0.5 rounded-full font-bold">4</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="agenda" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">calendar_month</span><span class="font-body-md text-body-md">Agenda</span></div></a></div><div class="space-y-1"><div class="px-space-sm pb-1"><span class="font-table-header text-table-header text-text-muted uppercase tracking-wider">Comunicação</span></div><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="whatsapp-inbox" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">chat</span><span class="font-body-md text-body-md">WhatsApp Inbox</span></div><span class="font-label-sm text-label-sm bg-success-surface text-success-text px-2 py-0.5 rounded-full font-bold">5</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="campanhas" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">send</span><span class="font-body-md text-body-md">Campanhas</span></div></a></div><div class="space-y-1"><div class="px-space-sm pb-1"><span class="font-table-header text-table-header text-text-muted uppercase tracking-wider">Análises</span></div><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="indicadores" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">monitoring</span><span class="font-body-md text-body-md">Indicadores</span></div></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="relatorios" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">description</span><span class="font-body-md text-body-md">Relatórios</span></div></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="comercial" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">query_stats</span><span class="font-body-md text-body-md">Comercial</span></div></a></div><div class="space-y-1"><div class="px-space-sm pb-1"><span class="font-table-header text-table-header text-text-muted uppercase tracking-wider">Administração</span></div><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="equipe" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">groups</span><span class="font-body-md text-body-md">Equipe</span></div></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="motivos-de-perda" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">cancel</span><span class="font-body-md text-body-md">Motivos de Perda</span></div></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="empresas" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">apartment</span><span class="font-body-md text-body-md">Empresas</span></div></a></div></nav></div></div><div class="p-space-md border-t border-sidebar-surface-active/50 bg-sidebar-surface"><div class="flex items-center justify-between text-text-muted"><a class="flex items-center gap-2 hover:text-surface-container-lowest transition-colors font-label-md text-label-md" data-path="suporte-e-ajuda" href="#"><span class="material-symbols-outlined text-[18px]">help</span><span>Ajuda &amp; Suporte</span></a><span class="font-label-sm text-label-sm text-text-muted/80 bg-sidebar-surface-active/80 px-2 py-0.5 rounded">v2.4.0</span></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface-card border-b border-border-subtle z-40 flex items-center justify-between px-gutter shadow-[0_1px_8px_rgba(0,0,0,0.02)]"><div class="flex items-center gap-space-lg flex-1 max-w-2xl"><div class="relative w-full max-w-lg"><span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[19px]">search</span><input class="w-full h-10 pl-9 pr-16 bg-surface-subtle border border-border-subtle rounded-lg font-body-md text-body-md text-text-primary placeholder:text-text-muted focus:outline-none focus:border-border-focus focus:bg-surface-card transition-all" placeholder="Buscar lead, clínica, telefone ou responsável... (Ctrl + K)" type="text"/><kbd class="absolute right-3 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[10px] font-label-sm bg-surface-card border border-border-subtle text-text-muted rounded shadow-sm">⌘K</kbd></div><div class="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border-subtle bg-surface-card text-text-primary shadow-sm hover:border-border-focus cursor-pointer transition-all"><span class="material-symbols-outlined text-primary text-[18px]">domain</span><div class="flex flex-col text-left"><span class="font-label-sm text-label-sm font-semibold leading-tight">Clínica São Lucas - Matriz</span><span class="font-label-sm text-[10px] text-success-text leading-none flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-success-text inline-block"></span>Ativo</span></div><span class="material-symbols-outlined text-text-muted text-[16px] ml-1">expand_more</span></div></div><div class="flex items-center gap-space-md"><div class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-success-surface border border-success-border"><span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success-text opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-success-text"></span></span><span class="font-label-sm text-label-sm text-success-text font-semibold">Tempo real conectado</span></div><button class="relative p-2 rounded-lg text-text-secondary hover:bg-surface-subtle hover:text-text-primary transition-colors" type="button"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-danger-text"></span></button><div class="h-6 w-px bg-border-subtle"></div><div class="flex items-center gap-space-sm pl-1 cursor-pointer"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><div class="hidden lg:flex flex-col text-left"><div class="flex items-center gap-1.5"><span class="font-label-lg text-label-lg font-semibold text-text-primary leading-tight">Dr. Roberto Mendes</span><span class="font-label-sm text-[10px] bg-primary-fixed text-on-primary-fixed px-1.5 py-0.2 rounded font-bold uppercase tracking-wider">MASTER</span></div><span class="font-label-sm text-label-sm text-text-muted leading-tight">roberto.mendes@medguia.com.br</span></div><span class="material-symbols-outlined text-text-muted text-[18px]">expand_more</span></div></div></header><main class="w-full pt-16 bg-background-canvas min-h-screen"><div class="flex flex-col w-full">
+<!-- Interactive View State Controller Header -->
+<div class="px-margin pt-space-lg pb-space-sm flex flex-col md:flex-row md:items-center justify-between gap-space-md">
+<div class="flex flex-col gap-0.5">
+<div class="flex items-center gap-space-sm">
+<h1 class="font-headline-lg text-headline-lg text-text-primary">Funil Pipeline de Vendas</h1>
+<span class="font-label-sm text-label-sm px-2.5 py-0.5 rounded-full bg-info-surface text-info-text font-semibold flex items-center gap-1 shadow-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-info-text animate-pulse"></span>
+          15 Etapas Ativas
+        </span>
+</div>
+<p class="font-body-md text-body-md text-text-secondary">Gestão de cadência comercial médica de 18 toques e ciclo de conversão B2B.</p>
+</div>
+<!-- Quick Preview States Switcher (US Compliance Requirement) -->
+<div class="flex items-center bg-surface-subtle p-1 rounded-xl shadow-inner self-start md:self-auto">
+<button class="view-state-tab px-3 py-1.5 rounded-lg font-label-md text-label-md bg-surface-card text-primary font-semibold shadow-sm transition-all flex items-center gap-1.5" id="btn-state-normal" onclick="setViewState('normal')" type="button">
+<span class="material-symbols-outlined text-[16px]">view_kanban</span>
+        Visão Normal
+      </button>
+<button class="view-state-tab px-3 py-1.5 rounded-lg font-label-md text-label-md text-text-secondary hover:text-text-primary transition-all flex items-center gap-1.5" id="btn-state-modal" onclick="setViewState('modal')" type="button">
+<span class="material-symbols-outlined text-[16px]">add_circle</span>
+        Modal Novo Card
+      </button>
+<button class="view-state-tab px-3 py-1.5 rounded-lg font-label-md text-label-md text-text-secondary hover:text-text-primary transition-all flex items-center gap-1.5" id="btn-state-skeleton" onclick="setViewState('skeleton')" type="button">
+<span class="material-symbols-outlined text-[16px]">hourglass_top</span>
+        Carregando
+      </button>
+<button class="view-state-tab px-3 py-1.5 rounded-lg font-label-md text-label-md text-text-secondary hover:text-text-primary transition-all flex items-center gap-1.5" id="btn-state-empty" onclick="setViewState('empty')" type="button">
+<span class="material-symbols-outlined text-[16px]">filter_alt_off</span>
+        Estado Vazio
+      </button>
+</div>
+</div>
+<!-- Operational Metric Tiles & KPI HUD -->
+<div class="px-margin py-space-sm grid grid-cols-2 lg:grid-cols-4 gap-space-md">
+<!-- Stat 1: Leads Ativos -->
+<div class="bg-surface-card rounded-2xl p-space-md shadow-sm flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-table-header uppercase text-text-muted tracking-wider">Leads Ativos</span>
+<div class="flex items-baseline gap-2 mt-0.5">
+<span class="font-metric-stat text-metric-stat text-text-primary">148</span>
+<span class="font-label-sm text-label-sm text-success-text font-semibold flex items-center">
+<span class="material-symbols-outlined text-[14px]">trending_up</span> +12%
+          </span>
+</div>
+<span class="font-body-sm text-body-sm text-text-muted mt-1">Distribuídos em 13 etapas</span>
+</div>
+<div class="w-12 h-12 rounded-xl bg-info-surface text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[24px]">group_work</span>
+</div>
+</div>
+<!-- Stat 2: Valor Total em Negociação -->
+<div class="bg-surface-card rounded-2xl p-space-md shadow-sm flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-table-header uppercase text-text-muted tracking-wider">Em Negociação</span>
+<div class="flex items-baseline gap-2 mt-0.5">
+<span class="font-metric-stat text-metric-stat text-text-primary">R$ 482.500</span>
+</div>
+<span class="font-body-sm text-body-sm text-text-muted mt-1">Ticket médio: R$ 8.650/mês</span>
+</div>
+<div class="w-12 h-12 rounded-xl bg-surface-subtle text-text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[24px]">payments</span>
+</div>
+</div>
+<!-- Stat 3: Tarefas Hoje -->
+<div class="bg-surface-card rounded-2xl p-space-md shadow-sm flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-table-header uppercase text-text-muted tracking-wider">Tarefas do Turno</span>
+<div class="flex items-baseline gap-2 mt-0.5">
+<span class="font-metric-stat text-metric-stat text-text-primary">18</span>
+<span class="font-label-sm text-label-sm text-danger-text bg-danger-surface px-2 py-0.5 rounded-full font-bold">4 atrasadas</span>
+</div>
+<span class="font-body-sm text-body-sm text-text-muted mt-1">14 agendadas para tarde</span>
+</div>
+<div class="w-12 h-12 rounded-xl bg-warning-surface text-warning-text flex items-center justify-center">
+<span class="material-symbols-outlined text-[24px]">notification_important</span>
+</div>
+</div>
+<!-- Stat 4: Taxa de Avanço -->
+<div class="bg-surface-card rounded-2xl p-space-md shadow-sm flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-table-header uppercase text-text-muted tracking-wider">Taxa de Avanço</span>
+<div class="flex items-baseline gap-2 mt-0.5">
+<span class="font-metric-stat text-metric-stat text-text-primary">24.8%</span>
+<span class="font-label-sm text-label-sm text-success-text font-semibold flex items-center">
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span> +3.2%
+          </span>
+</div>
+<span class="font-body-sm text-body-sm text-text-muted mt-1">Ciclo médio de 19 dias</span>
+</div>
+<!-- Inline Radial Spark -->
+<div class="relative w-12 h-12 flex items-center justify-center">
+<svg class="w-12 h-12 -rotate-90" viewbox="0 0 36 36">
+<circle class="stroke-surface-container" cx="18" cy="18" fill="none" r="15" stroke-width="3"></circle>
+<circle class="stroke-primary" cx="18" cy="18" fill="none" r="15" stroke-dasharray="94.2" stroke-dashoffset="70.8" stroke-linecap="round" stroke-width="3"></circle>
+</svg>
+<span class="material-symbols-outlined absolute text-[20px] text-primary">speed</span>
+</div>
+</div>
+</div>
+<!-- Filters & Action Bar -->
+<div class="px-margin pt-space-sm pb-space-md flex flex-col xl:flex-row xl:items-center justify-between gap-space-md">
+<!-- Left Filter Controls -->
+<div class="flex flex-wrap items-center gap-space-sm">
+<!-- Search Input -->
+<div class="relative w-64">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[18px]">search</span>
+<input class="w-full h-10 pl-9 pr-3 bg-surface-card rounded-xl font-body-md text-body-md text-text-primary placeholder:text-text-muted shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" id="pipelineSearch" placeholder="Filtrar nesta etapa..." type="text"/>
+</div>
+<!-- Consultant Avatar Multi-selector -->
+<div class="flex items-center bg-surface-card rounded-xl px-2.5 py-1.5 shadow-sm gap-2">
+<span class="font-label-sm text-label-sm text-text-secondary">Consultor:</span>
+<div class="flex -space-x-2 overflow-hidden">
+<div class="w-7 h-7 rounded-full bg-primary text-on-primary flex items-center justify-center text-[10px] font-bold ring-2 ring-surface-card cursor-pointer" title="Dra. Juliana Rocha">JR</div>
+<div class="w-7 h-7 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center text-[10px] font-bold ring-2 ring-surface-card cursor-pointer" title="Carlos Mendes">CM</div>
+<div class="w-7 h-7 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center text-[10px] font-bold ring-2 ring-surface-card cursor-pointer" title="Beatriz Lins">BL</div>
+</div>
+<button class="font-label-sm text-label-sm text-primary font-semibold hover:underline pl-1" type="button">Todos (4)</button>
+</div>
+<!-- Origin Filter dropdown -->
+<div class="relative">
+<select class="h-10 pl-3 pr-8 bg-surface-card text-text-primary font-body-md text-body-md rounded-xl shadow-sm appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/20">
+<option value="">Origem: Todas</option>
+<option value="google">Google Ads</option>
+<option value="indicacao">Indicação Médica</option>
+<option value="eventos">Congressos / Eventos</option>
+<option value="meta">Meta / Instagram Ads</option>
+</select>
+<span class="material-symbols-outlined pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted text-[18px]">arrow_drop_down</span>
+</div>
+<!-- Period Filter -->
+<div class="relative">
+<select class="h-10 pl-3 pr-8 bg-surface-card text-text-primary font-body-md text-body-md rounded-xl shadow-sm appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/20">
+<option value="30">Últimos 30 dias</option>
+<option value="15">Últimos 15 dias</option>
+<option value="7">Esta semana</option>
+<option value="90">Este Trimestre (Q2)</option>
+</select>
+<span class="material-symbols-outlined pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted text-[18px]">calendar_today</span>
+</div>
+</div>
+<!-- Right Primary Execution Actions -->
+<div class="flex items-center gap-space-sm self-end xl:self-auto">
+<button class="h-10 px-4 rounded-xl bg-surface-card hover:bg-surface-subtle text-text-primary font-label-md text-label-md font-semibold shadow-sm flex items-center gap-2 transition-all" type="button">
+<span class="material-symbols-outlined text-primary text-[19px]">schedule_send</span>
+<span>Iniciar Cadência em Massa</span>
+</button>
+<button class="h-10 px-4 rounded-xl bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md font-semibold shadow-md flex items-center gap-2 transition-all" onclick="setViewState('modal')" type="button">
+<span class="material-symbols-outlined text-[19px]">add</span>
+<span>+ Novo Card</span>
+</button>
+</div>
+</div>
+<!-- SKELETON VIEW STATE (US-029) -->
+<div class="hidden px-margin pb-10 w-full overflow-x-auto" id="view-skeleton">
+<div class="flex gap-4 min-w-[3400px]">
+<div class="w-80 bg-surface-card/60 p-4 rounded-2xl animate-pulse space-y-4">
+<div class="h-6 bg-surface-container rounded-lg w-3/4"></div>
+<div class="h-4 bg-surface-container-high rounded w-1/2"></div>
+<div class="space-y-3 pt-3">
+<div class="h-28 bg-surface-subtle rounded-xl"></div>
+<div class="h-28 bg-surface-subtle rounded-xl"></div>
+<div class="h-28 bg-surface-subtle rounded-xl"></div>
+</div>
+</div>
+<div class="w-80 bg-surface-card/60 p-4 rounded-2xl animate-pulse space-y-4">
+<div class="h-6 bg-surface-container rounded-lg w-2/3"></div>
+<div class="h-4 bg-surface-container-high rounded w-1/3"></div>
+<div class="space-y-3 pt-3">
+<div class="h-28 bg-surface-subtle rounded-xl"></div>
+<div class="h-28 bg-surface-subtle rounded-xl"></div>
+</div>
+</div>
+<div class="w-80 bg-surface-card/60 p-4 rounded-2xl animate-pulse space-y-4">
+<div class="h-6 bg-surface-container rounded-lg w-3/4"></div>
+<div class="h-4 bg-surface-container-high rounded w-2/5"></div>
+<div class="space-y-3 pt-3">
+<div class="h-28 bg-surface-subtle rounded-xl"></div>
+<div class="h-28 bg-surface-subtle rounded-xl"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- EMPTY VIEW STATE (US-029) -->
+<div class="hidden px-margin py-16 flex-col items-center justify-center text-center" id="view-empty">
+<div class="w-20 h-20 rounded-full bg-surface-subtle text-text-muted flex items-center justify-center mb-space-md shadow-inner">
+<span class="material-symbols-outlined text-[44px]">filter_alt_off</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-text-primary">Nenhum lead encontrado com estes filtros</h3>
+<p class="font-body-md text-body-md text-text-secondary max-w-md mt-1">Tente redefinir a origem, consultor responsável ou o intervalo de tempo selecionado.</p>
+<button class="mt-space-md px-4 py-2 bg-primary text-on-primary rounded-xl font-label-md text-label-md font-semibold shadow-sm" onclick="setViewState('normal')" type="button">
+      Limpar Filtros do Pipeline
+    </button>
+</div>
+<!-- KANBAN BOARD CONTAINER (15 COLUMNS HORIZONTAL SMOOTH SCROLL) -->
+<div class="w-full overflow-x-auto pb-10 px-margin scroll-smooth focus:outline-none" id="view-normal">
+<div class="flex gap-4 min-w-max items-start py-2">
+<!-- Coluna 1: Entrada de Leads -->
+<div class="w-80 flex-shrink-0 flex flex-col bg-surface-subtle/80 rounded-2xl p-3 shadow-sm">
+<div class="flex items-center justify-between pb-2.5 mb-2 px-1">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-text-primary">Entrada de Leads</span>
+<span class="font-label-sm text-label-sm text-text-secondary">24 cards • R$ 38.000</span>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-bold">24</span>
+</div>
+<div class="space-y-3">
+<!-- Card 1 -->
+<div class="bg-surface-card rounded-xl p-3.5 shadow-sm hover:shadow-md transition-all cursor-grab flex flex-col gap-2.5">
+<div class="flex items-start justify-between gap-2">
+<span class="font-headline-sm text-headline-sm text-text-primary leading-tight">Clínica Oftalmológica Santa Luzia</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-info-surface text-info-text font-semibold flex-shrink-0">Google Ads</span>
+</div>
+<div class="flex items-center justify-between text-body-sm text-text-muted">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-text-muted">phone_in_talk</span>
+<span class="font-body-sm text-body-sm text-text-secondary">(11) 98721-4402</span>
+</div>
+<span class="font-label-lg text-label-lg font-bold text-text-primary">R$ 6.800/mês</span>
+</div>
+<!-- Cadence Progress & Next Action -->
+<div class="bg-surface-subtle p-2 rounded-lg flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-[10px] uppercase font-bold text-text-secondary">Cadência Ativa</span>
+<span class="font-label-sm text-[10px] font-bold text-primary">Toque 1 de 18</span>
+</div>
+<div class="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[6%] rounded-full"></div>
+</div>
+<div class="flex items-center justify-between text-body-sm pt-0.5">
+<span class="font-body-sm text-[11px] text-text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px] text-primary">call</span> WhatsApp introdutório
+                </span>
+<span class="font-label-sm text-[10px] text-danger-text bg-danger-surface px-1.5 py-0.2 rounded font-bold">2h atrasado</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-1.5">
+<div class="w-6 h-6 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-[10px]">JR</div>
+<span class="font-label-sm text-label-sm text-text-secondary">Dra. Juliana</span>
+</div>
+<span class="font-label-sm text-[11px] text-text-muted">Há 3 horas</span>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-card rounded-xl p-3.5 shadow-sm hover:shadow-md transition-all cursor-grab flex flex-col gap-2.5">
+<div class="flex items-start justify-between gap-2">
+<span class="font-headline-sm text-headline-sm text-text-primary leading-tight">Instituto Gastro Paulista</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-warning-surface text-warning-text font-semibold flex-shrink-0">Indicação</span>
+</div>
+<div class="flex items-center justify-between text-body-sm text-text-muted">
+<span class="font-body-sm text-body-sm text-text-secondary">(19) 99120-1198</span>
+<span class="font-label-lg text-label-lg font-bold text-text-primary">R$ 4.200/mês</span>
+</div>
+<div class="bg-surface-subtle p-2 rounded-lg flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-[10px] font-semibold text-text-secondary">Toque 1/18: E-mail Boas-Vindas</span>
+<span class="font-label-sm text-[10px] text-success-text font-bold">Hoje 15:00</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-1.5">
+<div class="w-6 h-6 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center font-bold text-[10px]">CM</div>
+<span class="font-label-sm text-label-sm text-text-secondary">Carlos M.</span>
+</div>
+<span class="font-label-sm text-[11px] text-text-muted">Há 45 min</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Coluna 2: Tentativa de Contato 1 -->
+<div class="w-80 flex-shrink-0 flex flex-col bg-surface-subtle/80 rounded-2xl p-3 shadow-sm">
+<div class="flex items-center justify-between pb-2.5 mb-2 px-1">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-text-primary">Tentativa de Contato 1</span>
+<span class="font-label-sm text-label-sm text-text-secondary">18 cards</span>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container-high text-text-primary font-bold">18</span>
+</div>
+<div class="space-y-3">
+<div class="bg-surface-card rounded-xl p-3.5 shadow-sm hover:shadow-md transition-all cursor-grab flex flex-col gap-2.5">
+<div class="flex items-start justify-between gap-2">
+<span class="font-headline-sm text-headline-sm text-text-primary leading-tight">Dr. Eduardo Siqueira (Cardio)</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-info-surface text-info-text font-semibold flex-shrink-0">Meta Ads</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-text-secondary">(21) 97134-8821</span>
+<span class="font-label-lg text-label-lg font-bold text-text-primary">R$ 3.400/mês</span>
+</div>
+<div class="bg-surface-subtle p-2 rounded-lg flex flex-col gap-1">
+<div class="flex items-center justify-between text-body-sm">
+<span class="font-body-sm text-[11px] text-text-secondary">Toque 2/18: Ligação direta</span>
+<span class="font-label-sm text-[10px] text-danger-text bg-danger-surface px-1.5 py-0.2 rounded font-bold">Ontem</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-1.5">
+<div class="w-6 h-6 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-[10px]">BL</div>
+<span class="font-label-sm text-label-sm text-text-secondary">Beatriz Lins</span>
+</div>
+<span class="font-label-sm text-[11px] text-text-muted">1 dia</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Coluna 3: Tentativa de Contato 2 -->
+<div class="w-80 flex-shrink-0 flex flex-col bg-surface-subtle/80 rounded-2xl p-3 shadow-sm">
+<div class="flex items-center justify-between pb-2.5 mb-2 px-1">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-text-primary">Tentativa de Contato 2</span>
+<span class="font-label-sm text-label-sm text-text-secondary">14 cards</span>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container-high text-text-primary font-bold">14</span>
+</div>
+<div class="space-y-3">
+<div class="bg-surface-card rounded-xl p-3.5 shadow-sm hover:shadow-md transition-all cursor-grab flex flex-col gap-2.5">
+<div class="flex items-start justify-between gap-2">
+<span class="font-headline-sm text-headline-sm text-text-primary leading-tight">Clínica Dermatológica DermaCare</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-info-surface text-info-text font-semibold flex-shrink-0">Google Ads</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-text-secondary">(31) 98845-1200</span>
+<span class="font-label-lg text-label-lg font-bold text-text-primary">R$ 5.900/mês</span>
+</div>
+<div class="bg-surface-subtle p-2 rounded-lg flex flex-col gap-1">
+<div class="flex items-center justify-between text-body-sm">
+<span class="font-body-sm text-[11px] text-text-secondary">Toque 3/18: Áudio WhatsApp</span>
+<span class="font-label-sm text-[10px] text-success-text font-bold">Amanhã 09:30</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-1.5">
+<div class="w-6 h-6 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-[10px]">JR</div>
+<span class="font-label-sm text-label-sm text-text-secondary">Dra. Juliana</span>
+</div>
+<span class="font-label-sm text-[11px] text-text-muted">2 dias</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Coluna 4: Tentativa de Contato 3 -->
+<div class="w-80 flex-shrink-0 flex flex-col bg-surface-subtle/80 rounded-2xl p-3 shadow-sm">
+<div class="flex items-center justify-between pb-2.5 mb-2 px-1">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-text-primary">Tentativa de Contato 3</span>
+<span class="font-label-sm text-label-sm text-text-secondary">11 cards</span>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container-high text-text-primary font-bold">11</span>
+</div>
+<div class="space-y-3">
+<div class="bg-surface-card rounded-xl p-3.5 shadow-sm hover:shadow-md transition-all cursor-grab flex flex-col gap-2.5">
+<span class="font-headline-sm text-headline-sm text-text-primary leading-tight">Centro Médico Alvorada</span>
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-text-secondary">(41) 99201-7722</span>
+<span class="font-label-lg text-label-lg font-bold text-text-primary">R$ 8.100/mês</span>
+</div>
+<div class="bg-surface-subtle p-2 rounded-lg text-body-sm flex justify-between items-center">
+<span class="font-body-sm text-[11px] text-text-secondary">Toque 4/18: E-mail Quebra-Gelo</span>
+<span class="font-label-sm text-[10px] text-success-text font-bold">Hoje 17:00</span>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-1.5">
+<div class="w-6 h-6 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center font-bold text-[10px]">CM</div>
+<span class="font-label-sm text-label-sm text-text-secondary">Carlos M.</span>
+</div>
+<span class="font-label-sm text-[11px] text-text-muted">3 dias</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Coluna 5: Contato Efetivo -->
+<div class="w-80 flex-shrink-0 flex flex-col bg-surface-subtle/80 rounded-2xl p-3 shadow-sm">
+<div class="flex items-center justify-between pb-2.5 mb-2 px-1">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-text-primary">Contato Efetivo</span>
+<span class="font-label-sm text-label-sm text-text-secondary">15 cards</span>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container-high text-text-primary font-bold">15</span>
+</div>
+<div class="space-y-3">
+<div class="bg-surface-card rounded-xl p-3.5 shadow-sm hover:shadow-md transition-all cursor-grab flex flex-col gap-2.5">
+<span class="font-headline-sm text-headline-sm text-text-primary leading-tight">Clínica Integrada Morumbi</span>
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-text-secondary">(11) 96411-0988</span>
+<span class="font-label-lg text-label-lg font-bold text-text-primary">R$ 11.200/mês</span>
+</div>
+<div class="bg-surface-subtle p-2 rounded-lg text-body-sm">
+<span class="font-body-sm text-[11px] text-text-secondary">Respondido via WhatsApp. Solicitou ligar amanhã.</span>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-1.5">
+<div class="w-6 h-6 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-[10px]">BL</div>
+<span class="font-label-sm text-label-sm text-text-secondary">Beatriz Lins</span>
+</div>
+<span class="font-label-sm text-[11px] text-text-muted">1 dia</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Coluna 6: Qualificação / Diagnóstico -->
+<div class="w-80 flex-shrink-0 flex flex-col bg-surface-subtle/80 rounded-2xl p-3 shadow-sm">
+<div class="flex items-center justify-between pb-2.5 mb-2 px-1">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-text-primary">Qualificação / Diagnóstico</span>
+<span class="font-label-sm text-label-sm text-text-secondary">12 cards • R$ 64.000</span>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container-high text-text-primary font-bold">12</span>
+</div>
+<div class="space-y-3">
+<div class="bg-surface-card rounded-xl p-3.5 shadow-sm hover:shadow-md transition-all cursor-grab flex flex-col gap-2.5">
+<div class="flex items-start justify-between gap-2">
+<span class="font-headline-sm text-headline-sm text-text-primary leading-tight">Hospital Dia Vida Plena</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-warning-surface text-warning-text font-semibold flex-shrink-0">Eventos</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-text-secondary">(11) 97722-3101</span>
+<span class="font-label-lg text-label-lg font-bold text-text-primary">R$ 18.500/mês</span>
+</div>
+<div class="bg-surface-subtle p-2 rounded-lg flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-[10px] uppercase font-bold text-text-secondary">Toque 6 de 18</span>
+<span class="font-label-sm text-[10px] font-bold text-primary">33%</span>
+</div>
+<div class="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[33%] rounded-full"></div>
+</div>
+<span class="font-body-sm text-[11px] text-text-secondary mt-1">Diagnóstico agendado com gestor de TI</span>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-1.5">
+<div class="w-6 h-6 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-[10px]">JR</div>
+<span class="font-label-sm text-label-sm text-text-secondary">Dra. Juliana</span>
+</div>
+<span class="font-label-sm text-[11px] text-text-muted">4 dias</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Coluna 7: Reunião Agendada -->
+<div class="w-80 flex-shrink-0 flex flex-col bg-surface-subtle/80 rounded-2xl p-3 shadow-sm">
+<div class="flex items-center justify-between pb-2.5 mb-2 px-1">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-text-primary">Reunião Agendada</span>
+<span class="font-label-sm text-label-sm text-text-secondary">8 cards • R$ 42.000</span>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container-high text-text-primary font-bold">8</span>
+</div>
+<div class="space-y-3">
+<div class="bg-surface-card rounded-xl p-3.5 shadow-sm hover:shadow-md transition-all cursor-grab flex flex-col gap-2.5">
+<span class="font-headline-sm text-headline-sm text-text-primary leading-tight">Clínica Pediatria Bambino</span>
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-text-secondary">(21) 98112-9080</span>
+<span class="font-label-lg text-label-lg font-bold text-text-primary">R$ 5.250/mês</span>
+</div>
+<div class="bg-info-surface/80 p-2 rounded-lg flex items-center justify-between text-info-text">
+<span class="font-label-sm text-[11px] font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">event</span> Google Meet
+              </span>
+<span class="font-label-sm text-[11px] font-bold">Amanhã 10:00</span>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-1.5">
+<div class="w-6 h-6 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center font-bold text-[10px]">CM</div>
+<span class="font-label-sm text-label-sm text-text-secondary">Carlos M.</span>
+</div>
+<span class="font-label-sm text-[11px] text-text-muted">Hoje</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Coluna 8: Reunião Realizada -->
+<div class="w-80 flex-shrink-0 flex flex-col bg-surface-subtle/80 rounded-2xl p-3 shadow-sm">
+<div class="flex items-center justify-between pb-2.5 mb-2 px-1">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-text-primary">Reunião Realizada</span>
+<span class="font-label-sm text-label-sm text-text-secondary">6 cards • R$ 51.000</span>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container-high text-text-primary font-bold">6</span>
+</div>
+<div class="space-y-3">
+<div class="bg-surface-card rounded-xl p-3.5 shadow-sm hover:shadow-md transition-all cursor-grab flex flex-col gap-2.5">
+<span class="font-headline-sm text-headline-sm text-text-primary leading-tight">CardioVita Exames &amp; Consultas</span>
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-text-secondary">(11) 99404-5511</span>
+<span class="font-label-lg text-label-lg font-bold text-text-primary">R$ 9.800/mês</span>
+</div>
+<div class="bg-surface-subtle p-2 rounded-lg text-body-sm">
+<span class="font-body-sm text-[11px] text-text-secondary">Reunião realizada com sucesso. Gerando proposta personalizada.</span>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-1.5">
+<div class="w-6 h-6 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-[10px]">JR</div>
+<span class="font-label-sm text-label-sm text-text-secondary">Dra. Juliana</span>
+</div>
+<span class="font-label-sm text-[11px] text-text-muted">1 dia</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Coluna 9: Proposta Apresentada -->
+<div class="w-80 flex-shrink-0 flex flex-col bg-surface-subtle/80 rounded-2xl p-3 shadow-sm">
+<div class="flex items-center justify-between pb-2.5 mb-2 px-1">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-text-primary">Proposta Apresentada</span>
+<span class="font-label-sm text-label-sm text-text-secondary">9 cards • R$ 98.500</span>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container-high text-text-primary font-bold">9</span>
+</div>
+<div class="space-y-3">
+<div class="bg-surface-card rounded-xl p-3.5 shadow-sm hover:shadow-md transition-all cursor-grab flex flex-col gap-2.5">
+<span class="font-headline-sm text-headline-sm text-text-primary leading-tight">Grupo OrtoSpine São Paulo</span>
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-text-secondary">(11) 98109-0022</span>
+<span class="font-label-lg text-label-lg font-bold text-text-primary">R$ 14.500/mês</span>
+</div>
+<div class="bg-warning-surface/80 p-2 rounded-lg text-warning-text flex justify-between items-center">
+<span class="font-label-sm text-[11px] font-semibold">Proposta #4088 enviada</span>
+<span class="font-label-sm text-[10px] font-bold">Validade: 5 dias</span>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-1.5">
+<div class="w-6 h-6 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center font-bold text-[10px]">CM</div>
+<span class="font-label-sm text-label-sm text-text-secondary">Carlos M.</span>
+</div>
+<span class="font-label-sm text-[11px] text-text-muted">2 dias</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Coluna 10: Follow-up de Proposta -->
+<div class="w-80 flex-shrink-0 flex flex-col bg-surface-subtle/80 rounded-2xl p-3 shadow-sm">
+<div class="flex items-center justify-between pb-2.5 mb-2 px-1">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-text-primary">Follow-up de Proposta</span>
+<span class="font-label-sm text-label-sm text-text-secondary">7 cards • R$ 74.000</span>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container-high text-text-primary font-bold">7</span>
+</div>
+<div class="space-y-3">
+<div class="bg-surface-card rounded-xl p-3.5 shadow-sm hover:shadow-md transition-all cursor-grab flex flex-col gap-2.5">
+<span class="font-headline-sm text-headline-sm text-text-primary leading-tight">Clínica Renal Campinas</span>
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-text-secondary">(19) 99801-4433</span>
+<span class="font-label-lg text-label-lg font-bold text-text-primary">R$ 10.500/mês</span>
+</div>
+<div class="bg-surface-subtle p-2 rounded-lg text-body-sm">
+<span class="font-body-sm text-[11px] text-text-secondary">Toque 11/18: Ligação de alinhamento financeiro</span>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-1.5">
+<div class="w-6 h-6 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-[10px]">JR</div>
+<span class="font-label-sm text-label-sm text-text-secondary">Dra. Juliana</span>
+</div>
+<span class="font-label-sm text-[11px] text-text-muted">3 dias</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Coluna 11: Período de Teste / Trial -->
+<div class="w-80 flex-shrink-0 flex flex-col bg-surface-subtle/80 rounded-2xl p-3 shadow-sm">
+<div class="flex items-center justify-between pb-2.5 mb-2 px-1">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-text-primary">Período de Teste / Trial</span>
+<span class="font-label-sm text-label-sm text-text-secondary">5 cards • R$ 39.000</span>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-warning-surface text-warning-text font-bold">5</span>
+</div>
+<div class="space-y-3">
+<div class="bg-surface-card rounded-xl p-3.5 shadow-sm hover:shadow-md transition-all cursor-grab flex flex-col gap-2.5">
+<span class="font-headline-sm text-headline-sm text-text-primary leading-tight">Centro Médico Alphaville</span>
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-text-secondary">(11) 97711-2090</span>
+<span class="font-label-lg text-label-lg font-bold text-text-primary">R$ 7.800/mês</span>
+</div>
+<div class="bg-warning-surface/50 p-2 rounded-lg flex items-center justify-between">
+<span class="font-label-sm text-[11px] text-warning-text font-bold">Trial dia 9 de 14</span>
+<span class="font-label-sm text-[10px] text-text-secondary">18 licenças ativas</span>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-1.5">
+<div class="w-6 h-6 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-[10px]">BL</div>
+<span class="font-label-sm text-label-sm text-text-secondary">Beatriz Lins</span>
+</div>
+<span class="font-label-sm text-[11px] text-text-muted">9 dias</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Coluna 12: Negociação / Jurídico -->
+<div class="w-80 flex-shrink-0 flex flex-col bg-surface-subtle/80 rounded-2xl p-3 shadow-sm">
+<div class="flex items-center justify-between pb-2.5 mb-2 px-1">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-text-primary">Negociação / Jurídico</span>
+<span class="font-label-sm text-label-sm text-text-secondary">4 cards • R$ 48.000</span>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container-high text-text-primary font-bold">4</span>
+</div>
+<div class="space-y-3">
+<div class="bg-surface-card rounded-xl p-3.5 shadow-sm hover:shadow-md transition-all cursor-grab flex flex-col gap-2.5">
+<span class="font-headline-sm text-headline-sm text-text-primary leading-tight">Clínica Médica Jardins</span>
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-text-secondary">(11) 98901-2244</span>
+<span class="font-label-lg text-label-lg font-bold text-text-primary">R$ 12.000/mês</span>
+</div>
+<div class="bg-surface-subtle p-2 rounded-lg text-body-sm">
+<span class="font-body-sm text-[11px] text-text-secondary">Minuta contratual com setor jurídico do cliente</span>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-1.5">
+<div class="w-6 h-6 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-[10px]">JR</div>
+<span class="font-label-sm text-label-sm text-text-secondary">Dra. Juliana</span>
+</div>
+<span class="font-label-sm text-[11px] text-text-muted">12 dias</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Coluna 13: Aguardando Contrato -->
+<div class="w-80 flex-shrink-0 flex flex-col bg-surface-subtle/80 rounded-2xl p-3 shadow-sm">
+<div class="flex items-center justify-between pb-2.5 mb-2 px-1">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-text-primary">Aguardando Contrato</span>
+<span class="font-label-sm text-label-sm text-text-secondary">3 cards • R$ 28.000</span>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container-high text-text-primary font-bold">3</span>
+</div>
+<div class="space-y-3">
+<div class="bg-surface-card rounded-xl p-3.5 shadow-sm hover:shadow-md transition-all cursor-grab flex flex-col gap-2.5">
+<span class="font-headline-sm text-headline-sm text-text-primary leading-tight">MedFocus Diagnóstico por Imagem</span>
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-text-secondary">(11) 99119-0909</span>
+<span class="font-label-lg text-label-lg font-bold text-text-primary">R$ 9.300/mês</span>
+</div>
+<div class="bg-info-surface/80 p-2 rounded-lg text-info-text flex justify-between items-center">
+<span class="font-label-sm text-[11px] font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">draw</span> DocuSign Enviado
+              </span>
+<span class="font-label-sm text-[10px] font-bold">Aguardando Diretor</span>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-1.5">
+<div class="w-6 h-6 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center font-bold text-[10px]">CM</div>
+<span class="font-label-sm text-label-sm text-text-secondary">Carlos M.</span>
+</div>
+<span class="font-label-sm text-[11px] text-text-muted">Hoje</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Coluna 14: Ganho (Sucesso) -->
+<div class="w-80 flex-shrink-0 flex flex-col bg-success-surface/40 rounded-2xl p-3 shadow-sm border-t-4 border-success-text">
+<div class="flex items-center justify-between pb-2.5 mb-2 px-1">
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-success-text text-[18px]">verified</span>
+<span class="font-headline-sm text-headline-sm text-success-text font-bold">Ganho</span>
+</div>
+<span class="font-label-sm text-label-sm text-text-secondary">12 fechados • R$ 145.000</span>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-success-surface text-success-text font-bold">12</span>
+</div>
+<div class="space-y-3">
+<div class="bg-surface-card rounded-xl p-3.5 shadow-sm hover:shadow-md transition-all flex flex-col gap-2.5">
+<div class="flex items-start justify-between gap-2">
+<span class="font-headline-sm text-headline-sm text-text-primary leading-tight">Hospital São Lucas Matriz</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-success-surface text-success-text font-bold">FECHADO</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-text-secondary">Contrato 24 meses</span>
+<span class="font-label-lg text-label-lg font-bold text-success-text">R$ 22.000/mês</span>
+</div>
+<div class="bg-surface-subtle p-2 rounded-lg text-body-sm flex items-center justify-between">
+<span class="font-body-sm text-[11px] text-text-secondary">Onboarding agendado</span>
+<span class="font-label-sm text-[10px] text-primary font-bold">CS Notificado</span>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-1.5">
+<div class="w-6 h-6 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-[10px]">JR</div>
+<span class="font-label-sm text-label-sm text-text-secondary">Dra. Juliana</span>
+</div>
+<span class="font-label-sm text-[11px] text-success-text font-semibold">Ontem</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Coluna 15: Perdido -->
+<div class="w-80 flex-shrink-0 flex flex-col bg-danger-surface/30 rounded-2xl p-3 shadow-sm border-t-4 border-danger-text">
+<div class="flex items-center justify-between pb-2.5 mb-2 px-1">
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-danger-text text-[18px]">cancel</span>
+<span class="font-headline-sm text-headline-sm text-danger-text font-bold">Perdido</span>
+</div>
+<span class="font-label-sm text-label-sm text-text-secondary">8 cards arquivados</span>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-danger-surface text-danger-text font-bold">8</span>
+</div>
+<div class="space-y-3">
+<div class="bg-surface-card rounded-xl p-3.5 shadow-sm opacity-80 hover:opacity-100 transition-all flex flex-col gap-2.5">
+<span class="font-headline-sm text-headline-sm text-text-secondary line-through leading-tight">Clínica Odonto Prime</span>
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-text-muted">Perda no Toque 9</span>
+<span class="font-label-lg text-label-lg text-text-muted">R$ 2.900/mês</span>
+</div>
+<div class="bg-danger-surface/60 p-2 rounded-lg text-body-sm">
+<span class="font-label-sm text-[11px] font-semibold text-danger-text">Motivo: Optou por concorrente local</span>
+</div>
+<div class="flex items-center justify-between pt-1">
+<span class="font-label-sm text-[11px] text-text-muted">Beatriz Lins</span>
+<span class="font-label-sm text-[11px] text-text-muted">Há 4 dias</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- MODAL DE NOVO CARD (US-030) -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm transition-opacity duration-200" id="modal-novo-card">
+<div class="w-full max-w-lg bg-surface-card rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-150">
+<!-- Modal Header -->
+<div class="px-space-lg py-space-md bg-surface-card flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-primary-fixed text-on-primary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">person_add</span>
+</div>
+<div>
+<h2 class="font-headline-md text-headline-md text-text-primary leading-tight">Novo Lead no Pipeline</h2>
+<p class="font-body-sm text-body-sm text-text-secondary">Cadastre a clínica e dê início à régua de relacionamento.</p>
+</div>
+</div>
+<button class="w-8 h-8 rounded-lg text-text-muted hover:text-text-primary hover:bg-surface-subtle flex items-center justify-center transition-colors" onclick="closeNewCardModal()" type="button">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<!-- Modal Body / Form Fields -->
+<form class="p-space-lg space-y-space-md" id="newLeadForm" onsubmit="handleFormSubmit(event)">
+<!-- Field 1: Clínica / Médico -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md font-semibold text-text-primary flex items-center justify-between">
+<span>Nome da Clínica / Médico <span class="text-danger-text">*</span></span>
+<span class="font-label-sm text-text-muted font-normal">Ex: Clínica Vitae ou Dr. André</span>
+</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[18px]">local_hospital</span>
+<input class="w-full h-10 pl-9 pr-3 bg-surface-subtle rounded-xl font-body-md text-body-md text-text-primary placeholder:text-text-muted focus:bg-surface-card focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Ex: Clínica Oftalmo Alphaville" required="" type="text"/>
+</div>
+</div>
+<!-- Field 2: Telefone & Email (Grid 2 cols) -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md font-semibold text-text-primary">WhatsApp / Telefone <span class="text-danger-text">*</span></label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[18px]">chat</span>
+<input class="w-full h-10 pl-9 pr-3 bg-surface-subtle rounded-xl font-body-md text-body-md text-text-primary placeholder:text-text-muted focus:bg-surface-card focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" placeholder="(11) 99999-9999" required="" type="tel"/>
+</div>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md font-semibold text-text-primary">E-mail Institucional</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[18px]">mail</span>
+<input class="w-full h-10 pl-9 pr-3 bg-surface-subtle rounded-xl font-body-md text-body-md text-text-primary placeholder:text-text-muted focus:bg-surface-card focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" placeholder="contato@clinica.com.br" type="email"/>
+</div>
+</div>
+</div>
+<!-- Field 3: Origem & Responsável (Grid 2 cols) -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md font-semibold text-text-primary">Origem do Lead <span class="text-danger-text">*</span></label>
+<div class="relative">
+<select class="w-full h-10 pl-3 pr-8 bg-surface-subtle rounded-xl font-body-md text-body-md text-text-primary appearance-none cursor-pointer focus:bg-surface-card focus:outline-none focus:ring-2 focus:ring-primary/20" required="">
+<option value="google">Google Ads</option>
+<option value="indicacao">Indicação Médica</option>
+<option value="eventos">Congressos / Eventos</option>
+<option value="meta">Meta / Instagram Ads</option>
+<option value="outbound">Outbound / SDR</option>
+</select>
+<span class="material-symbols-outlined pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted text-[18px]">expand_more</span>
+</div>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md font-semibold text-text-primary">Responsável Comercial</label>
+<div class="relative">
+<select class="w-full h-10 pl-3 pr-8 bg-surface-subtle rounded-xl font-body-md text-body-md text-text-primary appearance-none cursor-pointer focus:bg-surface-card focus:outline-none focus:ring-2 focus:ring-primary/20">
+<option value="juliana">Dra. Juliana Rocha (Consultora)</option>
+<option value="carlos">Carlos Mendes (Executivo B2B)</option>
+<option value="beatriz">Beatriz Lins (SDR Sênior)</option>
+<option value="roberto">Dr. Roberto Mendes (Master)</option>
+</select>
+<span class="material-symbols-outlined pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted text-[18px]">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Field 4: Valor Estimado Mensal -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md font-semibold text-text-primary">Valor Estimado do Contrato (Mensal)</label>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 font-label-md text-label-md font-bold text-text-muted">R$</span>
+<input class="w-full h-10 pl-10 pr-3 bg-surface-subtle rounded-xl font-body-md text-body-md text-text-primary placeholder:text-text-muted focus:bg-surface-card focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" placeholder="6.500,00" type="text"/>
+</div>
+</div>
+<!-- Cadence Pre-selection Notice -->
+<div class="p-3 bg-info-surface rounded-xl flex items-start gap-2.5">
+<span class="material-symbols-outlined text-info-text text-[20px] flex-shrink-0 mt-0.5">info</span>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm font-semibold text-info-text">Cadência Médica Automatizada</span>
+<span class="font-body-sm text-[11px] text-text-secondary leading-tight mt-0.5">Ao salvar, o sistema programará o primeiro toque via WhatsApp em até 15 minutos úteis.</span>
+</div>
+</div>
+<!-- Modal Footer Actions -->
+<div class="pt-space-sm flex items-center justify-end gap-space-sm">
+<button class="px-4 py-2 rounded-xl text-text-secondary hover:bg-surface-subtle font-label-md text-label-md font-semibold transition-colors" onclick="closeNewCardModal()" type="button">
+            Cancelar
+          </button>
+<button class="px-4 py-2 rounded-xl bg-surface-subtle hover:bg-surface-container text-text-primary font-label-md text-label-md font-semibold transition-colors" type="submit">
+            Criar Card na Entrada
+          </button>
+<button class="px-4 py-2 rounded-xl bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md font-semibold shadow-md transition-all flex items-center gap-1.5" type="submit">
+<span class="material-symbols-outlined text-[18px]">play_arrow</span>
+            Salvar e Iniciar Cadência
+          </button>
+</div>
+</form>
+</div>
+</div>
+<script>
+    function setViewState(state) {
+      const normalEl = document.getElementById('view-normal');
+      const skeletonEl = document.getElementById('view-skeleton');
+      const emptyEl = document.getElementById('view-empty');
+      const modalEl = document.getElementById('modal-novo-card');
+
+      // Reset all buttons
+      document.querySelectorAll('.view-state-tab').forEach(btn => {
+        btn.classList.remove('bg-surface-card', 'text-primary', 'shadow-sm');
+        btn.classList.add('text-text-secondary');
+      });
+
+      const activeBtn = document.getElementById('btn-state-' + state);
+      if (activeBtn) {
+        activeBtn.classList.add('bg-surface-card', 'text-primary', 'shadow-sm');
+        activeBtn.classList.remove('text-text-secondary');
+      }
+
+      if (state === 'normal') {
+        normalEl.classList.remove('hidden');
+        skeletonEl.classList.add('hidden');
+        emptyEl.classList.add('hidden');
+        modalEl.classList.add('hidden');
+      } else if (state === 'modal') {
+        normalEl.classList.remove('hidden');
+        skeletonEl.classList.add('hidden');
+        emptyEl.classList.add('hidden');
+        modalEl.classList.remove('hidden');
+      } else if (state === 'skeleton') {
+        normalEl.classList.add('hidden');
+        skeletonEl.classList.remove('hidden');
+        emptyEl.classList.add('hidden');
+        modalEl.classList.add('hidden');
+      } else if (state === 'empty') {
+        normalEl.classList.add('hidden');
+        skeletonEl.classList.add('hidden');
+        emptyEl.classList.remove('hidden');
+        modalEl.classList.add('hidden');
+      }
+    }
+
+    function closeNewCardModal() {
+      document.getElementById('modal-novo-card').classList.add('hidden');
+      setViewState('normal');
+    }
+
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      closeNewCardModal();
+    }
+  </script>
+</div></main></div></body></html>

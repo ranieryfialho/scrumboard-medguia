@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-subtle": "#F8FAFC", "info-border": "#BFDBFE", "danger-text": "#DC2626", "on-error-container": "#93000a", "surface-tint": "#1157cb", "on-secondary-fixed": "#131b30", "primary-fixed-dim": "#b1c5ff", "on-secondary-container": "#5a627b", "on-primary": "#ffffff", "inverse-on-surface": "#f0f0fa", "warning-surface": "#FEF3C7", "text-secondary": "#64748B", "surface-bright": "#faf8ff", "on-primary-fixed-variant": "#0040a0", "sidebar-surface": "#1E293B", "on-primary-fixed": "#001847", "success-border": "#A7F3D0", "on-tertiary-container": "#fffbff", "on-primary-container": "#fefcff", "secondary-fixed": "#dae2ff", "surface-container-lowest": "#ffffff", "on-tertiary-fixed": "#311300", "on-background": "#191b22", "text-muted": "#94A3B8", "background-canvas": "#F4F6FA", "tertiary-fixed-dim": "#ffb787", "warning-text": "#D97706", "sidebar-surface-active": "#2D3748", "on-secondary": "#ffffff", "border-subtle": "#E2E8F0", "outline": "#737785", "border-focus": "#93C5FD", "inverse-surface": "#2e3038", "on-tertiary": "#ffffff", "secondary-container": "#d7dffd", "inverse-primary": "#b1c5ff", "text-primary": "#0F172A", "error": "#ba1a1a", "info-text": "#2563EB", "success-surface": "#D1FAE5", "on-surface-variant": "#434654", "surface-container": "#ededf7", "on-secondary-fixed-variant": "#3e465e", "danger-surface": "#FEE2E2", "tertiary": "#924700", "primary-fixed": "#dae2ff", "success-text": "#059669", "warning-border": "#FDE68A", "surface-container-highest": "#e1e2ec", "error-container": "#ffdad6", "surface-dim": "#d9d9e3", "background": "#faf8ff", "tertiary-container": "#b85b00", "on-surface": "#191b22", "on-error": "#ffffff", "tertiary-fixed": "#ffdcc7", "secondary": "#565e77", "surface-container-low": "#f3f3fd", "surface-variant": "#e1e2ec", "info-surface": "#EFF6FF", "danger-border": "#FECACA", "surface-card": "#FFFFFF", "on-tertiary-fixed-variant": "#723600", "secondary-fixed-dim": "#bec6e3", "primary-container": "#366ee3", "primary": "#0954c9", "outline-variant": "#c3c6d6", "surface-container-high": "#e7e7f2", "surface": "#faf8ff" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "gutter-sm": "0.75rem", "gutter-lg": "1.5rem", "space-lg": "1.25rem", "space-sm": "0.5rem", "gutter": "1.25rem", "space-xs": "0.25rem", "space-md": "0.875rem", "margin": "1.75rem", "space-xl": "1.75rem", "margin-mobile": "1rem", "space-2xl": "2.5rem" }, "fontFamily": { "body-sm": ["Inter"], "headline-sm": ["Plus Jakarta Sans"], "body-lg": ["Inter"], "label-sm": ["Inter"], "body-md": ["Inter"], "headline-md": ["Plus Jakarta Sans"], "metric-stat": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "display-lg": ["Plus Jakarta Sans"], "label-md": ["Inter"], "display-lg-mobile": ["Plus Jakarta Sans"], "label-lg": ["Inter"], "table-header": ["Inter"] }, "fontSize": { "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }], "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }], "body-lg": ["15px", { "lineHeight": "22px", "fontWeight": "400" }], "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.03em", "fontWeight": "600" }], "body-md": ["13px", { "lineHeight": "20px", "fontWeight": "400" }], "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }], "metric-stat": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "500" }], "display-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "700" }], "label-lg": ["13px", { "lineHeight": "18px", "fontWeight": "600" }], "table-header": ["11px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }] } } } };</script></head><body class="bg-background-canvas font-body-md text-text-primary antialiased selection:bg-primary-fixed selection:text-on-primary-fixed"><aside class="fixed left-0 top-0 h-full w-64 bg-sidebar-surface text-surface z-50 flex flex-col justify-between shadow-[0_4px_20px_-2px_rgba(0,0,0,0.08)] overflow-hidden"><div class="flex flex-col flex-1 min-h-0"><div class="h-16 px-space-lg flex items-center justify-between border-b border-sidebar-surface-active/60 bg-sidebar-surface"><div class="flex items-center gap-space-sm"><div class="w-9 h-9 rounded-xl bg-primary flex items-center justify-center shadow-md"><span class="material-symbols-outlined text-on-primary text-[20px]">local_hospital</span></div><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-surface-container-lowest leading-none tracking-tight">MedCRM</span><span class="font-label-sm text-label-sm text-text-muted mt-0.5">MedGuia B2B</span></div></div><span class="font-label-sm text-[10px] px-1.5 py-0.5 rounded-full bg-primary-container/30 text-primary-fixed-dim uppercase tracking-wider font-semibold">Pipeline</span></div><div class="flex-1 overflow-y-auto px-space-sm py-space-md space-y-space-lg scrollbar-none"><nav class="space-y-space-md" data-active-classes="bg-sidebar-surface-active text-surface-container-lowest font-semibold rounded-lg shadow-sm"><div class="space-y-1"><div class="px-space-sm pb-1"><span class="font-table-header text-table-header text-text-muted uppercase tracking-wider">Operação</span></div><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="funil-pipeline" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">view_kanban</span><span class="font-body-md text-body-md">Funil Pipeline</span></div></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="lista-de-leads" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">format_list_bulleted</span><span class="font-body-md text-body-md">Lista</span></div></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="arquivados" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">archive</span><span class="font-body-md text-body-md">Arquivados</span></div></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="tarefas-do-turno" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">check_circle</span><span class="font-body-md text-body-md">Tarefas do Turno</span></div><span class="font-label-sm text-label-sm bg-primary-container text-on-primary px-2 py-0.5 rounded-full font-bold">12</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="tarefas-atrasadas" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px] text-danger-text">warning</span><span class="font-body-md text-body-md text-danger-text font-medium">Tarefas Atrasadas</span></div><span class="font-label-sm text-label-sm bg-danger-surface text-danger-text px-2 py-0.5 rounded-full font-bold">4</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="agenda" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">calendar_month</span><span class="font-body-md text-body-md">Agenda</span></div></a></div><div class="space-y-1"><div class="px-space-sm pb-1"><span class="font-table-header text-table-header text-text-muted uppercase tracking-wider">Comunicação</span></div><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="whatsapp-inbox" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">chat</span><span class="font-body-md text-body-md">WhatsApp Inbox</span></div><span class="font-label-sm text-label-sm bg-success-surface text-success-text px-2 py-0.5 rounded-full font-bold">5</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="campanhas" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">send</span><span class="font-body-md text-body-md">Campanhas</span></div></a></div><div class="space-y-1"><div class="px-space-sm pb-1"><span class="font-table-header text-table-header text-text-muted uppercase tracking-wider">Análises</span></div><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="indicadores" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">monitoring</span><span class="font-body-md text-body-md">Indicadores</span></div></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="relatorios" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">description</span><span class="font-body-md text-body-md">Relatórios</span></div></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="comercial" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">query_stats</span><span class="font-body-md text-body-md">Comercial</span></div></a></div><div class="space-y-1"><div class="px-space-sm pb-1"><span class="font-table-header text-table-header text-text-muted uppercase tracking-wider">Administração</span></div><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="equipe" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">groups</span><span class="font-body-md text-body-md">Equipe</span></div></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="motivos-de-perda" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">cancel</span><span class="font-body-md text-body-md">Motivos de Perda</span></div></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="empresas" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">apartment</span><span class="font-body-md text-body-md">Empresas</span></div></a></div></nav></div></div><div class="p-space-md border-t border-sidebar-surface-active/50 bg-sidebar-surface"><div class="flex items-center justify-between text-text-muted"><a class="flex items-center gap-2 hover:text-surface-container-lowest transition-colors font-label-md text-label-md" data-path="suporte-e-ajuda" href="#"><span class="material-symbols-outlined text-[18px]">help</span><span>Ajuda &amp; Suporte</span></a><span class="font-label-sm text-label-sm text-text-muted/80 bg-sidebar-surface-active/80 px-2 py-0.5 rounded">v2.4.0</span></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface-card border-b border-border-subtle z-40 flex items-center justify-between px-gutter shadow-[0_1px_8px_rgba(0,0,0,0.02)]"><div class="flex items-center gap-space-lg flex-1 max-w-2xl"><div class="relative w-full max-w-lg"><span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[19px]">search</span><input class="w-full h-10 pl-9 pr-16 bg-surface-subtle border border-border-subtle rounded-lg font-body-md text-body-md text-text-primary placeholder:text-text-muted focus:outline-none focus:border-border-focus focus:bg-surface-card transition-all" placeholder="Buscar lead, clínica, telefone ou responsável... (Ctrl + K)" type="text"/><kbd class="absolute right-3 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[10px] font-label-sm bg-surface-card border border-border-subtle text-text-muted rounded shadow-sm">⌘K</kbd></div><div class="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border-subtle bg-surface-card text-text-primary shadow-sm hover:border-border-focus cursor-pointer transition-all"><span class="material-symbols-outlined text-primary text-[18px]">domain</span><div class="flex flex-col text-left"><span class="font-label-sm text-label-sm font-semibold leading-tight">Clínica São Lucas - Matriz</span><span class="font-label-sm text-[10px] text-success-text leading-none flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-success-text inline-block"></span>Ativo</span></div><span class="material-symbols-outlined text-text-muted text-[16px] ml-1">expand_more</span></div></div><div class="flex items-center gap-space-md"><div class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-success-surface border border-success-border"><span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success-text opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-success-text"></span></span><span class="font-label-sm text-label-sm text-success-text font-semibold">Tempo real conectado</span></div><button class="relative p-2 rounded-lg text-text-secondary hover:bg-surface-subtle hover:text-text-primary transition-colors" type="button"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-danger-text"></span></button><div class="h-6 w-px bg-border-subtle"></div><div class="flex items-center gap-space-sm pl-1 cursor-pointer"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><div class="hidden lg:flex flex-col text-left"><div class="flex items-center gap-1.5"><span class="font-label-lg text-label-lg font-semibold text-text-primary leading-tight">Dr. Roberto Mendes</span><span class="font-label-sm text-[10px] bg-primary-fixed text-on-primary-fixed px-1.5 py-0.2 rounded font-bold uppercase tracking-wider">MASTER</span></div><span class="font-label-sm text-label-sm text-text-muted leading-tight">roberto.mendes@medguia.com.br</span></div><span class="material-symbols-outlined text-text-muted text-[18px]">expand_more</span></div></div></header><main class="w-full pt-16 bg-background-canvas min-h-screen"><div class="flex flex-col w-full">
+<!-- Top Context Header Area -->
+<div class="w-full bg-surface-card px-gutter-lg pt-space-md shadow-sm">
+<!-- Breadcrumbs -->
+<div class="flex items-center gap-space-xs text-text-muted font-body-sm text-body-sm pb-space-xs">
+<span class="hover:text-primary cursor-pointer transition-colors">Pipeline Comercial</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="hover:text-primary cursor-pointer transition-colors">Negociações Ativas</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-text-primary font-semibold truncate max-w-xs md:max-w-md">Clínica Santa Luzia Oftalmologia (Dr. Marcos Albuquerque)</span>
+</div>
+<!-- Title, Badges & Quick Action Row -->
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md py-space-sm">
+<div class="flex flex-wrap items-center gap-space-sm">
+<div class="w-10 h-10 rounded-xl bg-info-surface flex items-center justify-center text-primary shadow-xs">
+<span class="material-symbols-outlined text-[24px]">apartment</span>
+</div>
+<div>
+<div class="flex flex-wrap items-center gap-2.5">
+<h1 class="font-headline-lg text-headline-lg text-text-primary font-bold tracking-tight">Clínica Santa Luzia Oftalmologia</h1>
+<span class="px-2.5 py-0.5 rounded-full bg-warning-surface text-warning-text font-label-sm text-label-sm font-semibold flex items-center gap-1 shadow-xs">
+<span class="w-1.5 h-1.5 rounded-full bg-warning-text"></span>
+              9. Proposta Enviada
+            </span>
+<span class="font-label-md text-label-md text-text-muted bg-surface-subtle px-2 py-0.5 rounded shadow-xs">#MED-9402</span>
+</div>
+<p class="font-body-md text-body-md text-text-secondary mt-0.5 flex items-center gap-3">
+<span>Responsável: <strong class="text-text-primary font-semibold">Roberto Mendes</strong></span>
+<span class="w-1 h-1 rounded-full bg-border-subtle"></span>
+<span>MRR Estimado: <strong class="text-primary font-bold">R$ 6.800,00/mês</strong></span>
+<span class="w-1 h-1 rounded-full bg-border-subtle"></span>
+<span class="text-success-text font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">verified</span>
+              Qualificação 92%
+            </span>
+</p>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="flex flex-wrap items-center gap-2">
+<button class="px-3.5 py-2 rounded-lg bg-primary text-on-primary font-label-lg text-label-lg flex items-center gap-1.5 shadow-sm hover:bg-primary-container transition-all" onclick="document.getElementById('upload-zone-section').scrollIntoView({ behavior: 'smooth' })" type="button">
+<span class="material-symbols-outlined text-[18px]">cloud_upload</span>
+<span>+ Upload de Arquivo / Evidência</span>
+</button>
+<button class="px-3.5 py-2 rounded-lg bg-surface-card text-text-primary hover:bg-surface-subtle font-label-lg text-label-lg flex items-center gap-1.5 shadow-sm transition-all" type="button">
+<span class="material-symbols-outlined text-[18px] text-text-secondary">archive</span>
+<span>Exportar Dossiê (ZIP)</span>
+</button>
+<button class="px-3.5 py-2 rounded-lg bg-surface-container-high text-on-surface-variant hover:bg-secondary-fixed font-label-lg text-label-lg flex items-center gap-1.5 transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">double_arrow</span>
+<span>Mover Etapa</span>
+</button>
+</div>
+</div>
+<!-- Navigation Tabs -->
+<div class="flex items-center gap-space-lg overflow-x-auto pt-space-xs scrollbar-none">
+<a class="pb-3 px-1 text-text-secondary hover:text-text-primary font-label-lg text-label-lg flex items-center gap-1.5 whitespace-nowrap transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">dashboard</span>
+<span>Resumo Geral</span>
+</a>
+<a class="pb-3 px-1 text-text-secondary hover:text-text-primary font-label-lg text-label-lg flex items-center gap-1.5 whitespace-nowrap transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">checklist</span>
+<span>Cadência (18 Toques) US-053</span>
+<span class="bg-surface-container text-text-secondary font-label-sm text-[10px] px-1.5 py-0.2 rounded-full font-bold">Toque 9</span>
+</a>
+<a class="pb-3 px-1 text-text-secondary hover:text-text-primary font-label-lg text-label-lg flex items-center gap-1.5 whitespace-nowrap transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">forum</span>
+<span>WhatsApp &amp; Conversas</span>
+<span class="bg-success-surface text-success-text font-label-sm text-[10px] px-1.5 py-0.2 rounded-full font-bold">Ativo</span>
+</a>
+<a class="pb-3 px-1 text-primary font-label-lg text-label-lg flex items-center gap-1.5 whitespace-nowrap shadow-[inset_0_-2px_0_0_currentColor] transition-all" href="#">
+<span class="material-symbols-outlined text-[18px]">attach_file</span>
+<span>Anexos &amp; Evidências</span>
+<span class="bg-primary text-on-primary font-label-sm text-[10px] px-2 py-0.5 rounded-full font-bold shadow-xs">5</span>
+</a>
+</div>
+</div>
+<!-- Main Body Content: US-034 a US-036 -->
+<div class="p-gutter-lg space-y-space-lg max-w-7xl w-full mx-auto">
+<!-- LGPD & Compliance Healthcare Alert Banner -->
+<div class="relative overflow-hidden rounded-xl bg-info-surface p-space-md shadow-sm">
+<div class="flex items-start gap-space-md">
+<div class="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[22px]">health_and_safety</span>
+</div>
+<div class="flex-1 pr-6">
+<div class="flex items-center gap-2">
+<h2 class="font-headline-sm text-headline-sm text-primary font-semibold">Evidências Comerciais &amp; Conformidade Médica (LGPD Saúde)</h2>
+<span class="bg-surface-card text-primary font-label-sm text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider shadow-xs">US-034 / US-036</span>
+</div>
+<p class="font-body-md text-body-md text-text-secondary mt-1">
+            Anexos marcados como <strong class="text-text-primary">"Evidência"</strong> possuem criptografia ponta a ponta e são legalmente validados para transição de fases críticas (ex.: Proposta Comercial formal para avançar à Negociação Final, ou Aceite de escopo pelo Responsável Técnico CRM). Os links de visualização são de curta duração (expiram em 15 minutos).
+          </p>
+</div>
+<div class="hidden sm:flex items-center gap-2 shrink-0 self-center">
+<div class="flex flex-col text-right">
+<span class="font-label-sm text-label-sm text-text-muted uppercase tracking-wider">Governança</span>
+<span class="font-label-md text-label-md text-success-text font-bold flex items-center justify-end gap-1">
+<span class="w-2 h-2 rounded-full bg-success-text"></span>
+              Auditável ISO-27799
+            </span>
+</div>
+</div>
+</div>
+</div>
+<!-- Filters, Stats & Search Controls -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-md bg-surface-card p-space-md rounded-xl shadow-sm">
+<!-- Search Input -->
+<div class="relative flex-1 max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[19px]">search</span>
+<input class="w-full h-10 pl-9 pr-4 bg-surface-subtle rounded-lg font-body-md text-body-md text-text-primary placeholder:text-text-muted focus:bg-surface-card focus:outline-none shadow-xs transition-all" id="search-docs" placeholder="Buscar documento por nome, autor, formato ou tag..." type="text"/>
+</div>
+<!-- Quick Category Segmented Buttons -->
+<div class="flex items-center gap-1.5 overflow-x-auto scrollbar-none py-1">
+<button class="px-3 py-1.5 rounded-lg bg-primary text-on-primary font-label-sm text-label-sm font-semibold whitespace-nowrap shadow-xs" type="button">
+          Todos (5)
+        </button>
+<button class="px-3 py-1.5 rounded-lg bg-surface-subtle text-text-secondary hover:text-text-primary hover:bg-surface-container font-label-sm text-label-sm font-medium whitespace-nowrap transition-colors" type="button">
+          Evidências Obrigatórias (3)
+        </button>
+<button class="px-3 py-1.5 rounded-lg bg-surface-subtle text-text-secondary hover:text-text-primary hover:bg-surface-container font-label-sm text-label-sm font-medium whitespace-nowrap transition-colors" type="button">
+          Propostas &amp; Contratos (2)
+        </button>
+<button class="px-3 py-1.5 rounded-lg bg-surface-subtle text-text-secondary hover:text-text-primary hover:bg-surface-container font-label-sm text-label-sm font-medium whitespace-nowrap transition-colors" type="button">
+          Prints WhatsApp (1)
+        </button>
+<button class="px-3 py-1.5 rounded-lg bg-surface-subtle text-text-secondary hover:text-text-primary hover:bg-surface-container font-label-sm text-label-sm font-medium whitespace-nowrap transition-colors" type="button">
+          Doc Técnica (1)
+        </button>
+</div>
+</div>
+<!-- Files & Evidence List (Cards Grid Style) -->
+<div class="space-y-space-md">
+<!-- Item 1: Proposta Comercial v1.2 (Evidência Aprovada) -->
+<div class="bg-surface-card rounded-xl p-space-md shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row md:items-center justify-between gap-space-md">
+<div class="flex items-start gap-space-md flex-1 min-w-0">
+<!-- Rich Thumbnail preview simulation -->
+<div class="w-14 h-16 rounded-lg bg-danger-surface/50 text-danger-text flex flex-col items-center justify-center shrink-0 shadow-xs relative overflow-hidden group">
+<span class="material-symbols-outlined text-[28px]">picture_as_pdf</span>
+<span class="font-label-sm text-[9px] font-bold tracking-wider mt-0.5 uppercase">PDF</span>
+<div class="absolute inset-0 bg-text-primary/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-[18px]">zoom_in</span>
+</div>
+</div>
+<div class="flex-1 min-w-0 space-y-1">
+<div class="flex flex-wrap items-center gap-2">
+<h3 class="font-headline-sm text-headline-sm text-text-primary font-semibold truncate hover:text-primary cursor-pointer">
+                Proposta_Comercial_SantaLuzia_v1.2.pdf
+              </h3>
+<span class="px-2.5 py-0.5 rounded-full bg-success-surface text-success-text font-label-sm text-label-sm font-bold flex items-center gap-1 shadow-xs">
+<span class="material-symbols-outlined text-[13px]">check_circle</span>
+                Evidência Aprovada
+              </span>
+<span class="px-2 py-0.5 rounded bg-surface-subtle text-text-muted font-label-sm text-label-sm">
+                2.4 MB
+              </span>
+</div>
+<div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-text-secondary font-body-sm text-body-sm">
+<span class="flex items-center gap-1 text-primary font-medium">
+<span class="material-symbols-outlined text-[15px]">timeline</span>
+                Etapa: <strong>9. Proposta Enviada</strong>
+</span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-text-muted">person</span>
+                Dra. Juliana Rocha
+              </span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-text-muted">schedule</span>
+                Hoje, 11:20
+              </span>
+<span class="text-text-muted">| SHA-256: 7f9a...3c21</span>
+</div>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="flex items-center gap-2 shrink-0 border-t md:border-t-0 pt-2 md:pt-0 border-surface-container">
+<button class="px-3 py-1.5 rounded-lg bg-info-surface text-primary hover:bg-primary hover:text-on-primary font-label-md text-label-md font-semibold flex items-center gap-1.5 transition-all shadow-xs" title="Link com token temporário de 15 minutos" type="button">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+<span>Link Seguro (15m)</span>
+</button>
+<button class="p-2 rounded-lg bg-surface-subtle text-text-secondary hover:text-text-primary hover:bg-surface-container-high transition-colors shadow-xs" title="Download" type="button">
+<span class="material-symbols-outlined text-[18px]">download</span>
+</button>
+<button class="px-2.5 py-1.5 rounded-lg bg-surface-subtle text-text-secondary hover:text-danger-text hover:bg-danger-surface font-label-md text-label-md transition-colors" title="Desvincular do avanço de etapa" type="button">
+<span class="material-symbols-outlined text-[16px]">link_off</span>
+</button>
+</div>
+</div>
+<!-- Item 2: Ata de Reunião Demonstração Técnica (Evidência Válida) -->
+<div class="bg-surface-card rounded-xl p-space-md shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row md:items-center justify-between gap-space-md">
+<div class="flex items-start gap-space-md flex-1 min-w-0">
+<div class="w-14 h-16 rounded-lg bg-danger-surface/50 text-danger-text flex flex-col items-center justify-center shrink-0 shadow-xs relative overflow-hidden group">
+<span class="material-symbols-outlined text-[28px]">description</span>
+<span class="font-label-sm text-[9px] font-bold tracking-wider mt-0.5 uppercase">PDF</span>
+<div class="absolute inset-0 bg-text-primary/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-[18px]">zoom_in</span>
+</div>
+</div>
+<div class="flex-1 min-w-0 space-y-1">
+<div class="flex flex-wrap items-center gap-2">
+<h3 class="font-headline-sm text-headline-sm text-text-primary font-semibold truncate hover:text-primary cursor-pointer">
+                Ata_Reuniao_Demonstracao_Tecnica_26-04.pdf
+              </h3>
+<span class="px-2.5 py-0.5 rounded-full bg-success-surface text-success-text font-label-sm text-label-sm font-bold flex items-center gap-1 shadow-xs">
+<span class="material-symbols-outlined text-[13px]">verified</span>
+                Evidência Válida
+              </span>
+<span class="px-2 py-0.5 rounded bg-surface-subtle text-text-muted font-label-sm text-label-sm">
+                1.1 MB
+              </span>
+</div>
+<div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-text-secondary font-body-sm text-body-sm">
+<span class="flex items-center gap-1 text-primary font-medium">
+<span class="material-symbols-outlined text-[15px]">timeline</span>
+                Etapa: <strong>7. Reunião Realizada</strong>
+</span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-text-muted">person</span>
+                Roberto Mendes
+              </span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-text-muted">schedule</span>
+                Ontem, 16:30
+              </span>
+<span class="text-text-muted">| Assinado digitalmente</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2 shrink-0 border-t md:border-t-0 pt-2 md:pt-0 border-surface-container">
+<button class="px-3 py-1.5 rounded-lg bg-info-surface text-primary hover:bg-primary hover:text-on-primary font-label-md text-label-md font-semibold flex items-center gap-1.5 transition-all shadow-xs" type="button">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+<span>Link Seguro (15m)</span>
+</button>
+<button class="p-2 rounded-lg bg-surface-subtle text-text-secondary hover:text-text-primary hover:bg-surface-container-high transition-colors shadow-xs" type="button">
+<span class="material-symbols-outlined text-[18px]">download</span>
+</button>
+<button class="px-2.5 py-1.5 rounded-lg bg-surface-subtle text-text-secondary hover:text-danger-text hover:bg-danger-surface font-label-md text-label-md transition-colors" title="Desvincular Evidência" type="button">
+<span class="material-symbols-outlined text-[16px]">link_off</span>
+</button>
+</div>
+</div>
+<!-- Item 3: Print Aceite WhatsApp (Evidência em Revisão) -->
+<div class="bg-surface-card rounded-xl p-space-md shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row md:items-center justify-between gap-space-md">
+<div class="flex items-start gap-space-md flex-1 min-w-0">
+<!-- Image preview slot -->
+<div class="w-14 h-16 rounded-lg bg-surface-container-high relative overflow-hidden shrink-0 shadow-xs flex items-center justify-center">
+<img class="w-full h-full object-cover" data-alt="A clean screenshot simulation showing a verified WhatsApp Business conversation between a medical doctor and the MedCRM sales executive confirming the quotation terms, crisp UI, slate and teal tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDeufQQxFMSAnnRDFVWKRkff_EBdRgbxUBpwOEbT-AKMJ4cWFh9yble_eWDZwIWMOrpL7x_QOaaGaBrhQeji7KuihiQ_bStOHg-VPn5Zf9Vei-CMWMXzbgAKLgr3MuiBo9eZ-kUB-BBXSvkn91UfUx9HzKe9i6pG-cA4-J8xKalpOrWQZEzmHWWoaMXLEJfUR7CHUP3Jtx9n8DSdxR3-BV9a2JZM9kgAfkr-81tvkaDtHBzQkTHmIdi"/>
+<span class="absolute bottom-0 right-0 bg-primary text-on-primary text-[8px] font-bold px-1 rounded-tl">PNG</span>
+</div>
+<div class="flex-1 min-w-0 space-y-1">
+<div class="flex flex-wrap items-center gap-2">
+<h3 class="font-headline-sm text-headline-sm text-text-primary font-semibold truncate hover:text-primary cursor-pointer">
+                Print_Aceite_Escopo_WhatsApp_DrMarcos.png
+              </h3>
+<span class="px-2.5 py-0.5 rounded-full bg-warning-surface text-warning-text font-label-sm text-label-sm font-bold flex items-center gap-1 shadow-xs">
+<span class="material-symbols-outlined text-[13px]">pending</span>
+                Evidência em Revisão
+              </span>
+<span class="px-2 py-0.5 rounded bg-surface-subtle text-text-muted font-label-sm text-label-sm">
+                840 KB
+              </span>
+</div>
+<div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-text-secondary font-body-sm text-body-sm">
+<span class="flex items-center gap-1 text-primary font-medium">
+<span class="material-symbols-outlined text-[15px]">timeline</span>
+                Etapa: <strong>8. Follow-up Pós-Demo</strong>
+</span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-text-muted">person</span>
+                Ana Clara
+              </span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-text-muted">schedule</span>
+                Ontem, 14:15
+              </span>
+<span class="text-warning-text font-medium flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[14px]">info</span>
+                Aguardando crivo do coordenador
+              </span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2 shrink-0 border-t md:border-t-0 pt-2 md:pt-0 border-surface-container">
+<button class="px-3 py-1.5 rounded-lg bg-info-surface text-primary hover:bg-primary hover:text-on-primary font-label-md text-label-md font-semibold flex items-center gap-1.5 transition-all shadow-xs" type="button">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+<span>Link Seguro (15m)</span>
+</button>
+<button class="p-2 rounded-lg bg-surface-subtle text-text-secondary hover:text-text-primary hover:bg-surface-container-high transition-colors shadow-xs" type="button">
+<span class="material-symbols-outlined text-[18px]">download</span>
+</button>
+<button class="px-2.5 py-1.5 rounded-lg bg-surface-subtle text-text-secondary hover:text-danger-text hover:bg-danger-surface font-label-md text-label-md transition-colors" title="Desvincular Evidência" type="button">
+<span class="material-symbols-outlined text-[16px]">link_off</span>
+</button>
+</div>
+</div>
+<!-- Item 4: Planilha Mapeamento Tasy (Documentação Técnica) -->
+<div class="bg-surface-card rounded-xl p-space-md shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row md:items-center justify-between gap-space-md">
+<div class="flex items-start gap-space-md flex-1 min-w-0">
+<div class="w-14 h-16 rounded-lg bg-success-surface/50 text-success-text flex flex-col items-center justify-center shrink-0 shadow-xs relative overflow-hidden group">
+<span class="material-symbols-outlined text-[28px]">table_chart</span>
+<span class="font-label-sm text-[9px] font-bold tracking-wider mt-0.5 uppercase">XLSX</span>
+<div class="absolute inset-0 bg-text-primary/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-[18px]">zoom_in</span>
+</div>
+</div>
+<div class="flex-1 min-w-0 space-y-1">
+<div class="flex flex-wrap items-center gap-2">
+<h3 class="font-headline-sm text-headline-sm text-text-primary font-semibold truncate hover:text-primary cursor-pointer">
+                Mapeamento_Integracao_Tasy_Philips.xlsx
+              </h3>
+<span class="px-2.5 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm font-semibold flex items-center gap-1 shadow-xs">
+<span class="material-symbols-outlined text-[13px]">developer_board</span>
+                Suporte Técnico e TI
+              </span>
+<span class="px-2 py-0.5 rounded bg-surface-subtle text-text-muted font-label-sm text-label-sm">
+                450 KB
+              </span>
+</div>
+<div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-text-secondary font-body-sm text-body-sm">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-text-muted">person</span>
+                Suporte de Integração MedGuia
+              </span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-text-muted">schedule</span>
+                24/04/2025, 09:12
+              </span>
+<span class="text-text-muted">| Schema FHIR v4.0.1</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2 shrink-0 border-t md:border-t-0 pt-2 md:pt-0 border-surface-container">
+<button class="px-3 py-1.5 rounded-lg bg-surface-subtle text-text-primary hover:bg-surface-container font-label-md text-label-md font-medium flex items-center gap-1.5 transition-all shadow-xs" type="button">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+<span>Visualizar Planilha</span>
+</button>
+<button class="p-2 rounded-lg bg-surface-subtle text-text-secondary hover:text-text-primary hover:bg-surface-container-high transition-colors shadow-xs" type="button">
+<span class="material-symbols-outlined text-[18px]">download</span>
+</button>
+<button class="px-3 py-1.5 rounded-lg bg-surface-subtle text-primary hover:bg-primary hover:text-on-primary font-label-md text-label-md font-medium transition-all" title="Vincular como evidência formal de etapa" type="button">
+            + Tornar Evidência
+          </button>
+</div>
+</div>
+<!-- Item 5: Cartão CNPJ e Contrato Social (Compliance & Jurídico) -->
+<div class="bg-surface-card rounded-xl p-space-md shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row md:items-center justify-between gap-space-md">
+<div class="flex items-start gap-space-md flex-1 min-w-0">
+<div class="w-14 h-16 rounded-lg bg-danger-surface/50 text-danger-text flex flex-col items-center justify-center shrink-0 shadow-xs relative overflow-hidden group">
+<span class="material-symbols-outlined text-[28px]">gavel</span>
+<span class="font-label-sm text-[9px] font-bold tracking-wider mt-0.5 uppercase">PDF</span>
+<div class="absolute inset-0 bg-text-primary/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-[18px]">zoom_in</span>
+</div>
+</div>
+<div class="flex-1 min-w-0 space-y-1">
+<div class="flex flex-wrap items-center gap-2">
+<h3 class="font-headline-sm text-headline-sm text-text-primary font-semibold truncate hover:text-primary cursor-pointer">
+                Cartao_CNPJ_Contrato_Social_SantaLuzia.pdf
+              </h3>
+<span class="px-2.5 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm font-semibold flex items-center gap-1 shadow-xs">
+<span class="material-symbols-outlined text-[13px]">policy</span>
+                Compliance &amp; Jurídico
+              </span>
+<span class="px-2 py-0.5 rounded bg-surface-subtle text-text-muted font-label-sm text-label-sm">
+                980 KB
+              </span>
+</div>
+<div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-text-secondary font-body-sm text-body-sm">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-text-muted">person</span>
+                Roberto Mendes
+              </span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-text-muted">schedule</span>
+                22/04/2025, 17:45
+              </span>
+<span class="text-success-text font-medium flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[14px]">task_alt</span>
+                Receita Federal Validada
+              </span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2 shrink-0 border-t md:border-t-0 pt-2 md:pt-0 border-surface-container">
+<button class="px-3 py-1.5 rounded-lg bg-info-surface text-primary hover:bg-primary hover:text-on-primary font-label-md text-label-md font-semibold flex items-center gap-1.5 transition-all shadow-xs" type="button">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+<span>Link Seguro (15m)</span>
+</button>
+<button class="p-2 rounded-lg bg-surface-subtle text-text-secondary hover:text-text-primary hover:bg-surface-container-high transition-colors shadow-xs" type="button">
+<span class="material-symbols-outlined text-[18px]">download</span>
+</button>
+<button class="px-3 py-1.5 rounded-lg bg-surface-subtle text-primary hover:bg-primary hover:text-on-primary font-label-md text-label-md font-medium transition-all" title="Vincular como evidência formal de etapa" type="button">
+            + Tornar Evidência
+          </button>
+</div>
+</div>
+</div>
+<!-- Drag & Drop Upload Zone (US-034 a US-036) -->
+<div class="bg-surface-card rounded-2xl p-space-xl shadow-md space-y-space-md" id="upload-zone-section">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-space-sm">
+<div>
+<h2 class="font-headline-md text-headline-md text-text-primary font-bold">Adicionar Arquivos ou Evidências ao Dossiê</h2>
+<p class="font-body-md text-body-md text-text-secondary">Os documentos serão vinculados ao histórico auditável desta negociação comercial.</p>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm text-text-muted bg-surface-subtle px-2.5 py-1 rounded-full">Espaço utilizado: 5.7 MB / 500 MB</span>
+</div>
+</div>
+<!-- Drop Container -->
+<div class="border-2 border-dashed border-border-subtle hover:border-primary bg-surface-subtle/80 hover:bg-info-surface/30 rounded-xl p-space-2xl flex flex-col items-center justify-center text-center cursor-pointer transition-all group" id="drop-area">
+<div class="w-16 h-16 rounded-2xl bg-surface-card text-primary flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform mb-space-sm">
+<span class="material-symbols-outlined text-[36px]">upload_file</span>
+</div>
+<p class="font-headline-sm text-headline-sm text-text-primary font-semibold">
+          Arraste propostas, comprovantes de aceite ou prints de conversas aqui
+        </p>
+<p class="font-body-md text-body-md text-text-secondary mt-1">
+          ou <span class="text-primary font-semibold underline decoration-primary/40 underline-offset-4 group-hover:decoration-primary">procure arquivos no seu computador</span>
+</p>
+<div class="flex flex-wrap items-center justify-center gap-2 mt-space-md text-text-muted font-body-sm text-body-sm">
+<span class="bg-surface-card px-2 py-0.5 rounded shadow-xs">Formatos: PDF, PNG, JPG, DOCX, XLSX</span>
+<span>•</span>
+<span>Tamanho máx.: 25 MB por arquivo</span>
+<span>•</span>
+<span class="text-success-text font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">lock</span>
+            Criptografia TLS 1.3
+          </span>
+</div>
+<input accept=".pdf,.png,.jpg,.jpeg,.docx,.xlsx" class="hidden" id="file-selector" multiple="" type="file"/>
+</div>
+<!-- Stage Evidence Checkbox & Destination Selector (US-036) -->
+<div class="bg-surface-subtle p-space-md rounded-xl flex flex-col md:flex-row md:items-center justify-between gap-space-md">
+<label class="flex items-start md:items-center gap-3 cursor-pointer select-none">
+<input checked="" class="w-5 h-5 rounded text-primary focus:ring-primary/20 accent-primary mt-0.5 md:mt-0" id="is-stage-evidence" type="checkbox"/>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-text-primary font-semibold">
+              Marcar este documento como Evidência de Transição de Etapa (US-036)
+            </span>
+<span class="font-body-sm text-body-sm text-text-secondary">
+              Necessário para validar o avanço para as próximas fases do pipeline sem bloqueio de compliance.
+            </span>
+</div>
+</label>
+<!-- Stage selector dropdown for evidence -->
+<div class="flex items-center gap-2 shrink-0">
+<span class="font-label-md text-label-md text-text-muted">Vincular à etapa:</span>
+<select class="h-10 px-3 bg-surface-card rounded-lg font-body-md text-body-md text-text-primary focus:outline-none shadow-xs cursor-pointer">
+<option selected="" value="9">9. Proposta Enviada (Atual)</option>
+<option value="10">10. Negociação Final</option>
+<option value="11">11. Fechamento Comercial</option>
+<option value="8">8. Follow-up Pós-Demo</option>
+</select>
+</div>
+</div>
+<!-- Action Confirmation Row -->
+<div class="flex items-center justify-end gap-space-sm pt-space-xs">
+<button class="px-4 py-2 rounded-lg bg-surface-card text-text-secondary hover:text-text-primary font-label-md text-label-md transition-colors" type="button">
+          Limpar Seleção
+        </button>
+<button class="px-5 py-2.5 rounded-lg bg-primary text-on-primary font-label-lg text-label-lg font-semibold flex items-center gap-2 shadow-sm hover:bg-primary-container transition-all" type="button">
+<span class="material-symbols-outlined text-[19px]">done_all</span>
+<span>Salvar e Enviar ao Dossiê</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<script>
+  // Simple interactive micro-behavior for the drag and drop area
+  const dropArea = document.getElementById('drop-area');
+  const fileInput = document.getElementById('file-selector');
+
+  if (dropArea && fileInput) {
+    dropArea.addEventListener('click', () => fileInput.click());
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropArea.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropArea.classList.add('bg-info-surface/60', 'border-primary');
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropArea.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropArea.classList.remove('bg-info-surface/60', 'border-primary');
+      }, false);
+    });
+
+    dropArea.addEventListener('drop', (e) => {
+      const dt = e.dataTransfer;
+      const files = dt.files;
+      if (files.length > 0) {
+        alert(files.length + ' arquivo(s) preparado(s) para upload como evidência segura!');
+      }
+    });
+
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files.length > 0) {
+        alert(fileInput.files.length + ' arquivo(s) selecionado(s) com sucesso!');
+      }
+    });
+  }
+</script></main></div></body></html>

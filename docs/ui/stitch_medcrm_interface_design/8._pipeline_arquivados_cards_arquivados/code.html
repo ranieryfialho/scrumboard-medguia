@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-subtle": "#F8FAFC", "info-border": "#BFDBFE", "danger-text": "#DC2626", "on-error-container": "#93000a", "surface-tint": "#1157cb", "on-secondary-fixed": "#131b30", "primary-fixed-dim": "#b1c5ff", "on-secondary-container": "#5a627b", "on-primary": "#ffffff", "inverse-on-surface": "#f0f0fa", "warning-surface": "#FEF3C7", "text-secondary": "#64748B", "surface-bright": "#faf8ff", "on-primary-fixed-variant": "#0040a0", "sidebar-surface": "#1E293B", "on-primary-fixed": "#001847", "success-border": "#A7F3D0", "on-tertiary-container": "#fffbff", "on-primary-container": "#fefcff", "secondary-fixed": "#dae2ff", "surface-container-lowest": "#ffffff", "on-tertiary-fixed": "#311300", "on-background": "#191b22", "text-muted": "#94A3B8", "background-canvas": "#F4F6FA", "tertiary-fixed-dim": "#ffb787", "warning-text": "#D97706", "sidebar-surface-active": "#2D3748", "on-secondary": "#ffffff", "border-subtle": "#E2E8F0", "outline": "#737785", "border-focus": "#93C5FD", "inverse-surface": "#2e3038", "on-tertiary": "#ffffff", "secondary-container": "#d7dffd", "inverse-primary": "#b1c5ff", "text-primary": "#0F172A", "error": "#ba1a1a", "info-text": "#2563EB", "success-surface": "#D1FAE5", "on-surface-variant": "#434654", "surface-container": "#ededf7", "on-secondary-fixed-variant": "#3e465e", "danger-surface": "#FEE2E2", "tertiary": "#924700", "primary-fixed": "#dae2ff", "success-text": "#059669", "warning-border": "#FDE68A", "surface-container-highest": "#e1e2ec", "error-container": "#ffdad6", "surface-dim": "#d9d9e3", "background": "#faf8ff", "tertiary-container": "#b85b00", "on-surface": "#191b22", "on-error": "#ffffff", "tertiary-fixed": "#ffdcc7", "secondary": "#565e77", "surface-container-low": "#f3f3fd", "surface-variant": "#e1e2ec", "info-surface": "#EFF6FF", "danger-border": "#FECACA", "surface-card": "#FFFFFF", "on-tertiary-fixed-variant": "#723600", "secondary-fixed-dim": "#bec6e3", "primary-container": "#366ee3", "primary": "#0954c9", "outline-variant": "#c3c6d6", "surface-container-high": "#e7e7f2", "surface": "#faf8ff" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "gutter-sm": "0.75rem", "gutter-lg": "1.5rem", "space-lg": "1.25rem", "space-sm": "0.5rem", "gutter": "1.25rem", "space-xs": "0.25rem", "space-md": "0.875rem", "margin": "1.75rem", "space-xl": "1.75rem", "margin-mobile": "1rem", "space-2xl": "2.5rem" }, "fontFamily": { "body-sm": ["Inter"], "headline-sm": ["Plus Jakarta Sans"], "body-lg": ["Inter"], "label-sm": ["Inter"], "body-md": ["Inter"], "headline-md": ["Plus Jakarta Sans"], "metric-stat": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "display-lg": ["Plus Jakarta Sans"], "label-md": ["Inter"], "display-lg-mobile": ["Plus Jakarta Sans"], "label-lg": ["Inter"], "table-header": ["Inter"] }, "fontSize": { "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }], "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }], "body-lg": ["15px", { "lineHeight": "22px", "fontWeight": "400" }], "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.03em", "fontWeight": "600" }], "body-md": ["13px", { "lineHeight": "20px", "fontWeight": "400" }], "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }], "metric-stat": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "500" }], "display-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "700" }], "label-lg": ["13px", { "lineHeight": "18px", "fontWeight": "600" }], "table-header": ["11px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }] } } } };</script></head><body class="bg-background-canvas font-body-md text-text-primary antialiased selection:bg-primary-fixed selection:text-on-primary-fixed"><aside class="fixed left-0 top-0 h-full w-64 bg-sidebar-surface text-surface z-50 flex flex-col justify-between shadow-[0_4px_20px_-2px_rgba(0,0,0,0.08)] overflow-hidden"><div class="flex flex-col flex-1 min-h-0"><div class="h-16 px-space-lg flex items-center justify-between border-b border-sidebar-surface-active/60 bg-sidebar-surface"><div class="flex items-center gap-space-sm"><div class="w-9 h-9 rounded-xl bg-primary flex items-center justify-center shadow-md"><span class="material-symbols-outlined text-on-primary text-[20px]">local_hospital</span></div><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-surface-container-lowest leading-none tracking-tight">MedCRM</span><span class="font-label-sm text-label-sm text-text-muted mt-0.5">MedGuia B2B</span></div></div><span class="font-label-sm text-[10px] px-1.5 py-0.5 rounded-full bg-primary-container/30 text-primary-fixed-dim uppercase tracking-wider font-semibold">Pipeline</span></div><div class="flex-1 overflow-y-auto px-space-sm py-space-md space-y-space-lg scrollbar-none"><nav class="space-y-space-md" data-active-classes="bg-sidebar-surface-active text-surface-container-lowest font-semibold rounded-lg shadow-sm"><div class="space-y-1"><div class="px-space-sm pb-1"><span class="font-table-header text-table-header text-text-muted uppercase tracking-wider">Operação</span></div><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="funil-pipeline" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">view_kanban</span><span class="font-body-md text-body-md">Funil Pipeline</span></div></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="lista-de-leads" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">format_list_bulleted</span><span class="font-body-md text-body-md">Lista</span></div></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="arquivados" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">archive</span><span class="font-body-md text-body-md">Arquivados</span></div></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="tarefas-do-turno" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">check_circle</span><span class="font-body-md text-body-md">Tarefas do Turno</span></div><span class="font-label-sm text-label-sm bg-primary-container text-on-primary px-2 py-0.5 rounded-full font-bold">12</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="tarefas-atrasadas" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px] text-danger-text">warning</span><span class="font-body-md text-body-md text-danger-text font-medium">Tarefas Atrasadas</span></div><span class="font-label-sm text-label-sm bg-danger-surface text-danger-text px-2 py-0.5 rounded-full font-bold">4</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="agenda" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">calendar_month</span><span class="font-body-md text-body-md">Agenda</span></div></a></div><div class="space-y-1"><div class="px-space-sm pb-1"><span class="font-table-header text-table-header text-text-muted uppercase tracking-wider">Comunicação</span></div><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="whatsapp-inbox" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">chat</span><span class="font-body-md text-body-md">WhatsApp Inbox</span></div><span class="font-label-sm text-label-sm bg-success-surface text-success-text px-2 py-0.5 rounded-full font-bold">5</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="campanhas" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">send</span><span class="font-body-md text-body-md">Campanhas</span></div></a></div><div class="space-y-1"><div class="px-space-sm pb-1"><span class="font-table-header text-table-header text-text-muted uppercase tracking-wider">Análises</span></div><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="indicadores" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">monitoring</span><span class="font-body-md text-body-md">Indicadores</span></div></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="relatorios" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">description</span><span class="font-body-md text-body-md">Relatórios</span></div></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="comercial" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">query_stats</span><span class="font-body-md text-body-md">Comercial</span></div></a></div><div class="space-y-1"><div class="px-space-sm pb-1"><span class="font-table-header text-table-header text-text-muted uppercase tracking-wider">Administração</span></div><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="equipe" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">groups</span><span class="font-body-md text-body-md">Equipe</span></div></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="motivos-de-perda" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">cancel</span><span class="font-body-md text-body-md">Motivos de Perda</span></div></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-text-muted hover:bg-sidebar-surface-active/70 hover:text-surface-container-lowest transition-colors" data-path="empresas" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[19px]">apartment</span><span class="font-body-md text-body-md">Empresas</span></div></a></div></nav></div></div><div class="p-space-md border-t border-sidebar-surface-active/50 bg-sidebar-surface"><div class="flex items-center justify-between text-text-muted"><a class="flex items-center gap-2 hover:text-surface-container-lowest transition-colors font-label-md text-label-md" data-path="suporte-e-ajuda" href="#"><span class="material-symbols-outlined text-[18px]">help</span><span>Ajuda &amp; Suporte</span></a><span class="font-label-sm text-label-sm text-text-muted/80 bg-sidebar-surface-active/80 px-2 py-0.5 rounded">v2.4.0</span></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface-card border-b border-border-subtle z-40 flex items-center justify-between px-gutter shadow-[0_1px_8px_rgba(0,0,0,0.02)]"><div class="flex items-center gap-space-lg flex-1 max-w-2xl"><div class="relative w-full max-w-lg"><span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[19px]">search</span><input class="w-full h-10 pl-9 pr-16 bg-surface-subtle border border-border-subtle rounded-lg font-body-md text-body-md text-text-primary placeholder:text-text-muted focus:outline-none focus:border-border-focus focus:bg-surface-card transition-all" placeholder="Buscar lead, clínica, telefone ou responsável... (Ctrl + K)" type="text"/><kbd class="absolute right-3 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[10px] font-label-sm bg-surface-card border border-border-subtle text-text-muted rounded shadow-sm">⌘K</kbd></div><div class="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border-subtle bg-surface-card text-text-primary shadow-sm hover:border-border-focus cursor-pointer transition-all"><span class="material-symbols-outlined text-primary text-[18px]">domain</span><div class="flex flex-col text-left"><span class="font-label-sm text-label-sm font-semibold leading-tight">Clínica São Lucas - Matriz</span><span class="font-label-sm text-[10px] text-success-text leading-none flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-success-text inline-block"></span>Ativo</span></div><span class="material-symbols-outlined text-text-muted text-[16px] ml-1">expand_more</span></div></div><div class="flex items-center gap-space-md"><div class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-success-surface border border-success-border"><span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success-text opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-success-text"></span></span><span class="font-label-sm text-label-sm text-success-text font-semibold">Tempo real conectado</span></div><button class="relative p-2 rounded-lg text-text-secondary hover:bg-surface-subtle hover:text-text-primary transition-colors" type="button"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-danger-text"></span></button><div class="h-6 w-px bg-border-subtle"></div><div class="flex items-center gap-space-sm pl-1 cursor-pointer"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><div class="hidden lg:flex flex-col text-left"><div class="flex items-center gap-1.5"><span class="font-label-lg text-label-lg font-semibold text-text-primary leading-tight">Dr. Roberto Mendes</span><span class="font-label-sm text-[10px] bg-primary-fixed text-on-primary-fixed px-1.5 py-0.2 rounded font-bold uppercase tracking-wider">MASTER</span></div><span class="font-label-sm text-label-sm text-text-muted leading-tight">roberto.mendes@medguia.com.br</span></div><span class="material-symbols-outlined text-text-muted text-[18px]">expand_more</span></div></div></header><main class="w-full pt-16 bg-background-canvas min-h-screen"><div class="flex flex-col w-full">
+<div class="px-gutter lg:px-margin py-space-lg flex flex-col gap-space-lg">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-md">
+<div>
+<div class="flex items-center gap-space-xs text-text-muted font-label-sm text-label-sm uppercase tracking-wider mb-1">
+<span>Pipeline Comercial</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-primary font-semibold">Arquivados &amp; Fechamentos</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-text-primary tracking-tight">Cards Arquivados (Fechamentos)</h1>
+<p class="font-body-md text-body-md text-text-secondary mt-0.5">Histórico de negociações finalizadas: oportunidades ganhas e leads desqualificados ou perdidos</p>
+</div>
+<div class="flex items-center gap-space-sm flex-wrap">
+<button class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-surface-card text-text-primary font-label-lg text-label-lg shadow-sm hover:bg-surface-subtle transition-all cursor-pointer">
+<span class="material-symbols-outlined text-[18px] text-text-secondary">file_download</span>
+<span>Exportar Relatório</span>
+</button>
+<button class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-primary text-on-primary font-label-lg text-label-lg shadow-md hover:bg-primary-container transition-all cursor-pointer">
+<span class="material-symbols-outlined text-[18px]">query_stats</span>
+<span>Análise de Motivos de Perda</span>
+</button>
+</div>
+</div>
+<!-- KPI Metric Cards Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md">
+<!-- Metric 1: Total Ganho (MRR) -->
+<div class="bg-surface-card rounded-xl p-space-md shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-text-muted uppercase tracking-wider">Total Ganho (MRR)</span>
+<span class="font-metric-stat text-metric-stat text-text-primary mt-1">R$ 84.500<span class="text-base font-normal text-text-secondary">/mês</span></span>
+</div>
+<div class="w-10 h-10 rounded-xl bg-success-surface flex items-center justify-center text-success-text">
+<span class="material-symbols-outlined text-[22px]">attach_money</span>
+</div>
+</div>
+<div class="mt-3 pt-3 flex items-center justify-between">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-success-surface text-success-text font-label-sm text-label-sm font-bold">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+            +18.4% vs mês anterior
+          </span>
+<span class="font-label-sm text-label-sm text-text-muted">Total anual: R$ 1.01M</span>
+</div>
+</div>
+<!-- Metric 2: Negócios Fechados (Ganhos) -->
+<div class="bg-surface-card rounded-xl p-space-md shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-text-muted uppercase tracking-wider">Negócios Fechados</span>
+<span class="font-metric-stat text-metric-stat text-text-primary mt-1">24 <span class="text-base font-normal text-text-secondary">contratos</span></span>
+</div>
+<div class="w-10 h-10 rounded-xl bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[22px]">verified</span>
+</div>
+</div>
+<div class="mt-3 pt-3 flex items-center justify-between">
+<div class="flex items-center gap-1 text-success-text font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span>Meta batida (112%)</span>
+</div>
+<span class="font-label-sm text-label-sm text-text-muted">Ticket Médio: R$ 3.520</span>
+</div>
+</div>
+<!-- Metric 3: Taxa de Conversão Final -->
+<div class="bg-surface-card rounded-xl p-space-md shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-text-muted uppercase tracking-wider">Conversão Final</span>
+<span class="font-metric-stat text-metric-stat text-text-primary mt-1">22.8%</span>
+</div>
+<div class="w-10 h-10 rounded-xl bg-info-surface flex items-center justify-center text-info-text">
+<span class="material-symbols-outlined text-[22px]">pie_chart</span>
+</div>
+</div>
+<div class="mt-3 pt-3 flex items-center justify-between">
+<div class="w-28 bg-surface-subtle rounded-full h-2 overflow-hidden flex">
+<div class="bg-primary h-full rounded-full" style="width: 22.8%"></div>
+</div>
+<span class="font-label-sm text-label-sm text-text-secondary">62 finalizados</span>
+</div>
+</div>
+<!-- Metric 4: Total de Perdas no Mês -->
+<div class="bg-surface-card rounded-xl p-space-md shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-text-muted uppercase tracking-wider">Perdas no Mês</span>
+<span class="font-metric-stat text-metric-stat text-danger-text mt-1">38 <span class="text-base font-normal text-text-secondary">leads</span></span>
+</div>
+<div class="w-10 h-10 rounded-xl bg-danger-surface flex items-center justify-center text-danger-text">
+<span class="material-symbols-outlined text-[22px]">person_off</span>
+</div>
+</div>
+<div class="mt-3 pt-3 flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-danger-text font-semibold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-danger-text inline-block"></span>
+            Taxa de perda: 61.2%
+          </span>
+<span class="font-label-sm text-label-sm text-text-muted">Top: Preço (39%)</span>
+</div>
+</div>
+</div>
+<!-- Main Container: View Switcher, Filter Bar & Records -->
+<div class="bg-surface-card rounded-2xl shadow-sm p-space-md flex flex-col gap-space-md">
+<!-- Top Action Bar: Segment Tabs & Quick Search -->
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md pb-space-sm">
+<!-- View Tabs -->
+<div class="flex items-center bg-surface-subtle p-1 rounded-xl self-start">
+<button class="tab-btn px-4 py-2 rounded-lg font-label-lg text-label-lg transition-all cursor-pointer bg-surface-card text-primary shadow-sm font-bold flex items-center gap-2" id="tab-all" onclick="switchFilter('all')">
+<span class="material-symbols-outlined text-[18px]">inventory_2</span>
+<span>Todos os Arquivados</span>
+<span class="bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded-full text-[11px]">62</span>
+</button>
+<button class="tab-btn px-4 py-2 rounded-lg font-label-lg text-label-lg text-text-secondary hover:text-text-primary transition-all cursor-pointer flex items-center gap-2" id="tab-won" onclick="switchFilter('won')">
+<span class="material-symbols-outlined text-[18px] text-success-text">verified</span>
+<span>Ganhos / Convertidos</span>
+<span class="bg-success-surface text-success-text px-2 py-0.5 rounded-full text-[11px] font-bold">24</span>
+</button>
+<button class="tab-btn px-4 py-2 rounded-lg font-label-lg text-label-lg text-text-secondary hover:text-text-primary transition-all cursor-pointer flex items-center gap-2" id="tab-lost" onclick="switchFilter('lost')">
+<span class="material-symbols-outlined text-[18px] text-danger-text">cancel</span>
+<span>Perdidos / Desqualificados</span>
+<span class="bg-danger-surface text-danger-text px-2 py-0.5 rounded-full text-[11px] font-bold">38</span>
+</button>
+</div>
+<!-- Reference visual context indicator -->
+<div class="flex items-center gap-space-sm self-end lg:self-center">
+<span class="font-label-sm text-label-sm text-text-muted flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-primary inline-block"></span>
+            Sincronizado com CRM MedGuia B2B
+          </span>
+<button class="p-2 rounded-lg text-text-secondary hover:bg-surface-subtle transition-colors cursor-pointer" title="Configurações de arquivamento">
+<span class="material-symbols-outlined text-[20px]">tune</span>
+</button>
+</div>
+</div>
+<!-- Advanced Filter Toolbar -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-sm bg-surface-subtle p-3 rounded-xl">
+<!-- Search Field -->
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[18px]">search</span>
+<input class="w-full h-10 pl-9 pr-3 rounded-lg bg-surface-card text-text-primary font-body-md text-body-md placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary shadow-xs" id="searchInput" placeholder="Buscar clínica, médico ou CNPJ..." type="text"/>
+</div>
+<!-- Filter: Motivo de Perda -->
+<div class="relative">
+<select class="w-full h-10 pl-3 pr-8 rounded-lg bg-surface-card text-text-primary font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary shadow-xs appearance-none cursor-pointer" id="reasonFilter">
+<option value="">Todos os Motivos de Perda</option>
+<option value="preco">Preço acima do orçamento</option>
+<option value="concorrente">Optou por concorrente</option>
+<option value="cadencia">Sem retorno após cadência de 18 toques</option>
+<option value="fechou">Clínica encerrou atividades</option>
+<option value="prontuario">Falta de integração com prontuário</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none text-[18px]">arrow_drop_down</span>
+</div>
+<!-- Filter: Responsável Comercial -->
+<div class="relative">
+<select class="w-full h-10 pl-3 pr-8 rounded-lg bg-surface-card text-text-primary font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary shadow-xs appearance-none cursor-pointer" id="ownerFilter">
+<option value="">Todos os Consultores</option>
+<option value="roberto">Dr. Roberto Mendes (Master)</option>
+<option value="camila">Camila Prado (Closer)</option>
+<option value="julio">Júlio Barreto (SDR Sênior)</option>
+<option value="fernanda">Fernanda Lins (Closer)</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none text-[18px]">arrow_drop_down</span>
+</div>
+<!-- Filter: Data de Fechamento -->
+<div class="flex items-center gap-2">
+<div class="relative flex-1">
+<input class="w-full h-10 px-3 rounded-lg bg-surface-card text-text-primary font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary shadow-xs cursor-pointer" type="date" value="2025-05-01"/>
+</div>
+<button class="h-10 px-3 rounded-lg bg-surface-card text-text-secondary hover:text-danger-text hover:bg-danger-surface font-label-md text-label-md shadow-xs transition-colors flex items-center gap-1 cursor-pointer" onclick="resetFilters()" title="Limpar Filtros">
+<span class="material-symbols-outlined text-[16px]">clear_all</span>
+<span>Limpar</span>
+</button>
+</div>
+</div>
+<!-- Data Table of Closed Deals -->
+<div class="overflow-x-auto rounded-xl shadow-xs">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-subtle text-text-secondary font-table-header text-table-header uppercase tracking-wider h-11">
+<th class="py-2.5 px-4 font-semibold">Status / Tipo</th>
+<th class="py-2.5 px-4 font-semibold">Clínica / Responsável Médico</th>
+<th class="py-2.5 px-4 font-semibold">Especialidade / Perfil</th>
+<th class="py-2.5 px-4 font-semibold">Consultor Comercial</th>
+<th class="py-2.5 px-4 font-semibold">Detalhe Comercial / Motivo</th>
+<th class="py-2.5 px-4 font-semibold">Data Fechamento</th>
+<th class="py-2.5 px-4 font-semibold text-right">Ações Rápidas</th>
+</tr>
+</thead>
+<tbody class="divide-y-0 text-text-primary font-body-md text-body-md" id="deals-table-body">
+<!-- Row 1: GANHO -->
+<tr class="deal-row item-won bg-surface-card hover:bg-surface-subtle transition-colors group" data-owner="camila" data-reason="" data-status="won">
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-success-surface text-success-text font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                  Ganho / Cliente Ativo
+                </span>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-space-sm">
+<div class="w-9 h-9 rounded-xl bg-success-surface/50 text-success-text flex items-center justify-center font-bold font-headline-sm text-headline-sm">
+                    SO
+                  </div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-text-primary leading-snug">Clínica São Rafael Ortopedia</span>
+<span class="font-body-sm text-body-sm text-text-muted flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">badge</span> CNPJ: 14.892.401/0001-92 • Dr. Rafael Soares
+                    </span>
+</div>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-text-primary font-medium">Ortopedia &amp; Traumatologia</span>
+<span class="font-body-sm text-body-sm text-text-muted">6 consultórios • Pacote Pro Enterprise</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center text-[10px] font-bold">CP</div>
+<span class="font-label-md text-label-md text-text-primary">Camila Prado</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex flex-col">
+<span class="font-metric-stat text-[15px] font-bold text-success-text">R$ 5.800,00<span class="text-xs font-normal text-text-secondary">/mês</span></span>
+<span class="font-body-sm text-body-sm text-text-muted flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">timer</span> Ciclo de vendas: 14 dias
+                  </span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-text-primary">18/05/2025</span>
+<span class="font-body-sm text-body-sm text-text-muted">15:42</span>
+</div>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="px-2.5 py-1.5 rounded-lg bg-surface-subtle hover:bg-surface-container text-primary font-label-md text-label-md transition-colors flex items-center gap-1 cursor-pointer" onclick="openDealDetail('Clínica São Rafael Ortopedia', 'won')" title="Ver Card">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+<span>Abrir card</span>
+</button>
+<button class="px-2.5 py-1.5 rounded-lg bg-primary text-on-primary font-label-md text-label-md shadow-xs hover:bg-primary-container transition-all flex items-center gap-1 cursor-pointer" title="Acessar Contrato">
+<span class="material-symbols-outlined text-[16px]">description</span>
+<span>Contrato</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2: PERDIDO (Preço) -->
+<tr class="deal-row item-lost bg-surface-card hover:bg-surface-subtle transition-colors group" data-owner="roberto" data-reason="preco" data-status="lost">
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-danger-surface text-danger-text font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">cancel</span>
+                  Perdido
+                </span>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-space-sm">
+<div class="w-9 h-9 rounded-xl bg-danger-surface/60 text-danger-text flex items-center justify-center font-bold font-headline-sm text-headline-sm">
+                    CD
+                  </div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-text-primary leading-snug">Centro Dermatológico Vitalle</span>
+<span class="font-body-sm text-body-sm text-text-muted flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">badge</span> CNPJ: 28.119.554/0001-31 • Dra. Bianca Ramos
+                    </span>
+</div>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-text-primary font-medium">Dermatologia &amp; Estética</span>
+<span class="font-body-sm text-body-sm text-text-muted">1 consultório • Proposta Inicial: R$ 2.400/mês</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-sidebar-surface text-surface flex items-center justify-center text-[10px] font-bold">RM</div>
+<span class="font-label-md text-label-md text-text-primary">Dr. Roberto Mendes</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex flex-col gap-1">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-danger-surface text-danger-text font-label-sm text-label-sm font-bold w-fit">
+                    Motivo: Preço / Budget
+                  </span>
+<span class="font-body-sm text-body-sm text-text-secondary line-clamp-1 italic" title="Achou a mensalidade alta para clínica de 1 médico solo; esperava plano abaixo de R$ 900.">
+                    "Achou a mensalidade alta para clínica de 1 médico solo"
+                  </span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-text-primary">17/05/2025</span>
+<span class="font-body-sm text-body-sm text-text-muted">11:15</span>
+</div>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="px-2.5 py-1.5 rounded-lg bg-surface-subtle hover:bg-surface-container text-text-secondary font-label-md text-label-md transition-colors flex items-center gap-1 cursor-pointer" onclick="openDealDetail('Centro Dermatológico Vitalle', 'lost')">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+<span>Abrir</span>
+</button>
+<button class="px-2.5 py-1.5 rounded-lg bg-info-surface text-info-text hover:bg-info-border font-label-md text-label-md transition-all flex items-center gap-1 cursor-pointer" onclick="confirmReopen('Centro Dermatológico Vitalle')" title="Mover de volta para etapa de negociação">
+<span class="material-symbols-outlined text-[16px]">restart_alt</span>
+<span>Reabrir</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3: GANHO -->
+<tr class="deal-row item-won bg-surface-card hover:bg-surface-subtle transition-colors group" data-owner="fernanda" data-reason="" data-status="won">
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-success-surface text-success-text font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                  Ganho / Cliente Ativo
+                </span>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-space-sm">
+<div class="w-9 h-9 rounded-xl bg-success-surface/50 text-success-text flex items-center justify-center font-bold font-headline-sm text-headline-sm">
+                    IC
+                  </div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-text-primary leading-snug">Instituto de Cardiologia Integrada</span>
+<span class="font-body-sm text-body-sm text-text-muted flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">badge</span> CNPJ: 07.234.901/0002-18 • Dr. Sérgio Nogueira
+                    </span>
+</div>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-text-primary font-medium">Cardiologia &amp; Hemodinâmica</span>
+<span class="font-body-sm text-body-sm text-text-muted">12 médicos • Plano Corporativo Multi-unidade</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center text-[10px] font-bold">FL</div>
+<span class="font-label-md text-label-md text-text-primary">Fernanda Lins</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex flex-col">
+<span class="font-metric-stat text-[15px] font-bold text-success-text">R$ 11.200,00<span class="text-xs font-normal text-text-secondary">/mês</span></span>
+<span class="font-body-sm text-body-sm text-text-muted flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">timer</span> Ciclo de vendas: 28 dias
+                  </span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-text-primary">16/05/2025</span>
+<span class="font-body-sm text-body-sm text-text-muted">18:02</span>
+</div>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="px-2.5 py-1.5 rounded-lg bg-surface-subtle hover:bg-surface-container text-primary font-label-md text-label-md transition-colors flex items-center gap-1 cursor-pointer" onclick="openDealDetail('Instituto de Cardiologia Integrada', 'won')">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+<span>Abrir card</span>
+</button>
+<button class="px-2.5 py-1.5 rounded-lg bg-primary text-on-primary font-label-md text-label-md shadow-xs hover:bg-primary-container transition-all flex items-center gap-1 cursor-pointer">
+<span class="material-symbols-outlined text-[16px]">description</span>
+<span>Contrato</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4: PERDIDO (Optou por concorrente) -->
+<tr class="deal-row item-lost bg-surface-card hover:bg-surface-subtle transition-colors group" data-owner="julio" data-reason="concorrente" data-status="lost">
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-danger-surface text-danger-text font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">cancel</span>
+                  Perdido
+                </span>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-space-sm">
+<div class="w-9 h-9 rounded-xl bg-danger-surface/60 text-danger-text flex items-center justify-center font-bold font-headline-sm text-headline-sm">
+                    MP
+                  </div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-text-primary leading-snug">MedPediatria Kids Alphaville</span>
+<span class="font-body-sm text-body-sm text-text-muted flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">badge</span> CNPJ: 33.419.008/0001-10 • Dra. Juliana Ferraz
+                    </span>
+</div>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-text-primary font-medium">Pediatria &amp; Vacinação</span>
+<span class="font-body-sm text-body-sm text-text-muted">4 consultórios • Lead Inbound</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center text-[10px] font-bold">JB</div>
+<span class="font-label-md text-label-md text-text-primary">Júlio Barreto</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex flex-col gap-1">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-danger-surface text-danger-text font-label-sm text-label-sm font-bold w-fit">
+                    Motivo: Optou por Concorrente
+                  </span>
+<span class="font-body-sm text-body-sm text-text-secondary line-clamp-1 italic" title="Assinou contrato com solução tradicional regional já homologada pela cooperativa local.">
+                    "Optou por sistema da cooperativa médica regional"
+                  </span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-text-primary">15/05/2025</span>
+<span class="font-body-sm text-body-sm text-text-muted">09:30</span>
+</div>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="px-2.5 py-1.5 rounded-lg bg-surface-subtle hover:bg-surface-container text-text-secondary font-label-md text-label-md transition-colors flex items-center gap-1 cursor-pointer" onclick="openDealDetail('MedPediatria Kids Alphaville', 'lost')">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+<span>Abrir</span>
+</button>
+<button class="px-2.5 py-1.5 rounded-lg bg-info-surface text-info-text hover:bg-info-border font-label-md text-label-md transition-all flex items-center gap-1 cursor-pointer" onclick="confirmReopen('MedPediatria Kids Alphaville')">
+<span class="material-symbols-outlined text-[16px]">restart_alt</span>
+<span>Reabrir</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 5: PERDIDO (Sem retorno após 18 toques) -->
+<tr class="deal-row item-lost bg-surface-card hover:bg-surface-subtle transition-colors group" data-owner="julio" data-reason="cadencia" data-status="lost">
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-danger-surface text-danger-text font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">cancel</span>
+                  Perdido
+                </span>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-space-sm">
+<div class="w-9 h-9 rounded-xl bg-danger-surface/60 text-danger-text flex items-center justify-center font-bold font-headline-sm text-headline-sm">
+                    OG
+                  </div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-text-primary leading-snug">OftalmoGastro Prime Jardins</span>
+<span class="font-body-sm text-body-sm text-text-muted flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">badge</span> CNPJ: 45.102.399/0001-44 • Dr. Marcos Silveira
+                    </span>
+</div>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-text-primary font-medium">Oftalmologia Especializada</span>
+<span class="font-body-sm text-body-sm text-text-muted">3 consultórios • Outbound Cadência B2B</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center text-[10px] font-bold">JB</div>
+<span class="font-label-md text-label-md text-text-primary">Júlio Barreto</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex flex-col gap-1">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-warning-surface text-warning-text font-label-sm text-label-sm font-bold w-fit">
+                    Motivo: Sem retorno (18 toques)
+                  </span>
+<span class="font-body-sm text-body-sm text-text-secondary line-clamp-1 italic" title="Cadência comercial de 18 toques esgotada no WhatsApp e ligações; arquivado automaticamente.">
+                    "Esgotada régua de contatos sem resposta do decisor"
+                  </span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-text-primary">14/05/2025</span>
+<span class="font-body-sm text-body-sm text-text-muted">17:10</span>
+</div>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="px-2.5 py-1.5 rounded-lg bg-surface-subtle hover:bg-surface-container text-text-secondary font-label-md text-label-md transition-colors flex items-center gap-1 cursor-pointer" onclick="openDealDetail('OftalmoGastro Prime Jardins', 'lost')">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+<span>Abrir</span>
+</button>
+<button class="px-2.5 py-1.5 rounded-lg bg-info-surface text-info-text hover:bg-info-border font-label-md text-label-md transition-all flex items-center gap-1 cursor-pointer" onclick="confirmReopen('OftalmoGastro Prime Jardins')">
+<span class="material-symbols-outlined text-[16px]">restart_alt</span>
+<span>Reabrir</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 6: GANHO -->
+<tr class="deal-row item-won bg-surface-card hover:bg-surface-subtle transition-colors group" data-owner="roberto" data-reason="" data-status="won">
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-success-surface text-success-text font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                  Ganho / Cliente Ativo
+                </span>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-space-sm">
+<div class="w-9 h-9 rounded-xl bg-success-surface/50 text-success-text flex items-center justify-center font-bold font-headline-sm text-headline-sm">
+                    CP
+                  </div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-text-primary leading-snug">Clínica Psiquiátrica Renascer</span>
+<span class="font-body-sm text-body-sm text-text-muted flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">badge</span> CNPJ: 19.800.741/0001-50 • Dra. Larissa Peixoto
+                    </span>
+</div>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-text-primary font-medium">Saúde Mental &amp; Terapias</span>
+<span class="font-body-sm text-body-sm text-text-muted">8 psicólogos + 2 psiquiatras</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-sidebar-surface text-surface flex items-center justify-center text-[10px] font-bold">RM</div>
+<span class="font-label-md text-label-md text-text-primary">Dr. Roberto Mendes</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex flex-col">
+<span class="font-metric-stat text-[15px] font-bold text-success-text">R$ 4.200,00<span class="text-xs font-normal text-text-secondary">/mês</span></span>
+<span class="font-body-sm text-body-sm text-text-muted flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">timer</span> Ciclo de vendas: 9 dias
+                  </span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-text-primary">13/05/2025</span>
+<span class="font-body-sm text-body-sm text-text-muted">16:45</span>
+</div>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="px-2.5 py-1.5 rounded-lg bg-surface-subtle hover:bg-surface-container text-primary font-label-md text-label-md transition-colors flex items-center gap-1 cursor-pointer" onclick="openDealDetail('Clínica Psiquiátrica Renascer', 'won')">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+<span>Abrir card</span>
+</button>
+<button class="px-2.5 py-1.5 rounded-lg bg-primary text-on-primary font-label-md text-label-md shadow-xs hover:bg-primary-container transition-all flex items-center gap-1 cursor-pointer">
+<span class="material-symbols-outlined text-[16px]">description</span>
+<span>Contrato</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 7: PERDIDO (Falta de Integração) -->
+<tr class="deal-row item-lost bg-surface-card hover:bg-surface-subtle transition-colors group" data-owner="fernanda" data-reason="prontuario" data-status="lost">
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-danger-surface text-danger-text font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">cancel</span>
+                  Perdido
+                </span>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-space-sm">
+<div class="w-9 h-9 rounded-xl bg-danger-surface/60 text-danger-text flex items-center justify-center font-bold font-headline-sm text-headline-sm">
+                    HG
+                  </div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-text-primary leading-snug">Hospital Dia &amp; Gastroclínica Barão</span>
+<span class="font-body-sm text-body-sm text-text-muted flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">badge</span> CNPJ: 50.119.873/0001-09 • Dr. André Linhares
+                    </span>
+</div>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-text-primary font-medium">Gastroenterologia &amp; Cirurgia</span>
+<span class="font-body-sm text-body-sm text-text-muted">15 leitos dia • 20 médicos</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center text-[10px] font-bold">FL</div>
+<span class="font-label-md text-label-md text-text-primary">Fernanda Lins</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex flex-col gap-1">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-danger-surface text-danger-text font-label-sm text-label-sm font-bold w-fit">
+                    Motivo: Sem Integração com PEP
+                  </span>
+<span class="font-body-sm text-body-sm text-text-secondary line-clamp-1 italic" title="Exigiam sincronização bidirecional em tempo real com prontuário legado MV 2000.">
+                    "Exigia sincronização direta com prontuário MV Soul legado"
+                  </span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-text-primary">11/05/2025</span>
+<span class="font-body-sm text-body-sm text-text-muted">14:20</span>
+</div>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="px-2.5 py-1.5 rounded-lg bg-surface-subtle hover:bg-surface-container text-text-secondary font-label-md text-label-md transition-colors flex items-center gap-1 cursor-pointer" onclick="openDealDetail('Hospital Dia &amp; Gastroclínica Barão', 'lost')">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+<span>Abrir</span>
+</button>
+<button class="px-2.5 py-1.5 rounded-lg bg-info-surface text-info-text hover:bg-info-border font-label-md text-label-md transition-all flex items-center gap-1 cursor-pointer" onclick="confirmReopen('Hospital Dia &amp; Gastroclínica Barão')">
+<span class="material-symbols-outlined text-[16px]">restart_alt</span>
+<span>Reabrir</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination Footer -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm pt-space-sm">
+<div class="flex items-center gap-2 text-text-secondary font-body-sm text-body-sm">
+<span>Mostrando <strong>1</strong> a <strong>7</strong> de <strong>62</strong> negócios arquivados</span>
+<span class="text-text-muted">•</span>
+<span class="text-text-muted">Página 1 de 9</span>
+</div>
+<div class="flex items-center gap-1 self-end sm:self-center">
+<button class="px-3 py-1.5 rounded-lg bg-surface-subtle text-text-muted cursor-not-allowed font-label-md text-label-md flex items-center gap-1" disabled="">
+<span class="material-symbols-outlined text-[16px]">chevron_left</span>
+<span>Anterior</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-primary text-on-primary font-label-md text-label-md font-bold flex items-center justify-center shadow-xs">1</button>
+<button class="w-8 h-8 rounded-lg bg-surface-card hover:bg-surface-subtle text-text-primary font-label-md text-label-md flex items-center justify-center transition-colors">2</button>
+<button class="w-8 h-8 rounded-lg bg-surface-card hover:bg-surface-subtle text-text-primary font-label-md text-label-md flex items-center justify-center transition-colors">3</button>
+<span class="px-1 text-text-muted">...</span>
+<button class="w-8 h-8 rounded-lg bg-surface-card hover:bg-surface-subtle text-text-primary font-label-md text-label-md flex items-center justify-center transition-colors">9</button>
+<button class="px-3 py-1.5 rounded-lg bg-surface-card hover:bg-surface-subtle text-text-primary font-label-md text-label-md shadow-xs flex items-center gap-1 transition-colors cursor-pointer">
+<span>Próxima</span>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Analytics Bento Section: Insights on Lost & Won Reasons -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-space-md">
+<!-- Breakdown Chart of Loss Reasons -->
+<div class="bg-surface-card rounded-2xl p-space-md shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between pb-space-sm">
+<div class="flex flex-col">
+<h3 class="font-headline-sm text-headline-sm text-text-primary">Distribuição de Motivos de Perda</h3>
+<span class="font-body-sm text-body-sm text-text-muted">Base de 38 desqualificações no ciclo</span>
+</div>
+<span class="material-symbols-outlined text-text-muted text-[20px]">donut_large</span>
+</div>
+<div class="space-y-3 py-2">
+<!-- Reason 1 -->
+<div>
+<div class="flex justify-between text-label-md font-label-md mb-1">
+<span class="text-text-primary font-medium">Preço acima do orçamento</span>
+<span class="text-text-secondary font-bold">15 (39.5%)</span>
+</div>
+<div class="w-full bg-surface-subtle h-2 rounded-full overflow-hidden">
+<div class="bg-danger-text h-full rounded-full" style="width: 39.5%"></div>
+</div>
+</div>
+<!-- Reason 2 -->
+<div>
+<div class="flex justify-between text-label-md font-label-md mb-1">
+<span class="text-text-primary font-medium">Sem retorno (Cadência 18 toques)</span>
+<span class="text-text-secondary font-bold">11 (28.9%)</span>
+</div>
+<div class="w-full bg-surface-subtle h-2 rounded-full overflow-hidden">
+<div class="bg-warning-text h-full rounded-full" style="width: 28.9%"></div>
+</div>
+</div>
+<!-- Reason 3 -->
+<div>
+<div class="flex justify-between text-label-md font-label-md mb-1">
+<span class="text-text-primary font-medium">Optou por concorrente</span>
+<span class="text-text-secondary font-bold">7 (18.4%)</span>
+</div>
+<div class="w-full bg-surface-subtle h-2 rounded-full overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 18.4%"></div>
+</div>
+</div>
+<!-- Reason 4 -->
+<div>
+<div class="flex justify-between text-label-md font-label-md mb-1">
+<span class="text-text-primary font-medium">Falta de integração com PEP legado</span>
+<span class="text-text-secondary font-bold">5 (13.2%)</span>
+</div>
+<div class="w-full bg-surface-subtle h-2 rounded-full overflow-hidden">
+<div class="bg-outline h-full rounded-full" style="width: 13.2%"></div>
+</div>
+</div>
+</div>
+<div class="pt-3 mt-1 flex items-center justify-between text-text-muted font-label-sm text-label-sm">
+<span>Oportunidade de melhoria: Ajustar proposta de entrada</span>
+<button class="text-primary font-bold hover:underline cursor-pointer">Ver gráfico completo</button>
+</div>
+</div>
+<!-- Closed Won Performance Highlights -->
+<div class="bg-surface-card rounded-2xl p-space-md shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between pb-space-sm">
+<div class="flex flex-col">
+<h3 class="font-headline-sm text-headline-sm text-text-primary">Top Fechamentos do Trimestre</h3>
+<span class="font-body-sm text-body-sm text-text-muted">Especialidades com maior conversão clínica</span>
+</div>
+<span class="material-symbols-outlined text-success-text text-[20px]">workspace_premium</span>
+</div>
+<div class="space-y-3">
+<div class="flex items-center justify-between p-2.5 rounded-xl bg-surface-subtle">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-success-surface text-success-text flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">cardiology</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg font-bold text-text-primary">Cardiologia &amp; Clínicas Cirúrgicas</span>
+<span class="font-body-sm text-body-sm text-text-muted">9 contratos • MRR Médio R$ 7.100</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm font-bold text-success-text">+34% conv.</span>
+</div>
+<div class="flex items-center justify-between p-2.5 rounded-xl bg-surface-subtle">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-info-surface text-info-text flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">dentistry</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg font-bold text-text-primary">Ortopedia &amp; Reabilitação</span>
+<span class="font-body-sm text-body-sm text-text-muted">8 contratos • MRR Médio R$ 5.400</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm font-bold text-info-text">+26% conv.</span>
+</div>
+<div class="flex items-center justify-between p-2.5 rounded-xl bg-surface-subtle">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-secondary-container text-on-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">psychology</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg font-bold text-text-primary">Saúde Mental &amp; Terapias</span>
+<span class="font-body-sm text-body-sm text-text-muted">7 contratos • MRR Médio R$ 3.800</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm font-bold text-text-secondary">+19% conv.</span>
+</div>
+</div>
+<div class="pt-3 mt-1 flex items-center justify-between font-label-sm text-label-sm">
+<span class="text-text-muted">Ciclo médio de ganho: 17.5 dias</span>
+<span class="text-success-text font-bold">CAC Payback: 2.1 meses</span>
+</div>
+</div>
+<!-- Quick Guidance & Knowledge Hub Card -->
+<div class="bg-gradient-to-br from-sidebar-surface to-slate-900 rounded-2xl p-space-md text-surface flex flex-col justify-between shadow-md relative overflow-hidden">
+<div class="absolute -right-6 -bottom-6 w-36 h-36 bg-primary/20 rounded-full blur-2xl pointer-events-none"></div>
+<div>
+<div class="flex items-center justify-between mb-3">
+<span class="font-label-sm text-label-sm px-2.5 py-0.5 rounded-full bg-primary-container text-surface-container-lowest font-bold uppercase tracking-wider">
+              Playbook de Reversão
+            </span>
+<span class="material-symbols-outlined text-primary-fixed-dim text-[20px]">auto_stories</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-surface-container-lowest leading-tight">Como reabrir oportunidades perdidas por preço?</h3>
+<p class="font-body-sm text-body-sm text-text-muted mt-2">
+            Leads perdidos por orçamento há mais de 45 dias são elegíveis para a campanha de lançamento do plano <strong>MedGuia Essencial</strong> com carência de 30 dias na implantação.
+          </p>
+</div>
+<div class="mt-4 pt-3 flex flex-col gap-2">
+<div class="flex items-center gap-2 text-surface-container-lowest text-label-md font-label-md">
+<span class="material-symbols-outlined text-success-text text-[18px]">check_circle</span>
+<span>15 clínicas prontas para régua de reativação</span>
+</div>
+<button class="w-full mt-2 py-2 px-3 rounded-xl bg-primary hover:bg-primary-container text-on-primary font-label-lg text-label-lg font-semibold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer" onclick="triggerReactivation()">
+<span class="material-symbols-outlined text-[18px]">forward_to_inbox</span>
+<span>Iniciar Campanha de Reativação</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Reopen Confirmation Dialog Modal (Hidden by Default) -->
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-xs hidden transition-opacity" id="reopenModal">
+<div class="bg-surface-card rounded-2xl p-space-lg w-full max-w-md shadow-2xl relative flex flex-col gap-space-md">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-info-surface text-info-text flex items-center justify-center">
+<span class="material-symbols-outlined text-[24px]">restart_alt</span>
+</div>
+<div class="flex flex-col">
+<h4 class="font-headline-sm text-headline-sm text-text-primary">Reabrir Lead no Pipeline</h4>
+<span class="font-body-sm text-body-sm text-text-muted">Retornar negociação ao funil ativo</span>
+</div>
+</div>
+<button class="p-1 rounded-lg text-text-muted hover:text-text-primary hover:bg-surface-subtle transition-colors cursor-pointer" onclick="closeModal('reopenModal')">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<div class="bg-surface-subtle p-3 rounded-xl flex flex-col gap-1">
+<span class="font-label-sm text-label-sm text-text-muted">Clínica selecionada:</span>
+<span class="font-label-lg text-label-lg font-bold text-text-primary" id="modalClinicName">Nome da Clínica</span>
+<p class="font-body-sm text-body-sm text-text-secondary mt-1">
+          Ao reabrir, este card voltará para a etapa <strong>'Reativação / Negociação'</strong> e gerará uma nova tarefa de contato no turno do responsável.
+        </p>
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-label-md text-text-primary font-semibold">Novo Motivo de Reabertura (Obrigatório):</label>
+<textarea class="w-full p-2.5 rounded-lg bg-surface-subtle text-text-primary font-body-sm text-body-sm focus:outline-none focus:ring-2 focus:ring-primary" id="reopenNote" placeholder="Ex: Médico solicitou novo contato após ajuste de verba semestral..." rows="2"></textarea>
+</div>
+<div class="flex items-center justify-end gap-2 pt-2">
+<button class="px-4 py-2 rounded-lg bg-surface-card hover:bg-surface-subtle text-text-secondary font-label-lg text-label-lg transition-colors cursor-pointer" onclick="closeModal('reopenModal')">
+          Cancelar
+        </button>
+<button class="px-4 py-2 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-lg text-label-lg shadow-sm font-semibold transition-all flex items-center gap-1.5 cursor-pointer" onclick="executeReopen()">
+<span class="material-symbols-outlined text-[18px]">done</span>
+<span>Confirmar e Reabrir</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Detail Quick View Drawer / Notification Toast -->
+<div class="fixed bottom-6 right-6 z-50 bg-sidebar-surface text-surface px-4 py-3 rounded-xl shadow-xl flex items-center gap-3 translate-y-20 opacity-0 transition-all duration-300 pointer-events-none" id="toastNotification">
+<span class="material-symbols-outlined text-success-text text-[22px]">check_circle</span>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-surface-container-lowest font-bold" id="toastTitle">Sucesso</span>
+<span class="font-body-sm text-body-sm text-text-muted" id="toastDesc">Ação realizada no MedCRM.</span>
+</div>
+</div>
+</div>
+<!-- Vanilla JS for Client Interactions -->
+<script>
+  let activeFilter = 'all';
+
+  function switchFilter(type) {
+    activeFilter = type;
+    
+    // Update tab visual styling
+    const tabs = {
+      all: document.getElementById('tab-all'),
+      won: document.getElementById('tab-won'),
+      lost: document.getElementById('tab-lost')
+    };
+
+    Object.keys(tabs).forEach(key => {
+      const btn = tabs[key];
+      if (key === type) {
+        btn.classList.add('bg-surface-card', 'text-primary', 'shadow-sm', 'font-bold');
+        btn.classList.remove('text-text-secondary');
+      } else {
+        btn.classList.remove('bg-surface-card', 'text-primary', 'shadow-sm', 'font-bold');
+        btn.classList.add('text-text-secondary');
+      }
+    });
+
+    applyFilters();
+  }
+
+  function applyFilters() {
+    const rows = document.querySelectorAll('.deal-row');
+    const searchVal = document.getElementById('searchInput').value.toLowerCase();
+    const reasonVal = document.getElementById('reasonFilter').value;
+    const ownerVal = document.getElementById('ownerFilter').value;
+
+    rows.forEach(row => {
+      const status = row.getAttribute('data-status');
+      const owner = row.getAttribute('data-owner');
+      const reason = row.getAttribute('data-reason');
+      const text = row.innerText.toLowerCase();
+
+      let matchesTab = (activeFilter === 'all') || (activeFilter === status);
+      let matchesSearch = searchVal === '' || text.includes(searchVal);
+      let matchesReason = (reasonVal === '') || (reason === reasonVal);
+      let matchesOwner = (ownerVal === '') || (owner === ownerVal);
+
+      if (matchesTab && matchesSearch && matchesReason && matchesOwner) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+  }
+
+  // Bind dynamic inputs
+  document.getElementById('searchInput').addEventListener('input', applyFilters);
+  document.getElementById('reasonFilter').addEventListener('change', applyFilters);
+  document.getElementById('ownerFilter').addEventListener('change', applyFilters);
+
+  function resetFilters() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('reasonFilter').value = '';
+    document.getElementById('ownerFilter').value = '';
+    switchFilter('all');
+  }
+
+  let selectedClinicToReopen = '';
+
+  function confirmReopen(clinicName) {
+    selectedClinicToReopen = clinicName;
+    document.getElementById('modalClinicName').innerText = clinicName;
+    document.getElementById('reopenNote').value = '';
+    const modal = document.getElementById('reopenModal');
+    modal.classList.remove('hidden');
+  }
+
+  function closeModal(modalId) {
+    document.getElementById(modalId).classList.add('hidden');
+  }
+
+  function executeReopen() {
+    closeModal('reopenModal');
+    showToast('Oportunidade Reaberta!', `${selectedClinicToReopen} foi reinserida na etapa de Negociação.`);
+  }
+
+  function openDealDetail(clinicName, status) {
+    const statusText = status === 'won' ? 'Ganho / Cliente Ativo' : 'Lead Arquivado';
+    showToast(clinicName, `Abrindo registro completo: ${statusText}`);
+  }
+
+  function triggerReactivation() {
+    showToast('Campanha Disparada', '15 mensagens personalizadas enviadas para o WhatsApp Inbox.');
+  }
+
+  function showToast(title, desc) {
+    const toast = document.getElementById('toastNotification');
+    document.getElementById('toastTitle').innerText = title;
+    document.getElementById('toastDesc').innerText = desc;
+
+    toast.classList.remove('translate-y-20', 'opacity-0');
+    toast.classList.add('translate-y-0', 'opacity-100');
+
+    setTimeout(() => {
+      toast.classList.add('translate-y-20', 'opacity-0');
+      toast.classList.remove('translate-y-0', 'opacity-100');
+    }, 3800);
+  }
+</script></main></div></body></html>

@@ -10,6 +10,7 @@ import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
 import { contas, sessoes, tokensVerificacao, usuarios } from '../../db/schema';
 import { hashSenha } from './definir-senha';
+import { validarSenha } from './politica-senha';
 
 // Literal exigido pelas rotas internas do Better Auth (T-026/T-027) — nunca traduzir.
 const PROVEDOR_CREDENCIAL = 'credential';
@@ -90,6 +91,8 @@ export interface ResetarSenhaResultado {
  *
  * - AC-041: token válido atualiza a credencial, invalida o token (uso
  *   único) e revoga todas as sessões ativas do usuário em `sessoes`.
+ * - AC-385: senha fora da política (`politica-senha.ts`) é recusada antes
+ *   de tocar no token ou na credencial.
  */
 export async function resetarSenhaComToken(
   db: NodePgDatabase,
@@ -97,6 +100,8 @@ export async function resetarSenhaComToken(
   novaSenha: string,
   opcoes: ResetarSenhaOpcoes = {}
 ): Promise<ResetarSenhaResultado> {
+  validarSenha(novaSenha);
+
   const agora = opcoes.agora ? opcoes.agora() : new Date();
 
   return db.transaction(async (tx) => {

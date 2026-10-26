@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"border-focus":"#93C5FD","tertiary-container":"#b85b00","sidebar-surface":"#1E293B","surface-subtle":"#F8FAFC","outline-variant":"#c3c6d6","surface-dim":"#d9d9e3","primary-fixed":"#dae2ff","danger-text":"#DC2626","danger-border":"#FECACA","on-error":"#ffffff","on-primary":"#ffffff","tertiary-fixed-dim":"#ffb787","inverse-primary":"#b1c5ff","secondary-container":"#d7dffd","surface":"#faf8ff","warning-surface":"#FEF3C7","sidebar-surface-active":"#2D3748","error-container":"#ffdad6","surface-tint":"#1157cb","warning-border":"#FDE68A","on-primary-fixed-variant":"#0040a0","surface-bright":"#faf8ff","background":"#faf8ff","on-primary-container":"#fefcff","success-surface":"#D1FAE5","text-secondary":"#64748B","surface-container":"#ededf7","primary-fixed-dim":"#b1c5ff","surface-container-low":"#f3f3fd","secondary-fixed-dim":"#bec6e3","success-text":"#059669","primary":"#0954c9","info-border":"#BFDBFE","inverse-surface":"#2e3038","on-secondary-fixed-variant":"#3e465e","error":"#ba1a1a","info-surface":"#EFF6FF","outline":"#737785","border-subtle":"#E2E8F0","on-secondary-fixed":"#131b30","on-surface-variant":"#434654","on-surface":"#191b22","text-primary":"#0F172A","primary-container":"#366ee3","info-text":"#2563EB","on-secondary":"#ffffff","surface-container-high":"#e7e7f2","on-error-container":"#93000a","on-tertiary-fixed":"#311300","on-background":"#191b22","on-tertiary-container":"#fffbff","tertiary-fixed":"#ffdcc7","on-tertiary":"#ffffff","warning-text":"#D97706","surface-card":"#FFFFFF","inverse-on-surface":"#f0f0fa","tertiary":"#924700","text-muted":"#94A3B8","on-secondary-container":"#5a627b","on-tertiary-fixed-variant":"#723600","secondary":"#565e77","on-primary-fixed":"#001847","secondary-fixed":"#dae2ff","surface-container-lowest":"#ffffff","success-border":"#A7F3D0","background-canvas":"#F4F6FA","surface-container-highest":"#e1e2ec","danger-surface":"#FEE2E2","surface-variant":"#e1e2ec"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"space-lg":"1.25rem","space-xl":"1.75rem","space-xs":"0.25rem","margin":"1.75rem","space-sm":"0.5rem","space-2xl":"2.5rem","gutter-sm":"0.75rem","margin-mobile":"1rem","space-md":"0.875rem","gutter-lg":"1.5rem","gutter":"1.25rem"},"fontFamily":{"body-lg":["Inter"],"display-lg-mobile":["Plus Jakarta Sans"],"label-lg":["Inter"],"metric-stat":["Plus Jakarta Sans"],"body-sm":["Inter"],"headline-md":["Plus Jakarta Sans"],"table-header":["Inter"],"label-sm":["Inter"],"headline-lg":["Plus Jakarta Sans"],"label-md":["Inter"],"body-md":["Inter"],"headline-sm":["Plus Jakarta Sans"],"display-lg":["Plus Jakarta Sans"]},"fontSize":{"body-lg":["15px",{"lineHeight":"22px","fontWeight":"400"}],"display-lg-mobile":["26px",{"lineHeight":"34px","letterSpacing":"-0.01em","fontWeight":"700"}],"label-lg":["13px",{"lineHeight":"18px","fontWeight":"600"}],"metric-stat":["28px",{"lineHeight":"36px","letterSpacing":"-0.02em","fontWeight":"700"}],"body-sm":["12px",{"lineHeight":"16px","fontWeight":"400"}],"headline-md":["20px",{"lineHeight":"28px","fontWeight":"600"}],"table-header":["11px",{"lineHeight":"16px","letterSpacing":"0.05em","fontWeight":"600"}],"label-sm":["11px",{"lineHeight":"14px","letterSpacing":"0.03em","fontWeight":"600"}],"headline-lg":["24px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"600"}],"label-md":["12px",{"lineHeight":"16px","fontWeight":"500"}],"body-md":["13px",{"lineHeight":"20px","fontWeight":"400"}],"headline-sm":["16px",{"lineHeight":"24px","fontWeight":"600"}],"display-lg":["32px",{"lineHeight":"40px","letterSpacing":"-0.02em","fontWeight":"700"}]}}}}</script></head><body class="bg-background-canvas font-body-md text-text-primary antialiased min-h-screen"><aside class="fixed left-0 top-0 h-full w-64 bg-sidebar-surface z-50 flex flex-col justify-between shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex flex-col h-full overflow-hidden"><div class="h-16 flex items-center px-space-lg gap-space-sm bg-sidebar-surface"><div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[20px]">local_hospital</span></div><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-surface-card leading-tight tracking-tight">MedCRM</span><span class="font-label-sm text-label-sm text-text-muted">MedGuia B2B Health</span></div></div><div class="overflow-y-auto flex-1 px-space-sm py-space-sm space-y-space-md"><div class="space-y-space-xs"><span class="px-space-md font-table-header text-table-header text-text-muted uppercase tracking-wider block">Operação</span><nav class="space-y-1" data-active-classes="bg-primary text-on-primary font-label-md rounded-lg shadow-sm"><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="funil-pipeline" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">view_kanban</span><span class="font-label-md text-label-md">Funil Pipeline</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="lista" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">view_list</span><span class="font-label-md text-label-md">Lista</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="arquivados" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">archive</span><span class="font-label-md text-label-md">Arquivados</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="tarefas-do-turno" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">assignment</span><span class="font-label-md text-label-md">Tarefas do Turno</span></div><span class="px-2 py-0.5 rounded-full font-label-sm text-label-sm bg-info-surface text-info-text">12</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="tarefas-atrasadas" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">warning</span><span class="font-label-md text-label-md">Tarefas Atrasadas</span></div><span class="px-2 py-0.5 rounded-full font-label-sm text-label-sm bg-danger-surface text-danger-text">4</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="agenda" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">calendar_today</span><span class="font-label-md text-label-md">Agenda</span></div></a></nav></div><div class="space-y-space-xs"><span class="px-space-md font-table-header text-table-header text-text-muted uppercase tracking-wider block">Comunicação</span><nav class="space-y-1" data-active-classes="bg-primary text-on-primary font-label-md rounded-lg shadow-sm"><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="whatsapp-inbox" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">chat</span><span class="font-label-md text-label-md">WhatsApp Inbox</span></div><span class="px-2 py-0.5 rounded-full font-label-sm text-label-sm bg-success-surface text-success-text">5</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="conexao-qr-code" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">qr_code_2</span><span class="font-label-md text-label-md">Conexão &amp; QR Code</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="configuracao-evolution" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">settings_ethernet</span><span class="font-label-md text-label-md">Configuração Evolution</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="campanhas" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">campaign</span><span class="font-label-md text-label-md">Campanhas</span></div></a></nav></div><div class="space-y-space-xs"><span class="px-space-md font-table-header text-table-header text-text-muted uppercase tracking-wider block">Análises</span><nav class="space-y-1" data-active-classes="bg-primary text-on-primary font-label-md rounded-lg shadow-sm"><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="indicadores" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">query_stats</span><span class="font-label-md text-label-md">Indicadores</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="relatorios" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">analytics</span><span class="font-label-md text-label-md">Relatórios</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="relatorios-comerciais" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">assessment</span><span class="font-label-md text-label-md">Comercial</span></div></a></nav></div><div class="space-y-space-xs"><span class="px-space-md font-table-header text-table-header text-primary-fixed uppercase tracking-wider block">Administração</span><nav class="space-y-1" data-active-classes="bg-primary text-on-primary font-label-md rounded-lg shadow-sm"><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="equipe" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">group</span><span class="font-label-md text-label-md">Equipe</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="motivos-de-perda" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">rule</span><span class="font-label-md text-label-md">Motivos de Perda</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-text-muted hover:bg-sidebar-surface-active hover:text-surface-card transition-colors" data-path="empresas" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">domain</span><span class="font-label-md text-label-md">Empresas</span></div><span class="px-2 py-0.5 rounded-full font-label-sm text-label-sm bg-warning-surface text-warning-text">Super Admin</span></a></nav></div></div><div class="p-space-md bg-sidebar-surface flex items-center justify-between text-text-muted"><a class="flex items-center gap-space-xs hover:text-surface-card transition-colors" data-path="ajuda-e-suporte" href="#"><span class="material-symbols-outlined text-[16px]">help</span><span class="font-body-sm text-body-sm">Ajuda &amp; Suporte</span></a><span class="font-label-sm text-label-sm text-outline">v2.4.0</span></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface-card/90 backdrop-blur-xl z-40 shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="w-full h-16 px-space-lg flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-sm px-space-md py-space-xs bg-surface-subtle rounded-xl"><div class="w-2 h-2 rounded-full bg-success-text"></div><span class="font-label-md text-label-md text-text-primary font-medium">Clínica São Lucas - Matriz</span><span class="font-label-sm text-label-sm text-success-text bg-success-surface px-1.5 py-0.5 rounded-full font-semibold">Ativo</span><span class="material-symbols-outlined text-text-secondary text-[16px]">expand_more</span></div><div class="flex items-center gap-space-xs px-space-sm py-1 bg-surface-subtle rounded-full"><span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success-text opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-success-text"></span></span><span class="font-label-sm text-label-sm text-text-secondary hidden xl:inline-block">Tempo real conectado</span></div></div><div class="flex-1 max-w-md mx-space-md"><div class="relative flex items-center"><span class="material-symbols-outlined absolute left-space-md text-text-muted text-[18px]">search</span><input class="w-full h-10 pl-10 pr-12 rounded-lg bg-surface-subtle text-text-primary placeholder:text-text-muted font-body-sm text-body-sm focus:outline-none focus:ring-2 focus:ring-border-focus transition-all" placeholder="Buscar usuário, e-mail, papel..." type="text"/><kbd class="absolute right-space-md px-1.5 py-0.5 bg-surface-card text-text-muted font-label-sm text-label-sm rounded shadow-[0_1px_2px_rgba(0,0,0,0.05)]">⌘K</kbd></div></div><div class="flex items-center gap-space-md"><button class="relative p-2 rounded-lg hover:bg-surface-subtle text-text-secondary hover:text-text-primary transition-colors"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-1.5 right-1.5 w-4 h-4 bg-danger-text text-on-error font-label-sm text-[10px] leading-4 flex items-center justify-center rounded-full font-bold">1</span></button><div class="flex items-center gap-space-sm pl-space-sm"><div class="flex flex-col text-right hidden sm:flex"><div class="flex items-center justify-end gap-1"><span class="font-label-md text-label-md text-text-primary font-semibold">Dr. Roberto Mendes</span><span class="px-1.5 py-0.2 rounded font-label-sm text-[10px] bg-primary-fixed text-on-primary-fixed-variant font-bold uppercase tracking-wider">Master</span></div><span class="font-body-sm text-body-sm text-text-muted">roberto.mendes@medguia.com.br</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></div></header><main class="w-full pt-16 bg-background-canvas min-h-[calc(100vh-4rem)] p-margin"><div class="flex flex-col w-full">
+<!-- Interactive Script to highlight active navigation on Shell -->
+<script>
+    (function() {
+      const activeLink = document.querySelector('a[data-path="motivos-de-perda"]');
+      if (activeLink) {
+        activeLink.classList.remove('text-text-muted', 'hover:bg-sidebar-surface-active', 'hover:text-surface-card');
+        activeLink.classList.add('bg-primary', 'text-on-primary', 'font-label-md', 'shadow-sm');
+        const icon = activeLink.querySelector('.material-symbols-outlined');
+        if (icon) icon.classList.add('text-on-primary');
+      }
+    })();
+  </script>
+<!-- Breadcrumb & Page Command Center Header -->
+<div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-space-lg mb-space-xl">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center gap-space-xs text-text-muted font-table-header text-table-header uppercase tracking-wider">
+<span class="hover:text-text-secondary cursor-pointer transition-colors">Administração</span>
+<span class="material-symbols-outlined text-[13px] text-text-muted">chevron_right</span>
+<span class="text-primary font-bold">/configuracoes/motivos-perda</span>
+</div>
+<div class="flex items-center gap-space-md">
+<h1 class="font-headline-lg text-headline-lg text-text-primary tracking-tight">Motivos de Perda &amp; Churn Comercial</h1>
+<span class="px-space-sm py-0.5 rounded-full bg-info-surface text-info-text font-label-sm text-label-sm font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">verified_user</span> Governança Ativa
+        </span>
+</div>
+<p class="font-body-sm text-body-sm text-text-secondary">
+        Controle de taxonomia clínica e regras bloqueantes para arquivamento e encerramento de negócios no pipeline MedCRM.
+      </p>
+</div>
+<div class="flex flex-wrap items-center gap-space-sm">
+<button class="h-10 px-space-md bg-surface-card hover:bg-surface-subtle text-text-primary font-label-md text-label-md rounded-lg shadow-sm flex items-center gap-space-xs transition-all active:scale-[0.98]" onclick="exportCSV()">
+<span class="material-symbols-outlined text-[18px] text-text-secondary">download</span>
+        Exportar Relatório de Churn (CSV)
+      </button>
+<button class="h-10 px-space-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md rounded-lg shadow-sm flex items-center gap-space-xs transition-all active:scale-[0.98]" onclick="toggleModal(true)">
+<span class="material-symbols-outlined text-[20px]">add</span>
+        + Novo Motivo de Perda
+      </button>
+</div>
+</div>
+<!-- Compliance Callout Banner -->
+<div class="bg-surface-card rounded-xl p-space-md shadow-sm mb-space-xl flex flex-col md:flex-row md:items-center justify-between gap-space-md relative overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-primary"></div>
+<div class="flex items-start md:items-center gap-space-md">
+<div class="w-10 h-10 rounded-xl bg-primary-fixed/30 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-[22px]">policy</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-xs">
+<span class="font-headline-sm text-headline-sm text-text-primary">Auditoria Comercial e Requisito Bloqueante</span>
+<span class="px-2 py-0.5 rounded-full font-label-sm text-[10px] bg-success-surface text-success-text font-bold">Protocolo US-032 / US-061</span>
+</div>
+<p class="font-body-sm text-body-sm text-text-secondary mt-0.5">
+          Conforme diretriz clínica-comercial, nenhuma oportunidade pode transitar para a etapa <strong>15. Perdido</strong> sem a seleção obrigatória de um motivo catalogado e justificativa detalhada para retroalimentação da IA de vendas.
+        </p>
+</div>
+</div>
+<div class="flex items-center gap-space-sm shrink-0">
+<button class="px-space-md py-1.5 bg-surface-subtle hover:bg-surface-container text-primary font-label-sm text-label-sm rounded-lg transition-colors flex items-center gap-1 font-semibold" onclick="toggleInfoDrawer()">
+<span class="material-symbols-outlined text-[16px]">info</span> Ver Diretrizes
+      </button>
+</div>
+</div>
+<!-- Section 1: Governance KPIs -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-lg mb-space-xl">
+<!-- Card 1 -->
+<div class="bg-surface-card p-space-lg rounded-xl shadow-sm flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between mb-space-sm">
+<span class="font-table-header text-table-header text-text-muted uppercase tracking-wider">Catálogo de Motivos</span>
+<div class="w-8 h-8 rounded-lg bg-info-surface text-info-text flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">rule</span>
+</div>
+</div>
+<div class="flex flex-col">
+<div class="flex items-baseline gap-space-xs">
+<span class="font-metric-stat text-metric-stat text-text-primary">12</span>
+<span class="font-body-sm text-body-sm text-text-muted">motivos ativos</span>
+</div>
+<div class="flex items-center gap-space-xs mt-space-xs">
+<span class="px-1.5 py-0.5 rounded bg-surface-subtle text-text-secondary font-label-sm text-[10px] font-bold">5 Sistêmicos</span>
+<span class="text-text-muted">•</span>
+<span class="px-1.5 py-0.5 rounded bg-primary-fixed/40 text-primary font-label-sm text-[10px] font-bold">7 Personalizados</span>
+</div>
+</div>
+<div class="w-full bg-surface-subtle h-1 rounded-full mt-space-md overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 58%"></div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-card p-space-lg rounded-xl shadow-sm flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between mb-space-sm">
+<span class="font-table-header text-table-header text-text-muted uppercase tracking-wider">Perdas no Mês (Outubro)</span>
+<div class="w-8 h-8 rounded-lg bg-danger-surface text-danger-text flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">trending_down</span>
+</div>
+</div>
+<div class="flex flex-col">
+<div class="flex items-baseline gap-space-xs">
+<span class="font-metric-stat text-metric-stat text-text-primary">38</span>
+<span class="font-body-sm text-body-sm text-danger-text font-semibold">-4.2% vs set</span>
+</div>
+<div class="flex items-center gap-space-xs mt-space-xs">
+<span class="font-label-md text-label-md text-text-secondary">Impacto:</span>
+<span class="font-label-md text-label-md text-danger-text font-bold">R$ 214.500</span>
+<span class="font-body-sm text-body-sm text-text-muted">em pipeline</span>
+</div>
+</div>
+<!-- Inline Mini Sparkline Chart -->
+<div class="mt-space-md">
+<svg class="w-full h-4 text-danger-text" fill="none" preserveaspectratio="none" stroke="currentColor" stroke-width="2" viewbox="0 0 100 20">
+<path d="M0,18 Q20,15 35,8 T70,12 T100,5" stroke-linecap="round"></path>
+</svg>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-card p-space-lg rounded-xl shadow-sm flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between mb-space-sm">
+<span class="font-table-header text-table-header text-text-muted uppercase tracking-wider">Principal Motivo de Churn</span>
+<div class="w-8 h-8 rounded-lg bg-warning-surface text-warning-text flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">priority_high</span>
+</div>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-text-primary truncate" title="Decisão Adiada / Prioridade da Diretoria">
+          Decisão Adiada / Diretoria
+        </span>
+<div class="flex items-center gap-space-xs mt-space-xs">
+<span class="px-2 py-0.5 rounded-full bg-warning-surface text-warning-text font-label-sm text-label-sm font-bold">36.8% do volume</span>
+<span class="font-body-sm text-body-sm text-text-muted">(14 clínicas)</span>
+</div>
+</div>
+<div class="w-full bg-surface-subtle h-1 rounded-full mt-space-md overflow-hidden">
+<div class="bg-warning-text h-full rounded-full" style="width: 36.8%"></div>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="bg-surface-card p-space-lg rounded-xl shadow-sm flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between mb-space-sm">
+<span class="font-table-header text-table-header text-text-muted uppercase tracking-wider">Conformidade de Fechamento</span>
+<div class="w-8 h-8 rounded-lg bg-success-surface text-success-text flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+</div>
+</div>
+<div class="flex flex-col">
+<div class="flex items-baseline gap-space-xs">
+<span class="font-metric-stat text-metric-stat text-success-text">100%</span>
+<span class="font-body-sm text-body-sm text-text-muted">zero cards sem justificativa</span>
+</div>
+<div class="flex items-center gap-space-xs mt-space-xs">
+<span class="font-label-sm text-label-sm text-text-secondary">Validação instantânea no Pipeline Kanban</span>
+</div>
+</div>
+<div class="w-full bg-surface-subtle h-1 rounded-full mt-space-md overflow-hidden">
+<div class="bg-success-text h-full rounded-full" style="width: 100%"></div>
+</div>
+</div>
+</div>
+<!-- Section 2: Table & Management Card -->
+<div class="bg-surface-card rounded-xl shadow-sm overflow-hidden flex flex-col">
+<!-- Toolbar & Filters -->
+<div class="p-space-lg bg-surface-card flex flex-col lg:flex-row lg:items-center lg:justify-between gap-space-md">
+<!-- Search Input -->
+<div class="relative flex-1 max-w-lg">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-text-muted text-[18px]">search</span>
+<input class="w-full h-10 pl-10 pr-4 bg-surface-subtle text-text-primary rounded-lg font-body-sm text-body-sm placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-border-focus transition-all" id="searchInput" onkeyup="filterTable()" placeholder="Buscar por nome do motivo, categoria ou incidência..." type="text"/>
+</div>
+<!-- Segmented Dropdown Filters -->
+<div class="flex flex-wrap items-center gap-space-sm">
+<div class="flex items-center bg-surface-subtle rounded-lg p-0.5">
+<button class="px-space-md py-1.5 rounded-lg font-label-sm text-label-sm font-semibold bg-surface-card text-text-primary shadow-sm transition-all" id="btn-type-all" onclick="setTypeFilter('all')">Todos os Tipos</button>
+<button class="px-space-md py-1.5 rounded-lg font-label-sm text-label-sm text-text-secondary hover:text-text-primary transition-all" id="btn-type-sistemico" onclick="setTypeFilter('sistemico')">Sistêmicos (Nativos)</button>
+<button class="px-space-md py-1.5 rounded-lg font-label-sm text-label-sm text-text-secondary hover:text-text-primary transition-all" id="btn-type-personalizado" onclick="setTypeFilter('personalizado')">Personalizados</button>
+</div>
+<select class="h-10 px-space-md bg-surface-subtle rounded-lg font-label-sm text-label-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-border-focus cursor-pointer" id="statusFilter" onchange="filterTable()">
+<option value="all">Status: Todos</option>
+<option value="ativo">Apenas Ativos</option>
+<option value="inativo">Apenas Inativos</option>
+</select>
+<button class="p-2 text-text-muted hover:text-text-primary hover:bg-surface-subtle rounded-lg transition-colors" onclick="resetFilters()" title="Limpar Filtros">
+<span class="material-symbols-outlined text-[20px]">filter_alt_off</span>
+</button>
+</div>
+</div>
+<!-- Data Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-left" id="reasonsTable">
+<thead>
+<tr class="bg-surface-subtle font-table-header text-table-header text-text-secondary uppercase tracking-wider h-11">
+<th class="w-12 px-space-lg text-center">
+<input class="w-4 h-4 rounded text-primary focus:ring-0 cursor-pointer" id="selectAll" onclick="toggleSelectAll(this)" type="checkbox"/>
+</th>
+<th class="py-space-sm px-space-md">Motivo &amp; Descrição Técnica</th>
+<th class="py-space-sm px-space-md">Categoria / Incidência Típica</th>
+<th class="py-space-sm px-space-md">Natureza</th>
+<th class="py-space-sm px-space-md">Cards Perdidos (Mês / Total)</th>
+<th class="py-space-sm px-space-md">Status</th>
+<th class="py-space-sm px-space-lg text-right">Ações de Gestão</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-low font-body-sm text-body-sm">
+<!-- Row 1: Sistêmico Principal -->
+<tr class="hover:bg-surface-subtle/80 transition-colors group" data-status="ativo" data-type="sistemico">
+<td class="px-space-lg text-center">
+<input class="row-checkbox w-4 h-4 rounded text-primary focus:ring-0 cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-space-md px-space-md">
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-text-primary font-bold flex items-center gap-1.5">
+                  Decisão Adiada / Prioridade da Diretoria
+                  <span class="px-1.5 py-0.2 rounded font-label-sm text-[10px] bg-danger-surface text-danger-text font-bold uppercase">Top 1</span>
+</span>
+<span class="text-text-secondary text-[12px] mt-0.5 line-clamp-1">
+                  Corpo clínico ou diretoria executiva optou por postergar o investimento para o próximo ano orçamentário.
+                </span>
+</div>
+</td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<div class="inline-flex items-center gap-1.5 px-space-sm py-1 rounded-lg bg-surface-subtle text-text-primary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[15px] text-text-secondary">account_balance</span>
+                Governança Hospitalar
+              </div>
+</td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full font-label-sm text-label-sm bg-info-surface text-info-text font-semibold">
+<span class="material-symbols-outlined text-[14px]">lock</span>
+                Sistêmico
+              </span>
+</td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-headline-sm text-text-primary">14</span>
+<span class="font-label-sm text-label-sm text-danger-text font-semibold">36.8%</span>
+</div>
+<div class="w-24 bg-surface-container-high h-1.5 rounded-full overflow-hidden mt-1">
+<div class="bg-danger-text h-full rounded-full" style="width: 36.8%"></div>
+</div>
+<span class="text-[11px] text-text-muted mt-0.5">Histórico: 89 cards</span>
+</div>
+</td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-label-sm text-label-sm bg-success-surface text-success-text font-bold">
+<span class="w-2 h-2 rounded-full bg-success-text"></span> Ativo
+              </span>
+</td>
+<td class="py-space-md px-space-lg text-right whitespace-nowrap">
+<div class="flex items-center justify-end gap-1">
+<div class="relative group/tooltip">
+<button class="p-1.5 rounded-lg text-text-muted opacity-40 cursor-not-allowed" disabled="">
+<span class="material-symbols-outlined text-[18px]">lock</span>
+</button>
+<div class="absolute right-0 bottom-full mb-1 hidden group-hover/tooltip:block z-30 w-64 p-2 bg-sidebar-surface text-on-primary font-body-sm text-[11px] rounded-lg shadow-xl">
+                    Motivo nativo do MedCRM: não pode ser excluído nem desativado (garantia de conformidade US-032).
+                  </div>
+</div>
+<button class="p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-subtle transition-colors" onclick="previewReason('Decisão Adiada / Prioridade da Diretoria', 'Governança Hospitalar', 'Sistêmico', '14')" title="Visualizar Detalhes">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2: Sistêmico Técnico -->
+<tr class="hover:bg-surface-subtle/80 transition-colors group" data-status="ativo" data-type="sistemico">
+<td class="px-space-lg text-center">
+<input class="row-checkbox w-4 h-4 rounded text-primary focus:ring-0 cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-space-md px-space-md">
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-text-primary font-bold">
+                  Incompatibilidade com Prontuário Legado
+                </span>
+<span class="text-text-secondary text-[12px] mt-0.5 line-clamp-1">
+                  Sistemas internos antigos (ex: MV, Tasy sem API REST aberta) inviabilizam integração imediata com MedCRM.
+                </span>
+</div>
+</td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<div class="inline-flex items-center gap-1.5 px-space-sm py-1 rounded-lg bg-surface-subtle text-text-primary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[15px] text-text-secondary">terminal</span>
+                Técnica / TI Médica
+              </div>
+</td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full font-label-sm text-label-sm bg-info-surface text-info-text font-semibold">
+<span class="material-symbols-outlined text-[14px]">lock</span>
+                Sistêmico
+              </span>
+</td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-headline-sm text-text-primary">11</span>
+<span class="font-label-sm text-label-sm text-warning-text font-semibold">28.9%</span>
+</div>
+<div class="w-24 bg-surface-container-high h-1.5 rounded-full overflow-hidden mt-1">
+<div class="bg-warning-text h-full rounded-full" style="width: 28.9%"></div>
+</div>
+<span class="text-[11px] text-text-muted mt-0.5">Histórico: 54 cards</span>
+</div>
+</td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-label-sm text-label-sm bg-success-surface text-success-text font-bold">
+<span class="w-2 h-2 rounded-full bg-success-text"></span> Ativo
+              </span>
+</td>
+<td class="py-space-md px-space-lg text-right whitespace-nowrap">
+<div class="flex items-center justify-end gap-1">
+<div class="relative group/tooltip">
+<button class="p-1.5 rounded-lg text-text-muted opacity-40 cursor-not-allowed" disabled="">
+<span class="material-symbols-outlined text-[18px]">lock</span>
+</button>
+<div class="absolute right-0 bottom-full mb-1 hidden group-hover/tooltip:block z-30 w-64 p-2 bg-sidebar-surface text-on-primary font-body-sm text-[11px] rounded-lg shadow-xl">
+                    Motivo nativo do MedCRM: métrica protegida para squads de integrações e produto.
+                  </div>
+</div>
+<button class="p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-subtle transition-colors" onclick="previewReason('Incompatibilidade com Prontuário Legado', 'Técnica / TI Médica', 'Sistêmico', '11')" title="Visualizar Detalhes">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3: Sistêmico Financeiro -->
+<tr class="hover:bg-surface-subtle/80 transition-colors group" data-status="ativo" data-type="sistemico">
+<td class="px-space-lg text-center">
+<input class="row-checkbox w-4 h-4 rounded text-primary focus:ring-0 cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-space-md px-space-md">
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-text-primary font-bold">
+                  Preço / Sem Verba para Implantação
+                </span>
+<span class="text-text-secondary text-[12px] mt-0.5 line-clamp-1">
+                  Clínica não atingiu o ROI esperado ou alegou mensalidade fora do teto operacional autorizado.
+                </span>
+</div>
+</td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<div class="inline-flex items-center gap-1.5 px-space-sm py-1 rounded-lg bg-surface-subtle text-text-primary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[15px] text-text-secondary">payments</span>
+                Orçamento / Financeiro
+              </div>
+</td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full font-label-sm text-label-sm bg-info-surface text-info-text font-semibold">
+<span class="material-symbols-outlined text-[14px]">lock</span>
+                Sistêmico
+              </span>
+</td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-headline-sm text-text-primary">7</span>
+<span class="font-label-sm text-label-sm text-text-secondary font-semibold">18.4%</span>
+</div>
+<div class="w-24 bg-surface-container-high h-1.5 rounded-full overflow-hidden mt-1">
+<div class="bg-primary h-full rounded-full" style="width: 18.4%"></div>
+</div>
+<span class="text-[11px] text-text-muted mt-0.5">Histórico: 42 cards</span>
+</div>
+</td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-label-sm text-label-sm bg-success-surface text-success-text font-bold">
+<span class="w-2 h-2 rounded-full bg-success-text"></span> Ativo
+              </span>
+</td>
+<td class="py-space-md px-space-lg text-right whitespace-nowrap">
+<div class="flex items-center justify-end gap-1">
+<div class="relative group/tooltip">
+<button class="p-1.5 rounded-lg text-text-muted opacity-40 cursor-not-allowed" disabled="">
+<span class="material-symbols-outlined text-[18px]">lock</span>
+</button>
+<div class="absolute right-0 bottom-full mb-1 hidden group-hover/tooltip:block z-30 w-64 p-2 bg-sidebar-surface text-on-primary font-body-sm text-[11px] rounded-lg shadow-xl">
+                    Motivo nativo do MedCRM: protegido contra exclusão acidental.
+                  </div>
+</div>
+<button class="p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-subtle transition-colors" onclick="previewReason('Preço / Sem Verba para Implantação', 'Orçamento / Financeiro', 'Sistêmico', '7')" title="Visualizar Detalhes">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4: Customizado Ativo -->
+<tr class="hover:bg-surface-subtle/80 transition-colors group" data-status="ativo" data-type="personalizado">
+<td class="px-space-lg text-center">
+<input class="row-checkbox w-4 h-4 rounded text-primary focus:ring-0 cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-space-md px-space-md">
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-text-primary font-bold">
+                  Optou por Software Especializado de Nicho
+                </span>
+<span class="text-text-secondary text-[12px] mt-0.5 line-clamp-1">
+                  Preferência por ERP vertical com foco exclusivo em Oftalmologia ou Radiologia diagnóstica.
+                </span>
+</div>
+</td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<div class="inline-flex items-center gap-1.5 px-space-sm py-1 rounded-lg bg-surface-subtle text-text-primary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[15px] text-text-secondary">store</span>
+                Concorrência
+              </div>
+</td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full font-label-sm text-label-sm bg-surface-subtle text-text-primary font-semibold">
+<span class="material-symbols-outlined text-[14px] text-text-muted">tune</span>
+                Personalizado
+              </span>
+</td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-headline-sm text-text-primary">4</span>
+<span class="font-label-sm text-label-sm text-text-secondary font-semibold">10.5%</span>
+</div>
+<div class="w-24 bg-surface-container-high h-1.5 rounded-full overflow-hidden mt-1">
+<div class="bg-primary/70 h-full rounded-full" style="width: 10.5%"></div>
+</div>
+<span class="text-[11px] text-text-muted mt-0.5">Histórico: 19 cards</span>
+</div>
+</td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-label-sm text-label-sm bg-success-surface text-success-text font-bold">
+<span class="w-2 h-2 rounded-full bg-success-text"></span> Ativo
+              </span>
+</td>
+<td class="py-space-md px-space-lg text-right whitespace-nowrap">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 rounded-lg text-text-secondary hover:text-primary hover:bg-surface-subtle transition-colors" onclick="editReason('Optou por Software Especializado de Nicho', 'Concorrência', 'Preferência por ERP vertical com foco exclusivo em Oftalmologia ou Radiologia diagnóstica.')" title="Editar Motivo">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 rounded-lg text-text-secondary hover:text-warning-text hover:bg-surface-subtle transition-colors" onclick="toggleRowStatus(this)" title="Pausar / Desativar">
+<span class="material-symbols-outlined text-[18px]">pause_circle</span>
+</button>
+<button class="p-1.5 rounded-lg text-text-secondary hover:text-danger-text hover:bg-surface-subtle transition-colors" onclick="deleteCustomReason('Optou por Software Especializado de Nicho')" title="Excluir">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 5: Sistêmico Cadência -->
+<tr class="hover:bg-surface-subtle/80 transition-colors group" data-status="ativo" data-type="sistemico">
+<td class="px-space-lg text-center">
+<input class="row-checkbox w-4 h-4 rounded text-primary focus:ring-0 cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-space-md px-space-md">
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-text-primary font-bold">
+                  Contato Perdido / Sem Retorno após 18 Toques
+                </span>
+<span class="text-text-secondary text-[12px] mt-0.5 line-clamp-1">
+                  Esgotamento da régua multicanal oficial (WhatsApp, ligação telefônica e e-mail) sem engajamento.
+                </span>
+</div>
+</td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<div class="inline-flex items-center gap-1.5 px-space-sm py-1 rounded-lg bg-surface-subtle text-text-primary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[15px] text-text-secondary">ring_volume</span>
+                Régua Comercial
+              </div>
+</td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full font-label-sm text-label-sm bg-info-surface text-info-text font-semibold">
+<span class="material-symbols-outlined text-[14px]">lock</span>
+                Sistêmico
+              </span>
+</td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-headline-sm text-text-primary">2</span>
+<span class="font-label-sm text-label-sm text-text-secondary font-semibold">5.3%</span>
+</div>
+<div class="w-24 bg-surface-container-high h-1.5 rounded-full overflow-hidden mt-1">
+<div class="bg-primary/50 h-full rounded-full" style="width: 5.3%"></div>
+</div>
+<span class="text-[11px] text-text-muted mt-0.5">Histórico: 21 cards</span>
+</div>
+</td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-label-sm text-label-sm bg-success-surface text-success-text font-bold">
+<span class="w-2 h-2 rounded-full bg-success-text"></span> Ativo
+              </span>
+</td>
+<td class="py-space-md px-space-lg text-right whitespace-nowrap">
+<div class="flex items-center justify-end gap-1">
+<div class="relative group/tooltip">
+<button class="p-1.5 rounded-lg text-text-muted opacity-40 cursor-not-allowed" disabled="">
+<span class="material-symbols-outlined text-[18px]">lock</span>
+</button>
+<div class="absolute right-0 bottom-full mb-1 hidden group-hover/tooltip:block z-30 w-64 p-2 bg-sidebar-surface text-on-primary font-body-sm text-[11px] rounded-lg shadow-xl">
+                    Motivo nativo do MedCRM: atrelado automaticamente à régua de 18 toques comerciais.
+                  </div>
+</div>
+<button class="p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-subtle transition-colors" onclick="previewReason('Contato Perdido / Sem Retorno após 18 Toques', 'Régua Comercial', 'Sistêmico', '2')" title="Visualizar Detalhes">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 6: Customizado Cadastral -->
+<tr class="hover:bg-surface-subtle/80 transition-colors group" data-status="ativo" data-type="personalizado">
+<td class="px-space-lg text-center">
+<input class="row-checkbox w-4 h-4 rounded text-primary focus:ring-0 cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-space-md px-space-md">
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-text-primary font-bold">
+                  Clínica Fechou ou Mudança Societária
+                </span>
+<span class="text-text-secondary text-[12px] mt-0.5 line-clamp-1">
+                  Encerramento das atividades da unidade de saúde ou rescisão do contrato social dos fundadores.
+                </span>
+</div>
+</td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<div class="inline-flex items-center gap-1.5 px-space-sm py-1 rounded-lg bg-surface-subtle text-text-primary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[15px] text-text-secondary">domain_disabled</span>
+                Cadastral
+              </div>
+</td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full font-label-sm text-label-sm bg-surface-subtle text-text-primary font-semibold">
+<span class="material-symbols-outlined text-[14px] text-text-muted">tune</span>
+                Personalizado
+              </span>
+</td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-headline-sm text-text-muted">0</span>
+<span class="font-label-sm text-label-sm text-text-muted font-semibold">0.0%</span>
+</div>
+<div class="w-24 bg-surface-container-high h-1.5 rounded-full overflow-hidden mt-1">
+<div class="bg-primary/20 h-full rounded-full" style="width: 0%"></div>
+</div>
+<span class="text-[11px] text-text-muted mt-0.5">Histórico: 3 cards</span>
+</div>
+</td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-label-sm text-label-sm bg-success-surface text-success-text font-bold">
+<span class="w-2 h-2 rounded-full bg-success-text"></span> Ativo
+              </span>
+</td>
+<td class="py-space-md px-space-lg text-right whitespace-nowrap">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 rounded-lg text-text-secondary hover:text-primary hover:bg-surface-subtle transition-colors" onclick="editReason('Clínica Fechou ou Mudança Societária', 'Cadastral', 'Encerramento das atividades da unidade de saúde ou rescisão do contrato social dos fundadores.')" title="Editar Motivo">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 rounded-lg text-text-secondary hover:text-warning-text hover:bg-surface-subtle transition-colors" onclick="toggleRowStatus(this)" title="Pausar / Desativar">
+<span class="material-symbols-outlined text-[18px]">pause_circle</span>
+</button>
+<button class="p-1.5 rounded-lg text-text-secondary hover:text-danger-text hover:bg-surface-subtle transition-colors" onclick="deleteCustomReason('Clínica Fechou ou Mudança Societária')" title="Excluir">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 7: Customizado Inativo -->
+<tr class="hover:bg-surface-subtle/80 transition-colors group opacity-75" data-status="inativo" data-type="personalizado">
+<td class="px-space-lg text-center">
+<input class="row-checkbox w-4 h-4 rounded text-primary focus:ring-0 cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-space-md px-space-md">
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-text-secondary font-bold line-through">
+                  Projeto de IA Suspenso pelo CFM
+                </span>
+<span class="text-text-muted text-[12px] mt-0.5 line-clamp-1">
+                  Descontinuado após resolução normativa de homologação de inteligência artificial clínica de 2024.
+                </span>
+</div>
+</td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<div class="inline-flex items-center gap-1.5 px-space-sm py-1 rounded-lg bg-surface-subtle text-text-secondary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[15px] text-text-muted">gavel</span>
+                Jurídico / Regulatório
+              </div>
+</td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full font-label-sm text-label-sm bg-surface-subtle text-text-muted font-semibold">
+<span class="material-symbols-outlined text-[14px] text-text-muted">tune</span>
+                Personalizado
+              </span>
+</td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-headline-sm text-text-muted">0</span>
+<span class="font-label-sm text-label-sm text-text-muted font-semibold">0.0%</span>
+</div>
+<div class="w-24 bg-surface-container-high h-1.5 rounded-full overflow-hidden mt-1">
+<div class="bg-outline-variant h-full rounded-full" style="width: 0%"></div>
+</div>
+<span class="text-[11px] text-text-muted mt-0.5">Histórico: 2 cards</span>
+</div>
+</td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-label-sm text-label-sm bg-surface-subtle text-text-muted font-bold">
+<span class="w-2 h-2 rounded-full bg-text-muted"></span> Inativo
+              </span>
+</td>
+<td class="py-space-md px-space-lg text-right whitespace-nowrap">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 rounded-lg text-text-secondary hover:text-primary hover:bg-surface-subtle transition-colors" onclick="editReason('Projeto de IA Suspenso pelo CFM', 'Jurídico / Regulatório', 'Descontinuado após resolução normativa de homologação de IA.')" title="Editar Motivo">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 rounded-lg text-text-secondary hover:text-success-text hover:bg-surface-subtle transition-colors" onclick="toggleRowStatus(this)" title="Reativar Motivo">
+<span class="material-symbols-outlined text-[18px]">play_circle</span>
+</button>
+<button class="p-1.5 rounded-lg text-text-secondary hover:text-danger-text hover:bg-surface-subtle transition-colors" onclick="deleteCustomReason('Projeto de IA Suspenso pelo CFM')" title="Excluir">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footer / Pagination -->
+<div class="px-space-lg py-space-md bg-surface-card flex flex-col sm:flex-row items-center justify-between gap-space-md border-t border-surface-subtle">
+<span class="font-body-sm text-body-sm text-text-muted">
+        Exibindo <span class="text-text-primary font-semibold">7</span> de <span class="text-text-primary font-semibold">12</span> motivos cadastrados
+      </span>
+<div class="flex items-center gap-space-xs">
+<button class="px-space-md py-1.5 rounded-lg bg-surface-subtle text-text-muted font-label-sm text-label-sm opacity-50 cursor-not-allowed" disabled="">Anterior</button>
+<button class="w-8 h-8 rounded-lg bg-primary text-on-primary font-label-sm text-label-sm font-semibold flex items-center justify-center shadow-sm">1</button>
+<button class="w-8 h-8 rounded-lg bg-surface-subtle hover:bg-surface-container text-text-primary font-label-sm text-label-sm font-semibold flex items-center justify-center transition-colors">2</button>
+<button class="px-space-md py-1.5 rounded-lg bg-surface-subtle hover:bg-surface-container text-text-primary font-label-sm text-label-sm transition-colors">Próximo</button>
+</div>
+</div>
+</div>
+<!-- Section 3: Bottom Intelligence & Loss Insights Section -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-space-lg mt-space-xl">
+<!-- Card Insights: Distribuição por Categoria -->
+<div class="bg-surface-card p-space-lg rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between mb-space-md">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-text-primary">Distribuição por Categoria</span>
+<span class="font-body-sm text-body-sm text-text-muted">Perdas registradas no mês corrente</span>
+</div>
+<div class="w-8 h-8 rounded-lg bg-surface-subtle text-text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">pie_chart</span>
+</div>
+</div>
+<div class="space-y-space-md my-space-xs">
+<div>
+<div class="flex justify-between font-label-sm text-label-sm mb-1">
+<span class="text-text-primary font-medium">Governança Médica / Diretoria</span>
+<span class="text-text-primary font-bold">36.8% (14)</span>
+</div>
+<div class="w-full bg-surface-subtle h-2 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 36.8%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between font-label-sm text-label-sm mb-1">
+<span class="text-text-primary font-medium">Técnica / TI Médica (Prontuário)</span>
+<span class="text-text-primary font-bold">28.9% (11)</span>
+</div>
+<div class="w-full bg-surface-subtle h-2 rounded-full overflow-hidden">
+<div class="bg-primary-container h-full rounded-full" style="width: 28.9%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between font-label-sm text-label-sm mb-1">
+<span class="text-text-primary font-medium">Financeiro / ROI &amp; Mensalidade</span>
+<span class="text-text-primary font-bold">18.4% (7)</span>
+</div>
+<div class="w-full bg-surface-subtle h-2 rounded-full overflow-hidden">
+<div class="bg-warning-text h-full rounded-full" style="width: 18.4%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between font-label-sm text-label-sm mb-1">
+<span class="text-text-primary font-medium">Concorrência &amp; Especializados</span>
+<span class="text-text-primary font-bold">10.5% (4)</span>
+</div>
+<div class="w-full bg-surface-subtle h-2 rounded-full overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 10.5%"></div>
+</div>
+</div>
+</div>
+<div class="p-space-sm bg-surface-subtle rounded-lg mt-space-md flex items-center justify-between text-[11px] text-text-secondary">
+<span>Taxa de churn controlada em 3.2% do faturamento total</span>
+<a class="text-primary font-semibold hover:underline" href="#">Ver BI Comercial →</a>
+</div>
+</div>
+<!-- Card Insights: Plano de Ação Preventivo -->
+<div class="bg-surface-card p-space-lg rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between mb-space-md">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-text-primary">Ação de Retenção Recomendada</span>
+<span class="font-body-sm text-body-sm text-text-muted">Sugestão baseada nos dados de outubro</span>
+</div>
+<div class="w-8 h-8 rounded-lg bg-warning-surface text-warning-text flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">lightbulb</span>
+</div>
+</div>
+<div class="space-y-space-sm">
+<div class="p-space-md rounded-xl bg-info-surface/60 border-l-4 border-primary">
+<div class="flex items-center gap-1 font-label-md text-label-md text-text-primary font-bold">
+<span class="material-symbols-outlined text-[16px] text-primary">psychology</span>
+            Workshops Executivos de Diretoria
+          </div>
+<p class="font-body-sm text-body-sm text-text-secondary mt-1">
+            78% das perdas por "Decisão Adiada" ocorrem porque o diretor clínico não participou do pitch inicial. Sugerimos agendamento conjunto na etapa 4 (Diagnóstico).
+          </p>
+</div>
+<div class="p-space-md rounded-xl bg-surface-subtle">
+<div class="flex items-center gap-1 font-label-md text-label-md text-text-primary font-bold">
+<span class="material-symbols-outlined text-[16px] text-success-text">cable</span>
+            Conectores Rápidos para MV/Tasy
+          </div>
+<p class="font-body-sm text-body-sm text-text-secondary mt-1">
+            Reduziu o churn técnico em 14% em relação ao trimestre anterior via API Evolution.
+          </p>
+</div>
+</div>
+<button class="mt-space-md w-full h-9 bg-surface-subtle hover:bg-surface-container text-text-primary font-label-sm text-label-sm rounded-lg transition-colors flex items-center justify-center gap-1 font-semibold">
+<span class="material-symbols-outlined text-[16px]">menu_book</span> Abrir Playbook de Objeções Médicas
+      </button>
+</div>
+<!-- Card Insights: Quick Cadence Simulator -->
+<div class="bg-surface-card p-space-lg rounded-xl shadow-sm flex flex-col justify-between relative overflow-hidden">
+<div>
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-headline-sm text-headline-sm text-text-primary">Governança Multi-Tenant</span>
+<span class="px-2 py-0.5 rounded font-label-sm text-[10px] bg-primary-fixed text-on-primary-fixed-variant font-bold">Matriz São Lucas</span>
+</div>
+<p class="font-body-sm text-body-sm text-text-secondary mb-space-md">
+          Regras de sincronização com as 3 filiais ativas da rede médica.
+        </p>
+<div class="space-y-space-sm">
+<div class="flex items-center justify-between p-space-sm rounded-lg bg-surface-subtle">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-text-secondary text-[18px]">share</span>
+<span class="font-label-md text-label-md text-text-primary">Sincronizar Motivos com Filiais</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-9 h-5 bg-surface-container-high peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="flex items-center justify-between p-space-sm rounded-lg bg-surface-subtle">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-text-secondary text-[18px]">edit_note</span>
+<span class="font-label-md text-label-md text-text-primary">Exigir Justificativa Textual</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-9 h-5 bg-surface-container-high peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="flex items-center justify-between p-space-sm rounded-lg bg-surface-subtle">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-text-secondary text-[18px]">notification_important</span>
+<span class="font-label-md text-label-md text-text-primary">Alertar Gestor em Perdas &gt; R$ 15k</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-9 h-5 bg-surface-container-high peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</div>
+<div class="mt-space-md pt-space-sm flex items-center justify-between text-text-muted font-body-sm text-body-sm">
+<span>Última auditoria: Hoje às 09:41</span>
+<span class="material-symbols-outlined text-[16px] text-success-text">done_all</span>
+</div>
+</div>
+</div>
+<!-- Modal: Adicionar / Editar Motivo de Perda -->
+<div class="fixed inset-0 z-50 bg-sidebar-surface/60 backdrop-blur-sm hidden flex items-center justify-center p-space-md" id="reasonModal">
+<div class="bg-surface-card w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+<!-- Modal Header -->
+<div class="px-space-lg py-space-md bg-surface-card border-b border-surface-subtle flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-9 h-9 rounded-xl bg-primary-fixed/40 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">rule_folder</span>
+</div>
+<div class="flex flex-col">
+<h3 class="font-headline-md text-headline-md text-text-primary" id="modalTitle">Novo Motivo de Perda</h3>
+<span class="font-body-sm text-body-sm text-text-muted">Configuração para a unidade Clínica São Lucas</span>
+</div>
+</div>
+<button class="p-1 rounded-lg text-text-muted hover:text-text-primary hover:bg-surface-subtle transition-colors" onclick="toggleModal(false)">
+<span class="material-symbols-outlined text-[22px]">close</span>
+</button>
+</div>
+<!-- Modal Body -->
+<form class="p-space-lg space-y-space-md" id="reasonForm" onsubmit="saveReason(event)">
+<div>
+<label class="block font-label-md text-label-md text-text-primary mb-1">
+            Nome do Motivo de Perda <span class="text-danger-text">*</span>
+</label>
+<input class="w-full h-10 px-space-md bg-surface-subtle rounded-lg font-body-sm text-body-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-border-focus" id="formReasonName" placeholder="Ex: Concorrente Ofereceu Módulo Laboratorial Gratuito" required="" type="text"/>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
+<div>
+<label class="block font-label-md text-label-md text-text-primary mb-1">
+              Categoria Clínica/Comercial <span class="text-danger-text">*</span>
+</label>
+<select class="w-full h-10 px-space-md bg-surface-subtle rounded-lg font-body-sm text-body-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-border-focus cursor-pointer" id="formReasonCategory" required="">
+<option value="Orçamento / Financeiro">Orçamento / Financeiro</option>
+<option value="Governança Hospitalar">Governança Hospitalar</option>
+<option value="Técnica / TI Médica">Técnica / TI Médica</option>
+<option value="Concorrência">Concorrência</option>
+<option value="Régua Comercial">Régua Comercial</option>
+<option value="Cadastral">Cadastral</option>
+<option value="Jurídico / Regulatório">Jurídico / Regulatório</option>
+</select>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-text-primary mb-1">
+              Natureza do Registro
+            </label>
+<input class="w-full h-10 px-space-md bg-surface-container-high/60 rounded-lg font-body-sm text-body-sm text-text-secondary cursor-not-allowed" readonly="" type="text" value="Personalizado (Clínica)"/>
+</div>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-text-primary mb-1">
+            Descrição Operacional e Orientação para o Vendedor
+          </label>
+<textarea class="w-full p-space-md bg-surface-subtle rounded-lg font-body-sm text-body-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-border-focus resize-none" id="formReasonDesc" placeholder="Detalhe o cenário em que o SDR/Closer deve selecionar este motivo para que o algoritmo de qualificação aprenda o padrão de perda..." rows="3"></textarea>
+</div>
+<div class="p-space-md bg-surface-subtle rounded-xl flex items-start gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[20px] shrink-0 mt-0.5">verified</span>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-text-primary font-bold">Impacto no Pipeline Kanban</span>
+<p class="font-body-sm text-[12px] text-text-secondary">
+              Ao ser ativado, este motivo aparecerá imediatamente no modal de confirmação de perda na etapa 15 de todos os vendedores e SDRs da equipe.
+            </p>
+</div>
+</div>
+<!-- Modal Footer Actions -->
+<div class="pt-space-md flex items-center justify-end gap-space-sm border-t border-surface-subtle">
+<button class="h-10 px-space-lg bg-surface-subtle hover:bg-surface-container text-text-primary font-label-md text-label-md rounded-lg transition-colors" onclick="toggleModal(false)" type="button">
+            Cancelar
+          </button>
+<button class="h-10 px-space-xl bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md rounded-lg shadow-sm transition-all active:scale-[0.98]" type="submit">
+            Salvar Motivo
+          </button>
+</div>
+</form>
+</div>
+</div>
+<!-- Drawer Lateral: Diretrizes do Requisito Bloqueante -->
+<div class="fixed inset-0 z-50 bg-sidebar-surface/50 backdrop-blur-sm hidden justify-end" id="infoDrawer">
+<div class="bg-surface-card w-full max-w-md h-full shadow-2xl p-space-lg flex flex-col justify-between overflow-y-auto animate-in slide-in-from-right duration-200">
+<div>
+<div class="flex items-center justify-between pb-space-md border-b border-surface-subtle mb-space-md">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[22px]">gavel</span>
+<span class="font-headline-md text-headline-md text-text-primary">Diretrizes US-032 / US-061</span>
+</div>
+<button class="p-1 rounded-lg text-text-muted hover:text-text-primary hover:bg-surface-subtle transition-colors" onclick="toggleInfoDrawer()">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<div class="space-y-space-md">
+<div class="p-space-md bg-info-surface rounded-xl text-info-text">
+<h4 class="font-label-md text-label-md font-bold mb-1">Por que os motivos são bloqueantes?</h4>
+<p class="font-body-sm text-[12px] leading-relaxed">
+              No MedCRM, a integridade da conversão comercial no setor de saúde exige rastreabilidade total. O fechamento como "Perdido" alimenta a matriz de perda de mercado da MedGuia, recalibrando pontuações de Fit Score de novos leads.
+            </p>
+</div>
+<div class="space-y-space-sm">
+<span class="font-label-md text-label-md text-text-primary font-bold">Regras de Proteção Sistêmica:</span>
+<ul class="space-y-2 text-text-secondary font-body-sm text-body-sm">
+<li class="flex items-start gap-2">
+<span class="material-symbols-outlined text-success-text text-[18px] shrink-0">check_circle</span>
+<span><strong>5 Motivos Fixos:</strong> Garantem que métricas macro entre hospitais e clínicas da base MedCRM sejam compatíveis e comparáveis.</span>
+</li>
+<li class="flex items-start gap-2">
+<span class="material-symbols-outlined text-success-text text-[18px] shrink-0">check_circle</span>
+<span><strong>Justificativa Textual:</strong> Mínimo de 30 caracteres para que o gestor possa entender a objeção real do médico responsável.</span>
+</li>
+<li class="flex items-start gap-2">
+<span class="material-symbols-outlined text-success-text text-[18px] shrink-0">check_circle</span>
+<span><strong>Histórico Imutável:</strong> Motivos já utilizados em cards anteriores não podem ser apagados se houver histórico de churn atrelado.</span>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="pt-space-md border-t border-surface-subtle">
+<button class="w-full h-10 bg-primary text-on-primary font-label-md text-label-md rounded-lg shadow-sm hover:bg-primary-container transition-colors" onclick="toggleInfoDrawer()">
+          Entendido
+        </button>
+</div>
+</div>
+</div>
+<!-- Notification Toast Container -->
+<div class="fixed bottom-space-lg right-space-lg z-50 bg-sidebar-surface text-on-primary px-space-lg py-space-md rounded-xl shadow-2xl hidden items-center gap-space-sm" id="toast">
+<span class="material-symbols-outlined text-success-text text-[20px]" id="toastIcon">check_circle</span>
+<span class="font-label-md text-label-md" id="toastMessage">Operação realizada com sucesso!</span>
+</div>
+<!-- Interactive JavaScript logic -->
+<script>
+    function toggleModal(show) {
+      const modal = document.getElementById('reasonModal');
+      if (show) {
+        modal.classList.remove('hidden');
+        document.getElementById('modalTitle').innerText = 'Novo Motivo de Perda';
+        document.getElementById('reasonForm').reset();
+      } else {
+        modal.classList.add('hidden');
+      }
+    }
+
+    function toggleInfoDrawer() {
+      const drawer = document.getElementById('infoDrawer');
+      if (drawer.classList.contains('hidden')) {
+        drawer.classList.remove('hidden');
+        drawer.classList.add('flex');
+      } else {
+        drawer.classList.add('hidden');
+        drawer.classList.remove('flex');
+      }
+    }
+
+    function showToast(msg, isSuccess = true) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMessage');
+      const toastIcon = document.getElementById('toastIcon');
+
+      toastMsg.innerText = msg;
+      toastIcon.innerText = isSuccess ? 'check_circle' : 'warning';
+      toastIcon.className = `material-symbols-outlined text-[20px] ${isSuccess ? 'text-success-text' : 'text-danger-text'}`;
+
+      toast.classList.remove('hidden');
+      toast.classList.add('flex');
+
+      setTimeout(() => {
+        toast.classList.add('hidden');
+        toast.classList.remove('flex');
+      }, 3500);
+    }
+
+    function exportCSV() {
+      showToast('Exportando relatório comercial consolidado de churn em .CSV...');
+    }
+
+    function filterTable() {
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      const statusFilter = document.getElementById('statusFilter').value;
+      const rows = document.querySelectorAll('#reasonsTable tbody tr');
+
+      rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        const rowType = row.getAttribute('data-type');
+        const rowStatus = row.getAttribute('data-status');
+
+        const matchesSearch = text.includes(search);
+        const matchesStatus = (statusFilter === 'all') || (rowStatus === statusFilter);
+        const matchesType = (currentTypeFilter === 'all') || (rowType === currentTypeFilter);
+
+        if (matchesSearch && matchesStatus && matchesType) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+
+    let currentTypeFilter = 'all';
+    function setTypeFilter(type) {
+      currentTypeFilter = type;
+      
+      const buttons = [
+        { id: 'btn-type-all', type: 'all' },
+        { id: 'btn-type-sistemico', type: 'sistemico' },
+        { id: 'btn-type-personalizado', type: 'personalizado' }
+      ];
+
+      buttons.forEach(btn => {
+        const elem = document.getElementById(btn.id);
+        if (btn.type === type) {
+          elem.className = 'px-space-md py-1.5 rounded-lg font-label-sm text-label-sm font-semibold bg-surface-card text-text-primary shadow-sm transition-all';
+        } else {
+          elem.className = 'px-space-md py-1.5 rounded-lg font-label-sm text-label-sm text-text-secondary hover:text-text-primary transition-all';
+        }
+      });
+
+      filterTable();
+    }
+
+    function resetFilters() {
+      document.getElementById('searchInput').value = '';
+      document.getElementById('statusFilter').value = 'all';
+      setTypeFilter('all');
+      filterTable();
+      showToast('Filtros redefinidos');
+    }
+
+    function toggleSelectAll(masterCheckbox) {
+      const checkboxes = document.querySelectorAll('.row-checkbox');
+      checkboxes.forEach(cb => cb.checked = masterCheckbox.checked);
+    }
+
+    function toggleRowStatus(btn) {
+      const row = btn.closest('tr');
+      const isCurrentlyActive = row.getAttribute('data-status') === 'ativo';
+      const statusCell = row.children[5];
+
+      if (isCurrentlyActive) {
+        row.setAttribute('data-status', 'inativo');
+        row.classList.add('opacity-75');
+        statusCell.innerHTML = `
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-label-sm text-label-sm bg-surface-subtle text-text-muted font-bold">
+            <span class="w-2 h-2 rounded-full bg-text-muted"></span> Inativo
+          </span>
+        `;
+        btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">play_circle</span>';
+        btn.title = 'Reativar Motivo';
+        showToast('Motivo desativado no pipeline');
+      } else {
+        row.setAttribute('data-status', 'ativo');
+        row.classList.remove('opacity-75');
+        statusCell.innerHTML = `
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-label-sm text-label-sm bg-success-surface text-success-text font-bold">
+            <span class="w-2 h-2 rounded-full bg-success-text"></span> Ativo
+          </span>
+        `;
+        btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">pause_circle</span>';
+        btn.title = 'Pausar / Desativar';
+        showToast('Motivo ativado com sucesso');
+      }
+    }
+
+    function deleteCustomReason(name) {
+      if (confirm(`Tem certeza que deseja excluir o motivo personalizado "${name}"?\nEsta ação requer conformidade com o histórico comercial.`)) {
+        showToast(`Motivo "${name}" excluído do catálogo.`);
+      }
+    }
+
+    function editReason(name, category, desc) {
+      document.getElementById('modalTitle').innerText = 'Editar Motivo de Perda';
+      document.getElementById('formReasonName').value = name;
+      document.getElementById('formReasonCategory').value = category;
+      document.getElementById('formReasonDesc').value = desc;
+      document.getElementById('reasonModal').classList.remove('hidden');
+    }
+
+    function previewReason(name, cat, type, losses) {
+      showToast(`Visualizando métricas consolidadas de: ${name} (${losses} perdas)`);
+    }
+
+    function saveReason(e) {
+      e.preventDefault();
+      const name = document.getElementById('formReasonName').value;
+      toggleModal(false);
+      showToast(`Motivo "${name}" cadastrado e disponível no pipeline.`);
+    }
+  </script>
+</div></main></div></body></html>

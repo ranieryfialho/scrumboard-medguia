@@ -1,0 +1,120 @@
+{
+  "runId": "scrumboard-medguia-fase4-design-system-shell-acesso-mvp6um2a",
+  "feature": "fase4-design-system-shell-acesso",
+  "agent": "claude",
+  "modo": "sequencial",
+  "paralelizar": null,
+  "modeloForcado": null,
+  "esforcoForcado": null,
+  "geradoEm": "2026-10-26 11:43",
+  "branchTrabalho": "spec/fase4-design-system-shell-acesso",
+  "baseDir": ".spec/features/fase4-design-system-shell-acesso",
+  "specDir": ".spec",
+  "repoName": "scrumboard-medguia",
+  "logsDir": "../onp-worktrees/scrumboard-medguia-fase4-design-system-shell-acesso-logs",
+  "ondas": [],
+  "faixas": [],
+  "sequenciais": [
+    {
+      "id": "T-148",
+      "titulo": "Tela de login",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "src/app/(auth)/login/page.tsx",
+        "src/components/auth/formulario-login.tsx",
+        "test/components/auth/login.test.tsx"
+      ],
+      "refs": [
+        "AC-358",
+        "AC-359",
+        "AC-360",
+        "AC-361"
+      ]
+    },
+    {
+      "id": "T-149",
+      "titulo": "Tela de esqueci minha senha",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/app/(auth)/esqueci-senha/page.tsx",
+        "src/components/auth/formulario-esqueci-senha.tsx",
+        "test/components/auth/esqueci-senha.test.tsx"
+      ],
+      "refs": [
+        "AC-363",
+        "AC-366"
+      ]
+    },
+    {
+      "id": "T-150",
+      "titulo": "Tela de redefinir senha",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "src/app/(auth)/redefinir-senha/[token]/page.tsx",
+        "src/components/auth/formulario-redefinir-senha.tsx",
+        "test/components/auth/redefinir-senha.test.tsx"
+      ],
+      "refs": [
+        "AC-367",
+        "AC-368"
+      ]
+    },
+    {
+      "id": "T-151",
+      "titulo": "Tela de convite",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "src/app/(auth)/convite/[token]/page.tsx",
+        "src/components/auth/formulario-convite.tsx",
+        "test/components/auth/convite.test.tsx"
+      ],
+      "refs": [
+        "AC-372"
+      ]
+    },
+    {
+      "id": "T-152",
+      "titulo": "Tela de sem acesso e sessão expirada",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/app/(auth)/sem-acesso/page.tsx",
+        "src/components/auth/painel-sem-acesso.tsx",
+        "src/lib/auth/nomes-de-rotas.ts",
+        "test/components/auth/sem-acesso.test.tsx"
+      ],
+      "refs": [
+        "AC-375",
+        "AC-376",
+        "AC-377"
+      ]
+    },
+    {
+      "id": "T-153",
+      "titulo": "Garantia transversal: nenhuma tela de acesso traz artefato do protótipo",
+      "modelo": "claude-sonnet-5",
+      "esforco": "low",
+      "arquivos": [
+        "test/components/auth/sem-artefatos.test.tsx"
+      ],
+      "refs": [
+        "AC-347"
+      ]
+    }
+  ],
+  "concluidas": [
+    "T-140",
+    "T-141",
+    "T-142",
+    "T-143",
+    "T-144",
+    "T-145",
+    "T-146",
+    "T-147"
+  ],
+  "avisos": []
+}

@@ -4,6 +4,190 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/*
+ * T-140 (fase4-design-system-shell-acesso, AC-345/AC-346): tokens de cor,
+ * espaçamento, tipografia (tamanho e família) do protótipo Stitch, portados
+ * do `tailwind.config` de `docs/ui/stitch_medcrm_interface_design/*​/code.html`
+ * (ASM-124: valores do código, não do texto do DESIGN.md).
+ * ASM-125: estes tokens substituem os do shadcn — os componentes legados
+ * herdam a nova identidade.
+ */
+@theme {
+  /* --color-primary, --color-secondary e --color-background não entram aqui:
+   * o shadcn já registra esses nomes via `@theme inline` apontando para
+   * `--primary`/`--secondary`/`--background` (ver :root); uma segunda
+   * declaração aqui perderia para a do shadcn (ASM-125) — por isso os
+   * valores do protótipo são aplicados direto nessas variáveis em :root. */
+  --color-primary-container: #366ee3;
+  --color-primary-fixed: #dae2ff;
+  --color-primary-fixed-dim: #b1c5ff;
+  --color-on-primary: #ffffff;
+  --color-on-primary-container: #fefcff;
+  --color-on-primary-fixed: #001847;
+  --color-on-primary-fixed-variant: #0040a0;
+
+  --color-secondary-container: #d7dffd;
+  --color-secondary-fixed: #dae2ff;
+  --color-secondary-fixed-dim: #bec6e3;
+  --color-on-secondary: #ffffff;
+  --color-on-secondary-container: #5a627b;
+  --color-on-secondary-fixed: #131b30;
+  --color-on-secondary-fixed-variant: #3e465e;
+
+  --color-tertiary: #924700;
+  --color-tertiary-container: #b85b00;
+  --color-tertiary-fixed: #ffdcc7;
+  --color-tertiary-fixed-dim: #ffb787;
+  --color-on-tertiary: #ffffff;
+  --color-on-tertiary-container: #fffbff;
+  --color-on-tertiary-fixed: #311300;
+  --color-on-tertiary-fixed-variant: #723600;
+
+  --color-error: #ba1a1a;
+  --color-error-container: #ffdad6;
+  --color-on-error: #ffffff;
+  --color-on-error-container: #93000a;
+
+  --color-background-canvas: #f4f6fa;
+  --color-on-background: #191b22;
+
+  --color-surface: #faf8ff;
+  --color-surface-card: #ffffff;
+  --color-surface-dim: #d9d9e3;
+  --color-surface-bright: #faf8ff;
+  --color-surface-subtle: #f8fafc;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f3f3fd;
+  --color-surface-container: #ededf7;
+  --color-surface-container-high: #e7e7f2;
+  --color-surface-container-highest: #e1e2ec;
+  --color-surface-variant: #e1e2ec;
+  --color-surface-tint: #1157cb;
+
+  --color-on-surface: #191b22;
+  --color-on-surface-variant: #434654;
+
+  --color-inverse-surface: #2e3038;
+  --color-inverse-on-surface: #f0f0fa;
+  --color-inverse-primary: #b1c5ff;
+
+  --color-outline: #737785;
+  --color-outline-variant: #c3c6d6;
+  --color-border-subtle: #e2e8f0;
+  --color-border-focus: #93c5fd;
+
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #64748b;
+  --color-text-muted: #94a3b8;
+
+  --color-sidebar-surface: #1e293b;
+  --color-sidebar-surface-active: #2d3748;
+
+  --color-success-surface: #d1fae5;
+  --color-success-border: #a7f3d0;
+  --color-success-text: #059669;
+
+  --color-warning-surface: #fef3c7;
+  --color-warning-border: #fde68a;
+  --color-warning-text: #d97706;
+
+  --color-danger-surface: #fee2e2;
+  --color-danger-border: #fecaca;
+  --color-danger-text: #dc2626;
+
+  --color-info-surface: #eff6ff;
+  --color-info-border: #bfdbfe;
+  --color-info-text: #2563eb;
+
+  --spacing-space-xs: 0.25rem;
+  --spacing-space-sm: 0.5rem;
+  --spacing-space-md: 0.875rem;
+  --spacing-space-lg: 1.25rem;
+  --spacing-space-xl: 1.75rem;
+  --spacing-space-2xl: 2.5rem;
+  --spacing-gutter-sm: 0.75rem;
+  --spacing-gutter: 1.25rem;
+  --spacing-gutter-lg: 1.5rem;
+  --spacing-margin: 1.75rem;
+  --spacing-margin-mobile: 1rem;
+
+  --font-headline-sm: var(--font-plus-jakarta-sans), sans-serif;
+  --font-headline-md: var(--font-plus-jakarta-sans), sans-serif;
+  --font-headline-lg: var(--font-plus-jakarta-sans), sans-serif;
+  --font-display-lg: var(--font-plus-jakarta-sans), sans-serif;
+  --font-display-lg-mobile: var(--font-plus-jakarta-sans), sans-serif;
+  --font-metric-stat: var(--font-plus-jakarta-sans), sans-serif;
+  --font-label-sm: var(--font-inter), sans-serif;
+  --font-label-md: var(--font-inter), sans-serif;
+  --font-label-lg: var(--font-inter), sans-serif;
+  --font-body-sm: var(--font-inter), sans-serif;
+  --font-body-md: var(--font-inter), sans-serif;
+  --font-body-lg: var(--font-inter), sans-serif;
+  --font-table-header: var(--font-inter), sans-serif;
+
+  --text-headline-sm: 16px;
+  --text-headline-sm--line-height: 24px;
+  --text-headline-sm--font-weight: 600;
+  --text-headline-md: 20px;
+  --text-headline-md--line-height: 28px;
+  --text-headline-md--font-weight: 600;
+  --text-headline-lg: 24px;
+  --text-headline-lg--line-height: 32px;
+  --text-headline-lg--letter-spacing: -0.01em;
+  --text-headline-lg--font-weight: 600;
+  --text-display-lg: 32px;
+  --text-display-lg--line-height: 40px;
+  --text-display-lg--letter-spacing: -0.02em;
+  --text-display-lg--font-weight: 700;
+  --text-display-lg-mobile: 26px;
+  --text-display-lg-mobile--line-height: 34px;
+  --text-display-lg-mobile--letter-spacing: -0.01em;
+  --text-display-lg-mobile--font-weight: 700;
+  --text-metric-stat: 28px;
+  --text-metric-stat--line-height: 36px;
+  --text-metric-stat--letter-spacing: -0.02em;
+  --text-metric-stat--font-weight: 700;
+  --text-label-sm: 11px;
+  --text-label-sm--line-height: 14px;
+  --text-label-sm--letter-spacing: 0.03em;
+  --text-label-sm--font-weight: 600;
+  --text-label-md: 12px;
+  --text-label-md--line-height: 16px;
+  --text-label-md--font-weight: 500;
+  --text-label-lg: 13px;
+  --text-label-lg--line-height: 18px;
+  --text-label-lg--font-weight: 600;
+  --text-body-sm: 12px;
+  --text-body-sm--line-height: 16px;
+  --text-body-md: 13px;
+  --text-body-md--line-height: 20px;
+  --text-body-lg: 15px;
+  --text-body-lg--line-height: 22px;
+  --text-table-header: 11px;
+  --text-table-header--line-height: 16px;
+  --text-table-header--letter-spacing: 0.05em;
+  --text-table-header--font-weight: 600;
+}
+
+/* Material Symbols Outlined (AC-346): classe de exibição do ícone — o
+ * `@font-face` vem do `<link>` carregado em `layout.tsx`; a variação `FILL`
+ * é aplicada por elemento via `style="font-variation-settings: 'FILL' 1"`,
+ * como no protótipo. */
+.material-symbols-outlined {
+  font-family: "Material Symbols Outlined";
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  font-variation-settings: "FILL" 0;
+  -webkit-font-smoothing: antialiased;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -49,16 +233,20 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
+  /* --background, --primary, --secondary e --foreground vêm do protótipo
+   * Stitch (T-140, AC-345/ASM-125): o shadcn mapeia bg-primary etc. para
+   * essas mesmas variáveis via `@theme inline` acima, então sobrescrevê-las
+   * aqui já troca a identidade em todos os componentes `src/components/ui/*`. */
+  --background: #faf8ff;
   --foreground: oklch(0.129 0.042 264.695);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.129 0.042 264.695);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
-  --primary-foreground: oklch(0.984 0.003 247.858);
-  --secondary: oklch(0.968 0.007 247.896);
-  --secondary-foreground: oklch(0.208 0.042 265.755);
+  --primary: #0954c9;
+  --primary-foreground: #ffffff;
+  --secondary: #565e77;
+  --secondary-foreground: #ffffff;
   --muted: oklch(0.968 0.007 247.896);
   --muted-foreground: oklch(0.554 0.046 257.417);
   --accent: oklch(0.968 0.007 247.896);

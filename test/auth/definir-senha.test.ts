@@ -8,7 +8,7 @@ import { Pool } from 'pg';
 import { eq } from 'drizzle-orm';
 
 import { subirPostgresEfemero, type PostgresEfemero } from '../support/postgres-efemero';
-import { contas, tokensVerificacao } from '../../src/db/schema';
+import { contas, tokensVerificacao, usuarios } from '../../src/db/schema';
 import { convidarUsuario, type AtorConvite } from '../../src/lib/auth/convites';
 import {
   definirSenhaComToken,
@@ -74,6 +74,29 @@ describe('T-029: definição de senha a partir do convite', () => {
         .from(tokensVerificacao)
         .where(eq(tokensVerificacao.valor, convite.token));
       expect(tokensRestantes).toHaveLength(0);
+    });
+
+    test('nome informado na ativação do convite substitui o placeholder (ASM-127)', async () => {
+      const email = 'convidado.nome@teste.com';
+      const convite = await convidarUsuario(db, ATOR_MASTER, { email, papel: 'ATENDENTE' });
+
+      const antes = await db.select().from(usuarios).where(eq(usuarios.id, convite.usuarioId));
+      expect(antes[0].nome).toBe(email);
+
+      await definirSenhaComToken(db, convite.token, 'senha-com-nome', { nome: 'Dra. Juliana Lopes' });
+
+      const depois = await db.select().from(usuarios).where(eq(usuarios.id, convite.usuarioId));
+      expect(depois[0].nome).toBe('Dra. Juliana Lopes');
+    });
+
+    test('sem nome informado, o placeholder do convite é preservado', async () => {
+      const email = 'convidado.sem.nome@teste.com';
+      const convite = await convidarUsuario(db, ATOR_MASTER, { email, papel: 'ATENDENTE' });
+
+      await definirSenhaComToken(db, convite.token, 'senha-sem-nome');
+
+      const depois = await db.select().from(usuarios).where(eq(usuarios.id, convite.usuarioId));
+      expect(depois[0].nome).toBe(email);
     });
   });
 
