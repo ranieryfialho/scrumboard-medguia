@@ -60,7 +60,7 @@
 - Esforço: alto
 - Notas: achado pelo agente da T-160: o modal "Novo Lead" precisa criar um lead novo, e hoje `POST /api/oportunidades` só aceita `leadId` de lead existente (e não aceita valor nem responsável). Estende o `POST` de forma **aditiva**: continua aceitando `{ leadId }`; passa a aceitar também `{ novoLead: { nome, telefone, email?, origem }, valor?, responsavelId? }`, criando lead e card na etapa "Entrada de leads" em **uma transação** (se uma parte falha, nada é gravado). Usa `criarLead` e `criarOportunidade` já existentes, sem migration. Valida: nome, telefone e origem obrigatórios (400 com o campo); `responsavelId` precisa ser de usuário ativo da mesma empresa (senão 400); telefone normalizado para E.164 como no resto do sistema; mesmas permissões de hoje (ATENDENTE, GERENTE e MASTER criam card). Roda antes de T-160.
 
-## T-160 — Tela do funil (Kanban) com indicadores, filtros e novo lead [pendente]
+## T-160 — Tela do funil (Kanban) com indicadores, filtros e novo lead [concluida]
 - Refs: AC-387, AC-388, AC-390, AC-391, AC-392, AC-393
 - Arquivos: src/app/(app)/pipeline/page.tsx, src/components/pipeline/board-kanban.tsx, src/components/pipeline/coluna-etapa.tsx, src/components/pipeline/card-oportunidade.tsx, src/components/pipeline/filtros-funil.tsx, src/components/pipeline/modal-novo-lead.tsx, src/components/pipeline/indicadores-funil.tsx, test/components/pipeline/funil.test.tsx, test/components/pipeline/modal-novo-lead.test.tsx
 - Esforço: xalto
