@@ -36,8 +36,7 @@
 - Esforço: alto
 - Notas: reabrir usa a transição existente (`14→5` e `15→13`, com justificativa) mais uma checagem de papel por cima: só MASTER e GERENTE, ATENDENTE recebe 403 (ASM-138; o grafo do seed permite os três papéis e não é alterado). Anotação = evento `anotacao` em `atividades` com texto e autor (ASM-139; confirmar na tarefa se `atividades.tipo` aceita o valor sem migration, senão parar e perguntar).
 
-## T-157 — Linha do tempo do card [pendente]
-
+## T-157 — Linha do tempo do card [concluida]
 - Refs: AC-407, AC-408
 - Arquivos: src/app/api/oportunidades/[id]/linha-do-tempo/route.ts, src/repositories/linha-do-tempo.ts, test/api/pipeline-linha-do-tempo.test.ts
 - Esforço: medio
