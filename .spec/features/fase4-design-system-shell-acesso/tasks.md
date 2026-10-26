@@ -81,8 +81,7 @@
 - Esforço: medio
 - Notas: fonte visual `2._esqueci_senha_recuperar_senha/code.html`. O prazo exibido é 24 horas (não os 30 minutos do protótipo).
 
-## T-150 — Tela de redefinir senha [pendente]
-
+## T-150 — Tela de redefinir senha [concluida]
 - Refs: AC-367, AC-368
 - Arquivos: src/app/(auth)/redefinir-senha/[token]/page.tsx, src/components/auth/formulario-redefinir-senha.tsx, test/components/auth/redefinir-senha.test.tsx
 - Esforço: alto
