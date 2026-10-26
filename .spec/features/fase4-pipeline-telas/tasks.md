@@ -18,8 +18,7 @@
     (atalho: `onp-spec tarefa <feature> <T-xxx> <status>`)
 -->
 
-## T-154 — Consultas do servidor: lista paginada, arquivados e indicadores [pendente]
-
+## T-154 — Consultas do servidor: lista paginada, arquivados e indicadores [concluida]
 - Refs: AC-389, AC-395, AC-396, AC-397, AC-398, AC-402, AC-403
 - Arquivos: src/repositories/pipeline-lista.ts, src/repositories/pipeline-indicadores.ts, test/repositories/pipeline-lista.test.ts
 - Esforço: alto
