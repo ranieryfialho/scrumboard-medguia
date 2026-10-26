@@ -78,8 +78,7 @@
 - Esforço: alto
 - Notas: fonte visual `docs/ui/stitch_medcrm_interface_design/8._pipeline_arquivados_cards_arquivados/`. Abas Todos, Ganhos e Perdidos com contagem. "Reabrir" pede a justificativa e chama a rota de T-156; desabilitado para ATENDENTE. "Exportar Relatório", "Análise de Motivos de Perda", "Top Fechamentos" e "Playbook de Reversão" ficam "em breve". Depende de T-155, T-156, T-158 e T-159.
 
-## T-163 — Tela de detalhe do card [pendente]
-
+## T-163 — Tela de detalhe do card [concluida]
 - Refs: AC-406, AC-407, AC-408, AC-409, AC-410, AC-411, AC-412
 - Arquivos: src/app/(app)/pipeline/[id]/page.tsx, src/components/pipeline/detalhe/cabecalho-card.tsx, src/components/pipeline/detalhe/jornada.tsx, src/components/pipeline/detalhe/informacoes.tsx, src/components/pipeline/detalhe/linha-do-tempo.tsx, src/components/pipeline/detalhe/registro-rapido.tsx, src/app/api/oportunidades/[id]/route.ts, test/components/pipeline/detalhe.test.tsx
 - Esforço: xalto

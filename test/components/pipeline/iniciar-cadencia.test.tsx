@@ -8,9 +8,14 @@ import userEvent from "@testing-library/user-event";
 
 import { BotaoIniciarCadencia } from "../../../src/components/pipeline/botao-iniciar-cadencia";
 import { CardOportunidade, type CardBoard } from "../../../src/components/pipeline/card-oportunidade";
-import DetalheOportunidadePage from "../../../src/app/pipeline/[id]/page";
+// T-164 (fase4-pipeline-telas, AC-415): a tela antiga `src/app/pipeline/[id]/page.tsx`
+// saiu de cena (rota duplicada); estes testes passam a provar o botão
+// "Iniciar cadência" contra a tela nova, que o embarca por compatibilidade
+// (ver comentário em `src/app/(app)/pipeline/[id]/page.tsx`).
+import PipelineDetalhePage from "../../../src/app/(app)/pipeline/[id]/page";
 
 const CARD_ID = "ffffffff-0000-0000-0000-0000000000c1";
+const LEAD_ID = "lead-1";
 
 function resposta(status: number, corpo: unknown) {
   return Promise.resolve({ ok: status >= 200 && status < 300, status, json: () => Promise.resolve(corpo) });
@@ -20,7 +25,7 @@ function cardBoard(overrides: Partial<CardBoard> = {}): CardBoard {
   return {
     id: CARD_ID,
     etapaId: 1,
-    leadId: "lead-1",
+    leadId: LEAD_ID,
     leadNome: "Maria Souza",
     responsavelId: null,
     responsavelNome: null,
@@ -32,24 +37,57 @@ function cardBoard(overrides: Partial<CardBoard> = {}): CardBoard {
 
 const DETALHE = {
   id: CARD_ID,
+  leadId: LEAD_ID,
   etapaId: 1,
   leadNome: "Maria Souza",
+  origem: null,
+  email: null,
+  criadoEm: new Date().toISOString(),
+  responsavelId: null,
   responsavelNome: null,
   valor: null,
-  motivoPerdaNome: null,
   proximaAcaoEm: null,
   version: 3,
 };
 
-async function renderDetalhe(id: string) {
+/** Roteador mínimo da tela nova: card, grafo, telefones e linha do tempo, além da cadência sob teste. */
+function roteador(detalheAtual: typeof DETALHE, respostaCadencia?: () => Promise<unknown>) {
+  return (url: string, init?: RequestInit) => {
+    const analisada = new URL(url, "http://localhost");
+    const caminho = analisada.pathname;
+    const metodo = init?.method ?? "GET";
+
+    if (caminho === `/api/oportunidades/${CARD_ID}` && metodo === "GET") {
+      return resposta(200, detalheAtual);
+    }
+    if (caminho === "/api/oportunidades" && metodo === "GET") {
+      return resposta(200, { itens: [], grafo: {} });
+    }
+    if (caminho === `/api/leads/${detalheAtual.leadId}/telefones`) {
+      return resposta(200, { telefones: [] });
+    }
+    if (caminho === `/api/oportunidades/${CARD_ID}/linha-do-tempo` && metodo === "GET") {
+      return resposta(200, { itens: [], totalInteracoes: 0 });
+    }
+    if (caminho === `/api/oportunidades/${CARD_ID}/cadencia/iniciar` && metodo === "POST" && respostaCadencia) {
+      return respostaCadencia();
+    }
+    return resposta(404, { codigo: "NAO_MAPEADO_NO_TESTE" });
+  };
+}
+
+async function renderDetalhe(id: string, detalheAtual: typeof DETALHE = DETALHE, respostaCadencia?: () => Promise<unknown>) {
+  fetchFalsoGlobal.mockImplementation(roteador(detalheAtual, respostaCadencia));
   await act(async () => {
     render(
       <Suspense fallback={null}>
-        <DetalheOportunidadePage params={Promise.resolve({ id })} />
+        <PipelineDetalhePage params={Promise.resolve({ id })} />
       </Suspense>
     );
   });
 }
+
+let fetchFalsoGlobal: ReturnType<typeof vi.fn>;
 
 describe("T-099: botão Iniciar cadência", () => {
   const fetchOriginal = globalThis.fetch;
@@ -57,6 +95,7 @@ describe("T-099: botão Iniciar cadência", () => {
 
   beforeEach(() => {
     fetchFalso = vi.fn();
+    fetchFalsoGlobal = fetchFalso;
     globalThis.fetch = fetchFalso as unknown as typeof fetch;
   });
 
@@ -77,15 +116,13 @@ describe("T-099: botão Iniciar cadência", () => {
     });
 
     test("detalhe: etapaId 1 mostra o botão @spec:AC-214", async () => {
-      fetchFalso.mockReturnValue(resposta(200, DETALHE));
-      await renderDetalhe(CARD_ID);
+      await renderDetalhe(CARD_ID, DETALHE);
 
       await waitFor(() => expect(screen.getByRole("button", { name: "Iniciar cadência" })).toBeTruthy());
     });
 
     test("detalhe: outra etapa não mostra o botão @spec:AC-214", async () => {
-      fetchFalso.mockReturnValue(resposta(200, { ...DETALHE, etapaId: 5 }));
-      await renderDetalhe(CARD_ID);
+      await renderDetalhe(CARD_ID, { ...DETALHE, etapaId: 5 });
 
       await waitFor(() => expect(screen.queryByText("Maria Souza")).toBeTruthy());
       expect(screen.queryByRole("button", { name: "Iniciar cadência" })).toBeNull();
@@ -136,13 +173,11 @@ describe("T-099: botão Iniciar cadência", () => {
     });
 
     test("detalhe: sucesso mostra a confirmação de Minhas tarefas @spec:AC-215", async () => {
-      fetchFalso.mockReturnValueOnce(resposta(200, DETALHE));
-      await renderDetalhe(CARD_ID);
-      await waitFor(() => expect(screen.getByRole("button", { name: "Iniciar cadência" })).toBeTruthy());
-
-      fetchFalso.mockReturnValueOnce(
+      await renderDetalhe(CARD_ID, DETALHE, async () =>
         resposta(200, { oportunidade: { etapaId: 2, version: 4 }, toques: [1, 2, 3] })
       );
+      await waitFor(() => expect(screen.getByRole("button", { name: "Iniciar cadência" })).toBeTruthy());
+
       const usuario = userEvent.setup();
       await usuario.click(screen.getByRole("button", { name: "Iniciar cadência" }));
 
