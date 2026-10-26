@@ -1,7 +1,7 @@
 {
   "feature": "fase4-design-system-shell-acesso",
-  "timestamp": "2026-10-26T12:41:37.314Z",
-  "gitRev": "335cf4a",
+  "timestamp": "2026-10-26T13:42:19.969Z",
+  "gitRev": "c7dc0ff",
   "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
   "exitCode": 1,
@@ -19,7 +19,7 @@
     },
     "AC-347": {
       "status": "pass",
-      "testName": "T-153: nenhuma tela de acesso traz artefato do protótipo AC-347: as telas de acesso não trazem artefatos do protótipo tela de login não traz artefato do protótipo @spec:AC-347 tela de login não traz artefato do protótipo @spec:AC-347",
+      "testName": "T-147: moldura das telas de acesso a moldura renderiza o conteúdo sem nenhum artefato do protótipo (seletor de estado, código de história, selo de conformidade) @spec:AC-347 a moldura renderiza o conteúdo sem nenhum artefato do protótipo (seletor de estado, código de história, selo de conformidade) @spec:AC-347",
       "method": "vitest-json"
     },
     "AC-348": {
@@ -90,6 +90,11 @@
     "AC-361": {
       "status": "pass",
       "testName": "T-148: tela de login AC-361: enquanto envia, o botão não aceita novo clique clicar de novo em \"Entrar na Plataforma\" durante o envio não dispara um segundo envio @spec:AC-361 clicar de novo em \"Entrar na Plataforma\" durante o envio não dispara um segundo envio @spec:AC-361",
+      "method": "vitest-json"
+    },
+    "AC-362": {
+      "status": "pass",
+      "testName": "T-147: moldura das telas de acesso quem já tem sessão válida e abre uma tela de acesso é levado para /pipeline, sem ver o formulário @spec:AC-362 quem já tem sessão válida e abre uma tela de acesso é levado para /pipeline, sem ver o formulário @spec:AC-362",
       "method": "vitest-json"
     },
     "AC-363": {
