@@ -19,6 +19,11 @@ import { ErroSessaoInvalida, resolverContextoTenant, type ContextoTenant } from 
 import { papelPodeTransicionar } from '../../../domain/pipeline/papel';
 import { comTenant } from '../../../repositories/contexto';
 import { criarOportunidade, ErroLeadNaoEncontrado, listarOportunidades } from '../../../repositories/oportunidades';
+import {
+  criarLeadComOportunidade,
+  ErroCampoObrigatorio,
+  ErroResponsavelInvalido,
+} from '../../../repositories/oportunidades-novo-lead';
 
 export const dynamic = 'force-dynamic';
 
@@ -143,12 +148,49 @@ export async function GET(request: NextRequest) {
   return NextResponse.json({ itens, grafo });
 }
 
-/** AC-079/AC-080/AC-081: cria um card manualmente a partir de um lead existente. */
+/**
+ * T-165 (AC-391/AC-392): além de `{ leadId }` (lead já existente), aceita
+ * `{ novoLead: { nome, telefone, email?, origem }, valor?, responsavelId? }`
+ * — cria o lead e o card em "Entrada de leads" numa única transação. Quem
+ * inicia a cadência depois ("Salvar e Iniciar Cadência") é o chamador,
+ * encadeando `POST /api/oportunidades/[id]/cadencia/iniciar` já existente.
+ */
+function corpoComNovoLead(corpo: unknown): corpo is { novoLead: Record<string, unknown> } & Record<string, unknown> {
+  if (!corpo || typeof corpo !== 'object') return false;
+  const novoLead = (corpo as Record<string, unknown>).novoLead;
+  return !!novoLead && typeof novoLead === 'object';
+}
+
+/** AC-079/AC-080/AC-081/AC-391/AC-392: cria um card a partir de um lead existente ou de um lead novo. */
 export async function POST(request: NextRequest) {
   const contexto = await resolverContexto(request);
   if (!contexto) return semSessao();
 
   const corpo = await request.json().catch(() => null);
+
+  if (corpoComNovoLead(corpo)) {
+    const novoLead = corpo.novoLead;
+    try {
+      const { lead, oportunidade } = await criarLeadComOportunidade(getDb(), contexto, {
+        nome: novoLead.nome as string,
+        telefone: novoLead.telefone as string,
+        email: (novoLead.email as string | undefined) ?? null,
+        origem: novoLead.origem as string,
+        valor: (corpo.valor as string | undefined) ?? null,
+        responsavelId: (corpo.responsavelId as string | undefined) ?? null,
+      });
+      return NextResponse.json({ ...oportunidade, leadId: lead.id }, { status: 201 });
+    } catch (erro) {
+      if (erro instanceof ErroCampoObrigatorio) {
+        return NextResponse.json({ codigo: 'CAMPO_OBRIGATORIO', campo: erro.campo }, { status: 400 });
+      }
+      if (erro instanceof ErroResponsavelInvalido) {
+        return NextResponse.json({ codigo: 'RESPONSAVEL_INVALIDO' }, { status: 400 });
+      }
+      throw erro;
+    }
+  }
+
   const leadId = corpo?.leadId;
   if (typeof leadId !== 'string' || leadId.length === 0) {
     return NextResponse.json({ codigo: 'LEAD_ID_OBRIGATORIO' }, { status: 400 });
