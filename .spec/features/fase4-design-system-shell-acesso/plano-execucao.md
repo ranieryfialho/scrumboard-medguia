@@ -1,11 +1,11 @@
 # Plano de execução — fase4-design-system-shell-acesso
 
-> gerado por `onp-spec plano` em 2026-10-23 16:21 — NÃO edite à mão;
+> gerado por `onp-spec plano` em 2026-10-26 11:43 — NÃO edite à mão;
 > mudou tasks.md ou a config? Regenere: `onp-spec plano fase4-design-system-shell-acesso --sequencial`
 
 ## Resumo — o que vai acontecer
 
-- **modo SEQUENCIAL (escolha do usuário)**: 14 tarefa(s) pendente(s), UMA APÓS A OUTRA, na árvore principal
+- **modo SEQUENCIAL (escolha do usuário)**: 6 tarefa(s) pendente(s), UMA APÓS A OUTRA, na árvore principal (8 já concluída(s): T-140, T-141, T-142, T-143, T-144, T-145, T-146, T-147)
 - sem worktrees e sem paralelismo — cada tarefa roda numa janela de contexto limpa, na ordem do tasks.md
 - tudo acontece na branch de trabalho `spec/fase4-design-system-shell-acesso`; levar para a main é decisão sua
 
@@ -13,14 +13,6 @@
 
 | tarefa | título | modelo | esforço |
 |---|---|---|---|
-| T-140 | Tokens de tema, fontes e ícones do protótipo | `claude-sonnet-5` | medium |
-| T-141 | Política de senha única e nome gravado no convite | `claude-sonnet-5` | medium |
-| T-142 | Envio de e-mail (Resend) para redefinição de senha | `claude-sonnet-5` | medium |
-| T-143 | Permissões por rota, middleware do Better Auth e raiz | `claude-sonnet-5` | high |
-| T-144 | Rotas HTTP de autenticação, `/api/me` e empresa ativa | `claude-sonnet-5` | high |
-| T-145 | APIs das telas públicas: esqueci, redefinir e convite | `claude-sonnet-5` | high |
-| T-146 | Casca: menu lateral, topo e layout das telas logadas | `claude-sonnet-5` | xhigh |
-| T-147 | Moldura das telas de acesso (fundo, cartão e rodapé) | `claude-sonnet-5` | medium |
 | T-148 | Tela de login | `claude-sonnet-5` | high |
 | T-149 | Tela de esqueci minha senha | `claude-sonnet-5` | medium |
 | T-150 | Tela de redefinir senha | `claude-sonnet-5` | high |

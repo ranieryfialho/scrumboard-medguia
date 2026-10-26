@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# executar-tarefas.sh — gerado por `onp-spec plano fase4-design-system-shell-acesso` em 2026-10-23 16:21
+# executar-tarefas.sh — gerado por `onp-spec plano fase4-design-system-shell-acesso` em 2026-10-26 11:43
 # NÃO edite à mão: mudou tasks.md ou a config, regenere o plano.
 #
 # uso:
@@ -14,7 +14,7 @@
 set -u
 set -o pipefail
 
-RUN_ID='scrumboard-medguia-fase4-design-system-shell-acesso-mvl6fxcp'
+RUN_ID='scrumboard-medguia-fase4-design-system-shell-acesso-mvp6um2a'
 FEATURE='fase4-design-system-shell-acesso'
 BASE_BRANCH='spec/fase4-design-system-shell-acesso'
 ENGINE='.claude/skills/onp-spec-driven/scripts/onp-spec.mjs'
@@ -164,262 +164,6 @@ iniciar_resumos() {
   RESUMO_PID=$!
   # ao sair: para o loop e grava um último resumo (o estado final, do motor)
   trap 'parar_resumos; node "$ENGINE" resumo "$FEATURE" --gravar >/dev/null 2>&1 || true' EXIT
-}
-
-# ── sequencial T-140 (ordem do tasks.md) ──
-executar_seq_T_140() {
-  info 'sequencial T-140 — Tokens de tema, fontes e ícones do protótipo'
-  if rodar_tarefa seq 'T-140' 'Você executa UMA tarefa da feature "fase4-design-system-shell-acesso" (fluxo onp-spec, spec-anchored).
-Leia primeiro: .spec/features/fase4-design-system-shell-acesso/spec.md, .spec/features/fase4-design-system-shell-acesso/tasks.md e .spec/constituicao.md.
-
-Sua tarefa (somente ela):
-T-140 — "Tokens de tema, fontes e ícones do protótipo"
-  critérios/refs: AC-345 (Os tokens do protótipo viram classes utilizáveis), AC-346 (As fontes e os ícones do protótipo são carregados)
-  arquivos permitidos (e seus testes): src/app/globals.css, src/app/layout.tsx, test/ui/design-system.test.ts
-  mensagem de commit: "T-140 fase4-design-system-shell-acesso: Tokens de tema, fontes e ícones do protótipo"
-
-Regras inegociáveis:
-- Todo critério de aceite referenciado vira teste com @spec:AC-xxx no título.
-- NUNCA enfraqueça, pule (skip/todo) ou apague um teste para passar — teste pulado não é prova e o audit acusa.
-- Rode os testes localmente com `npx vitest run --reporter=json --outputFile=.spec/verification/raw.json` até passarem.
-- NÃO edite tasks.md, NÃO rode onp-spec verify/audit e NÃO toque em outras tarefas — o orquestrador cuida disso.
-- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' medium >> "$LOG_DIR/seq.log" 2>&1; then
-    # commit de segurança se o agente esqueceu (rastreabilidade > perfeição)
-    if [ -n "$(git status --porcelain)" ]; then
-      git add -A && git commit -q -m 'T-140 fase4-design-system-shell-acesso: Tokens de tema, fontes e ícones do protótipo (auto-commit do plano)'
-    fi
-    marcar_concluidas T-140
-    verde "✔ T-140 concluída"
-    return 0
-  fi
-  vermelho "✘ T-140 falhou (log: $LOG_DIR/seq.log)"
-  amarelo "  reexecute só ela: bash .spec/features/fase4-design-system-shell-acesso/executar-tarefas.sh --seq T-140"
-  FALHAS="$FALHAS T-140"
-  return 1
-}
-
-# ── sequencial T-141 (ordem do tasks.md) ──
-executar_seq_T_141() {
-  info 'sequencial T-141 — Política de senha única e nome gravado no convite'
-  if rodar_tarefa seq 'T-141' 'Você executa UMA tarefa da feature "fase4-design-system-shell-acesso" (fluxo onp-spec, spec-anchored).
-Leia primeiro: .spec/features/fase4-design-system-shell-acesso/spec.md, .spec/features/fase4-design-system-shell-acesso/tasks.md e .spec/constituicao.md.
-
-Sua tarefa (somente ela):
-T-141 — "Política de senha única e nome gravado no convite"
-  critérios/refs: AC-385 (O servidor recusa senha fora da política), AC-386 (As duas telas mostram exatamente as regras que o servidor aplica)
-  arquivos permitidos (e seus testes): src/lib/auth/politica-senha.ts, src/lib/auth/definir-senha.ts, src/lib/auth/reset-senha.ts, test/auth/politica-senha.test.ts
-  mensagem de commit: "T-141 fase4-design-system-shell-acesso: Política de senha única e nome gravado no convite"
-
-Regras inegociáveis:
-- Todo critério de aceite referenciado vira teste com @spec:AC-xxx no título.
-- NUNCA enfraqueça, pule (skip/todo) ou apague um teste para passar — teste pulado não é prova e o audit acusa.
-- Rode os testes localmente com `npx vitest run --reporter=json --outputFile=.spec/verification/raw.json` até passarem.
-- NÃO edite tasks.md, NÃO rode onp-spec verify/audit e NÃO toque em outras tarefas — o orquestrador cuida disso.
-- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' medium >> "$LOG_DIR/seq.log" 2>&1; then
-    # commit de segurança se o agente esqueceu (rastreabilidade > perfeição)
-    if [ -n "$(git status --porcelain)" ]; then
-      git add -A && git commit -q -m 'T-141 fase4-design-system-shell-acesso: Política de senha única e nome gravado no convite (auto-commit do plano)'
-    fi
-    marcar_concluidas T-141
-    verde "✔ T-141 concluída"
-    return 0
-  fi
-  vermelho "✘ T-141 falhou (log: $LOG_DIR/seq.log)"
-  amarelo "  reexecute só ela: bash .spec/features/fase4-design-system-shell-acesso/executar-tarefas.sh --seq T-141"
-  FALHAS="$FALHAS T-141"
-  return 1
-}
-
-# ── sequencial T-142 (ordem do tasks.md) ──
-executar_seq_T_142() {
-  info 'sequencial T-142 — Envio de e-mail (Resend) para redefinição de senha'
-  if rodar_tarefa seq 'T-142' 'Você executa UMA tarefa da feature "fase4-design-system-shell-acesso" (fluxo onp-spec, spec-anchored).
-Leia primeiro: .spec/features/fase4-design-system-shell-acesso/spec.md, .spec/features/fase4-design-system-shell-acesso/tasks.md e .spec/constituicao.md.
-
-Sua tarefa (somente ela):
-T-142 — "Envio de e-mail (Resend) para redefinição de senha"
-  critérios/refs: AC-365 (O e-mail só é enviado quando a conta existe)
-  arquivos permitidos (e seus testes): src/lib/email/enviar.ts, src/lib/email/templates.ts, test/email/enviar.test.ts
-  mensagem de commit: "T-142 fase4-design-system-shell-acesso: Envio de e-mail (Resend) para redefinição de senha"
-
-Regras inegociáveis:
-- Todo critério de aceite referenciado vira teste com @spec:AC-xxx no título.
-- NUNCA enfraqueça, pule (skip/todo) ou apague um teste para passar — teste pulado não é prova e o audit acusa.
-- Rode os testes localmente com `npx vitest run --reporter=json --outputFile=.spec/verification/raw.json` até passarem.
-- NÃO edite tasks.md, NÃO rode onp-spec verify/audit e NÃO toque em outras tarefas — o orquestrador cuida disso.
-- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' medium >> "$LOG_DIR/seq.log" 2>&1; then
-    # commit de segurança se o agente esqueceu (rastreabilidade > perfeição)
-    if [ -n "$(git status --porcelain)" ]; then
-      git add -A && git commit -q -m 'T-142 fase4-design-system-shell-acesso: Envio de e-mail (Resend) para redefinição de senha (auto-commit do plano)'
-    fi
-    marcar_concluidas T-142
-    verde "✔ T-142 concluída"
-    return 0
-  fi
-  vermelho "✘ T-142 falhou (log: $LOG_DIR/seq.log)"
-  amarelo "  reexecute só ela: bash .spec/features/fase4-design-system-shell-acesso/executar-tarefas.sh --seq T-142"
-  FALHAS="$FALHAS T-142"
-  return 1
-}
-
-# ── sequencial T-143 (ordem do tasks.md) ──
-executar_seq_T_143() {
-  info 'sequencial T-143 — Permissões por rota, middleware do Better Auth e raiz'
-  if rodar_tarefa seq 'T-143' 'Você executa UMA tarefa da feature "fase4-design-system-shell-acesso" (fluxo onp-spec, spec-anchored).
-Leia primeiro: .spec/features/fase4-design-system-shell-acesso/spec.md, .spec/features/fase4-design-system-shell-acesso/tasks.md e .spec/constituicao.md.
-
-Sua tarefa (somente ela):
-T-143 — "Permissões por rota, middleware do Better Auth e raiz"
-  critérios/refs: AC-379 (Sem sessão, páginas vão para o login e APIs respondem 401), AC-380 (O que precisa ser público continua público), AC-381 (Papel sem permissão vai para a tela de sem acesso), AC-382 (A raiz leva ao lugar certo), AC-384 (O middleware já não consulta o Supabase)
-  arquivos permitidos (e seus testes): src/middleware.ts, src/lib/auth/rotas.ts, src/app/page.tsx, test/auth/middleware.test.ts
-  mensagem de commit: "T-143 fase4-design-system-shell-acesso: Permissões por rota, middleware do Better Auth e raiz"
-
-Regras inegociáveis:
-- Todo critério de aceite referenciado vira teste com @spec:AC-xxx no título.
-- NUNCA enfraqueça, pule (skip/todo) ou apague um teste para passar — teste pulado não é prova e o audit acusa.
-- Rode os testes localmente com `npx vitest run --reporter=json --outputFile=.spec/verification/raw.json` até passarem.
-- NÃO edite tasks.md, NÃO rode onp-spec verify/audit e NÃO toque em outras tarefas — o orquestrador cuida disso.
-- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' high >> "$LOG_DIR/seq.log" 2>&1; then
-    # commit de segurança se o agente esqueceu (rastreabilidade > perfeição)
-    if [ -n "$(git status --porcelain)" ]; then
-      git add -A && git commit -q -m 'T-143 fase4-design-system-shell-acesso: Permissões por rota, middleware do Better Auth e raiz (auto-commit do plano)'
-    fi
-    marcar_concluidas T-143
-    verde "✔ T-143 concluída"
-    return 0
-  fi
-  vermelho "✘ T-143 falhou (log: $LOG_DIR/seq.log)"
-  amarelo "  reexecute só ela: bash .spec/features/fase4-design-system-shell-acesso/executar-tarefas.sh --seq T-143"
-  FALHAS="$FALHAS T-143"
-  return 1
-}
-
-# ── sequencial T-144 (ordem do tasks.md) ──
-executar_seq_T_144() {
-  info 'sequencial T-144 — Rotas HTTP de autenticação, `/api/me` e empresa ativa'
-  if rodar_tarefa seq 'T-144' 'Você executa UMA tarefa da feature "fase4-design-system-shell-acesso" (fluxo onp-spec, spec-anchored).
-Leia primeiro: .spec/features/fase4-design-system-shell-acesso/spec.md, .spec/features/fase4-design-system-shell-acesso/tasks.md e .spec/constituicao.md.
-
-Sua tarefa (somente ela):
-T-144 — "Rotas HTTP de autenticação, `/api/me` e empresa ativa"
-  critérios/refs: AC-353 (Só o super admin vê e usa o seletor de empresa), AC-357 (Sair encerra a sessão), AC-378 (As rotas do Better Auth atendem pelo navegador), AC-383 (`/api/me` entrega o necessário para a casca)
-  arquivos permitidos (e seus testes): src/app/api/auth/[...all]/route.ts, src/app/api/me/route.ts, src/app/api/empresa-ativa/route.ts, test/api/auth-http.test.ts
-  mensagem de commit: "T-144 fase4-design-system-shell-acesso: Rotas HTTP de autenticação, `/api/me` e empresa ativa"
-
-Regras inegociáveis:
-- Todo critério de aceite referenciado vira teste com @spec:AC-xxx no título.
-- NUNCA enfraqueça, pule (skip/todo) ou apague um teste para passar — teste pulado não é prova e o audit acusa.
-- Rode os testes localmente com `npx vitest run --reporter=json --outputFile=.spec/verification/raw.json` até passarem.
-- NÃO edite tasks.md, NÃO rode onp-spec verify/audit e NÃO toque em outras tarefas — o orquestrador cuida disso.
-- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' high >> "$LOG_DIR/seq.log" 2>&1; then
-    # commit de segurança se o agente esqueceu (rastreabilidade > perfeição)
-    if [ -n "$(git status --porcelain)" ]; then
-      git add -A && git commit -q -m 'T-144 fase4-design-system-shell-acesso: Rotas HTTP de autenticação, `/api/me` e empresa ativa (auto-commit do plano)'
-    fi
-    marcar_concluidas T-144
-    verde "✔ T-144 concluída"
-    return 0
-  fi
-  vermelho "✘ T-144 falhou (log: $LOG_DIR/seq.log)"
-  amarelo "  reexecute só ela: bash .spec/features/fase4-design-system-shell-acesso/executar-tarefas.sh --seq T-144"
-  FALHAS="$FALHAS T-144"
-  return 1
-}
-
-# ── sequencial T-145 (ordem do tasks.md) ──
-executar_seq_T_145() {
-  info 'sequencial T-145 — APIs das telas públicas: esqueci, redefinir e convite'
-  if rodar_tarefa seq 'T-145' 'Você executa UMA tarefa da feature "fase4-design-system-shell-acesso" (fluxo onp-spec, spec-anchored).
-Leia primeiro: .spec/features/fase4-design-system-shell-acesso/spec.md, .spec/features/fase4-design-system-shell-acesso/tasks.md e .spec/constituicao.md.
-
-Sua tarefa (somente ela):
-T-145 — "APIs das telas públicas: esqueci, redefinir e convite"
-  critérios/refs: AC-364 (A confirmação é a mesma para qualquer e-mail), AC-365 (O e-mail só é enviado quando a conta existe), AC-369 (Salvar troca a senha e já entra no sistema), AC-370 (Link expirado ou já usado mostra a tela de erro, sem pedir senha), AC-371 (A tela mostra para quem é o convite), AC-373 (Ativar cria a senha, grava o nome e entra), AC-374 (Convite inválido mostra o erro sem vazar dados da empresa)
-  arquivos permitidos (e seus testes): src/app/api/acesso/esqueci-senha/route.ts, src/app/api/acesso/redefinir-senha/[token]/route.ts, src/app/api/acesso/convite/[token]/route.ts, test/api/acesso.test.ts
-  mensagem de commit: "T-145 fase4-design-system-shell-acesso: APIs das telas públicas: esqueci, redefinir e convite"
-
-Regras inegociáveis:
-- Todo critério de aceite referenciado vira teste com @spec:AC-xxx no título.
-- NUNCA enfraqueça, pule (skip/todo) ou apague um teste para passar — teste pulado não é prova e o audit acusa.
-- Rode os testes localmente com `npx vitest run --reporter=json --outputFile=.spec/verification/raw.json` até passarem.
-- NÃO edite tasks.md, NÃO rode onp-spec verify/audit e NÃO toque em outras tarefas — o orquestrador cuida disso.
-- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' high >> "$LOG_DIR/seq.log" 2>&1; then
-    # commit de segurança se o agente esqueceu (rastreabilidade > perfeição)
-    if [ -n "$(git status --porcelain)" ]; then
-      git add -A && git commit -q -m 'T-145 fase4-design-system-shell-acesso: APIs das telas públicas: esqueci, redefinir e convite (auto-commit do plano)'
-    fi
-    marcar_concluidas T-145
-    verde "✔ T-145 concluída"
-    return 0
-  fi
-  vermelho "✘ T-145 falhou (log: $LOG_DIR/seq.log)"
-  amarelo "  reexecute só ela: bash .spec/features/fase4-design-system-shell-acesso/executar-tarefas.sh --seq T-145"
-  FALHAS="$FALHAS T-145"
-  return 1
-}
-
-# ── sequencial T-146 (ordem do tasks.md) ──
-executar_seq_T_146() {
-  info 'sequencial T-146 — Casca: menu lateral, topo e layout das telas logadas'
-  if rodar_tarefa seq 'T-146' 'Você executa UMA tarefa da feature "fase4-design-system-shell-acesso" (fluxo onp-spec, spec-anchored).
-Leia primeiro: .spec/features/fase4-design-system-shell-acesso/spec.md, .spec/features/fase4-design-system-shell-acesso/tasks.md e .spec/constituicao.md.
-
-Sua tarefa (somente ela):
-T-146 — "Casca: menu lateral, topo e layout das telas logadas"
-  critérios/refs: AC-348 (O menu traz os grupos e itens do protótipo), AC-349 (O menu esconde o que o papel não pode ver), AC-350 (O item da tela atual aparece destacado), AC-351 (Os contadores do menu mostram números reais), AC-352 (O topo mostra quem está logado), AC-353 (Só o super admin vê e usa o seletor de empresa), AC-354 (O indicador de tempo real diz a verdade), AC-355 (O que não tem backend aparece como "em breve"), AC-356 (No celular o menu vira gaveta), AC-357 (Sair encerra a sessão)
-  arquivos permitidos (e seus testes): src/components/shell/menu-lateral.tsx, src/components/shell/topo.tsx, src/components/shell/menu-config.ts, src/components/shell/use-contadores.ts, src/components/shell/use-tempo-real.ts, src/app/(app)/layout.tsx, test/components/shell/casca.test.tsx
-  mensagem de commit: "T-146 fase4-design-system-shell-acesso: Casca: menu lateral, topo e layout das telas logadas"
-
-Regras inegociáveis:
-- Todo critério de aceite referenciado vira teste com @spec:AC-xxx no título.
-- NUNCA enfraqueça, pule (skip/todo) ou apague um teste para passar — teste pulado não é prova e o audit acusa.
-- Rode os testes localmente com `npx vitest run --reporter=json --outputFile=.spec/verification/raw.json` até passarem.
-- NÃO edite tasks.md, NÃO rode onp-spec verify/audit e NÃO toque em outras tarefas — o orquestrador cuida disso.
-- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' xhigh >> "$LOG_DIR/seq.log" 2>&1; then
-    # commit de segurança se o agente esqueceu (rastreabilidade > perfeição)
-    if [ -n "$(git status --porcelain)" ]; then
-      git add -A && git commit -q -m 'T-146 fase4-design-system-shell-acesso: Casca: menu lateral, topo e layout das telas logadas (auto-commit do plano)'
-    fi
-    marcar_concluidas T-146
-    verde "✔ T-146 concluída"
-    return 0
-  fi
-  vermelho "✘ T-146 falhou (log: $LOG_DIR/seq.log)"
-  amarelo "  reexecute só ela: bash .spec/features/fase4-design-system-shell-acesso/executar-tarefas.sh --seq T-146"
-  FALHAS="$FALHAS T-146"
-  return 1
-}
-
-# ── sequencial T-147 (ordem do tasks.md) ──
-executar_seq_T_147() {
-  info 'sequencial T-147 — Moldura das telas de acesso (fundo, cartão e rodapé)'
-  if rodar_tarefa seq 'T-147' 'Você executa UMA tarefa da feature "fase4-design-system-shell-acesso" (fluxo onp-spec, spec-anchored).
-Leia primeiro: .spec/features/fase4-design-system-shell-acesso/spec.md, .spec/features/fase4-design-system-shell-acesso/tasks.md e .spec/constituicao.md.
-
-Sua tarefa (somente ela):
-T-147 — "Moldura das telas de acesso (fundo, cartão e rodapé)"
-  critérios/refs: AC-347 (As telas de acesso não trazem artefatos do protótipo), AC-362 (Quem já está logado não vê o login)
-  arquivos permitidos (e seus testes): src/components/auth/moldura-acesso.tsx, src/components/auth/criterios-senha.tsx, src/app/(auth)/layout.tsx, test/components/auth/moldura.test.tsx
-  mensagem de commit: "T-147 fase4-design-system-shell-acesso: Moldura das telas de acesso (fundo, cartão e rodapé)"
-
-Regras inegociáveis:
-- Todo critério de aceite referenciado vira teste com @spec:AC-xxx no título.
-- NUNCA enfraqueça, pule (skip/todo) ou apague um teste para passar — teste pulado não é prova e o audit acusa.
-- Rode os testes localmente com `npx vitest run --reporter=json --outputFile=.spec/verification/raw.json` até passarem.
-- NÃO edite tasks.md, NÃO rode onp-spec verify/audit e NÃO toque em outras tarefas — o orquestrador cuida disso.
-- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' medium >> "$LOG_DIR/seq.log" 2>&1; then
-    # commit de segurança se o agente esqueceu (rastreabilidade > perfeição)
-    if [ -n "$(git status --porcelain)" ]; then
-      git add -A && git commit -q -m 'T-147 fase4-design-system-shell-acesso: Moldura das telas de acesso (fundo, cartão e rodapé) (auto-commit do plano)'
-    fi
-    marcar_concluidas T-147
-    verde "✔ T-147 concluída"
-    return 0
-  fi
-  vermelho "✘ T-147 falhou (log: $LOG_DIR/seq.log)"
-  amarelo "  reexecute só ela: bash .spec/features/fase4-design-system-shell-acesso/executar-tarefas.sh --seq T-147"
-  FALHAS="$FALHAS T-147"
-  return 1
 }
 
 # ── sequencial T-148 (ordem do tasks.md) ──
@@ -667,14 +411,6 @@ executar_tudo() {
   iniciar_resumos
   info "logs em: $LOG_DIR"
   info "resumo geral de andamento: a cada 1 min aqui no terminal (e via: onp-spec resumo)"
-  executar_seq_T_140 || true
-  executar_seq_T_141 || true
-  executar_seq_T_142 || true
-  executar_seq_T_143 || true
-  executar_seq_T_144 || true
-  executar_seq_T_145 || true
-  executar_seq_T_146 || true
-  executar_seq_T_147 || true
   executar_seq_T_148 || true
   executar_seq_T_149 || true
   executar_seq_T_150 || true
@@ -686,14 +422,6 @@ executar_tudo() {
 
 listar() {
   echo "execução: $RUN_ID (feature $FEATURE, branch $BASE_BRANCH)"
-  echo "  seq       T-140 (sequencial)"
-  echo "  seq       T-141 (sequencial)"
-  echo "  seq       T-142 (sequencial)"
-  echo "  seq       T-143 (sequencial)"
-  echo "  seq       T-144 (sequencial)"
-  echo "  seq       T-145 (sequencial)"
-  echo "  seq       T-146 (sequencial)"
-  echo "  seq       T-147 (sequencial)"
   echo "  seq       T-148 (sequencial)"
   echo "  seq       T-149 (sequencial)"
   echo "  seq       T-150 (sequencial)"
@@ -734,14 +462,6 @@ case "$MODO" in
     esac ;;
   seq)
     case "$ALVO" in
-      T-140) evento --tipo inicio --escopo "seq:T-140"; iniciar_resumos; executar_seq_T_140 || true; encerrar "seq:T-140" ;;
-      T-141) evento --tipo inicio --escopo "seq:T-141"; iniciar_resumos; executar_seq_T_141 || true; encerrar "seq:T-141" ;;
-      T-142) evento --tipo inicio --escopo "seq:T-142"; iniciar_resumos; executar_seq_T_142 || true; encerrar "seq:T-142" ;;
-      T-143) evento --tipo inicio --escopo "seq:T-143"; iniciar_resumos; executar_seq_T_143 || true; encerrar "seq:T-143" ;;
-      T-144) evento --tipo inicio --escopo "seq:T-144"; iniciar_resumos; executar_seq_T_144 || true; encerrar "seq:T-144" ;;
-      T-145) evento --tipo inicio --escopo "seq:T-145"; iniciar_resumos; executar_seq_T_145 || true; encerrar "seq:T-145" ;;
-      T-146) evento --tipo inicio --escopo "seq:T-146"; iniciar_resumos; executar_seq_T_146 || true; encerrar "seq:T-146" ;;
-      T-147) evento --tipo inicio --escopo "seq:T-147"; iniciar_resumos; executar_seq_T_147 || true; encerrar "seq:T-147" ;;
       T-148) evento --tipo inicio --escopo "seq:T-148"; iniciar_resumos; executar_seq_T_148 || true; encerrar "seq:T-148" ;;
       T-149) evento --tipo inicio --escopo "seq:T-149"; iniciar_resumos; executar_seq_T_149 || true; encerrar "seq:T-149" ;;
       T-150) evento --tipo inicio --escopo "seq:T-150"; iniciar_resumos; executar_seq_T_150 || true; encerrar "seq:T-150" ;;
