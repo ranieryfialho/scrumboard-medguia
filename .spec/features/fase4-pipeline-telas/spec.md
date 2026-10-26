@@ -161,9 +161,9 @@ para entender por que ganhamos e perdemos.
 
 #### AC-404 — "Reabrir" volta o card ao funil respeitando as regras
 
-- **Dado** um card perdido e um usuário cujo papel pode reabrir (regra do grafo de transições)
+- **Dado** um card perdido ou ganho e um usuário MASTER ou GERENTE
 - **Quando** ele usa "Reabrir" e informa a justificativa pedida
-- **Então** o card volta à etapa de reabertura permitida e sai dos arquivados; quem não pode vê o botão desabilitado e a API recusa
+- **Então** o card volta à etapa de reabertura do grafo (Perdido → Qualificando, Ganho → Negociação) e sai dos arquivados; o ATENDENTE vê o botão desabilitado e a API recusa (403)
 
 #### AC-405 — Os blocos de análise sem backend aparecem como "em breve"
 
@@ -242,6 +242,12 @@ quebrada.
 - **Quando** se procura a tela antiga de `/pipeline` (sem casca) e o componente que só ela usava
 - **Então** `/pipeline` é servida só pela versão nova, sem rota duplicada, e os testes do componente antigo foram trocados pelos da versão nova
 
+#### AC-416 — Funil, lista e arquivados se atualizam quando outro usuário mexe num card
+
+- **Dado** as telas de funil, lista e arquivados abertas, ligadas ao fluxo de eventos já existente (`/api/stream`, evento `oportunidade.movida`)
+- **Quando** outro usuário da mesma empresa move um card
+- **Então** a tela atualiza sozinha (o card muda de coluna no funil; a lista e os arquivados recarregam a página atual e os indicadores), sem recarregar o navegador; eventos de outra empresa nunca chegam, e se a conexão cair a tela mostra o aviso "tempo real desconectado" e volta a atualizar ao reconectar
+
 ## Fora de escopo
 
 - **Ações em lote** (mover etapa, reatribuir, disparar WhatsApp, arquivar em lote) e **exportar CSV/XLS** (lista e arquivados): feature `fase4-pipeline-lote`. Aqui aparecem "em breve".
@@ -250,7 +256,6 @@ quebrada.
 - Campos novos de cadastro (CNPJ, especialidade, estrutura, unidade física, ticket anual): fora, sem migration nesta feature (decisão 26/10).
 - Quadro "Top Fechamentos do Trimestre" com especialidade e "Playbook de Reversão" funcionando (a campanha de reativação é da fase de campanhas).
 - Registrar ligação, agendar reunião e disparar WhatsApp pelo bloco rápido do detalhe.
-- Tempo real do funil (sincronização por SSE já existe na fila de tarefas; ligar o funil a ele só se couber, ver Q-047).
 
 ## Suposições
 
@@ -263,8 +268,8 @@ quebrada.
 | ASM-134 | A data de fechamento mostrada nos arquivados é a do último evento de transição para a etapa terminal no histórico de atividades; não existe coluna de fechamento em `oportunidades` | aberta | Evita migration; cards migrados do legado sem esse evento usam `atualizado_em` |
 | ASM-135 | Definições dos indicadores: **cards ativos** = fora das etapas terminais; **propostas ativas** = cards na etapa "Proposta"; **toques em atraso** = atividades de cadência pendentes com horário vencido (as mesmas da fila de tarefas atrasadas); **taxa de conversão (30 dias)** = ganhos ÷ (ganhos + perdidos) com fechamento nos últimos 30 dias, vazia se não houve fechamento | aberta | Os valores do protótipo ("+14% vs mês", "Meta 22%", "Ticket Médio") não têm fonte no sistema e não entram |
 | ASM-136 | "Valor" do card é mensal (o protótipo escreve "/mês"); o sistema guarda um único `valor` por card, então a tela mostra "R$ X" com o rótulo "/mês" como no protótipo | aberta | Sem campo de periodicidade; confirmar o rótulo |
-| ASM-137 | A origem do lead (`leads.origem`) é texto livre; o filtro "Origem" lista os valores distintos que existem na empresa, e o campo do modal "Novo Lead" é uma lista fixa com "Outro" mais os valores já usados | aberta | Não existe tabela de origens |
-| ASM-138 | Reabrir um card segue o grafo já cadastrado (Perdido → Qualificando e Ganho → Negociação, com justificativa), sem criar regra nova | aberta | Vem do seed de `pipeline_transicoes` |
+| ASM-137 | A origem do lead (`leads.origem`) é texto livre; o filtro "Origem" lista os valores distintos que existem na empresa, e o campo do modal "Novo Lead" oferece esses valores mais "Outro" | confirmada | Decisão do usuário em 26/10 (Q-046): sem lista oficial |
+| ASM-138 | Reabrir um card segue o grafo já cadastrado (Perdido → Qualificando e Ganho → Negociação, com justificativa), com a restrição de papel da Q-048 | confirmada | Vem do seed de `pipeline_transicoes`; o grafo atual (`14→5`, `15→13`) permite os três papéis, então a rota de reabrir aplica a restrição a MASTER/GERENTE por cima do grafo, sem mexer no seed |
 | ASM-139 | A anotação interna é um novo tipo de evento em `atividades` (`anotacao`) com texto e autor, sem tabela nova | aberta | Se a coluna `tipo` for texto livre não há migration; verificar na tarefa |
 | ASM-140 | O seletor de empresa do topo e a busca global seguem como na fase 4 (empresa ativa pela sessão; busca "em breve") | confirmada | Decisão do usuário em 23/10 |
 
@@ -274,6 +279,6 @@ quebrada.
 
 | ID | Pergunta | Status | Resposta |
 |---|---|---|---|
-| Q-046 | O protótipo mostra "Origem: Parceria ABEMED", "Inbound ABEMED" e "Ticket Médio". Há uma lista oficial de origens de lead a seguir (Google Ads, Parceria, Indicação…)? Sem ela, vale a ASM-137 | aberta | — |
-| Q-047 | O funil e a lista devem se atualizar sozinhos quando outro usuário mexe num card (SSE, como a fila de tarefas)? O protótipo diz "Websocket Ativo", mas isso aumenta o escopo | aberta | — |
-| Q-048 | "Reabrir" um card arquivado é só para MASTER e GERENTE, ou o ATENDENTE também pode (o grafo atual decide por papel)? | aberta | — |
+| Q-046 | O protótipo mostra "Origem: Parceria ABEMED", "Inbound ABEMED" e "Ticket Médio". Há uma lista oficial de origens de lead a seguir (Google Ads, Parceria, Indicação…)? Sem ela, vale a ASM-137 | respondida | Decidido pelo usuário em 2026-10-26: sem lista oficial; usar os valores existentes mais "Outro" (ASM-137) |
+| Q-047 | O funil e a lista devem se atualizar sozinhos quando outro usuário mexe num card (SSE, como a fila de tarefas)? O protótipo diz "Websocket Ativo", mas isso aumenta o escopo | respondida | Decidido pelo usuário em 2026-10-26: sim, ligar ao SSE existente (AC-416) |
+| Q-048 | "Reabrir" um card arquivado é só para MASTER e GERENTE, ou o ATENDENTE também pode (o grafo atual decide por papel)? | respondida | Decidido pelo usuário em 2026-10-26: só MASTER e GERENTE (AC-404) |

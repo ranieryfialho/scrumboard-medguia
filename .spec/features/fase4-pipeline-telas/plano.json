@@ -1,0 +1,229 @@
+{
+  "runId": "scrumboard-medguia-fase4-pipeline-telas-mvpdblrf",
+  "feature": "fase4-pipeline-telas",
+  "agent": "claude",
+  "modo": "sequencial",
+  "paralelizar": null,
+  "modeloForcado": null,
+  "esforcoForcado": null,
+  "geradoEm": "2026-10-26 14:44",
+  "branchTrabalho": "spec/fase4-pipeline-telas",
+  "baseDir": ".spec/features/fase4-pipeline-telas",
+  "specDir": ".spec",
+  "repoName": "scrumboard-medguia",
+  "logsDir": "../onp-worktrees/scrumboard-medguia-fase4-pipeline-telas-logs",
+  "ondas": [],
+  "faixas": [],
+  "sequenciais": [
+    {
+      "id": "T-154",
+      "titulo": "Consultas do servidor: lista paginada, arquivados e indicadores",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "src/repositories/pipeline-lista.ts",
+        "src/repositories/pipeline-indicadores.ts",
+        "test/repositories/pipeline-lista.test.ts"
+      ],
+      "refs": [
+        "AC-389",
+        "AC-395",
+        "AC-396",
+        "AC-397",
+        "AC-398",
+        "AC-402",
+        "AC-403"
+      ]
+    },
+    {
+      "id": "T-155",
+      "titulo": "Rotas de leitura: lista, arquivados e indicadores",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/app/api/oportunidades/lista/route.ts",
+        "src/app/api/oportunidades/arquivados/route.ts",
+        "src/app/api/pipeline/indicadores/route.ts",
+        "test/api/pipeline-leitura.test.ts"
+      ],
+      "refs": [
+        "AC-389",
+        "AC-395",
+        "AC-396",
+        "AC-397",
+        "AC-398",
+        "AC-402",
+        "AC-403"
+      ]
+    },
+    {
+      "id": "T-156",
+      "titulo": "Reabrir card e registrar anotação",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "src/app/api/oportunidades/[id]/reabrir/route.ts",
+        "src/app/api/oportunidades/[id]/anotacoes/route.ts",
+        "src/repositories/anotacoes.ts",
+        "test/api/pipeline-escrita.test.ts"
+      ],
+      "refs": [
+        "AC-404",
+        "AC-409"
+      ]
+    },
+    {
+      "id": "T-157",
+      "titulo": "Linha do tempo do card",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/app/api/oportunidades/[id]/linha-do-tempo/route.ts",
+        "src/repositories/linha-do-tempo.ts",
+        "test/api/pipeline-linha-do-tempo.test.ts"
+      ],
+      "refs": [
+        "AC-407",
+        "AC-408"
+      ]
+    },
+    {
+      "id": "T-158",
+      "titulo": "Peças de tela compartilhadas e estados",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "src/components/pipeline/pecas/cartao-indicador.tsx",
+        "src/components/pipeline/pecas/paginacao.tsx",
+        "src/components/pipeline/pecas/selo-etapa.tsx",
+        "src/components/pipeline/pecas/selo-em-breve.tsx",
+        "src/components/pipeline/pecas/estados.tsx",
+        "test/components/pipeline/pecas.test.tsx"
+      ],
+      "refs": [
+        "AC-393",
+        "AC-405",
+        "AC-413"
+      ]
+    },
+    {
+      "id": "T-159",
+      "titulo": "Tempo real nas telas do pipeline",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/hooks/use-stream-oportunidades.ts",
+        "src/components/pipeline/pecas/aviso-tempo-real.tsx",
+        "test/components/pipeline/tempo-real.test.tsx"
+      ],
+      "refs": [
+        "AC-416"
+      ]
+    },
+    {
+      "id": "T-160",
+      "titulo": "Tela do funil (Kanban) com indicadores, filtros e novo lead",
+      "modelo": "claude-sonnet-5",
+      "esforco": "xhigh",
+      "arquivos": [
+        "src/app/(app)/pipeline/page.tsx",
+        "src/components/pipeline/board-kanban.tsx",
+        "src/components/pipeline/coluna-etapa.tsx",
+        "src/components/pipeline/card-oportunidade.tsx",
+        "src/components/pipeline/filtros-funil.tsx",
+        "src/components/pipeline/modal-novo-lead.tsx",
+        "src/components/pipeline/indicadores-funil.tsx",
+        "test/components/pipeline/funil.test.tsx",
+        "test/components/pipeline/modal-novo-lead.test.tsx"
+      ],
+      "refs": [
+        "AC-387",
+        "AC-388",
+        "AC-390",
+        "AC-391",
+        "AC-392",
+        "AC-393"
+      ]
+    },
+    {
+      "id": "T-161",
+      "titulo": "Tela da lista",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "src/app/(app)/pipeline/lista/page.tsx",
+        "src/components/pipeline/tabela-lista.tsx",
+        "src/components/pipeline/filtros-lista.tsx",
+        "test/components/pipeline/lista.test.tsx"
+      ],
+      "refs": [
+        "AC-394",
+        "AC-395",
+        "AC-396",
+        "AC-399"
+      ]
+    },
+    {
+      "id": "T-162",
+      "titulo": "Tela dos arquivados",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "src/app/(app)/pipeline/arquivados/page.tsx",
+        "src/components/pipeline/tabela-arquivados.tsx",
+        "src/components/pipeline/distribuicao-motivos.tsx",
+        "src/components/pipeline/botao-reabrir.tsx",
+        "test/components/pipeline/arquivados.test.tsx"
+      ],
+      "refs": [
+        "AC-400",
+        "AC-401",
+        "AC-403",
+        "AC-404",
+        "AC-405"
+      ]
+    },
+    {
+      "id": "T-163",
+      "titulo": "Tela de detalhe do card",
+      "modelo": "claude-sonnet-5",
+      "esforco": "xhigh",
+      "arquivos": [
+        "src/app/(app)/pipeline/[id]/page.tsx",
+        "src/components/pipeline/detalhe/cabecalho-card.tsx",
+        "src/components/pipeline/detalhe/jornada.tsx",
+        "src/components/pipeline/detalhe/informacoes.tsx",
+        "src/components/pipeline/detalhe/linha-do-tempo.tsx",
+        "src/components/pipeline/detalhe/registro-rapido.tsx",
+        "test/components/pipeline/detalhe.test.tsx"
+      ],
+      "refs": [
+        "AC-406",
+        "AC-407",
+        "AC-408",
+        "AC-409",
+        "AC-410",
+        "AC-411",
+        "AC-412"
+      ]
+    },
+    {
+      "id": "T-164",
+      "titulo": "Permissões das novas rotas, menu e retirada da tela antiga",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/lib/auth/rotas.ts",
+        "src/components/shell/menu-config.ts",
+        "test/auth/rotas-pipeline.test.ts"
+      ],
+      "refs": [
+        "AC-414",
+        "AC-415",
+        "AC-387"
+      ]
+    }
+  ],
+  "concluidas": [],
+  "avisos": []
+}
