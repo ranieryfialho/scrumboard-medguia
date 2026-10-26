@@ -66,8 +66,7 @@
 - Esforço: alto
 - Notas: fonte visual `docs/ui/stitch_medcrm_interface_design/7._pipeline_lista_vis_o_em_lista/`. Estado dos filtros e da página na URL (`?pagina=2&etapa=…`), para recarregar e compartilhar. Seleção por linha e por cabeçalho; as ações em lote aparecem "em breve" (feature `fase4-pipeline-lote`). Depende de T-155, T-158 e T-159.
 
-## T-162 — Tela dos arquivados [pendente]
-
+## T-162 — Tela dos arquivados [concluida]
 - Refs: AC-400, AC-401, AC-403, AC-404, AC-405
 - Arquivos: src/app/(app)/pipeline/arquivados/page.tsx, src/components/pipeline/tabela-arquivados.tsx, src/components/pipeline/distribuicao-motivos.tsx, src/components/pipeline/botao-reabrir.tsx, test/components/pipeline/arquivados.test.tsx
 - Esforço: alto
