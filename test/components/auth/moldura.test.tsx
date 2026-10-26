@@ -35,8 +35,7 @@ afterEach(() => {
 });
 
 describe('T-147: moldura das telas de acesso', () => {
-  // @spec:AC-347
-  test('a moldura renderiza o conteúdo sem nenhum artefato do protótipo (seletor de estado, código de história, selo de conformidade)', () => {
+  test('a moldura renderiza o conteúdo sem nenhum artefato do protótipo (seletor de estado, código de história, selo de conformidade) @spec:AC-347', () => {
     render(
       <MolduraAcesso>
         <p>Formulário de acesso de verdade</p>
@@ -60,8 +59,7 @@ describe('T-147: moldura das telas de acesso', () => {
     expect(texto).toMatch(/© 2026 MedGuia/);
   });
 
-  // @spec:AC-362
-  test('quem já tem sessão válida e abre uma tela de acesso é levado para /pipeline, sem ver o formulário', async () => {
+  test('quem já tem sessão válida e abre uma tela de acesso é levado para /pipeline, sem ver o formulário @spec:AC-362', async () => {
     instalarFetchFalso(200);
 
     render(
@@ -75,8 +73,7 @@ describe('T-147: moldura das telas de acesso', () => {
     expect(screen.queryByText('Formulário de login')).toBeNull();
   });
 
-  // @spec:AC-362
-  test('sem sessão, a tela de acesso é renderizada normalmente, sem redirecionar', async () => {
+  test('sem sessão, a tela de acesso é renderizada normalmente, sem redirecionar @spec:AC-362', async () => {
     instalarFetchFalso(401);
 
     render(
