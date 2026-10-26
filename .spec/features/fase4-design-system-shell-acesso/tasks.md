@@ -93,8 +93,7 @@
 - Esforço: alto
 - Notas: fonte visual `4._convite_token_aceitar_convite/code.html`. Sem o bloco "Contatos do Administrador" (ASM-128). Links de Termos de Uso e Suporte com selo "em breve". Reusa `criterios-senha.tsx` de T-147.
 
-## T-152 — Tela de sem acesso e sessão expirada [pendente]
-
+## T-152 — Tela de sem acesso e sessão expirada [concluida]
 - Refs: AC-375, AC-376, AC-377
 - Arquivos: src/app/(auth)/sem-acesso/page.tsx, src/components/auth/painel-sem-acesso.tsx, src/lib/auth/nomes-de-rotas.ts, test/components/auth/sem-acesso.test.tsx
 - Esforço: medio
