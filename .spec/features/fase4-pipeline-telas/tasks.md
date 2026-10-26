@@ -24,8 +24,7 @@
 - Esforço: alto
 - Notas: repositórios novos, sem tocar em `oportunidades.ts`. Tudo fail-closed por tenant (mesmo padrão `comTenant` de fase1). Lista: etapas 1 a 13; arquivados: etapas 14 e 15 (ASM-133); data de fechamento = último evento `transicao_etapa` para a etapa terminal, com `atualizado_em` como reserva (ASM-134). Indicadores seguem a ASM-135 (a conversão e a fila de atraso reaproveitam as definições de `kpis.ts` e de `atividades`, sem duplicar a regra). Filtros: etapa, responsável, origem, motivo de perda, período, texto (nome, e-mail e telefone); ordenação por valor, próxima ação e criado em; tamanhos de página 10, 25 e 50.
 
-## T-155 — Rotas de leitura: lista, arquivados e indicadores [pendente]
-
+## T-155 — Rotas de leitura: lista, arquivados e indicadores [concluida]
 - Refs: AC-389, AC-395, AC-396, AC-397, AC-398, AC-402, AC-403
 - Arquivos: src/app/api/oportunidades/lista/route.ts, src/app/api/oportunidades/arquivados/route.ts, src/app/api/pipeline/indicadores/route.ts, test/api/pipeline-leitura.test.ts
 - Esforço: medio
