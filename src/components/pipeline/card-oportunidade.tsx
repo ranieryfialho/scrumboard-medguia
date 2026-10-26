@@ -17,6 +17,14 @@ export interface CardBoard {
   responsavelNome: string | null;
   valor: string | null;
   version: number;
+  /**
+   * T-160 (AC-388): hora da próxima ação, quando o board souber dela — vem
+   * do mesmo cruzamento com a fila de cadência que já traz o selo
+   * "Atrasado" (`/api/atividades?atrasados=1`, AC-220); card sem toque
+   * pendente nessa fila mostra "Sem próxima ação", mesmo rótulo de
+   * `tabela-lista.tsx`.
+   */
+  proximaAcaoEm?: string | null;
 }
 
 interface CardOportunidadeProps {
@@ -29,6 +37,12 @@ function formatarValor(valor: string | null): string | null {
   const numero = Number(valor);
   if (Number.isNaN(numero)) return null;
   return numero.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+}
+
+/** AC-388: mesmo rótulo de `tabela-lista.tsx` para "sem próxima ação". */
+function formatarProximaAcao(iso: string | null | undefined): string {
+  if (!iso) return "Sem próxima ação";
+  return new Date(iso).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" });
 }
 
 export function CardOportunidade({ oportunidade, isOverlay }: CardOportunidadeProps) {
@@ -90,6 +104,7 @@ export function CardOportunidade({ oportunidade, isOverlay }: CardOportunidadePr
           <span>{oportunidade.responsavelNome ?? "Sem responsável"}</span>
           {valorFormatado && <span className="font-semibold text-emerald-700">{valorFormatado}</span>}
         </div>
+        <p className="text-[11px] text-slate-400">{formatarProximaAcao(oportunidade.proximaAcaoEm)}</p>
 
         {!isOverlay && (
           <div onPointerDown={(evento) => evento.stopPropagation()}>

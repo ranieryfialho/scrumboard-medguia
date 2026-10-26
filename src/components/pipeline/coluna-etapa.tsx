@@ -18,6 +18,18 @@ interface ColunaEtapaProps {
   oportunidadesAtrasadas: Set<string>;
 }
 
+/** AC-388: soma dos valores dos cards da coluna — `null`/inválido não entra na soma. */
+function somarValores(cards: CardBoard[]): number {
+  return cards.reduce((total, card) => {
+    const numero = Number(card.valor);
+    return Number.isFinite(numero) ? total + numero : total;
+  }, 0);
+}
+
+function formatarSoma(soma: number): string {
+  return soma.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+}
+
 export function ColunaEtapa({
   etapaId,
   nome,
@@ -40,11 +52,16 @@ export function ColunaEtapa({
         isOver ? "bg-indigo-100/60 border-indigo-300" : "bg-slate-100/50 border-slate-200/60"
       } ${restrita ? "opacity-40" : ""}`}
     >
-      <div className="flex items-center justify-between mb-3 px-1">
+      <div className="flex items-center justify-between mb-1 px-1">
         <h3 className="font-semibold text-slate-700 text-xs uppercase tracking-wide">{nome}</h3>
         <Badge variant="secondary" className="bg-slate-200 text-slate-600 hover:bg-slate-200">
           {cards.length}
         </Badge>
+      </div>
+      <div className="mb-2 px-1">
+        <span className="text-[11px] text-slate-400">
+          {cards.length} {cards.length === 1 ? "card" : "cards"} • {formatarSoma(somarValores(cards))}
+        </span>
       </div>
 
       <div className="flex-1 overflow-y-auto space-y-2 pr-1 min-h-[80px]">
