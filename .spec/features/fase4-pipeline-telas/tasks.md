@@ -42,8 +42,7 @@
 - Esforço: medio
 - Notas: `GET /api/oportunidades/[id]/linha-do-tempo?tipo=&pagina=`: eventos de `atividades` do card, do mais novo ao mais antigo, com tipo, texto, autor e data, mais a contagem de interações. Card de outra empresa ou inexistente = 404 sem vazar dado (AC-412). O detalhe também precisa dos telefones do lead: reaproveitar `GET /api/leads/[id]/telefones`, sem rota nova.
 
-## T-158 — Peças de tela compartilhadas e estados [pendente]
-
+## T-158 — Peças de tela compartilhadas e estados [concluida]
 - Refs: AC-393, AC-405, AC-413
 - Arquivos: src/components/pipeline/pecas/cartao-indicador.tsx, src/components/pipeline/pecas/paginacao.tsx, src/components/pipeline/pecas/selo-etapa.tsx, src/components/pipeline/pecas/selo-em-breve.tsx, src/components/pipeline/pecas/estados.tsx, test/components/pipeline/pecas.test.tsx
 - Esforço: alto
