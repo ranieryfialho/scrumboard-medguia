@@ -54,8 +54,7 @@
 - Esforço: medio
 - Notas: o hook atual já escuta `oportunidade.movida` para o funil antigo; passa a aceitar um callback genérico (o funil move o card, lista e arquivados recarregam a página atual e os indicadores) e a expor o estado da conexão para o aviso "tempo real desconectado". Não pode quebrar o uso atual em `board-kanban.tsx` até T-160 trocá-lo. Eventos de outra empresa nunca chegam (isolamento já vem do barramento; o teste prova).
 
-## T-165 — Criar lead e card em um passo (valor e responsável) [pendente]
-
+## T-165 — Criar lead e card em um passo (valor e responsável) [concluida]
 - Refs: AC-391, AC-392
 - Arquivos: src/app/api/oportunidades/route.ts, src/repositories/oportunidades-novo-lead.ts, test/api/oportunidades-novo-lead.test.ts
 - Esforço: alto
