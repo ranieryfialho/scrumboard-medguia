@@ -69,8 +69,7 @@
 - Esforço: medio
 - Notas: o fundo com os três círculos desfocados, o cartão `max-w-[460px] rounded-2xl` e o rodapé vêm do `1._login_acesso_plataforma/code.html`, **sem** o seletor de estado. Rodapé com texto verdadeiro, decidido em Q-042. Quem já tem sessão e abre uma tela de acesso vai para `/pipeline` (AC-362, no layout do grupo). Também entrega `criterios-senha.tsx` (lista de critérios que acendem, usa `validarSenha` de T-141), compartilhado pelas telas de redefinir (T-150) e convite (T-151), que rodam depois.
 
-## T-148 — Tela de login [pendente]
-
+## T-148 — Tela de login [concluida]
 - Refs: AC-358, AC-359, AC-360, AC-361
 - Arquivos: src/app/(auth)/login/page.tsx, src/components/auth/formulario-login.tsx, test/components/auth/login.test.tsx
 - Esforço: alto
