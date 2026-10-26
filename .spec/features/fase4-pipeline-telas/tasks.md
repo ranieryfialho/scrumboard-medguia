@@ -30,8 +30,7 @@
 - Esforço: medio
 - Notas: `GET /api/oportunidades/lista`, `GET /api/oportunidades/arquivados` e `GET /api/pipeline/indicadores?visao=funil|arquivados`. Mesmo padrão de sessão das rotas de `/api/oportunidades` (401 antes de tocar no banco; `empresaId` da URL é ignorado). Valida e normaliza os parâmetros (página mínima 1; `porPagina` fora de 10/25/50 vira 10). Depende de T-154.
 
-## T-156 — Reabrir card e registrar anotação [pendente]
-
+## T-156 — Reabrir card e registrar anotação [concluida]
 - Refs: AC-404, AC-409
 - Arquivos: src/app/api/oportunidades/[id]/reabrir/route.ts, src/app/api/oportunidades/[id]/anotacoes/route.ts, src/repositories/anotacoes.ts, test/api/pipeline-escrita.test.ts
 - Esforço: alto
