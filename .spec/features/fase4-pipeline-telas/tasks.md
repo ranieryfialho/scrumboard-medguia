@@ -60,8 +60,7 @@
 - Esforço: xalto
 - Notas: fonte visual `docs/ui/stitch_medcrm_interface_design/6._pipeline_funil_pipeline/` (`code.html` e `screen.png`). Move `/pipeline` para o grupo `(app)` (URL igual) e apaga `src/app/pipeline/page.tsx`. Mantém o drag-and-drop, o modal de dado faltante e o botão de iniciar cadência existentes. Etapas com os nomes do banco (ASM-132). Contagem e soma por coluna vêm dos cards carregados; indicadores de `/api/pipeline/indicadores?visao=funil`. "Salvar e iniciar cadência" chama `POST /api/oportunidades` e depois `/api/oportunidades/[id]/cadencia/iniciar`. Origem do modal: valores existentes mais "Outro" (ASM-137). Depende de T-155, T-158 e T-159.
 
-## T-161 — Tela da lista [pendente]
-
+## T-161 — Tela da lista [concluida]
 - Refs: AC-394, AC-395, AC-396, AC-399
 - Arquivos: src/app/(app)/pipeline/lista/page.tsx, src/components/pipeline/tabela-lista.tsx, src/components/pipeline/filtros-lista.tsx, test/components/pipeline/lista.test.tsx
 - Esforço: alto
