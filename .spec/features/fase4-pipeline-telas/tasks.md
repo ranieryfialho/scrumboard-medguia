@@ -54,7 +54,7 @@
 - Esforço: medio
 - Notas: o hook atual já escuta `oportunidade.movida` para o funil antigo; passa a aceitar um callback genérico (o funil move o card, lista e arquivados recarregam a página atual e os indicadores) e a expor o estado da conexão para o aviso "tempo real desconectado". Não pode quebrar o uso atual em `board-kanban.tsx` até T-160 trocá-lo. Eventos de outra empresa nunca chegam (isolamento já vem do barramento; o teste prova).
 
-## T-160 — Tela do funil (Kanban) com indicadores, filtros e novo lead [concluida]
+## T-160 — Tela do funil (Kanban) com indicadores, filtros e novo lead [pendente]
 - Refs: AC-387, AC-388, AC-390, AC-391, AC-392, AC-393
 - Arquivos: src/app/(app)/pipeline/page.tsx, src/components/pipeline/board-kanban.tsx, src/components/pipeline/coluna-etapa.tsx, src/components/pipeline/card-oportunidade.tsx, src/components/pipeline/filtros-funil.tsx, src/components/pipeline/modal-novo-lead.tsx, src/components/pipeline/indicadores-funil.tsx, test/components/pipeline/funil.test.tsx, test/components/pipeline/modal-novo-lead.test.tsx
 - Esforço: xalto
@@ -75,7 +75,7 @@
 ## T-163 — Tela de detalhe do card [pendente]
 
 - Refs: AC-406, AC-407, AC-408, AC-409, AC-410, AC-411, AC-412
-- Arquivos: src/app/(app)/pipeline/[id]/page.tsx, src/components/pipeline/detalhe/cabecalho-card.tsx, src/components/pipeline/detalhe/jornada.tsx, src/components/pipeline/detalhe/informacoes.tsx, src/components/pipeline/detalhe/linha-do-tempo.tsx, src/components/pipeline/detalhe/registro-rapido.tsx, test/components/pipeline/detalhe.test.tsx
+- Arquivos: src/app/(app)/pipeline/[id]/page.tsx, src/components/pipeline/detalhe/cabecalho-card.tsx, src/components/pipeline/detalhe/jornada.tsx, src/components/pipeline/detalhe/informacoes.tsx, src/components/pipeline/detalhe/linha-do-tempo.tsx, src/components/pipeline/detalhe/registro-rapido.tsx, src/app/api/oportunidades/[id]/route.ts, test/components/pipeline/detalhe.test.tsx
 - Esforço: xalto
 - Notas: fonte visual `docs/ui/stitch_medcrm_interface_design/9._pipeline_id_detalhe_do_card/`. Move `/pipeline/[id]` para `(app)` e apaga `src/app/pipeline/[id]/page.tsx`. **Blocos sem dado ficam fora** (decisão do usuário, 26/10): CNPJ, estrutura da clínica, valor anual, unidade física, telefone extra e e-mail extra do protótipo. Jornada com os nomes reais das 15 etapas (ASM-132). "Mover de Etapa", "Marcar como Ganho" e "Perdido" usam `/api/oportunidades/[id]/transicao` e o modal de dado faltante já existentes. Abas Cadência, WhatsApp e Anexos levam às rotas atuais (telas 10 a 12 virão depois). Depende de T-156, T-157 e T-158.
 

@@ -43,9 +43,9 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   }
 
   const db = getDb();
-  const [leadNome, responsavelNome, motivoPerdaNome] = await comTenant(db, contexto, async (tx) => {
+  const [lead, responsavelNome, motivoPerdaNome] = await comTenant(db, contexto, async (tx) => {
     const [lead] = await tx
-      .select({ nome: leads.nome })
+      .select({ nome: leads.nome, email: leads.email, origem: leads.origem })
       .from(leads)
       .where(and(eq(leads.id, oportunidade.leadId), eq(leads.empresaId, contexto.empresaId)))
       .limit(1);
@@ -58,14 +58,21 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       ? await tx.select({ nome: motivosPerda.nome }).from(motivosPerda).where(eq(motivosPerda.id, oportunidade.motivoPerdaId)).limit(1)
       : [];
 
-    return [lead?.nome ?? '', responsavel?.nome ?? null, motivo?.nome ?? null] as const;
+    return [lead ?? null, responsavel?.nome ?? null, motivo?.nome ?? null] as const;
   });
 
   return NextResponse.json({
     id: oportunidade.id,
     etapaId: oportunidade.etapaId,
     leadId: oportunidade.leadId,
-    leadNome,
+    leadNome: lead?.nome ?? '',
+    // T-163 (fase4-pipeline-telas, AC-407): origem/e-mail do lead e a data de
+    // entrada do card (quando foi criado) para o bloco "Informações
+    // Principais" do detalhe — nenhum consumidor anterior desta rota lia
+    // esses campos, então são só acrescentados, sem quebrar o contrato.
+    origem: lead?.origem ?? null,
+    email: lead?.email ?? null,
+    criadoEm: oportunidade.criadoEm.toISOString(),
     responsavelId: oportunidade.responsavelId,
     responsavelNome,
     valor: oportunidade.valor,
