@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# executar-tarefas.sh — gerado por `onp-spec plano fase4-pipeline-telas` em 2026-10-26 14:44
+# executar-tarefas.sh — gerado por `onp-spec plano fase4-pipeline-telas` em 2026-10-26 18:56
 # NÃO edite à mão: mudou tasks.md ou a config, regenere o plano.
 #
 # uso:
@@ -14,7 +14,7 @@
 set -u
 set -o pipefail
 
-RUN_ID='scrumboard-medguia-fase4-pipeline-telas-mvpdblrf'
+RUN_ID='scrumboard-medguia-fase4-pipeline-telas-mvpmb80v'
 FEATURE='fase4-pipeline-telas'
 BASE_BRANCH='spec/fase4-pipeline-telas'
 ENGINE='.claude/skills/onp-spec-driven/scripts/onp-spec.mjs'
@@ -166,17 +166,17 @@ iniciar_resumos() {
   trap 'parar_resumos; node "$ENGINE" resumo "$FEATURE" --gravar >/dev/null 2>&1 || true' EXIT
 }
 
-# ── sequencial T-154 (ordem do tasks.md) ──
-executar_seq_T_154() {
-  info 'sequencial T-154 — Consultas do servidor: lista paginada, arquivados e indicadores'
-  if rodar_tarefa seq 'T-154' 'Você executa UMA tarefa da feature "fase4-pipeline-telas" (fluxo onp-spec, spec-anchored).
+# ── sequencial T-165 (ordem do tasks.md) ──
+executar_seq_T_165() {
+  info 'sequencial T-165 — Criar lead e card em um passo (valor e responsável)'
+  if rodar_tarefa seq 'T-165' 'Você executa UMA tarefa da feature "fase4-pipeline-telas" (fluxo onp-spec, spec-anchored).
 Leia primeiro: .spec/features/fase4-pipeline-telas/spec.md, .spec/features/fase4-pipeline-telas/tasks.md e .spec/constituicao.md.
 
 Sua tarefa (somente ela):
-T-154 — "Consultas do servidor: lista paginada, arquivados e indicadores"
-  critérios/refs: AC-389 (Os indicadores do topo vêm dos dados reais), AC-395 (O servidor pagina a lista), AC-396 (O servidor filtra e ordena a lista), AC-397 (A lista nunca mostra card de outra empresa), AC-398 (A lista não traz cards arquivados), AC-402 (Os arquivados filtram e paginam no servidor), AC-403 (Os indicadores dos arquivados vêm dos dados reais)
-  arquivos permitidos (e seus testes): src/repositories/pipeline-lista.ts, src/repositories/pipeline-indicadores.ts, test/repositories/pipeline-lista.test.ts
-  mensagem de commit: "T-154 fase4-pipeline-telas: Consultas do servidor: lista paginada, arquivados e indicadores"
+T-165 — "Criar lead e card em um passo (valor e responsável)"
+  critérios/refs: AC-391 (O modal "Novo Lead" cria o card na entrada), AC-392 ("Salvar e iniciar cadência" cria o card e já inicia a cadência)
+  arquivos permitidos (e seus testes): src/app/api/oportunidades/route.ts, src/repositories/oportunidades-novo-lead.ts, test/api/oportunidades-novo-lead.test.ts
+  mensagem de commit: "T-165 fase4-pipeline-telas: Criar lead e card em um passo (valor e responsável)"
 
 Regras inegociáveis:
 - Todo critério de aceite referenciado vira teste com @spec:AC-xxx no título.
@@ -186,175 +186,15 @@ Regras inegociáveis:
 - Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' high >> "$LOG_DIR/seq.log" 2>&1; then
     # commit de segurança se o agente esqueceu (rastreabilidade > perfeição)
     if [ -n "$(git status --porcelain)" ]; then
-      git add -A && git commit -q -m 'T-154 fase4-pipeline-telas: Consultas do servidor: lista paginada, arquivados e indicadores (auto-commit do plano)'
+      git add -A && git commit -q -m 'T-165 fase4-pipeline-telas: Criar lead e card em um passo (valor e responsável) (auto-commit do plano)'
     fi
-    marcar_concluidas T-154
-    verde "✔ T-154 concluída"
+    marcar_concluidas T-165
+    verde "✔ T-165 concluída"
     return 0
   fi
-  vermelho "✘ T-154 falhou (log: $LOG_DIR/seq.log)"
-  amarelo "  reexecute só ela: bash .spec/features/fase4-pipeline-telas/executar-tarefas.sh --seq T-154"
-  FALHAS="$FALHAS T-154"
-  return 1
-}
-
-# ── sequencial T-155 (ordem do tasks.md) ──
-executar_seq_T_155() {
-  info 'sequencial T-155 — Rotas de leitura: lista, arquivados e indicadores'
-  if rodar_tarefa seq 'T-155' 'Você executa UMA tarefa da feature "fase4-pipeline-telas" (fluxo onp-spec, spec-anchored).
-Leia primeiro: .spec/features/fase4-pipeline-telas/spec.md, .spec/features/fase4-pipeline-telas/tasks.md e .spec/constituicao.md.
-
-Sua tarefa (somente ela):
-T-155 — "Rotas de leitura: lista, arquivados e indicadores"
-  critérios/refs: AC-389 (Os indicadores do topo vêm dos dados reais), AC-395 (O servidor pagina a lista), AC-396 (O servidor filtra e ordena a lista), AC-397 (A lista nunca mostra card de outra empresa), AC-398 (A lista não traz cards arquivados), AC-402 (Os arquivados filtram e paginam no servidor), AC-403 (Os indicadores dos arquivados vêm dos dados reais)
-  arquivos permitidos (e seus testes): src/app/api/oportunidades/lista/route.ts, src/app/api/oportunidades/arquivados/route.ts, src/app/api/pipeline/indicadores/route.ts, test/api/pipeline-leitura.test.ts
-  mensagem de commit: "T-155 fase4-pipeline-telas: Rotas de leitura: lista, arquivados e indicadores"
-
-Regras inegociáveis:
-- Todo critério de aceite referenciado vira teste com @spec:AC-xxx no título.
-- NUNCA enfraqueça, pule (skip/todo) ou apague um teste para passar — teste pulado não é prova e o audit acusa.
-- Rode os testes localmente com `npx vitest run --reporter=json --outputFile=.spec/verification/raw.json` até passarem.
-- NÃO edite tasks.md, NÃO rode onp-spec verify/audit e NÃO toque em outras tarefas — o orquestrador cuida disso.
-- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' medium >> "$LOG_DIR/seq.log" 2>&1; then
-    # commit de segurança se o agente esqueceu (rastreabilidade > perfeição)
-    if [ -n "$(git status --porcelain)" ]; then
-      git add -A && git commit -q -m 'T-155 fase4-pipeline-telas: Rotas de leitura: lista, arquivados e indicadores (auto-commit do plano)'
-    fi
-    marcar_concluidas T-155
-    verde "✔ T-155 concluída"
-    return 0
-  fi
-  vermelho "✘ T-155 falhou (log: $LOG_DIR/seq.log)"
-  amarelo "  reexecute só ela: bash .spec/features/fase4-pipeline-telas/executar-tarefas.sh --seq T-155"
-  FALHAS="$FALHAS T-155"
-  return 1
-}
-
-# ── sequencial T-156 (ordem do tasks.md) ──
-executar_seq_T_156() {
-  info 'sequencial T-156 — Reabrir card e registrar anotação'
-  if rodar_tarefa seq 'T-156' 'Você executa UMA tarefa da feature "fase4-pipeline-telas" (fluxo onp-spec, spec-anchored).
-Leia primeiro: .spec/features/fase4-pipeline-telas/spec.md, .spec/features/fase4-pipeline-telas/tasks.md e .spec/constituicao.md.
-
-Sua tarefa (somente ela):
-T-156 — "Reabrir card e registrar anotação"
-  critérios/refs: AC-404 ("Reabrir" volta o card ao funil respeitando as regras), AC-409 (Registrar uma anotação interna entra na linha do tempo)
-  arquivos permitidos (e seus testes): src/app/api/oportunidades/[id]/reabrir/route.ts, src/app/api/oportunidades/[id]/anotacoes/route.ts, src/repositories/anotacoes.ts, test/api/pipeline-escrita.test.ts
-  mensagem de commit: "T-156 fase4-pipeline-telas: Reabrir card e registrar anotação"
-
-Regras inegociáveis:
-- Todo critério de aceite referenciado vira teste com @spec:AC-xxx no título.
-- NUNCA enfraqueça, pule (skip/todo) ou apague um teste para passar — teste pulado não é prova e o audit acusa.
-- Rode os testes localmente com `npx vitest run --reporter=json --outputFile=.spec/verification/raw.json` até passarem.
-- NÃO edite tasks.md, NÃO rode onp-spec verify/audit e NÃO toque em outras tarefas — o orquestrador cuida disso.
-- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' high >> "$LOG_DIR/seq.log" 2>&1; then
-    # commit de segurança se o agente esqueceu (rastreabilidade > perfeição)
-    if [ -n "$(git status --porcelain)" ]; then
-      git add -A && git commit -q -m 'T-156 fase4-pipeline-telas: Reabrir card e registrar anotação (auto-commit do plano)'
-    fi
-    marcar_concluidas T-156
-    verde "✔ T-156 concluída"
-    return 0
-  fi
-  vermelho "✘ T-156 falhou (log: $LOG_DIR/seq.log)"
-  amarelo "  reexecute só ela: bash .spec/features/fase4-pipeline-telas/executar-tarefas.sh --seq T-156"
-  FALHAS="$FALHAS T-156"
-  return 1
-}
-
-# ── sequencial T-157 (ordem do tasks.md) ──
-executar_seq_T_157() {
-  info 'sequencial T-157 — Linha do tempo do card'
-  if rodar_tarefa seq 'T-157' 'Você executa UMA tarefa da feature "fase4-pipeline-telas" (fluxo onp-spec, spec-anchored).
-Leia primeiro: .spec/features/fase4-pipeline-telas/spec.md, .spec/features/fase4-pipeline-telas/tasks.md e .spec/constituicao.md.
-
-Sua tarefa (somente ela):
-T-157 — "Linha do tempo do card"
-  critérios/refs: AC-407 (O detalhe mostra só os dados que o sistema tem), AC-408 (A linha do tempo mostra o histórico real do card)
-  arquivos permitidos (e seus testes): src/app/api/oportunidades/[id]/linha-do-tempo/route.ts, src/repositories/linha-do-tempo.ts, test/api/pipeline-linha-do-tempo.test.ts
-  mensagem de commit: "T-157 fase4-pipeline-telas: Linha do tempo do card"
-
-Regras inegociáveis:
-- Todo critério de aceite referenciado vira teste com @spec:AC-xxx no título.
-- NUNCA enfraqueça, pule (skip/todo) ou apague um teste para passar — teste pulado não é prova e o audit acusa.
-- Rode os testes localmente com `npx vitest run --reporter=json --outputFile=.spec/verification/raw.json` até passarem.
-- NÃO edite tasks.md, NÃO rode onp-spec verify/audit e NÃO toque em outras tarefas — o orquestrador cuida disso.
-- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' medium >> "$LOG_DIR/seq.log" 2>&1; then
-    # commit de segurança se o agente esqueceu (rastreabilidade > perfeição)
-    if [ -n "$(git status --porcelain)" ]; then
-      git add -A && git commit -q -m 'T-157 fase4-pipeline-telas: Linha do tempo do card (auto-commit do plano)'
-    fi
-    marcar_concluidas T-157
-    verde "✔ T-157 concluída"
-    return 0
-  fi
-  vermelho "✘ T-157 falhou (log: $LOG_DIR/seq.log)"
-  amarelo "  reexecute só ela: bash .spec/features/fase4-pipeline-telas/executar-tarefas.sh --seq T-157"
-  FALHAS="$FALHAS T-157"
-  return 1
-}
-
-# ── sequencial T-158 (ordem do tasks.md) ──
-executar_seq_T_158() {
-  info 'sequencial T-158 — Peças de tela compartilhadas e estados'
-  if rodar_tarefa seq 'T-158' 'Você executa UMA tarefa da feature "fase4-pipeline-telas" (fluxo onp-spec, spec-anchored).
-Leia primeiro: .spec/features/fase4-pipeline-telas/spec.md, .spec/features/fase4-pipeline-telas/tasks.md e .spec/constituicao.md.
-
-Sua tarefa (somente ela):
-T-158 — "Peças de tela compartilhadas e estados"
-  critérios/refs: AC-393 (Itens do funil sem backend aparecem como "em breve"), AC-405 (Os blocos de análise sem backend aparecem como "em breve"), AC-413 (Cada tela tem estado de carregamento, vazio e erro)
-  arquivos permitidos (e seus testes): src/components/pipeline/pecas/cartao-indicador.tsx, src/components/pipeline/pecas/paginacao.tsx, src/components/pipeline/pecas/selo-etapa.tsx, src/components/pipeline/pecas/selo-em-breve.tsx, src/components/pipeline/pecas/estados.tsx, test/components/pipeline/pecas.test.tsx
-  mensagem de commit: "T-158 fase4-pipeline-telas: Peças de tela compartilhadas e estados"
-
-Regras inegociáveis:
-- Todo critério de aceite referenciado vira teste com @spec:AC-xxx no título.
-- NUNCA enfraqueça, pule (skip/todo) ou apague um teste para passar — teste pulado não é prova e o audit acusa.
-- Rode os testes localmente com `npx vitest run --reporter=json --outputFile=.spec/verification/raw.json` até passarem.
-- NÃO edite tasks.md, NÃO rode onp-spec verify/audit e NÃO toque em outras tarefas — o orquestrador cuida disso.
-- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' high >> "$LOG_DIR/seq.log" 2>&1; then
-    # commit de segurança se o agente esqueceu (rastreabilidade > perfeição)
-    if [ -n "$(git status --porcelain)" ]; then
-      git add -A && git commit -q -m 'T-158 fase4-pipeline-telas: Peças de tela compartilhadas e estados (auto-commit do plano)'
-    fi
-    marcar_concluidas T-158
-    verde "✔ T-158 concluída"
-    return 0
-  fi
-  vermelho "✘ T-158 falhou (log: $LOG_DIR/seq.log)"
-  amarelo "  reexecute só ela: bash .spec/features/fase4-pipeline-telas/executar-tarefas.sh --seq T-158"
-  FALHAS="$FALHAS T-158"
-  return 1
-}
-
-# ── sequencial T-159 (ordem do tasks.md) ──
-executar_seq_T_159() {
-  info 'sequencial T-159 — Tempo real nas telas do pipeline'
-  if rodar_tarefa seq 'T-159' 'Você executa UMA tarefa da feature "fase4-pipeline-telas" (fluxo onp-spec, spec-anchored).
-Leia primeiro: .spec/features/fase4-pipeline-telas/spec.md, .spec/features/fase4-pipeline-telas/tasks.md e .spec/constituicao.md.
-
-Sua tarefa (somente ela):
-T-159 — "Tempo real nas telas do pipeline"
-  critérios/refs: AC-416 (Funil, lista e arquivados se atualizam quando outro usuário mexe num card)
-  arquivos permitidos (e seus testes): src/hooks/use-stream-oportunidades.ts, src/components/pipeline/pecas/aviso-tempo-real.tsx, test/components/pipeline/tempo-real.test.tsx
-  mensagem de commit: "T-159 fase4-pipeline-telas: Tempo real nas telas do pipeline"
-
-Regras inegociáveis:
-- Todo critério de aceite referenciado vira teste com @spec:AC-xxx no título.
-- NUNCA enfraqueça, pule (skip/todo) ou apague um teste para passar — teste pulado não é prova e o audit acusa.
-- Rode os testes localmente com `npx vitest run --reporter=json --outputFile=.spec/verification/raw.json` até passarem.
-- NÃO edite tasks.md, NÃO rode onp-spec verify/audit e NÃO toque em outras tarefas — o orquestrador cuida disso.
-- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' medium >> "$LOG_DIR/seq.log" 2>&1; then
-    # commit de segurança se o agente esqueceu (rastreabilidade > perfeição)
-    if [ -n "$(git status --porcelain)" ]; then
-      git add -A && git commit -q -m 'T-159 fase4-pipeline-telas: Tempo real nas telas do pipeline (auto-commit do plano)'
-    fi
-    marcar_concluidas T-159
-    verde "✔ T-159 concluída"
-    return 0
-  fi
-  vermelho "✘ T-159 falhou (log: $LOG_DIR/seq.log)"
-  amarelo "  reexecute só ela: bash .spec/features/fase4-pipeline-telas/executar-tarefas.sh --seq T-159"
-  FALHAS="$FALHAS T-159"
+  vermelho "✘ T-165 falhou (log: $LOG_DIR/seq.log)"
+  amarelo "  reexecute só ela: bash .spec/features/fase4-pipeline-telas/executar-tarefas.sh --seq T-165"
+  FALHAS="$FALHAS T-165"
   return 1
 }
 
@@ -390,70 +230,6 @@ Regras inegociáveis:
   return 1
 }
 
-# ── sequencial T-161 (ordem do tasks.md) ──
-executar_seq_T_161() {
-  info 'sequencial T-161 — Tela da lista'
-  if rodar_tarefa seq 'T-161' 'Você executa UMA tarefa da feature "fase4-pipeline-telas" (fluxo onp-spec, spec-anchored).
-Leia primeiro: .spec/features/fase4-pipeline-telas/spec.md, .spec/features/fase4-pipeline-telas/tasks.md e .spec/constituicao.md.
-
-Sua tarefa (somente ela):
-T-161 — "Tela da lista"
-  critérios/refs: AC-394 (A lista aparece dentro da casca, em `/pipeline/lista`), AC-395 (O servidor pagina a lista), AC-396 (O servidor filtra e ordena a lista), AC-399 (Cada linha leva ao card e a seleção marca linhas)
-  arquivos permitidos (e seus testes): src/app/(app)/pipeline/lista/page.tsx, src/components/pipeline/tabela-lista.tsx, src/components/pipeline/filtros-lista.tsx, test/components/pipeline/lista.test.tsx
-  mensagem de commit: "T-161 fase4-pipeline-telas: Tela da lista"
-
-Regras inegociáveis:
-- Todo critério de aceite referenciado vira teste com @spec:AC-xxx no título.
-- NUNCA enfraqueça, pule (skip/todo) ou apague um teste para passar — teste pulado não é prova e o audit acusa.
-- Rode os testes localmente com `npx vitest run --reporter=json --outputFile=.spec/verification/raw.json` até passarem.
-- NÃO edite tasks.md, NÃO rode onp-spec verify/audit e NÃO toque em outras tarefas — o orquestrador cuida disso.
-- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' high >> "$LOG_DIR/seq.log" 2>&1; then
-    # commit de segurança se o agente esqueceu (rastreabilidade > perfeição)
-    if [ -n "$(git status --porcelain)" ]; then
-      git add -A && git commit -q -m 'T-161 fase4-pipeline-telas: Tela da lista (auto-commit do plano)'
-    fi
-    marcar_concluidas T-161
-    verde "✔ T-161 concluída"
-    return 0
-  fi
-  vermelho "✘ T-161 falhou (log: $LOG_DIR/seq.log)"
-  amarelo "  reexecute só ela: bash .spec/features/fase4-pipeline-telas/executar-tarefas.sh --seq T-161"
-  FALHAS="$FALHAS T-161"
-  return 1
-}
-
-# ── sequencial T-162 (ordem do tasks.md) ──
-executar_seq_T_162() {
-  info 'sequencial T-162 — Tela dos arquivados'
-  if rodar_tarefa seq 'T-162' 'Você executa UMA tarefa da feature "fase4-pipeline-telas" (fluxo onp-spec, spec-anchored).
-Leia primeiro: .spec/features/fase4-pipeline-telas/spec.md, .spec/features/fase4-pipeline-telas/tasks.md e .spec/constituicao.md.
-
-Sua tarefa (somente ela):
-T-162 — "Tela dos arquivados"
-  critérios/refs: AC-400 (Os arquivados aparecem em `/pipeline/arquivados` com as três abas), AC-401 (Cada linha traz status, responsável, motivo e data de fechamento), AC-403 (Os indicadores dos arquivados vêm dos dados reais), AC-404 ("Reabrir" volta o card ao funil respeitando as regras), AC-405 (Os blocos de análise sem backend aparecem como "em breve")
-  arquivos permitidos (e seus testes): src/app/(app)/pipeline/arquivados/page.tsx, src/components/pipeline/tabela-arquivados.tsx, src/components/pipeline/distribuicao-motivos.tsx, src/components/pipeline/botao-reabrir.tsx, test/components/pipeline/arquivados.test.tsx
-  mensagem de commit: "T-162 fase4-pipeline-telas: Tela dos arquivados"
-
-Regras inegociáveis:
-- Todo critério de aceite referenciado vira teste com @spec:AC-xxx no título.
-- NUNCA enfraqueça, pule (skip/todo) ou apague um teste para passar — teste pulado não é prova e o audit acusa.
-- Rode os testes localmente com `npx vitest run --reporter=json --outputFile=.spec/verification/raw.json` até passarem.
-- NÃO edite tasks.md, NÃO rode onp-spec verify/audit e NÃO toque em outras tarefas — o orquestrador cuida disso.
-- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' high >> "$LOG_DIR/seq.log" 2>&1; then
-    # commit de segurança se o agente esqueceu (rastreabilidade > perfeição)
-    if [ -n "$(git status --porcelain)" ]; then
-      git add -A && git commit -q -m 'T-162 fase4-pipeline-telas: Tela dos arquivados (auto-commit do plano)'
-    fi
-    marcar_concluidas T-162
-    verde "✔ T-162 concluída"
-    return 0
-  fi
-  vermelho "✘ T-162 falhou (log: $LOG_DIR/seq.log)"
-  amarelo "  reexecute só ela: bash .spec/features/fase4-pipeline-telas/executar-tarefas.sh --seq T-162"
-  FALHAS="$FALHAS T-162"
-  return 1
-}
-
 # ── sequencial T-163 (ordem do tasks.md) ──
 executar_seq_T_163() {
   info 'sequencial T-163 — Tela de detalhe do card'
@@ -463,7 +239,7 @@ Leia primeiro: .spec/features/fase4-pipeline-telas/spec.md, .spec/features/fase4
 Sua tarefa (somente ela):
 T-163 — "Tela de detalhe do card"
   critérios/refs: AC-406 (O detalhe mostra cabeçalho, etapa e jornada), AC-407 (O detalhe mostra só os dados que o sistema tem), AC-408 (A linha do tempo mostra o histórico real do card), AC-409 (Registrar uma anotação interna entra na linha do tempo), AC-410 (As ações de mover, ganho e perdido respeitam as regras do pipeline), AC-411 (O detalhe leva às abas das telas irmãs), AC-412 (Card de outra empresa ou inexistente mostra "não encontrado")
-  arquivos permitidos (e seus testes): src/app/(app)/pipeline/[id]/page.tsx, src/components/pipeline/detalhe/cabecalho-card.tsx, src/components/pipeline/detalhe/jornada.tsx, src/components/pipeline/detalhe/informacoes.tsx, src/components/pipeline/detalhe/linha-do-tempo.tsx, src/components/pipeline/detalhe/registro-rapido.tsx, test/components/pipeline/detalhe.test.tsx
+  arquivos permitidos (e seus testes): src/app/(app)/pipeline/[id]/page.tsx, src/components/pipeline/detalhe/cabecalho-card.tsx, src/components/pipeline/detalhe/jornada.tsx, src/components/pipeline/detalhe/informacoes.tsx, src/components/pipeline/detalhe/linha-do-tempo.tsx, src/components/pipeline/detalhe/registro-rapido.tsx, src/app/api/oportunidades/[id]/route.ts, test/components/pipeline/detalhe.test.tsx
   mensagem de commit: "T-163 fase4-pipeline-telas: Tela de detalhe do card"
 
 Regras inegociáveis:
@@ -571,15 +347,8 @@ executar_tudo() {
   iniciar_resumos
   info "logs em: $LOG_DIR"
   info "resumo geral de andamento: a cada 1 min aqui no terminal (e via: onp-spec resumo)"
-  executar_seq_T_154 || true
-  executar_seq_T_155 || true
-  executar_seq_T_156 || true
-  executar_seq_T_157 || true
-  executar_seq_T_158 || true
-  executar_seq_T_159 || true
+  executar_seq_T_165 || true
   executar_seq_T_160 || true
-  executar_seq_T_161 || true
-  executar_seq_T_162 || true
   executar_seq_T_163 || true
   executar_seq_T_164 || true
   encerrar tudo
@@ -587,15 +356,8 @@ executar_tudo() {
 
 listar() {
   echo "execução: $RUN_ID (feature $FEATURE, branch $BASE_BRANCH)"
-  echo "  seq       T-154 (sequencial)"
-  echo "  seq       T-155 (sequencial)"
-  echo "  seq       T-156 (sequencial)"
-  echo "  seq       T-157 (sequencial)"
-  echo "  seq       T-158 (sequencial)"
-  echo "  seq       T-159 (sequencial)"
+  echo "  seq       T-165 (sequencial)"
   echo "  seq       T-160 (sequencial)"
-  echo "  seq       T-161 (sequencial)"
-  echo "  seq       T-162 (sequencial)"
   echo "  seq       T-163 (sequencial)"
   echo "  seq       T-164 (sequencial)"
   echo
@@ -632,15 +394,8 @@ case "$MODO" in
     esac ;;
   seq)
     case "$ALVO" in
-      T-154) evento --tipo inicio --escopo "seq:T-154"; iniciar_resumos; executar_seq_T_154 || true; encerrar "seq:T-154" ;;
-      T-155) evento --tipo inicio --escopo "seq:T-155"; iniciar_resumos; executar_seq_T_155 || true; encerrar "seq:T-155" ;;
-      T-156) evento --tipo inicio --escopo "seq:T-156"; iniciar_resumos; executar_seq_T_156 || true; encerrar "seq:T-156" ;;
-      T-157) evento --tipo inicio --escopo "seq:T-157"; iniciar_resumos; executar_seq_T_157 || true; encerrar "seq:T-157" ;;
-      T-158) evento --tipo inicio --escopo "seq:T-158"; iniciar_resumos; executar_seq_T_158 || true; encerrar "seq:T-158" ;;
-      T-159) evento --tipo inicio --escopo "seq:T-159"; iniciar_resumos; executar_seq_T_159 || true; encerrar "seq:T-159" ;;
+      T-165) evento --tipo inicio --escopo "seq:T-165"; iniciar_resumos; executar_seq_T_165 || true; encerrar "seq:T-165" ;;
       T-160) evento --tipo inicio --escopo "seq:T-160"; iniciar_resumos; executar_seq_T_160 || true; encerrar "seq:T-160" ;;
-      T-161) evento --tipo inicio --escopo "seq:T-161"; iniciar_resumos; executar_seq_T_161 || true; encerrar "seq:T-161" ;;
-      T-162) evento --tipo inicio --escopo "seq:T-162"; iniciar_resumos; executar_seq_T_162 || true; encerrar "seq:T-162" ;;
       T-163) evento --tipo inicio --escopo "seq:T-163"; iniciar_resumos; executar_seq_T_163 || true; encerrar "seq:T-163" ;;
       T-164) evento --tipo inicio --escopo "seq:T-164"; iniciar_resumos; executar_seq_T_164 || true; encerrar "seq:T-164" ;;
       *) falhar "tarefa sequencial desconhecida: '$ALVO' — veja as disponíveis com --listar" ;;

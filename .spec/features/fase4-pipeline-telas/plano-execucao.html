@@ -38,9 +38,9 @@
 </style>
 <main>
   <h1>Plano de execução — fase4-pipeline-telas</h1>
-  <p class="sub">gerado por <code>onp-spec plano</code> em 2026-10-26 14:44 · regenere após mudar tasks.md</p>
+  <p class="sub">gerado por <code>onp-spec plano</code> em 2026-10-26 18:56 · regenere após mudar tasks.md</p>
   <div class="resumo">
-    <div><b>11</b> tarefa(s), uma após a outra</div>
+    <div><b>4</b> tarefa(s), uma após a outra</div>
     <div>modo <b>sequencial</b> (escolha do usuário)</div>
     <div>branch <code>spec/fase4-pipeline-telas</code></div>
   </div>
@@ -61,40 +61,10 @@
       <h3>Ordem de execução <small>uma tarefa após a outra, na árvore principal</small></h3>
       <div class="grade"><div class="faixa">
         <div class="tarefa">
-          <span class="tid">T-154</span>
-          <span class="ttitulo">Consultas do servidor: lista paginada, arquivados e indicadores</span>
+          <span class="tid">T-165</span>
+          <span class="ttitulo">Criar lead e card em um passo (valor e responsável)</span>
           <span class="meta"><code>claude-sonnet-5</code> · esforço <b>high</b></span>
-          <span class="arquivos"><code>src/repositories/pipeline-lista.ts</code> <code>src/repositories/pipeline-indicadores.ts</code> <code>test/repositories/pipeline-lista.test.ts</code></span>
-        </div>
-        <div class="tarefa">
-          <span class="tid">T-155</span>
-          <span class="ttitulo">Rotas de leitura: lista, arquivados e indicadores</span>
-          <span class="meta"><code>claude-sonnet-5</code> · esforço <b>medium</b></span>
-          <span class="arquivos"><code>src/app/api/oportunidades/lista/route.ts</code> <code>src/app/api/oportunidades/arquivados/route.ts</code> <code>src/app/api/pipeline/indicadores/route.ts</code> <code>test/api/pipeline-leitura.test.ts</code></span>
-        </div>
-        <div class="tarefa">
-          <span class="tid">T-156</span>
-          <span class="ttitulo">Reabrir card e registrar anotação</span>
-          <span class="meta"><code>claude-sonnet-5</code> · esforço <b>high</b></span>
-          <span class="arquivos"><code>src/app/api/oportunidades/[id]/reabrir/route.ts</code> <code>src/app/api/oportunidades/[id]/anotacoes/route.ts</code> <code>src/repositories/anotacoes.ts</code> <code>test/api/pipeline-escrita.test.ts</code></span>
-        </div>
-        <div class="tarefa">
-          <span class="tid">T-157</span>
-          <span class="ttitulo">Linha do tempo do card</span>
-          <span class="meta"><code>claude-sonnet-5</code> · esforço <b>medium</b></span>
-          <span class="arquivos"><code>src/app/api/oportunidades/[id]/linha-do-tempo/route.ts</code> <code>src/repositories/linha-do-tempo.ts</code> <code>test/api/pipeline-linha-do-tempo.test.ts</code></span>
-        </div>
-        <div class="tarefa">
-          <span class="tid">T-158</span>
-          <span class="ttitulo">Peças de tela compartilhadas e estados</span>
-          <span class="meta"><code>claude-sonnet-5</code> · esforço <b>high</b></span>
-          <span class="arquivos"><code>src/components/pipeline/pecas/cartao-indicador.tsx</code> <code>src/components/pipeline/pecas/paginacao.tsx</code> <code>src/components/pipeline/pecas/selo-etapa.tsx</code> <code>src/components/pipeline/pecas/selo-em-breve.tsx</code> <code>src/components/pipeline/pecas/estados.tsx</code> <code>test/components/pipeline/pecas.test.tsx</code></span>
-        </div>
-        <div class="tarefa">
-          <span class="tid">T-159</span>
-          <span class="ttitulo">Tempo real nas telas do pipeline</span>
-          <span class="meta"><code>claude-sonnet-5</code> · esforço <b>medium</b></span>
-          <span class="arquivos"><code>src/hooks/use-stream-oportunidades.ts</code> <code>src/components/pipeline/pecas/aviso-tempo-real.tsx</code> <code>test/components/pipeline/tempo-real.test.tsx</code></span>
+          <span class="arquivos"><code>src/app/api/oportunidades/route.ts</code> <code>src/repositories/oportunidades-novo-lead.ts</code> <code>test/api/oportunidades-novo-lead.test.ts</code></span>
         </div>
         <div class="tarefa">
           <span class="tid">T-160</span>
@@ -103,22 +73,10 @@
           <span class="arquivos"><code>src/app/(app)/pipeline/page.tsx</code> <code>src/components/pipeline/board-kanban.tsx</code> <code>src/components/pipeline/coluna-etapa.tsx</code> <code>src/components/pipeline/card-oportunidade.tsx</code> <code>src/components/pipeline/filtros-funil.tsx</code> <code>src/components/pipeline/modal-novo-lead.tsx</code> <code>src/components/pipeline/indicadores-funil.tsx</code> <code>test/components/pipeline/funil.test.tsx</code> <code>test/components/pipeline/modal-novo-lead.test.tsx</code></span>
         </div>
         <div class="tarefa">
-          <span class="tid">T-161</span>
-          <span class="ttitulo">Tela da lista</span>
-          <span class="meta"><code>claude-sonnet-5</code> · esforço <b>high</b></span>
-          <span class="arquivos"><code>src/app/(app)/pipeline/lista/page.tsx</code> <code>src/components/pipeline/tabela-lista.tsx</code> <code>src/components/pipeline/filtros-lista.tsx</code> <code>test/components/pipeline/lista.test.tsx</code></span>
-        </div>
-        <div class="tarefa">
-          <span class="tid">T-162</span>
-          <span class="ttitulo">Tela dos arquivados</span>
-          <span class="meta"><code>claude-sonnet-5</code> · esforço <b>high</b></span>
-          <span class="arquivos"><code>src/app/(app)/pipeline/arquivados/page.tsx</code> <code>src/components/pipeline/tabela-arquivados.tsx</code> <code>src/components/pipeline/distribuicao-motivos.tsx</code> <code>src/components/pipeline/botao-reabrir.tsx</code> <code>test/components/pipeline/arquivados.test.tsx</code></span>
-        </div>
-        <div class="tarefa">
           <span class="tid">T-163</span>
           <span class="ttitulo">Tela de detalhe do card</span>
           <span class="meta"><code>claude-sonnet-5</code> · esforço <b>xhigh</b></span>
-          <span class="arquivos"><code>src/app/(app)/pipeline/[id]/page.tsx</code> <code>src/components/pipeline/detalhe/cabecalho-card.tsx</code> <code>src/components/pipeline/detalhe/jornada.tsx</code> <code>src/components/pipeline/detalhe/informacoes.tsx</code> <code>src/components/pipeline/detalhe/linha-do-tempo.tsx</code> <code>src/components/pipeline/detalhe/registro-rapido.tsx</code> <code>test/components/pipeline/detalhe.test.tsx</code></span>
+          <span class="arquivos"><code>src/app/(app)/pipeline/[id]/page.tsx</code> <code>src/components/pipeline/detalhe/cabecalho-card.tsx</code> <code>src/components/pipeline/detalhe/jornada.tsx</code> <code>src/components/pipeline/detalhe/informacoes.tsx</code> <code>src/components/pipeline/detalhe/linha-do-tempo.tsx</code> <code>src/components/pipeline/detalhe/registro-rapido.tsx</code> <code>src/app/api/oportunidades/[id]/route.ts</code> <code>test/components/pipeline/detalhe.test.tsx</code></span>
         </div>
         <div class="tarefa">
           <span class="tid">T-164</span>

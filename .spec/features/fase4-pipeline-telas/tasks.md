@@ -54,11 +54,18 @@
 - Esforço: medio
 - Notas: o hook atual já escuta `oportunidade.movida` para o funil antigo; passa a aceitar um callback genérico (o funil move o card, lista e arquivados recarregam a página atual e os indicadores) e a expor o estado da conexão para o aviso "tempo real desconectado". Não pode quebrar o uso atual em `board-kanban.tsx` até T-160 trocá-lo. Eventos de outra empresa nunca chegam (isolamento já vem do barramento; o teste prova).
 
-## T-160 — Tela do funil (Kanban) com indicadores, filtros e novo lead [concluida]
+## T-165 — Criar lead e card em um passo (valor e responsável) [pendente]
+
+- Refs: AC-391, AC-392
+- Arquivos: src/app/api/oportunidades/route.ts, src/repositories/oportunidades-novo-lead.ts, test/api/oportunidades-novo-lead.test.ts
+- Esforço: alto
+- Notas: achado pelo agente da T-160: o modal "Novo Lead" precisa criar um lead novo, e hoje `POST /api/oportunidades` só aceita `leadId` de lead existente (e não aceita valor nem responsável). Estende o `POST` de forma **aditiva**: continua aceitando `{ leadId }`; passa a aceitar também `{ novoLead: { nome, telefone, email?, origem }, valor?, responsavelId? }`, criando lead e card na etapa "Entrada de leads" em **uma transação** (se uma parte falha, nada é gravado). Usa `criarLead` e `criarOportunidade` já existentes, sem migration. Valida: nome, telefone e origem obrigatórios (400 com o campo); `responsavelId` precisa ser de usuário ativo da mesma empresa (senão 400); telefone normalizado para E.164 como no resto do sistema; mesmas permissões de hoje (ATENDENTE, GERENTE e MASTER criam card). Roda antes de T-160.
+
+## T-160 — Tela do funil (Kanban) com indicadores, filtros e novo lead [pendente]
 - Refs: AC-387, AC-388, AC-390, AC-391, AC-392, AC-393
 - Arquivos: src/app/(app)/pipeline/page.tsx, src/components/pipeline/board-kanban.tsx, src/components/pipeline/coluna-etapa.tsx, src/components/pipeline/card-oportunidade.tsx, src/components/pipeline/filtros-funil.tsx, src/components/pipeline/modal-novo-lead.tsx, src/components/pipeline/indicadores-funil.tsx, test/components/pipeline/funil.test.tsx, test/components/pipeline/modal-novo-lead.test.tsx
 - Esforço: xalto
-- Notas: fonte visual `docs/ui/stitch_medcrm_interface_design/6._pipeline_funil_pipeline/` (`code.html` e `screen.png`). Move `/pipeline` para o grupo `(app)` (URL igual) e apaga `src/app/pipeline/page.tsx`. Mantém o drag-and-drop, o modal de dado faltante e o botão de iniciar cadência existentes. Etapas com os nomes do banco (ASM-132). Contagem e soma por coluna vêm dos cards carregados; indicadores de `/api/pipeline/indicadores?visao=funil`. "Salvar e iniciar cadência" chama `POST /api/oportunidades` e depois `/api/oportunidades/[id]/cadencia/iniciar`. Origem do modal: valores existentes mais "Outro" (ASM-137). Depende de T-155, T-158 e T-159.
+- Notas: fonte visual `docs/ui/stitch_medcrm_interface_design/6._pipeline_funil_pipeline/` (`code.html` e `screen.png`). Move `/pipeline` para o grupo `(app)` (URL igual) e apaga `src/app/pipeline/page.tsx`. Mantém o drag-and-drop, o modal de dado faltante e o botão de iniciar cadência existentes. Etapas com os nomes do banco (ASM-132). Contagem e soma por coluna vêm dos cards carregados; indicadores de `/api/pipeline/indicadores?visao=funil`. "Salvar e iniciar cadência" chama `POST /api/oportunidades` e depois `/api/oportunidades/[id]/cadencia/iniciar`. Origem do modal: valores existentes mais "Outro" (ASM-137). Depende de T-155, T-158, T-159 e **T-165** (a criação do lead com valor e responsável vem de lá; a T-160 só mexe nos arquivos de tela listados e consome a API).
 
 ## T-161 — Tela da lista [concluida]
 - Refs: AC-394, AC-395, AC-396, AC-399

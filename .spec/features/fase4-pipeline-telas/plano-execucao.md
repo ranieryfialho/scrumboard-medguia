@@ -1,11 +1,11 @@
 # Plano de execução — fase4-pipeline-telas
 
-> gerado por `onp-spec plano` em 2026-10-26 14:44 — NÃO edite à mão;
+> gerado por `onp-spec plano` em 2026-10-26 18:56 — NÃO edite à mão;
 > mudou tasks.md ou a config? Regenere: `onp-spec plano fase4-pipeline-telas --sequencial`
 
 ## Resumo — o que vai acontecer
 
-- **modo SEQUENCIAL (escolha do usuário)**: 11 tarefa(s) pendente(s), UMA APÓS A OUTRA, na árvore principal
+- **modo SEQUENCIAL (escolha do usuário)**: 4 tarefa(s) pendente(s), UMA APÓS A OUTRA, na árvore principal (8 já concluída(s): T-154, T-155, T-156, T-157, T-158, T-159, T-161, T-162)
 - sem worktrees e sem paralelismo — cada tarefa roda numa janela de contexto limpa, na ordem do tasks.md
 - tudo acontece na branch de trabalho `spec/fase4-pipeline-telas`; levar para a main é decisão sua
 
@@ -13,15 +13,8 @@
 
 | tarefa | título | modelo | esforço |
 |---|---|---|---|
-| T-154 | Consultas do servidor: lista paginada, arquivados e indicadores | `claude-sonnet-5` | high |
-| T-155 | Rotas de leitura: lista, arquivados e indicadores | `claude-sonnet-5` | medium |
-| T-156 | Reabrir card e registrar anotação | `claude-sonnet-5` | high |
-| T-157 | Linha do tempo do card | `claude-sonnet-5` | medium |
-| T-158 | Peças de tela compartilhadas e estados | `claude-sonnet-5` | high |
-| T-159 | Tempo real nas telas do pipeline | `claude-sonnet-5` | medium |
+| T-165 | Criar lead e card em um passo (valor e responsável) | `claude-sonnet-5` | high |
 | T-160 | Tela do funil (Kanban) com indicadores, filtros e novo lead | `claude-sonnet-5` | xhigh |
-| T-161 | Tela da lista | `claude-sonnet-5` | high |
-| T-162 | Tela dos arquivados | `claude-sonnet-5` | high |
 | T-163 | Tela de detalhe do card | `claude-sonnet-5` | xhigh |
 | T-164 | Permissões das novas rotas, menu e retirada da tela antiga | `claude-sonnet-5` | medium |
 
