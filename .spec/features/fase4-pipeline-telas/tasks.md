@@ -48,8 +48,7 @@
 - Esforço: alto
 - Notas: cartão de indicador (como o do `6._pipeline_funil_pipeline/code.html` e do `7`), paginação "Exibindo N a M de T", selo de etapa por cor, selo "em breve" (o mesmo da fase 4, reaproveitar se já existir em `src/components/shell`) e os três estados: esqueleto de carregamento, vazio com próximo passo e erro com "Tentar de novo". Ficam em `pecas/` para que as quatro telas as usem sem colidir arquivos. Roda antes das telas.
 
-## T-159 — Tempo real nas telas do pipeline [pendente]
-
+## T-159 — Tempo real nas telas do pipeline [concluida]
 - Refs: AC-416
 - Arquivos: src/hooks/use-stream-oportunidades.ts, src/components/pipeline/pecas/aviso-tempo-real.tsx, test/components/pipeline/tempo-real.test.tsx
 - Esforço: medio
