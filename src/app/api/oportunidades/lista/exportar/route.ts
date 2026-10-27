@@ -10,7 +10,7 @@ import { getDb } from '../../../../../db/client';
 import { pipelineEtapas } from '../../../../../db/schema';
 import { getAuth } from '../../../../../lib/auth/instancia';
 import { ErroSessaoInvalida, resolverContextoTenant, type ContextoTenant } from '../../../../../lib/auth/tenant';
-import { formatarDataHoraCsv, formatarValorCsv, gerarCsv } from '../../../../../lib/csv/gerar-csv';
+import { formatarDataHoraCsv, formatarTelefoneCsv, formatarValorCsv, gerarCsv } from '../../../../../lib/csv/gerar-csv';
 import { dataDeHojeParaArquivo, respostaCsv } from '../../../../../lib/csv/resposta-csv';
 import {
   exportarLista,
@@ -83,7 +83,7 @@ export async function GET(request: NextRequest) {
     COLUNAS,
     resultado.itens.map((item) => [
       item.lead.nome,
-      item.lead.telefoneE164,
+      formatarTelefoneCsv(item.lead.telefoneE164),
       item.lead.email,
       item.lead.origem,
       etapas.get(item.etapaId) ?? String(item.etapaId),

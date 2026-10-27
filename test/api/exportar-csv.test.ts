@@ -131,7 +131,7 @@ describe('T-179: exportar em CSV (servidor)', () => {
       expect(linhas).toHaveLength(2);
       const campos = linhas[1].split(';');
       expect(campos[0]).toBe('Lead Lote 001');
-      expect(campos[1]).toBe('5511900000001');
+      expect(campos[1]).toBe('(11) 90000-0001');
       expect(campos[2]).toBe('lote1@teste.com');
       expect(campos[3]).toBe('Lote');
       expect(campos[4]).toBe('1º dia de contato');

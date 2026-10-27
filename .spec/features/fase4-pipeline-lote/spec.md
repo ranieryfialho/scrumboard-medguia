@@ -189,7 +189,7 @@ aplicados), para analisar fora do sistema.
 | ASM-152 | Reatribuir só MASTER e GERENTE (regra nova: antes não existia endpoint); o super admin segue como MASTER | aberta | O ATENDENTE não redistribui carteira |
 | ASM-153 | A reatribuição grava um evento `reatribuicao` no histórico de cada card (de quem, para quem, quem fez), sem tabela nova de histórico | aberta | A coluna `tipo` de `oportunidade_eventos` é texto livre; confirmar na tarefa |
 | ASM-154 | "Arquivar" = transição para "Perdido" (etapa 14) com o motivo escolhido; cards em "Contrato (Ganho)" não aparecem na lista, então não são alvo | aberta | Reaproveita a regra de transição, que já exige motivo para "Perdido" |
-| ASM-155 | O CSV usa ponto e vírgula, UTF-8 com BOM, datas dd/mm/aaaa hh:mm e valor com vírgula decimal (padrão do Excel em português); o teto é de 5.000 linhas por exportação | aberta | Número escolhido por ser folgado para a carteira atual; trocar é uma constante |
+| ASM-155 | O CSV usa ponto e vírgula, UTF-8 com BOM, datas dd/mm/aaaa hh:mm, valor com vírgula decimal e telefone brasileiro no formato `(DD) NNNNN-NNNN` (o `+55…` do cadastro viraria fórmula e notação científica no Excel); o teto é de 5.000 linhas por exportação | aberta | Número escolhido por ser folgado para a carteira atual; trocar é uma constante |
 | ASM-156 | O registro de exportações é uma tabela nova `auditoria_exportacoes` (migration 0014), com isolamento por empresa como as demais tabelas; a migration entra na lista de pendências do cutover, junto da 0012 e da 0013 | aberta | O registro pedido pelo usuário não cabe em nenhuma tabela existente |
 
 ## Perguntas em aberto

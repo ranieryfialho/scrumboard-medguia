@@ -3,7 +3,7 @@
 // injeção de fórmula. Funções puras: sem banco.
 import { describe, expect, test } from 'vitest';
 
-import { formatarDataHoraCsv, formatarValorCsv, gerarCsv, neutralizarFormula } from '../../src/lib/csv/gerar-csv';
+import { formatarDataHoraCsv, formatarTelefoneCsv, formatarValorCsv, gerarCsv, neutralizarFormula } from '../../src/lib/csv/gerar-csv';
 
 describe('T-179: gerador de CSV', () => {
   describe('AC-458: o arquivo abre certo no Excel e não executa fórmulas', () => {
@@ -47,6 +47,18 @@ describe('T-179: gerador de CSV', () => {
       expect(formatarValorCsv(null)).toBe('');
       expect(formatarValorCsv('')).toBe('');
       expect(formatarValorCsv('abc')).toBe('');
+    });
+
+    test('telefone brasileiro sai como "(DD) NNNNN-NNNN", sem o "+" que viraria fórmula; os outros ficam como vieram @spec:AC-458', () => {
+      expect(formatarTelefoneCsv('+5541866330013')).toBe('(41) 86633-0013');
+      expect(formatarTelefoneCsv('5511900000001')).toBe('(11) 90000-0001');
+      expect(formatarTelefoneCsv('+551133334444')).toBe('(11) 3333-4444');
+      expect(formatarTelefoneCsv('+14155550123')).toBe('+14155550123');
+      expect(formatarTelefoneCsv('')).toBe('');
+      expect(formatarTelefoneCsv(null)).toBe('');
+      // O que não é brasileiro continua protegido contra fórmula pelo gerador.
+      expect(gerarCsv(['Tel'], [[formatarTelefoneCsv('+14155550123')]]).slice(1)).toBe("Tel\r\n'+14155550123\r\n");
+      expect(gerarCsv(['Tel'], [[formatarTelefoneCsv('+5541866330013')]]).slice(1)).toBe('Tel\r\n(41) 86633-0013\r\n');
     });
 
     test('data vira dd/mm/aaaa hh:mm no fuso de São Paulo; sem data vira vazio @spec:AC-458', () => {

@@ -25,6 +25,22 @@ export function formatarValorCsv(valor: string | number | null | undefined): str
   return numero.toFixed(2).replace('.', ',');
 }
 
+/**
+ * Telefone brasileiro (E.164 `+55DDNNNNNNNNN`) no formato de leitura `(DD) NNNNN-NNNN`.
+ * O `+` inicial do E.164 seria tratado como fórmula (com apóstrofo visível no Excel) e
+ * os 13 dígitos virariam notação científica; a forma `(DD) …` é texto seguro e legível.
+ * Número que não é brasileiro, ou fora do padrão, sai como veio (e `gerarCsv` o protege).
+ */
+export function formatarTelefoneCsv(telefone: string | null | undefined): string {
+  if (!telefone) return '';
+  const digitos = telefone.replace(/\D/g, '');
+  if (!/^55\d{10,11}$/.test(digitos)) return telefone;
+  const ddd = digitos.slice(2, 4);
+  const numero = digitos.slice(4);
+  const corte = numero.length === 9 ? 5 : 4;
+  return `(${ddd}) ${numero.slice(0, corte)}-${numero.slice(corte)}`;
+}
+
 /** dd/mm/aaaa hh:mm no fuso de São Paulo (o mesmo das telas). */
 export function formatarDataHoraCsv(data: Date | null | undefined): string {
   if (!data) return '';
