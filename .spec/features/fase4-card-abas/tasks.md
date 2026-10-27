@@ -30,8 +30,7 @@
 - Esforço: medio
 - Notas: `GET /api/oportunidades/[id]/anexos` com o mesmo padrão de sessão e tenant das rotas de `/api/oportunidades` (401 antes de tocar no banco; card de outra empresa = 404). Cada item: id, nome (ou nulo), mime, tamanho, hash, quem enviou (nome), criadoEm e `evidencia: { etapaId, etapaNome } | null` (anexo que aparece como `anexo_id` de um evento de transição do card; ASM-143). Ordem: mais novo primeiro. Depende de T-168 (coluna `nome`).
 
-## T-170 — Listagem da cadência do card (servidor) [pendente]
-
+## T-170 — Listagem da cadência do card (servidor) [concluida]
 - Refs: AC-430, AC-431
 - Arquivos: src/repositories/cadencia-card.ts, src/app/api/oportunidades/[id]/cadencia/route.ts, test/api/oportunidade-cadencia-lista.test.ts
 - Esforço: medio
