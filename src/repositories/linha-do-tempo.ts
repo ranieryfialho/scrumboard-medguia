@@ -70,6 +70,13 @@ function textoDoEvento(
       return 'Dia da cadência avançado';
     case 'conexao_whatsapp':
       return 'Mensagem recebida via WhatsApp';
+    case 'reatribuicao': {
+      // T-177 (AC-452): de/para gravados com o nome da época, para o histórico não mudar se alguém for renomeado.
+      const para = typeof dados.paraNome === 'string' ? dados.paraNome : 'outra pessoa';
+      return typeof dados.deNome === 'string'
+        ? `Responsável alterado: de "${dados.deNome}" para "${para}"`
+        : `Responsável definido: "${para}"`;
+    }
     default:
       return tipo;
   }
