@@ -6,6 +6,7 @@
 // alcançáveis. Quem decide o que é "alcançável" é `page.tsx` (a partir do
 // mesmo `grafo` que `GET /api/oportunidades` já calcula filtrado por papel,
 // T-046/AC-094) — este componente só mostra o que recebe.
+import type { ReactNode } from 'react';
 import Link from 'next/link';
 
 import { SeloEtapa } from '@/components/pipeline/pecas/selo-etapa';
@@ -25,6 +26,8 @@ interface CabecalhoCardProps {
   podeMarcarPerdido: boolean;
   enviando: boolean;
   onEscolherDestino: (etapaDestinoId: number) => void;
+  /** T-171: itens extras nas ações (ex.: "Mover Etapa" em breve nas abas que não movem card). */
+  acoesExtras?: ReactNode;
 }
 
 export function CabecalhoCard({
@@ -36,6 +39,7 @@ export function CabecalhoCard({
   podeMarcarPerdido,
   enviando,
   onEscolherDestino,
+  acoesExtras,
 }: CabecalhoCardProps) {
   return (
     <div className="px-gutter pt-space-lg pb-space-md bg-surface-card shadow-sm">
@@ -114,6 +118,8 @@ export function CabecalhoCard({
                 Perdido
               </button>
             )}
+
+            {acoesExtras}
 
             <ItemEmBreve
               rotulo="Editar Informações"

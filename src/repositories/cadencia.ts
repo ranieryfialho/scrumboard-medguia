@@ -251,7 +251,7 @@ export interface ItemFilaCadencia {
  * horário de verão desde 2019, então hora local + 3h é sempre a hora UTC do
  * mesmo dia-calendário.
  */
-function inicioDoTurnoDeReferencia(agora: Date): Date {
+export function inicioDoTurnoDeReferencia(agora: Date): Date {
   const local = dataLocalEmSaoPaulo(agora);
   const horaReferenciaLocal = local.hora < 13 ? 8 : 13;
   return new Date(Date.UTC(local.ano, local.mes - 1, local.dia, horaReferenciaLocal + 3));

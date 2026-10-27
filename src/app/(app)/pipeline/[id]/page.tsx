@@ -30,6 +30,8 @@ import { Jornada, nomeDaEtapa } from '@/components/pipeline/detalhe/jornada';
 import { Informacoes, type TelefoneInformacao } from '@/components/pipeline/detalhe/informacoes';
 import { LinhaDoTempo } from '@/components/pipeline/detalhe/linha-do-tempo';
 import { RegistroRapido } from '@/components/pipeline/detalhe/registro-rapido';
+import { AbasDoCard } from '@/components/pipeline/card/abas-do-card';
+import { useContadoresDoCard } from '@/components/pipeline/card/use-contadores-do-card';
 
 const ETAPA_PERDIDO = 14;
 const ETAPA_CONTRATO_GANHO = 15;
@@ -59,13 +61,6 @@ interface DadoFaltantePendente {
   codigo: CodigoErroTransicao;
 }
 
-const ABAS = [
-  { chave: 'resumo', rotulo: 'Resumo', icone: 'dashboard', segmento: null },
-  { chave: 'cadencia', rotulo: 'Cadência', icone: 'checklist', segmento: 'cadencia' },
-  { chave: 'whatsapp', rotulo: 'WhatsApp', icone: 'chat', segmento: 'conversa' },
-  { chave: 'anexos', rotulo: 'Anexos & Evidências', icone: 'attachment', segmento: 'anexos' },
-] as const;
-
 function PipelineDetalheConteudo({ id }: { id: string }) {
   const [dados, setDados] = useState<DetalheOportunidade | null>(null);
   const [naoEncontrado, setNaoEncontrado] = useState(false);
@@ -81,6 +76,9 @@ function PipelineDetalheConteudo({ id }: { id: string }) {
   const [mensagem, setMensagem] = useState<string | null>(null);
   const [dadoFaltante, setDadoFaltante] = useState<DadoFaltantePendente | null>(null);
   const [versaoLinhaDoTempo, setVersaoLinhaDoTempo] = useState(0);
+
+  // T-171 (AC-420): contadores das abas (toques de 18 e anexos); falha só omite o número.
+  const contagens = useContadoresDoCard(dados ? id : null);
 
   const [cadenciaIniciada, setCadenciaIniciada] = useState(false);
   const [erroCadencia, setErroCadencia] = useState<string | null>(null);
@@ -241,33 +239,7 @@ function PipelineDetalheConteudo({ id }: { id: string }) {
         onEscolherDestino={(etapaDestinoId) => enviarTransicao(etapaDestinoId)}
       />
 
-      {/* AC-411: Resumo ativa; as outras levam às rotas atuais (telas 10 a 12 virão depois). */}
-      <div className="px-gutter pb-space-sm bg-surface-card shadow-sm flex items-center gap-1 overflow-x-auto">
-        {ABAS.map((aba) =>
-          aba.segmento === null ? (
-            <span
-              key={aba.chave}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg font-label-lg text-label-lg text-primary bg-primary-fixed/40"
-            >
-              <span aria-hidden="true" className="material-symbols-outlined text-[18px]">
-                {aba.icone}
-              </span>
-              {aba.rotulo}
-            </span>
-          ) : (
-            <Link
-              key={aba.chave}
-              href={`/pipeline/${dados.id}/${aba.segmento}`}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg font-label-lg text-label-lg text-text-secondary hover:text-text-primary hover:bg-surface-subtle transition-colors"
-            >
-              <span aria-hidden="true" className="material-symbols-outlined text-[18px]">
-                {aba.icone}
-              </span>
-              {aba.rotulo}
-            </Link>
-          )
-        )}
-      </div>
+      <AbasDoCard cardId={dados.id} ativa="resumo" contagens={contagens} />
 
       <Jornada etapaAtualId={dados.etapaId} />
 

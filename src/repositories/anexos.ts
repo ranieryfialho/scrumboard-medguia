@@ -25,6 +25,8 @@ export interface DadosNovoAnexo {
   mime: string;
   tamanho: number;
   hash: string;
+  /** Nome original do arquivo, já limpo (AC-428); `null`/ausente quando não há nome a guardar. */
+  nome?: string | null;
 }
 
 /**
@@ -54,6 +56,7 @@ export async function criarAnexo(
         mime: dados.mime,
         tamanho: dados.tamanho,
         hash: dados.hash,
+        nome: dados.nome ?? null,
         enviadoPor: contexto.usuarioId,
       })
       .returning();

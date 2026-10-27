@@ -25,6 +25,9 @@ function comoContadorVisivel(total: number): number | undefined {
   return total > 0 ? total : undefined;
 }
 
+/** Evento do navegador que faz o menu reler o contador de mensagens não lidas (T-174, AC-440). */
+export const EVENTO_CONTADORES_MUDARAM = 'crm:contadores-mudaram';
+
 async function carregarContadoresTarefas(): Promise<Pick<Contadores, 'tarefasDoTurno' | 'tarefasAtrasadas'>> {
   try {
     const resposta = await fetch('/api/atividades?atrasados=1');
@@ -64,8 +67,18 @@ export function useContadores(): Contadores {
       setContadores({ ...tarefas, ...whatsapp });
     });
 
+    // T-174 (AC-440): quem mexe nas mensagens (ex.: abrir a conversa de um lead
+    // marca as recebidas como lidas) avisa o menu, que refaz só o número do WhatsApp.
+    function aoMudarWhatsapp() {
+      void carregarContadorWhatsapp().then((whatsapp) => {
+        if (!cancelado) setContadores((atual) => ({ ...atual, ...whatsapp }));
+      });
+    }
+    window.addEventListener(EVENTO_CONTADORES_MUDARAM, aoMudarWhatsapp);
+
     return () => {
       cancelado = true;
+      window.removeEventListener(EVENTO_CONTADORES_MUDARAM, aoMudarWhatsapp);
     };
   }, []);
 

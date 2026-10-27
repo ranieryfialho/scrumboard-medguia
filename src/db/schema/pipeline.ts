@@ -144,6 +144,9 @@ export const anexos = pgTable('anexos', {
   mime: text('mime').notNull(),
   tamanho: integer('tamanho').notNull(),
   hash: text('hash').notNull(),
+  // Nome original do arquivo enviado (AC-428, T-168) — nulo nos anexos
+  // anteriores à migration 0013.
+  nome: text('nome'),
   enviadoPor: uuid('enviado_por').references(() => usuarios.id, { onDelete: 'set null' }),
   criadoEm: timestamp('criado_em', { withTimezone: true }).notNull().defaultNow(),
 });
