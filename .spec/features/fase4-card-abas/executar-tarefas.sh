@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# executar-tarefas.sh — gerado por `onp-spec plano fase4-card-abas` em 2026-10-27 17:26
+# executar-tarefas.sh — gerado por `onp-spec plano fase4-card-abas` em 2026-10-27 17:27
 # NÃO edite à mão: mudou tasks.md ou a config, regenere o plano.
 #
 # uso:
@@ -14,7 +14,7 @@
 set -u
 set -o pipefail
 
-RUN_ID='scrumboard-medguia-fase4-card-abas-mvqyjtac'
+RUN_ID='scrumboard-medguia-fase4-card-abas-mvqykc8v'
 FEATURE='fase4-card-abas'
 BASE_BRANCH='spec/fase4-card-abas'
 ENGINE='.claude/skills/onp-spec-driven/scripts/onp-spec.mjs'
@@ -166,15 +166,10 @@ iniciar_resumos() {
   trap 'parar_resumos; node "$ENGINE" resumo "$FEATURE" --gravar >/dev/null 2>&1 || true' EXIT
 }
 
-# ── faixa-1: T-168 ──
-executar_faixa_1() {
-  local WT="$WT_BASE-faixa-1"
-  preparar_worktree 'faixa-1' 'spec/fase4-card-abas-faixa-1' "$WT" || return 1
-  evento --tipo faixa --faixa 'faixa-1' --estado executando --tentativa "$(tentativa 'faixa-1')"
-  : > "$LOG_DIR/faixa-1.log"
-  (
-    cd "$WT" || exit 9
-    rodar_tarefa 'faixa-1' 'T-168' 'Você executa UMA tarefa da feature "fase4-card-abas" (fluxo onp-spec, spec-anchored).
+# ── sequencial T-168 (ordem do tasks.md) ──
+executar_seq_T_168() {
+  info 'sequencial T-168 — Nome original do anexo: migration 0013 e upload'
+  if rodar_tarefa seq 'T-168' 'Você executa UMA tarefa da feature "fase4-card-abas" (fluxo onp-spec, spec-anchored).
 Leia primeiro: .spec/features/fase4-card-abas/spec.md, .spec/features/fase4-card-abas/tasks.md e .spec/constituicao.md.
 
 Sua tarefa (somente ela):
@@ -188,23 +183,25 @@ Regras inegociáveis:
 - NUNCA enfraqueça, pule (skip/todo) ou apague um teste para passar — teste pulado não é prova e o audit acusa.
 - Rode os testes localmente com `npx vitest run --reporter=json --outputFile=.spec/verification/raw.json` até passarem.
 - NÃO edite tasks.md, NÃO rode onp-spec verify/audit e NÃO toque em outras tarefas — o orquestrador cuida disso.
-- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' high
-  ) >> "$LOG_DIR/faixa-1.log" 2>&1
-  local st=$?
-  mesclar_faixa 'faixa-1' 'spec/fase4-card-abas-faixa-1' "$WT" "$st" || return 1
-  marcar_concluidas T-168
-  return 0
+- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' high >> "$LOG_DIR/seq.log" 2>&1; then
+    # commit de segurança se o agente esqueceu (rastreabilidade > perfeição)
+    if [ -n "$(git status --porcelain)" ]; then
+      git add -A && git commit -q -m 'T-168 fase4-card-abas: Nome original do anexo: migration 0013 e upload (auto-commit do plano)'
+    fi
+    marcar_concluidas T-168
+    verde "✔ T-168 concluída"
+    return 0
+  fi
+  vermelho "✘ T-168 falhou (log: $LOG_DIR/seq.log)"
+  amarelo "  reexecute só ela: bash .spec/features/fase4-card-abas/executar-tarefas.sh --seq T-168"
+  FALHAS="$FALHAS T-168"
+  return 1
 }
 
-# ── faixa-2: T-169 ──
-executar_faixa_2() {
-  local WT="$WT_BASE-faixa-2"
-  preparar_worktree 'faixa-2' 'spec/fase4-card-abas-faixa-2' "$WT" || return 1
-  evento --tipo faixa --faixa 'faixa-2' --estado executando --tentativa "$(tentativa 'faixa-2')"
-  : > "$LOG_DIR/faixa-2.log"
-  (
-    cd "$WT" || exit 9
-    rodar_tarefa 'faixa-2' 'T-169' 'Você executa UMA tarefa da feature "fase4-card-abas" (fluxo onp-spec, spec-anchored).
+# ── sequencial T-169 (ordem do tasks.md) ──
+executar_seq_T_169() {
+  info 'sequencial T-169 — Listagem dos anexos do card (servidor)'
+  if rodar_tarefa seq 'T-169' 'Você executa UMA tarefa da feature "fase4-card-abas" (fluxo onp-spec, spec-anchored).
 Leia primeiro: .spec/features/fase4-card-abas/spec.md, .spec/features/fase4-card-abas/tasks.md e .spec/constituicao.md.
 
 Sua tarefa (somente ela):
@@ -218,23 +215,25 @@ Regras inegociáveis:
 - NUNCA enfraqueça, pule (skip/todo) ou apague um teste para passar — teste pulado não é prova e o audit acusa.
 - Rode os testes localmente com `npx vitest run --reporter=json --outputFile=.spec/verification/raw.json` até passarem.
 - NÃO edite tasks.md, NÃO rode onp-spec verify/audit e NÃO toque em outras tarefas — o orquestrador cuida disso.
-- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' medium
-  ) >> "$LOG_DIR/faixa-2.log" 2>&1
-  local st=$?
-  mesclar_faixa 'faixa-2' 'spec/fase4-card-abas-faixa-2' "$WT" "$st" || return 1
-  marcar_concluidas T-169
-  return 0
+- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' medium >> "$LOG_DIR/seq.log" 2>&1; then
+    # commit de segurança se o agente esqueceu (rastreabilidade > perfeição)
+    if [ -n "$(git status --porcelain)" ]; then
+      git add -A && git commit -q -m 'T-169 fase4-card-abas: Listagem dos anexos do card (servidor) (auto-commit do plano)'
+    fi
+    marcar_concluidas T-169
+    verde "✔ T-169 concluída"
+    return 0
+  fi
+  vermelho "✘ T-169 falhou (log: $LOG_DIR/seq.log)"
+  amarelo "  reexecute só ela: bash .spec/features/fase4-card-abas/executar-tarefas.sh --seq T-169"
+  FALHAS="$FALHAS T-169"
+  return 1
 }
 
-# ── faixa-3: T-170 ──
-executar_faixa_3() {
-  local WT="$WT_BASE-faixa-3"
-  preparar_worktree 'faixa-3' 'spec/fase4-card-abas-faixa-3' "$WT" || return 1
-  evento --tipo faixa --faixa 'faixa-3' --estado executando --tentativa "$(tentativa 'faixa-3')"
-  : > "$LOG_DIR/faixa-3.log"
-  (
-    cd "$WT" || exit 9
-    rodar_tarefa 'faixa-3' 'T-170' 'Você executa UMA tarefa da feature "fase4-card-abas" (fluxo onp-spec, spec-anchored).
+# ── sequencial T-170 (ordem do tasks.md) ──
+executar_seq_T_170() {
+  info 'sequencial T-170 — Listagem da cadência do card (servidor)'
+  if rodar_tarefa seq 'T-170' 'Você executa UMA tarefa da feature "fase4-card-abas" (fluxo onp-spec, spec-anchored).
 Leia primeiro: .spec/features/fase4-card-abas/spec.md, .spec/features/fase4-card-abas/tasks.md e .spec/constituicao.md.
 
 Sua tarefa (somente ela):
@@ -248,23 +247,25 @@ Regras inegociáveis:
 - NUNCA enfraqueça, pule (skip/todo) ou apague um teste para passar — teste pulado não é prova e o audit acusa.
 - Rode os testes localmente com `npx vitest run --reporter=json --outputFile=.spec/verification/raw.json` até passarem.
 - NÃO edite tasks.md, NÃO rode onp-spec verify/audit e NÃO toque em outras tarefas — o orquestrador cuida disso.
-- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' medium
-  ) >> "$LOG_DIR/faixa-3.log" 2>&1
-  local st=$?
-  mesclar_faixa 'faixa-3' 'spec/fase4-card-abas-faixa-3' "$WT" "$st" || return 1
-  marcar_concluidas T-170
-  return 0
+- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' medium >> "$LOG_DIR/seq.log" 2>&1; then
+    # commit de segurança se o agente esqueceu (rastreabilidade > perfeição)
+    if [ -n "$(git status --porcelain)" ]; then
+      git add -A && git commit -q -m 'T-170 fase4-card-abas: Listagem da cadência do card (servidor) (auto-commit do plano)'
+    fi
+    marcar_concluidas T-170
+    verde "✔ T-170 concluída"
+    return 0
+  fi
+  vermelho "✘ T-170 falhou (log: $LOG_DIR/seq.log)"
+  amarelo "  reexecute só ela: bash .spec/features/fase4-card-abas/executar-tarefas.sh --seq T-170"
+  FALHAS="$FALHAS T-170"
+  return 1
 }
 
-# ── faixa-4: T-171 ──
-executar_faixa_4() {
-  local WT="$WT_BASE-faixa-4"
-  preparar_worktree 'faixa-4' 'spec/fase4-card-abas-faixa-4' "$WT" || return 1
-  evento --tipo faixa --faixa 'faixa-4' --estado executando --tentativa "$(tentativa 'faixa-4')"
-  : > "$LOG_DIR/faixa-4.log"
-  (
-    cd "$WT" || exit 9
-    rodar_tarefa 'faixa-4' 'T-171' 'Você executa UMA tarefa da feature "fase4-card-abas" (fluxo onp-spec, spec-anchored).
+# ── sequencial T-171 (ordem do tasks.md) ──
+executar_seq_T_171() {
+  info 'sequencial T-171 — Molde do card: cabeçalho e abas compartilhados'
+  if rodar_tarefa seq 'T-171' 'Você executa UMA tarefa da feature "fase4-card-abas" (fluxo onp-spec, spec-anchored).
 Leia primeiro: .spec/features/fase4-card-abas/spec.md, .spec/features/fase4-card-abas/tasks.md e .spec/constituicao.md.
 
 Sua tarefa (somente ela):
@@ -278,23 +279,25 @@ Regras inegociáveis:
 - NUNCA enfraqueça, pule (skip/todo) ou apague um teste para passar — teste pulado não é prova e o audit acusa.
 - Rode os testes localmente com `npx vitest run --reporter=json --outputFile=.spec/verification/raw.json` até passarem.
 - NÃO edite tasks.md, NÃO rode onp-spec verify/audit e NÃO toque em outras tarefas — o orquestrador cuida disso.
-- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' xhigh
-  ) >> "$LOG_DIR/faixa-4.log" 2>&1
-  local st=$?
-  mesclar_faixa 'faixa-4' 'spec/fase4-card-abas-faixa-4' "$WT" "$st" || return 1
-  marcar_concluidas T-171
-  return 0
+- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' xhigh >> "$LOG_DIR/seq.log" 2>&1; then
+    # commit de segurança se o agente esqueceu (rastreabilidade > perfeição)
+    if [ -n "$(git status --porcelain)" ]; then
+      git add -A && git commit -q -m 'T-171 fase4-card-abas: Molde do card: cabeçalho e abas compartilhados (auto-commit do plano)'
+    fi
+    marcar_concluidas T-171
+    verde "✔ T-171 concluída"
+    return 0
+  fi
+  vermelho "✘ T-171 falhou (log: $LOG_DIR/seq.log)"
+  amarelo "  reexecute só ela: bash .spec/features/fase4-card-abas/executar-tarefas.sh --seq T-171"
+  FALHAS="$FALHAS T-171"
+  return 1
 }
 
-# ── faixa-5: T-172 ──
-executar_faixa_5() {
-  local WT="$WT_BASE-faixa-5"
-  preparar_worktree 'faixa-5' 'spec/fase4-card-abas-faixa-5' "$WT" || return 1
-  evento --tipo faixa --faixa 'faixa-5' --estado executando --tentativa "$(tentativa 'faixa-5')"
-  : > "$LOG_DIR/faixa-5.log"
-  (
-    cd "$WT" || exit 9
-    rodar_tarefa 'faixa-5' 'T-172' 'Você executa UMA tarefa da feature "fase4-card-abas" (fluxo onp-spec, spec-anchored).
+# ── sequencial T-172 (ordem do tasks.md) ──
+executar_seq_T_172() {
+  info 'sequencial T-172 — Tela de anexos e evidências'
+  if rodar_tarefa seq 'T-172' 'Você executa UMA tarefa da feature "fase4-card-abas" (fluxo onp-spec, spec-anchored).
 Leia primeiro: .spec/features/fase4-card-abas/spec.md, .spec/features/fase4-card-abas/tasks.md e .spec/constituicao.md.
 
 Sua tarefa (somente ela):
@@ -308,23 +311,25 @@ Regras inegociáveis:
 - NUNCA enfraqueça, pule (skip/todo) ou apague um teste para passar — teste pulado não é prova e o audit acusa.
 - Rode os testes localmente com `npx vitest run --reporter=json --outputFile=.spec/verification/raw.json` até passarem.
 - NÃO edite tasks.md, NÃO rode onp-spec verify/audit e NÃO toque em outras tarefas — o orquestrador cuida disso.
-- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' xhigh
-  ) >> "$LOG_DIR/faixa-5.log" 2>&1
-  local st=$?
-  mesclar_faixa 'faixa-5' 'spec/fase4-card-abas-faixa-5' "$WT" "$st" || return 1
-  marcar_concluidas T-172
-  return 0
+- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' xhigh >> "$LOG_DIR/seq.log" 2>&1; then
+    # commit de segurança se o agente esqueceu (rastreabilidade > perfeição)
+    if [ -n "$(git status --porcelain)" ]; then
+      git add -A && git commit -q -m 'T-172 fase4-card-abas: Tela de anexos e evidências (auto-commit do plano)'
+    fi
+    marcar_concluidas T-172
+    verde "✔ T-172 concluída"
+    return 0
+  fi
+  vermelho "✘ T-172 falhou (log: $LOG_DIR/seq.log)"
+  amarelo "  reexecute só ela: bash .spec/features/fase4-card-abas/executar-tarefas.sh --seq T-172"
+  FALHAS="$FALHAS T-172"
+  return 1
 }
 
-# ── faixa-6: T-173 ──
-executar_faixa_6() {
-  local WT="$WT_BASE-faixa-6"
-  preparar_worktree 'faixa-6' 'spec/fase4-card-abas-faixa-6' "$WT" || return 1
-  evento --tipo faixa --faixa 'faixa-6' --estado executando --tentativa "$(tentativa 'faixa-6')"
-  : > "$LOG_DIR/faixa-6.log"
-  (
-    cd "$WT" || exit 9
-    rodar_tarefa 'faixa-6' 'T-173' 'Você executa UMA tarefa da feature "fase4-card-abas" (fluxo onp-spec, spec-anchored).
+# ── sequencial T-173 (ordem do tasks.md) ──
+executar_seq_T_173() {
+  info 'sequencial T-173 — Tela da cadência de 18 toques'
+  if rodar_tarefa seq 'T-173' 'Você executa UMA tarefa da feature "fase4-card-abas" (fluxo onp-spec, spec-anchored).
 Leia primeiro: .spec/features/fase4-card-abas/spec.md, .spec/features/fase4-card-abas/tasks.md e .spec/constituicao.md.
 
 Sua tarefa (somente ela):
@@ -338,23 +343,25 @@ Regras inegociáveis:
 - NUNCA enfraqueça, pule (skip/todo) ou apague um teste para passar — teste pulado não é prova e o audit acusa.
 - Rode os testes localmente com `npx vitest run --reporter=json --outputFile=.spec/verification/raw.json` até passarem.
 - NÃO edite tasks.md, NÃO rode onp-spec verify/audit e NÃO toque em outras tarefas — o orquestrador cuida disso.
-- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' xhigh
-  ) >> "$LOG_DIR/faixa-6.log" 2>&1
-  local st=$?
-  mesclar_faixa 'faixa-6' 'spec/fase4-card-abas-faixa-6' "$WT" "$st" || return 1
-  marcar_concluidas T-173
-  return 0
+- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' xhigh >> "$LOG_DIR/seq.log" 2>&1; then
+    # commit de segurança se o agente esqueceu (rastreabilidade > perfeição)
+    if [ -n "$(git status --porcelain)" ]; then
+      git add -A && git commit -q -m 'T-173 fase4-card-abas: Tela da cadência de 18 toques (auto-commit do plano)'
+    fi
+    marcar_concluidas T-173
+    verde "✔ T-173 concluída"
+    return 0
+  fi
+  vermelho "✘ T-173 falhou (log: $LOG_DIR/seq.log)"
+  amarelo "  reexecute só ela: bash .spec/features/fase4-card-abas/executar-tarefas.sh --seq T-173"
+  FALHAS="$FALHAS T-173"
+  return 1
 }
 
-# ── faixa-7: T-174 ──
-executar_faixa_7() {
-  local WT="$WT_BASE-faixa-7"
-  preparar_worktree 'faixa-7' 'spec/fase4-card-abas-faixa-7' "$WT" || return 1
-  evento --tipo faixa --faixa 'faixa-7' --estado executando --tentativa "$(tentativa 'faixa-7')"
-  : > "$LOG_DIR/faixa-7.log"
-  (
-    cd "$WT" || exit 9
-    rodar_tarefa 'faixa-7' 'T-174' 'Você executa UMA tarefa da feature "fase4-card-abas" (fluxo onp-spec, spec-anchored).
+# ── sequencial T-174 (ordem do tasks.md) ──
+executar_seq_T_174() {
+  info 'sequencial T-174 — Tela da conversa de WhatsApp do lead'
+  if rodar_tarefa seq 'T-174' 'Você executa UMA tarefa da feature "fase4-card-abas" (fluxo onp-spec, spec-anchored).
 Leia primeiro: .spec/features/fase4-card-abas/spec.md, .spec/features/fase4-card-abas/tasks.md e .spec/constituicao.md.
 
 Sua tarefa (somente ela):
@@ -368,23 +375,25 @@ Regras inegociáveis:
 - NUNCA enfraqueça, pule (skip/todo) ou apague um teste para passar — teste pulado não é prova e o audit acusa.
 - Rode os testes localmente com `npx vitest run --reporter=json --outputFile=.spec/verification/raw.json` até passarem.
 - NÃO edite tasks.md, NÃO rode onp-spec verify/audit e NÃO toque em outras tarefas — o orquestrador cuida disso.
-- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' xhigh
-  ) >> "$LOG_DIR/faixa-7.log" 2>&1
-  local st=$?
-  mesclar_faixa 'faixa-7' 'spec/fase4-card-abas-faixa-7' "$WT" "$st" || return 1
-  marcar_concluidas T-174
-  return 0
+- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' xhigh >> "$LOG_DIR/seq.log" 2>&1; then
+    # commit de segurança se o agente esqueceu (rastreabilidade > perfeição)
+    if [ -n "$(git status --porcelain)" ]; then
+      git add -A && git commit -q -m 'T-174 fase4-card-abas: Tela da conversa de WhatsApp do lead (auto-commit do plano)'
+    fi
+    marcar_concluidas T-174
+    verde "✔ T-174 concluída"
+    return 0
+  fi
+  vermelho "✘ T-174 falhou (log: $LOG_DIR/seq.log)"
+  amarelo "  reexecute só ela: bash .spec/features/fase4-card-abas/executar-tarefas.sh --seq T-174"
+  FALHAS="$FALHAS T-174"
+  return 1
 }
 
-# ── faixa-8: T-175 ──
-executar_faixa_8() {
-  local WT="$WT_BASE-faixa-8"
-  preparar_worktree 'faixa-8' 'spec/fase4-card-abas-faixa-8' "$WT" || return 1
-  evento --tipo faixa --faixa 'faixa-8' --estado executando --tentativa "$(tentativa 'faixa-8')"
-  : > "$LOG_DIR/faixa-8.log"
-  (
-    cd "$WT" || exit 9
-    rodar_tarefa 'faixa-8' 'T-175' 'Você executa UMA tarefa da feature "fase4-card-abas" (fluxo onp-spec, spec-anchored).
+# ── sequencial T-175 (ordem do tasks.md) ──
+executar_seq_T_175() {
+  info 'sequencial T-175 — Garantia: as quatro abas existem e nenhuma dá 404'
+  if rodar_tarefa seq 'T-175' 'Você executa UMA tarefa da feature "fase4-card-abas" (fluxo onp-spec, spec-anchored).
 Leia primeiro: .spec/features/fase4-card-abas/spec.md, .spec/features/fase4-card-abas/tasks.md e .spec/constituicao.md.
 
 Sua tarefa (somente ela):
@@ -398,12 +407,19 @@ Regras inegociáveis:
 - NUNCA enfraqueça, pule (skip/todo) ou apague um teste para passar — teste pulado não é prova e o audit acusa.
 - Rode os testes localmente com `npx vitest run --reporter=json --outputFile=.spec/verification/raw.json` até passarem.
 - NÃO edite tasks.md, NÃO rode onp-spec verify/audit e NÃO toque em outras tarefas — o orquestrador cuida disso.
-- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' low
-  ) >> "$LOG_DIR/faixa-8.log" 2>&1
-  local st=$?
-  mesclar_faixa 'faixa-8' 'spec/fase4-card-abas-faixa-8' "$WT" "$st" || return 1
-  marcar_concluidas T-175
-  return 0
+- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'claude-sonnet-5' low >> "$LOG_DIR/seq.log" 2>&1; then
+    # commit de segurança se o agente esqueceu (rastreabilidade > perfeição)
+    if [ -n "$(git status --porcelain)" ]; then
+      git add -A && git commit -q -m 'T-175 fase4-card-abas: Garantia: as quatro abas existem e nenhuma dá 404 (auto-commit do plano)'
+    fi
+    marcar_concluidas T-175
+    verde "✔ T-175 concluída"
+    return 0
+  fi
+  vermelho "✘ T-175 falhou (log: $LOG_DIR/seq.log)"
+  amarelo "  reexecute só ela: bash .spec/features/fase4-card-abas/executar-tarefas.sh --seq T-175"
+  FALHAS="$FALHAS T-175"
+  return 1
 }
 
 # ── gate: quem decide é a máquina ────────────────────────────────────
@@ -459,41 +475,27 @@ executar_tudo() {
   iniciar_resumos
   info "logs em: $LOG_DIR"
   info "resumo geral de andamento: a cada 1 min aqui no terminal (e via: onp-spec resumo)"
-  # onda 1: faixa-1 ∥ faixa-2 ∥ faixa-3
-  info "onda 1: faixa-1 ∥ faixa-2 ∥ faixa-3 — janelas limpas em paralelo"
-  executar_faixa_1 & PID_FAIXA_1=$!
-  executar_faixa_2 & PID_FAIXA_2=$!
-  executar_faixa_3 & PID_FAIXA_3=$!
-  wait "$PID_FAIXA_1" || true
-  wait "$PID_FAIXA_2" || true
-  wait "$PID_FAIXA_3" || true
-  # onda 2: faixa-4 ∥ faixa-5 ∥ faixa-6
-  info "onda 2: faixa-4 ∥ faixa-5 ∥ faixa-6 — janelas limpas em paralelo"
-  executar_faixa_4 & PID_FAIXA_4=$!
-  executar_faixa_5 & PID_FAIXA_5=$!
-  executar_faixa_6 & PID_FAIXA_6=$!
-  wait "$PID_FAIXA_4" || true
-  wait "$PID_FAIXA_5" || true
-  wait "$PID_FAIXA_6" || true
-  # onda 3: faixa-7 ∥ faixa-8
-  info "onda 3: faixa-7 ∥ faixa-8 — janelas limpas em paralelo"
-  executar_faixa_7 & PID_FAIXA_7=$!
-  executar_faixa_8 & PID_FAIXA_8=$!
-  wait "$PID_FAIXA_7" || true
-  wait "$PID_FAIXA_8" || true
+  executar_seq_T_168 || true
+  executar_seq_T_169 || true
+  executar_seq_T_170 || true
+  executar_seq_T_171 || true
+  executar_seq_T_172 || true
+  executar_seq_T_173 || true
+  executar_seq_T_174 || true
+  executar_seq_T_175 || true
   encerrar tudo
 }
 
 listar() {
   echo "execução: $RUN_ID (feature $FEATURE, branch $BASE_BRANCH)"
-  echo "  faixa-1  onda 1  T-168"
-  echo "  faixa-2  onda 1  T-169"
-  echo "  faixa-3  onda 1  T-170"
-  echo "  faixa-4  onda 2  T-171"
-  echo "  faixa-5  onda 2  T-172"
-  echo "  faixa-6  onda 2  T-173"
-  echo "  faixa-7  onda 3  T-174"
-  echo "  faixa-8  onda 3  T-175"
+  echo "  seq       T-168 (sequencial)"
+  echo "  seq       T-169 (sequencial)"
+  echo "  seq       T-170 (sequencial)"
+  echo "  seq       T-171 (sequencial)"
+  echo "  seq       T-172 (sequencial)"
+  echo "  seq       T-173 (sequencial)"
+  echo "  seq       T-174 (sequencial)"
+  echo "  seq       T-175 (sequencial)"
   echo
   echo "reexecutar uma faixa:    --faixa <id>"
   echo "reexecutar sequencial:   --seq <T-xxx>"
@@ -524,18 +526,18 @@ case "$MODO" in
   gate) COM_GATE=1; iniciar_resumos; encerrar gate ;;
   faixa)
     case "$ALVO" in
-      faixa-1) evento --tipo inicio --escopo "faixa:faixa-1"; iniciar_resumos; executar_faixa_1 || true; encerrar "faixa:faixa-1" ;;
-      faixa-2) evento --tipo inicio --escopo "faixa:faixa-2"; iniciar_resumos; executar_faixa_2 || true; encerrar "faixa:faixa-2" ;;
-      faixa-3) evento --tipo inicio --escopo "faixa:faixa-3"; iniciar_resumos; executar_faixa_3 || true; encerrar "faixa:faixa-3" ;;
-      faixa-4) evento --tipo inicio --escopo "faixa:faixa-4"; iniciar_resumos; executar_faixa_4 || true; encerrar "faixa:faixa-4" ;;
-      faixa-5) evento --tipo inicio --escopo "faixa:faixa-5"; iniciar_resumos; executar_faixa_5 || true; encerrar "faixa:faixa-5" ;;
-      faixa-6) evento --tipo inicio --escopo "faixa:faixa-6"; iniciar_resumos; executar_faixa_6 || true; encerrar "faixa:faixa-6" ;;
-      faixa-7) evento --tipo inicio --escopo "faixa:faixa-7"; iniciar_resumos; executar_faixa_7 || true; encerrar "faixa:faixa-7" ;;
-      faixa-8) evento --tipo inicio --escopo "faixa:faixa-8"; iniciar_resumos; executar_faixa_8 || true; encerrar "faixa:faixa-8" ;;
       *) falhar "faixa desconhecida: '$ALVO' — veja as disponíveis com --listar" ;;
     esac ;;
   seq)
     case "$ALVO" in
+      T-168) evento --tipo inicio --escopo "seq:T-168"; iniciar_resumos; executar_seq_T_168 || true; encerrar "seq:T-168" ;;
+      T-169) evento --tipo inicio --escopo "seq:T-169"; iniciar_resumos; executar_seq_T_169 || true; encerrar "seq:T-169" ;;
+      T-170) evento --tipo inicio --escopo "seq:T-170"; iniciar_resumos; executar_seq_T_170 || true; encerrar "seq:T-170" ;;
+      T-171) evento --tipo inicio --escopo "seq:T-171"; iniciar_resumos; executar_seq_T_171 || true; encerrar "seq:T-171" ;;
+      T-172) evento --tipo inicio --escopo "seq:T-172"; iniciar_resumos; executar_seq_T_172 || true; encerrar "seq:T-172" ;;
+      T-173) evento --tipo inicio --escopo "seq:T-173"; iniciar_resumos; executar_seq_T_173 || true; encerrar "seq:T-173" ;;
+      T-174) evento --tipo inicio --escopo "seq:T-174"; iniciar_resumos; executar_seq_T_174 || true; encerrar "seq:T-174" ;;
+      T-175) evento --tipo inicio --escopo "seq:T-175"; iniciar_resumos; executar_seq_T_175 || true; encerrar "seq:T-175" ;;
       *) falhar "tarefa sequencial desconhecida: '$ALVO' — veja as disponíveis com --listar" ;;
     esac ;;
 esac
