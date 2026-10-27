@@ -1,9 +1,7 @@
 "use client";
 
 import { useDroppable } from "@dnd-kit/core";
-import { AlarmClock } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
 import { CardOportunidade, type CardBoard } from "./card-oportunidade";
 
 interface ColunaEtapaProps {
@@ -48,36 +46,30 @@ export function ColunaEtapa({
   return (
     <div
       ref={setNodeRef}
-      className={`flex flex-col min-w-[260px] max-w-[260px] rounded-xl p-3 border transition-colors ${
-        isOver ? "bg-indigo-100/60 border-indigo-300" : "bg-slate-100/50 border-slate-200/60"
+      className={`w-80 flex-shrink-0 flex flex-col rounded-2xl p-3 shadow-sm transition-colors ${
+        isOver ? "bg-primary-fixed/60 ring-2 ring-primary/40" : "bg-surface-subtle/80"
       } ${restrita ? "opacity-40" : ""}`}
     >
-      <div className="flex items-center justify-between mb-1 px-1">
-        <h3 className="font-semibold text-slate-700 text-xs uppercase tracking-wide">{nome}</h3>
-        <Badge variant="secondary" className="bg-slate-200 text-slate-600 hover:bg-slate-200">
+      <div className="flex items-center justify-between pb-2.5 mb-2 px-1">
+        <div className="flex flex-col">
+          <h3 className="font-headline-sm text-headline-sm text-text-primary">{nome}</h3>
+          <span className="font-label-sm text-label-sm text-text-secondary">
+            {cards.length} {cards.length === 1 ? "card" : "cards"} • {formatarSoma(somarValores(cards))}
+          </span>
+        </div>
+        <span className="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-bold">
           {cards.length}
-        </Badge>
-      </div>
-      <div className="mb-2 px-1">
-        <span className="text-[11px] text-slate-400">
-          {cards.length} {cards.length === 1 ? "card" : "cards"} • {formatarSoma(somarValores(cards))}
         </span>
       </div>
 
-      <div className="flex-1 overflow-y-auto space-y-2 pr-1 min-h-[80px]">
+      <div className="space-y-3 min-h-[80px]">
         {cards.map((card) => (
           <div key={card.id} className="relative">
-            {oportunidadesAtrasadas.has(card.id) && (
-              <span className="absolute -top-1.5 -right-1.5 z-10 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-amber-700 bg-amber-100 rounded-full px-2 py-0.5 shadow-sm">
-                <AlarmClock className="size-3" />
-                Atrasado
-              </span>
-            )}
-            <CardOportunidade oportunidade={card} />
+            <CardOportunidade oportunidade={card} atrasado={oportunidadesAtrasadas.has(card.id)} />
           </div>
         ))}
         {cards.length === 0 && (
-          <div className="h-16 border-2 border-dashed border-slate-200 rounded-lg flex items-center justify-center text-slate-400 text-xs">
+          <div className="h-16 border-2 border-dashed border-border-subtle rounded-xl flex items-center justify-center text-text-muted text-xs">
             Vazio
           </div>
         )}

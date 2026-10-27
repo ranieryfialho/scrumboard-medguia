@@ -528,7 +528,7 @@ export function BoardKanban() {
 
       {!carregando && !erroCarga && itensBrutos.length > 0 && (
         <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd} onDragCancel={handleDragCancel}>
-          <div className="flex-1 flex w-full overflow-x-auto gap-3 pb-2">
+          <div className="flex-1 flex w-full overflow-x-auto items-start gap-4 pb-10">
             {ETAPAS.map((etapa) => (
               <ColunaEtapa
                 key={etapa.id}

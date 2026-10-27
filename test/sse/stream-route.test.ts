@@ -174,6 +174,8 @@ describe('T-062: rota GET /api/stream', () => {
       } finally {
         vi.useRealTimers();
       }
+      // AC-416: a primeira linha é a de abertura; o batimento vem depois dela.
+      expect(await lerProximoBloco(reader, buffer)).toBe(': conectado');
       const blocoPing = await lerProximoBloco(reader, buffer);
       expect(blocoPing).toBe(': ping');
 
@@ -212,6 +214,23 @@ describe('T-062: rota GET /api/stream', () => {
       controladorAbort.abort();
       await new Promise((resolve) => setTimeout(resolve, 50));
     }, 30_000);
+  });
+
+  describe('AC-416: a conexão é anunciada na hora, sem esperar o primeiro batimento', () => {
+    test('a primeira coisa que o stream manda é a linha de abertura, bem antes de INTERVALO_PING_MS @spec:AC-416', async () => {
+      const controladorAbort = new AbortController();
+      const resposta = await routeModule.GET(getStream({ Cookie: cookieA }, controladorAbort.signal));
+      const reader = resposta.body!.getReader();
+      const buffer: BlocoDecodificado = { texto: '' };
+
+      try {
+        expect(resposta.status).toBe(200);
+        expect(await lerProximoBloco(reader, buffer)).toBe(': conectado');
+      } finally {
+        controladorAbort.abort();
+        await reader.cancel().catch(() => undefined);
+      }
+    });
   });
 
   describe('AC-116: cliente que fecha libera os recursos', () => {

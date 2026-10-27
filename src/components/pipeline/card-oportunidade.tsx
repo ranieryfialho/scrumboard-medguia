@@ -3,9 +3,8 @@
 import { useState } from "react";
 import { useDraggable } from "@dnd-kit/core";
 import Link from "next/link";
-import { ExternalLink } from "lucide-react";
+import { AlarmClock, ExternalLink } from "lucide-react";
 
-import { Card, CardContent } from "@/components/ui/card";
 import { BotaoIniciarCadencia } from "./botao-iniciar-cadencia";
 
 export interface CardBoard {
@@ -30,6 +29,17 @@ export interface CardBoard {
 interface CardOportunidadeProps {
   oportunidade: CardBoard;
   isOverlay?: boolean;
+  /** AC-220: o toque de cadência deste card está vencido — mostra o selo "Atrasado" dentro do bloco de próxima ação. */
+  atrasado?: boolean;
+}
+
+/** Iniciais para o avatar do responsável (ex.: "Diego Ramos" → "DR"). */
+function iniciais(nome: string): string {
+  const partes = nome.trim().split(/\s+/).filter(Boolean);
+  if (partes.length === 0) return "?";
+  const primeira = partes[0][0] ?? "";
+  const ultima = partes.length > 1 ? (partes[partes.length - 1][0] ?? "") : "";
+  return `${primeira}${ultima}`.toUpperCase();
 }
 
 function formatarValor(valor: string | null): string | null {
@@ -45,7 +55,7 @@ function formatarProximaAcao(iso: string | null | undefined): string {
   return new Date(iso).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" });
 }
 
-export function CardOportunidade({ oportunidade, isOverlay }: CardOportunidadeProps) {
+export function CardOportunidade({ oportunidade, isOverlay, atrasado }: CardOportunidadeProps) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: oportunidade.id,
     data: { etapaId: oportunidade.etapaId, version: oportunidade.version },
@@ -78,33 +88,56 @@ export function CardOportunidade({ oportunidade, isOverlay }: CardOportunidadePr
     : undefined;
 
   return (
-    <Card
+    <div
       ref={setNodeRef}
       style={style}
       {...listeners}
       {...attributes}
-      className={`p-0 cursor-grab active:cursor-grabbing transition-opacity ${
+      className={`bg-surface-card rounded-xl p-3.5 shadow-sm hover:shadow-md transition-all cursor-grab active:cursor-grabbing flex flex-col gap-2.5 ${
         isDragging ? "opacity-40" : "opacity-100"
       } ${isOverlay ? "shadow-lg rotate-2" : ""}`}
     >
-      <CardContent className="px-3 py-2.5 space-y-1.5">
-        <div className="flex items-start justify-between gap-2">
-          <p className="text-sm font-medium text-slate-800 leading-tight">{oportunidade.leadNome}</p>
-          <Link
-            href={`/pipeline/${oportunidade.id}`}
-            onClick={(evento) => evento.stopPropagation()}
-            onPointerDown={(evento) => evento.stopPropagation()}
-            className="text-slate-400 hover:text-indigo-600 shrink-0"
-            title="Abrir detalhe"
-          >
-            <ExternalLink className="size-3.5" />
-          </Link>
+      <div className="flex items-start justify-between gap-2">
+        <span className="font-headline-sm text-headline-sm text-text-primary leading-tight">{oportunidade.leadNome}</span>
+        <Link
+          href={`/pipeline/${oportunidade.id}`}
+          onClick={(evento) => evento.stopPropagation()}
+          onPointerDown={(evento) => evento.stopPropagation()}
+          className="text-text-muted hover:text-primary shrink-0"
+          title="Abrir detalhe"
+        >
+          <ExternalLink className="size-3.5" />
+        </Link>
+      </div>
+
+      {valorFormatado && (
+        <div className="flex items-center justify-end">
+          <span className="font-label-lg text-label-lg font-bold text-text-primary">{valorFormatado}</span>
         </div>
-        <div className="flex items-center justify-between text-xs text-slate-500">
-          <span>{oportunidade.responsavelNome ?? "Sem responsável"}</span>
-          {valorFormatado && <span className="font-semibold text-emerald-700">{valorFormatado}</span>}
+      )}
+
+      <div className="bg-surface-subtle p-2 rounded-lg flex items-center justify-between gap-2">
+        <div className="flex flex-col min-w-0">
+          <span className="font-label-sm text-[10px] uppercase font-bold text-text-secondary">Próxima ação</span>
+          <span className="font-body-sm text-[11px] text-text-secondary">{formatarProximaAcao(oportunidade.proximaAcaoEm)}</span>
         </div>
-        <p className="text-[11px] text-slate-400">{formatarProximaAcao(oportunidade.proximaAcaoEm)}</p>
+        {atrasado && (
+          <span className="font-label-sm text-[10px] text-danger-text bg-danger-surface px-1.5 py-0.5 rounded font-bold inline-flex items-center gap-1 shrink-0">
+            <AlarmClock className="size-3" />
+            Atrasado
+          </span>
+        )}
+      </div>
+
+      <div className="flex items-center gap-1.5 pt-0.5">
+        <div
+          aria-hidden="true"
+          className="w-6 h-6 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-[10px]"
+        >
+          {oportunidade.responsavelNome ? iniciais(oportunidade.responsavelNome) : "–"}
+        </div>
+        <span className="font-label-sm text-label-sm text-text-secondary">{oportunidade.responsavelNome ?? "Sem responsável"}</span>
+      </div>
 
         {!isOverlay && (
           <div onPointerDown={(evento) => evento.stopPropagation()}>
@@ -126,12 +159,11 @@ export function CardOportunidade({ oportunidade, isOverlay }: CardOportunidadePr
         )}
 
         {cadenciaIniciada && (
-          <p className="text-xs text-emerald-700">
+          <p className="text-xs text-success-text">
             Cadência iniciada — os 3 primeiros toques estão em Minhas tarefas.
           </p>
         )}
-        {erroCadencia && <p className="text-xs text-rose-600">{erroCadencia}</p>}
-      </CardContent>
-    </Card>
+        {erroCadencia && <p className="text-xs text-danger-text">{erroCadencia}</p>}
+    </div>
   );
 }
