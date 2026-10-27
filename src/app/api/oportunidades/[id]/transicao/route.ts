@@ -10,21 +10,12 @@
 // T-057 (fase2c-anexos, US-036): `anexoId` só conta como evidência se o anexo
 // existe no tenant E foi enviado para este mesmo card (AC-106); qualquer outro
 // valor é tratado como ausente, então o domínio responde EVIDENCIA_OBRIGATORIA.
-import { eq } from 'drizzle-orm';
 import { NextResponse, type NextRequest } from 'next/server';
 
 import { getDb } from '../../../../../db/client';
-import { pipelineEtapas, pipelineTransicoes } from '../../../../../db/schema';
 import { getAuth } from '../../../../../lib/auth/instancia';
 import { ErroSessaoInvalida, resolverContextoTenant, type ContextoTenant } from '../../../../../lib/auth/tenant';
-import { validarTransicao } from '../../../../../domain/pipeline/validar-transicao';
-import type { DadosTransicao, PipelineTransicao } from '../../../../../domain/pipeline/tipos';
-import { anexoValidoParaOportunidade } from '../../../../../repositories/anexos';
-import {
-  buscarOportunidadePorId,
-  ErroConflitoDeVersao,
-  moverOportunidade,
-} from '../../../../../repositories/oportunidades';
+import { transicionarCard } from '../../../../../repositories/transicao-card';
 
 export const dynamic = 'force-dynamic';
 
@@ -72,76 +63,16 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     return NextResponse.json({ codigo: 'REQUISICAO_INVALIDA' }, { status: 400 });
   }
 
-  // AC-087: card de outro tenant (ou inexistente) "não existe" do ponto de
-  // vista do chamador — 404 antes de validar a transição, nunca 403.
-  const oportunidade = await buscarOportunidadePorId(getDb(), contexto, id);
-  if (!oportunidade) {
-    return NextResponse.json({ codigo: 'OPORTUNIDADE_NAO_ENCONTRADA' }, { status: 404 });
+  // T-176: a regra inteira (404 fail closed, grafo, papel, dados obrigatórios,
+  // lock otimista) vive em `transicionarCard`, a mesma dos lotes.
+  const resultado = await transicionarCard(getDb(), contexto, id, corpo);
+
+  if (resultado.ok) return NextResponse.json(resultado.card);
+  if (resultado.codigo === 'OPORTUNIDADE_NAO_ENCONTRADA') {
+    return NextResponse.json({ codigo: resultado.codigo }, { status: 404 });
   }
-
-  const db = getDb();
-  const [etapaDestino] = await db
-    .select()
-    .from(pipelineEtapas)
-    .where(eq(pipelineEtapas.id, corpo.etapaDestinoId))
-    .limit(1);
-
-  // Destino fora das 15 etapas conhecidas nunca tem linha em
-  // `pipeline_transicoes` — mesmo desfecho de "fora do grafo" (AC-083), sem
-  // precisar montar um `PipelineEtapa` inexistente pro domínio.
-  if (!etapaDestino) {
-    return NextResponse.json({ codigo: 'TRANSICAO_NAO_PERMITIDA' }, { status: 422 });
+  if (resultado.codigo === 'CONFLITO_DE_VERSAO') {
+    return NextResponse.json({ codigo: resultado.codigo }, { status: 409 });
   }
-
-  const transicoesDaOrigem: PipelineTransicao[] = await db
-    .select({
-      etapaOrigemId: pipelineTransicoes.etapaOrigemId,
-      etapaDestinoId: pipelineTransicoes.etapaDestinoId,
-      exigeJustificativa: pipelineTransicoes.exigeJustificativa,
-      papeisPermitidos: pipelineTransicoes.papeisPermitidos,
-    })
-    .from(pipelineTransicoes)
-    .where(eq(pipelineTransicoes.etapaOrigemId, oportunidade.etapaId));
-
-  const dados: DadosTransicao = {
-    valor: corpo.valor ?? null,
-    motivoPerdaId: corpo.motivoPerdaId ?? null,
-    proximaAcaoEm: corpo.proximaAcaoEm ? new Date(corpo.proximaAcaoEm) : null,
-    anexoId:
-      typeof corpo.anexoId === 'string' &&
-      (await anexoValidoParaOportunidade(db, contexto, corpo.anexoId, oportunidade.id))
-        ? corpo.anexoId
-        : null,
-    justificativa: corpo.justificativa ?? null,
-  };
-
-  const resultado = validarTransicao({
-    transicoes: transicoesDaOrigem,
-    etapaOrigemId: oportunidade.etapaId,
-    etapaDestino,
-    ator: { papel: contexto.papel, isSuperAdmin: contexto.isSuperAdmin },
-    dados,
-  });
-
-  if (!resultado.ok) {
-    return NextResponse.json({ codigo: resultado.erro }, { status: 422 });
-  }
-
-  try {
-    const movida = await moverOportunidade(db, contexto, id, {
-      version: corpo.version,
-      etapaDestinoId: corpo.etapaDestinoId,
-      atorId: contexto.usuarioId,
-      atorTipo: 'usuario',
-      valor: typeof corpo.valor === 'number' ? String(corpo.valor) : null,
-      motivoPerdaId: corpo.motivoPerdaId ?? null,
-      proximaAcaoEm: dados.proximaAcaoEm,
-    });
-    return NextResponse.json(movida);
-  } catch (erro) {
-    if (erro instanceof ErroConflitoDeVersao) {
-      return NextResponse.json({ codigo: 'CONFLITO_DE_VERSAO' }, { status: 409 });
-    }
-    throw erro;
-  }
+  return NextResponse.json({ codigo: resultado.codigo }, { status: 422 });
 }

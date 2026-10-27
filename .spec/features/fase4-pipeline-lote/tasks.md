@@ -18,8 +18,7 @@
     (atalho: `onp-spec tarefa <feature> <T-xxx> <status>`)
 -->
 
-## T-176 — Núcleo do lote: transição compartilhada e "mover em lote" (servidor) [pendente]
-
+## T-176 — Núcleo do lote: transição compartilhada e "mover em lote" (servidor) [concluida]
 - Refs: AC-446, AC-447, AC-448, AC-449
 - Arquivos: src/repositories/transicao-card.ts, src/repositories/lote-oportunidades.ts, src/app/api/oportunidades/[id]/transicao/route.ts, src/app/api/oportunidades/lote/mover/route.ts, test/api/lote-mover.test.ts
 - Esforço: alto
