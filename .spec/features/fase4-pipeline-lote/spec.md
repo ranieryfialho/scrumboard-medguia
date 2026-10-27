@@ -164,7 +164,7 @@ aplicados), para analisar fora do sistema.
 
 - **Dado** o botão "Exportar CSV" na lista e nos arquivados
 - **Quando** o usuário clica, e quando não há nenhum card que atenda aos filtros ou a API falha
-- **Então** o botão mostra "Gerando..." e fica desabilitado enquanto baixa; sem cards a tela diz "Nenhum card para exportar com estes filtros" e não baixa nada; na falha mostra a mensagem do motivo e o botão volta ao normal
+- **Então** o botão mostra "Gerando..." e fica desabilitado enquanto baixa; sem cards a API responde 422 `NADA_PARA_EXPORTAR` (nada é registrado) e a tela diz "Nenhum card para exportar com estes filtros" e não baixa nada; na falha mostra a mensagem do motivo e o botão volta ao normal
 
 ## Fora de escopo
 

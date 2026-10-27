@@ -233,3 +233,16 @@ export const reunioes = pgTable('reunioes', {
   noShow: boolean('no_show').notNull().default(false),
   remarcadaDe: uuid('remarcada_de'),
 });
+
+/** T-179 (ASM-156): registro append-only de cada exportação de CSV (migration 0014). */
+export const auditoriaExportacoes = pgTable('auditoria_exportacoes', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  empresaId: uuid('empresa_id')
+    .notNull()
+    .references(() => empresas.id, { onDelete: 'cascade' }),
+  usuarioId: uuid('usuario_id').references(() => usuarios.id, { onDelete: 'set null' }),
+  tela: text('tela').notNull(),
+  filtros: jsonb('filtros').notNull().default({}),
+  linhas: integer('linhas').notNull(),
+  criadoEm: timestamp('criado_em', { withTimezone: true }).notNull().defaultNow(),
+});

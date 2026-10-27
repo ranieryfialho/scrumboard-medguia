@@ -36,8 +36,7 @@
 - Esforço: xalto
 - Notas: fonte visual `docs/ui/stitch_medcrm_interface_design/7._pipeline_lista_vis_o_em_lista/` (a barra azul "N clínicas selecionadas no grid"). Troca os três `ItemEmBreve` de `tabela-lista.tsx` por botões que abrem um diálogo: **Mover Etapa em Lote** (seletor das 15 etapas), **Reatribuir Comercial** (responsáveis de `GET /api/pipeline/responsaveis`) e **Arquivar** (motivos de `GET /api/motivos-perda`, motivo obrigatório e segundo clique para confirmar, mostrando a quantidade). "Disparar WhatsApp" continua `ItemEmBreve`. O ATENDENTE vê "Reatribuir Comercial" desabilitado (papel de `GET /api/me`). Depois do lote, painel de resultado "N movidos, M não movidos" com o nome do lead e o motivo em português de cada falha, a lista recarrega e os que falharam seguem marcados. Mensagens por código: `TRANSICAO_NAO_PERMITIDA`, `PAPEL_NAO_PERMITIDO`, dado faltante, `CONFLITO_DE_VERSAO`, `OPORTUNIDADE_NAO_ENCONTRADA`. Depende de T-176 e T-177.
 
-## T-179 — Exportar em CSV (servidor) e registro das exportações [pendente]
-
+## T-179 — Exportar em CSV (servidor) e registro das exportações [concluida]
 - Refs: AC-455, AC-456, AC-457, AC-458, AC-459
 - Arquivos: drizzle/0014_auditoria_exportacoes.sql, src/db/schema/pipeline.ts, src/lib/csv/gerar-csv.ts, src/repositories/exportar-carteira.ts, src/repositories/pipeline-lista.ts, src/app/api/oportunidades/lista/exportar/route.ts, src/app/api/oportunidades/arquivados/exportar/route.ts, test/lib/gerar-csv.test.ts, test/api/exportar-csv.test.ts
 - Esforço: alto
