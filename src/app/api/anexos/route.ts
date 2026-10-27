@@ -9,6 +9,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { getDb } from '../../../db/client';
 import { detectarTipo, tamanhoPermitido } from '../../../lib/anexos/conteudo';
 import { gravarAnexo } from '../../../lib/anexos/armazenamento';
+import { limparNomeArquivo } from '../../../lib/anexos/nome';
 import { getAuth } from '../../../lib/auth/instancia';
 import { ErroSessaoInvalida, resolverContextoTenant, type ContextoTenant } from '../../../lib/auth/tenant';
 import { criarAnexo, ErroOportunidadeNaoEncontrada } from '../../../repositories/anexos';
@@ -72,6 +73,7 @@ export async function POST(request: NextRequest) {
       mime: tipo,
       tamanho: bytes.byteLength,
       hash: createHash('sha256').update(bytes).digest('hex'),
+      nome: limparNomeArquivo(arquivo.name),
     });
     return NextResponse.json({ anexoId: anexo.id, url: `/api/anexos/${anexo.id}` }, { status: 201 });
   } catch (erro) {
