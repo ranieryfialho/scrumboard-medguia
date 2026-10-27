@@ -42,8 +42,7 @@
 - Esforço: alto
 - Notas: migration escrita à mão (mesmo estilo de 0011 a 0013), com o nome `auditoria_exportacoes` (empresa, usuário, tela, filtros em jsonb, linhas, criado em) e isolamento por empresa como as demais tabelas (`drizzle/0001_rls.sql`); vai para a lista de pendências do cutover (ASM-156). Número **0014**: a 0013 já é a do nome do anexo (`fase4-card-abas`). `gerar-csv.ts`: ponto e vírgula, BOM, aspas, datas dd/mm/aaaa hh:mm, valor com vírgula e apóstrofo antes de `=`, `+`, `-`, `@` (ASM-155, AC-458). As duas rotas só deixam MASTER/GERENTE/super admin (403 ATENDENTE, 401 sem sessão), reusam os filtros de `pipeline-lista.ts` (exportar o construtor de condições, sem duplicar regra) sem a paginação, recusam mais de 5.000 linhas (422 `LIMITE_EXCEDIDO`) e só gravam o registro quando o arquivo é de fato entregue. Nome do arquivo com a data.
 
-## T-180 — Botões "Exportar CSV" na lista e nos arquivados (tela) [pendente]
-
+## T-180 — Botões "Exportar CSV" na lista e nos arquivados (tela) [concluida]
 - Refs: AC-455, AC-456, AC-457, AC-460
 - Arquivos: src/components/pipeline/lote/botao-exportar.tsx, src/app/(app)/pipeline/lista/page.tsx, src/app/(app)/pipeline/arquivados/page.tsx, test/components/pipeline/exportar-tela.test.tsx
 - Esforço: medio

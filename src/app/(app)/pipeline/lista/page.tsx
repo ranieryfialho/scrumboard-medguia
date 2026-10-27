@@ -17,13 +17,13 @@ import { useRouter, useSearchParams } from 'next/navigation';
 
 import { EsqueletoCarregando, EstadoErro, EstadoVazio } from '@/components/pipeline/pecas/estados';
 import { Paginacao } from '@/components/pipeline/pecas/paginacao';
-import { ItemEmBreve } from '@/components/pipeline/pecas/selo-em-breve';
 import { IndicadoresFunil, type IndicadoresFunilView } from '@/components/pipeline/indicadores-funil';
 import { ModalNovoLead, type DadosNovoLead, type ResultadoSalvarNovoLead } from '@/components/pipeline/modal-novo-lead';
 import { criarCardNovoLead, criarLeadEIniciarCadencia } from '@/components/pipeline/novo-lead-api';
 import { ETAPAS_PIPELINE } from '@/components/pipeline/detalhe/jornada';
 import { BarraLote } from '@/components/pipeline/lote/barra-lote';
 import { DialogoLote, type OpcaoDoDialogo } from '@/components/pipeline/lote/dialogo-lote';
+import { BotaoExportar } from '@/components/pipeline/lote/botao-exportar';
 import { ResultadoLote } from '@/components/pipeline/lote/resultado-lote';
 import { MENSAGEM_DO_PEDIDO, type AcaoEmLote, type ResultadoDoLoteView } from '@/components/pipeline/lote/tipos';
 import {
@@ -114,6 +114,13 @@ function PipelineListaConteudo() {
   } | null>(null);
 
   const query = useMemo(() => construirQuery(filtro, pagina, porPagina), [filtro, pagina, porPagina]);
+  // AC-455: a exportação leva os mesmos filtros e a mesma ordenação da tela, mas não a página.
+  const consultaDaExportacao = useMemo(() => {
+    const parametros = new URLSearchParams(query);
+    parametros.delete('pagina');
+    parametros.delete('porPagina');
+    return parametros.toString();
+  }, [query]);
 
   const carregar = useCallback(async () => {
     setErro(false);
@@ -343,7 +350,8 @@ function PipelineListaConteudo() {
               </span>
             </span>
           )}
-          <ItemEmBreve rotulo="Exportar CSV/XLS" icone="download" className="h-10 px-4 rounded-xl bg-surface-card shadow-sm" />
+          {/* AC-457: só MASTER/GERENTE exportam (dado pessoal em massa); a API confere de novo. */}
+          {podeReatribuir && <BotaoExportar tela="lista" consulta={consultaDaExportacao} />}
           <Link
             href="/pipeline"
             className="h-10 px-4 rounded-xl bg-surface-card hover:bg-surface-subtle shadow-sm flex items-center gap-2 font-label-md text-label-md font-semibold text-text-primary transition-colors"

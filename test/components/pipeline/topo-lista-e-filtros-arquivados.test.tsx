@@ -118,13 +118,12 @@ describe('T-167: topo da lista e filtros dos arquivados', () => {
       expect(screen.getByText('Taxa de Conversão')).toBeTruthy();
     });
 
-    test('"Exportar CSV/XLS" aparece como "em breve" e "Alternar para Funil Kanban" leva a /pipeline @spec:AC-417', async () => {
+    test('"Exportar CSV" aparece para MASTER/GERENTE (AC-455) e "Alternar para Funil Kanban" leva a /pipeline @spec:AC-417', async () => {
       render(<PipelineListaPage />);
 
       await screen.findByText('20 leads');
-      const exportar = screen.getByText('Exportar CSV/XLS').closest('*[class*="rounded"]') as HTMLElement;
-      expect(exportar.textContent?.toLowerCase()).toContain('em breve');
-      expect(exportar.tagName).not.toBe('A');
+      expect(await screen.findByRole('button', { name: 'Exportar CSV' })).toBeTruthy();
+      expect(screen.queryByText('Exportar CSV/XLS')).toBeNull();
 
       const alternar = screen.getByRole('link', { name: /Alternar para Funil Kanban/ });
       expect(alternar.getAttribute('href')).toBe('/pipeline');
