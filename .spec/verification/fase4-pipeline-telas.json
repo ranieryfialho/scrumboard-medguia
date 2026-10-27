@@ -1,11 +1,11 @@
 {
   "feature": "fase4-pipeline-telas",
-  "timestamp": "2026-10-27T14:21:23.945Z",
-  "gitRev": "709bd54",
+  "timestamp": "2026-10-27T15:27:43.416Z",
+  "gitRev": "c957bc8",
   "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
-  "exitCode": 0,
-  "testsParsed": 1245,
+  "exitCode": 1,
+  "testsParsed": 1251,
   "results": {
     "AC-387": {
       "status": "pass",
@@ -72,6 +72,11 @@
       "testName": "T-161: tela da lista AC-399: cada linha leva ao card e a seleção marca linhas o nome do lead leva a /pipeline/[id] @spec:AC-399 o nome do lead leva a /pipeline/[id] @spec:AC-399",
       "method": "vitest-json"
     },
+    "AC-417": {
+      "status": "pass",
+      "testName": "T-167: topo da lista e filtros dos arquivados AC-417: o topo da lista traz o total, os indicadores, o atalho para o funil e o \"Novo Card\" mostra o total de leads com o valor somado e os quatro cartões de indicadores @spec:AC-417 mostra o total de leads com o valor somado e os quatro cartões de indicadores @spec:AC-417",
+      "method": "vitest-json"
+    },
     "AC-400": {
       "status": "pass",
       "testName": "T-162: tela dos arquivados AC-400: os arquivados aparecem em /pipeline/arquivados com as três abas mostra as abas Todos, Ganhos e Perdidos com a contagem de cada uma @spec:AC-400 mostra as abas Todos, Ganhos e Perdidos com a contagem de cada uma @spec:AC-400",
@@ -85,6 +90,11 @@
     "AC-402": {
       "status": "pass",
       "testName": "T-155: rotas de leitura do pipeline GET /api/oportunidades/arquivados sem sessão: 401 NAO_AUTENTICADO @spec:AC-402 sem sessão: 401 NAO_AUTENTICADO @spec:AC-402",
+      "method": "vitest-json"
+    },
+    "AC-418": {
+      "status": "pass",
+      "testName": "T-167: topo da lista e filtros dos arquivados AC-418: a tela de arquivados oferece os filtros que a API já aplica busca, motivo, consultor e data viram parâmetros do pedido ao servidor e voltam à página 1 @spec:AC-418 busca, motivo, consultor e data viram parâmetros do pedido ao servidor e voltam à página 1 @spec:AC-418",
       "method": "vitest-json"
     },
     "AC-403": {
@@ -154,7 +164,7 @@
     },
     "AC-416": {
       "status": "pass",
-      "testName": "T-159: @spec:AC-416 estado de conexão do useStreamOportunidades começa reconectando (ainda sem `open`) e passa a conectado no primeiro `open` começa reconectando (ainda sem `open`) e passa a conectado no primeiro `open`",
+      "testName": "T-062: rota GET /api/stream AC-416: a conexão é anunciada na hora, sem esperar o primeiro batimento a primeira coisa que o stream manda é a linha de abertura, bem antes de INTERVALO_PING_MS @spec:AC-416 a primeira coisa que o stream manda é a linha de abertura, bem antes de INTERVALO_PING_MS @spec:AC-416",
       "method": "vitest-json"
     }
   },

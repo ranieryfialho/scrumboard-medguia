@@ -46,6 +46,7 @@ export function ColunaEtapa({
   return (
     <div
       ref={setNodeRef}
+      data-etapa-id={etapaId}
       className={`w-80 flex-shrink-0 flex flex-col rounded-2xl p-3 shadow-sm transition-colors ${
         isOver ? "bg-primary-fixed/60 ring-2 ring-primary/40" : "bg-surface-subtle/80"
       } ${restrita ? "opacity-40" : ""}`}
