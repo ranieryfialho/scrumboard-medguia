@@ -108,6 +108,8 @@ export async function obterCadenciaDoCard(
       };
     }
 
+    // A posição do toque (dia, turno, canal e tipo) vem SEMPRE da matriz: a régua é
+    // fixa, com 3 toques por turno. O banco só informa o estado de cada toque.
     const { atividade } = linha;
     const estado: EstadoToque =
       atividade.resultado === 'conectou' || atividade.resultado === 'sem_resposta'
@@ -119,11 +121,11 @@ export async function obterCadenciaDoCard(
             : 'programado';
 
     return {
-      sequencia: atividade.sequencia,
-      dia: atividade.dia as Dia,
-      turno: atividade.turno,
-      canal: atividade.canal,
-      tipo: atividade.tipo,
+      sequencia: previsto.sequencia,
+      dia: previsto.dia,
+      turno: previsto.turno,
+      canal: previsto.canal,
+      tipo: previsto.tipo,
       estado,
       atividadeId: atividade.id,
       resultado: atividade.resultado,

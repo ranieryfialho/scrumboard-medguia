@@ -2,14 +2,7 @@
 // um com os turnos Manhã e Tarde (3 toques por turno) e o estado de cada toque:
 // concluído (com o resultado), toque da vez em destaque ou programado.
 // Fonte visual: "Matriz Cadencial de 18 Toques" de `10._pipeline_id_cadencia_cad_ncia_do_card/`.
-import {
-  ROTULO_CANAL,
-  ROTULO_RESULTADO,
-  ROTULO_TIPO,
-  ROTULO_TURNO,
-  formatarDataHora,
-  type ToqueDaCadencia,
-} from './tipos';
+import { ROTULO_RESULTADO, ROTULO_TURNO, formatarDataHora, tituloDoToque, type ToqueDaCadencia } from './tipos';
 
 const DIAS = [1, 2, 3] as const;
 const TURNOS = ['manha', 'tarde'] as const;
@@ -33,7 +26,7 @@ function CartaoDoToque({ toque }: { toque: ToqueDaCadencia }) {
           >
             {toque.sequencia}
           </span>
-          {ROTULO_TIPO[toque.tipo]} · {ROTULO_CANAL[toque.canal]}
+          {tituloDoToque(toque)}
         </span>
         {concluido && toque.resultado && (
           <span className="px-2 py-0.5 rounded-full bg-success-surface text-success-text font-label-sm text-label-sm font-bold">

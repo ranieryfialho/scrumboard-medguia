@@ -141,6 +141,26 @@ describe('T-170: listagem da cadência do card (servidor)', () => {
     expect(corpo.toqueDaVez).toBeNull();
   });
 
+  test('um toque gravado com dia e turno fora da régua continua na posição da matriz @spec:AC-432', async () => {
+    sql(
+      `UPDATE "cadencia_atividades" SET "dia" = 3, "turno" = 'tarde'
+       WHERE "oportunidade_id" = '${amb.tenants.oportunidadeA}' AND "sequencia" = 3;`
+    );
+
+    const corpo = await (await get(amb.cookieA, amb.tenants.oportunidadeA)).json();
+    const terceiro = corpo.toques[2] as ToqueResposta;
+
+    expect(terceiro.sequencia).toBe(3);
+    expect(terceiro.dia).toBe(1);
+    expect(terceiro.turno).toBe('manha');
+    // Cada dia e turno da régua continua com exatamente 3 toques.
+    const porBloco = new Map<string, number>();
+    for (const toque of corpo.toques as ToqueResposta[]) {
+      porBloco.set(`${toque.dia}-${toque.turno}`, (porBloco.get(`${toque.dia}-${toque.turno}`) ?? 0) + 1);
+    }
+    expect([...porBloco.values()]).toEqual([3, 3, 3, 3, 3, 3]);
+  });
+
   test('card de outra empresa ou inexistente: 404; sem sessão: 401 @spec:AC-430', async () => {
     expect((await get(amb.cookieA, amb.tenants.oportunidadeB)).status).toBe(404);
     expect((await get(amb.cookieA, CARD_INEXISTENTE)).status).toBe(404);

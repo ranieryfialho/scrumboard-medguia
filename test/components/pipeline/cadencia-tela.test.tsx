@@ -195,6 +195,9 @@ describe('T-173: tela da cadência de 18 toques', () => {
       expect(within(segundo).getByText('Sem resposta')).toBeTruthy();
       expect(within(matriz.querySelector('li[data-sequencia="3"]') as HTMLElement).getByText('Toque da vez')).toBeTruthy();
       expect(within(matriz.querySelector('li[data-sequencia="18"]') as HTMLElement).getByText(/Mensagem de despedida/)).toBeTruthy();
+      // Ligação não repete o rótulo ("Ligação · Ligação"); mensagem leva o canal.
+      expect(within(primeiro).getByText('Ligação telefônica')).toBeTruthy();
+      expect(within(matriz.querySelector('li[data-sequencia="3"]') as HTMLElement).queryByText(/Ligação · Ligação/)).toBeNull();
     });
   });
 

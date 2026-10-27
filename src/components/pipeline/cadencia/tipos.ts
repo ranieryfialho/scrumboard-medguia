@@ -61,6 +61,12 @@ export const ROTULO_RESULTADO: Record<'conectou' | 'sem_resposta' | 'cancelada' 
   pendente: 'Pendente',
 };
 
+/** "Ligação telefônica", "Mensagem · WhatsApp" ou "Mensagem de despedida · WhatsApp" (sem repetir "Ligação · Ligação"). */
+export function tituloDoToque(toque: Pick<ToqueDaCadencia, 'tipo' | 'canal'>): string {
+  if (toque.tipo === 'ligacao') return 'Ligação telefônica';
+  return `${ROTULO_TIPO[toque.tipo]} · ${ROTULO_CANAL[toque.canal]}`;
+}
+
 export function formatarDataHora(iso: string): string {
   return new Date(iso).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
 }
