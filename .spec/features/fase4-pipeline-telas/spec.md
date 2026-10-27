@@ -130,6 +130,12 @@ servidor, para trabalhar com centenas de cards sem travar a tela.
 - **Quando** o usuário clica no nome do lead, ou marca a caixa de uma linha ou a caixa do cabeçalho
 - **Então** o nome leva a `/pipeline/[id]`; a marcação mostra "N selecionados" na barra de ações; as ações em lote aparecem "em breve" (entram na feature `fase4-pipeline-lote`)
 
+#### AC-417 — O topo da lista traz o total, os indicadores, o atalho para o funil e o "Novo Card"
+
+- **Dado** a lista aberta em `/pipeline/lista`
+- **Quando** o usuário olha o topo da tela
+- **Então** vê o total de leads ativos com o valor somado, os quatro cartões de indicadores do funil (os mesmos de `/pipeline`), o botão "Exportar CSV/XLS" marcado "em breve", o botão "Alternar para Funil Kanban" que leva a `/pipeline` e o botão "Novo Card", que abre o mesmo modal "Novo Lead" do funil e, ao salvar, recarrega a tabela e os indicadores
+
 ### US-108 — Consultar o histórico de ganhos e perdas
 
 Como gerente, quero ver os negócios fechados, ganhos e perdidos, com o motivo,
@@ -152,6 +158,12 @@ para entender por que ganhamos e perdemos.
 - **Dado** 30 cards arquivados
 - **Quando** a lista pede busca de texto, motivo de perda, responsável e período, com página e tamanho (`GET /api/oportunidades/arquivados`)
 - **Então** voltam só os que atendem a todos os filtros, a página pedida e o total filtrado; sem sessão é 401 e nunca aparece card de outra empresa
+
+#### AC-418 — A tela de arquivados oferece os filtros que a API já aplica
+
+- **Dado** a tela de arquivados
+- **Quando** o usuário digita na busca, escolhe um motivo de perda, um consultor ou uma data de fechamento, ou usa "Limpar"
+- **Então** a tela pede ao servidor só os cards que atendem a todos os filtros (volta à página 1), mostra "Nenhum card arquivado com estes filtros" quando nada casa, e "Limpar" devolve a lista completa
 
 #### AC-403 — Os indicadores dos arquivados vêm dos dados reais
 

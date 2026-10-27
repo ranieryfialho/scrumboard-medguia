@@ -76,6 +76,20 @@ function chaveDaOrdenacao(ordenarPor: OrdenacaoLista | undefined, ordem: Direcao
 const CLASSE_CAMPO =
   'h-10 px-3 rounded-lg bg-surface-subtle text-text-primary font-label-md text-label-md focus:outline-none shadow-sm';
 
+// Seletor do protótipo: sem a seta nativa do navegador e com a seta própria à direita.
+const CLASSE_SELETOR = `${CLASSE_CAMPO} pr-8 appearance-none cursor-pointer`;
+
+function SetaSeletor() {
+  return (
+    <span
+      aria-hidden="true"
+      className="material-symbols-outlined pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted text-[18px]"
+    >
+      expand_more
+    </span>
+  );
+}
+
 export function FiltrosLista({ valor, responsaveis, origens, onMudar, onLimpar }: FiltrosListaProps) {
   return (
     <div className="p-space-md rounded-xl bg-surface-card shadow-sm">
@@ -88,11 +102,12 @@ export function FiltrosLista({ valor, responsaveis, origens, onMudar, onLimpar }
           aria-label="Buscar"
           className={`${CLASSE_CAMPO} flex-1 max-w-xl`}
         />
+        <div className="relative">
         <select
           aria-label="Etapa"
           value={valor.etapaId ?? ''}
           onChange={(evento) => onMudar({ etapaId: evento.target.value ? Number(evento.target.value) : undefined })}
-          className={CLASSE_CAMPO}
+          className={CLASSE_SELETOR}
         >
           <option value="">Todas as etapas</option>
           {ETAPAS_LISTA.map((etapa) => (
@@ -101,11 +116,14 @@ export function FiltrosLista({ valor, responsaveis, origens, onMudar, onLimpar }
             </option>
           ))}
         </select>
+        <SetaSeletor />
+        </div>
+        <div className="relative">
         <select
           aria-label="Responsável"
           value={valor.responsavelId ?? ''}
           onChange={(evento) => onMudar({ responsavelId: evento.target.value || undefined })}
-          className={CLASSE_CAMPO}
+          className={CLASSE_SELETOR}
         >
           <option value="">Todos os responsáveis</option>
           {responsaveis.map((responsavel) => (
@@ -114,11 +132,14 @@ export function FiltrosLista({ valor, responsaveis, origens, onMudar, onLimpar }
             </option>
           ))}
         </select>
+        <SetaSeletor />
+        </div>
+        <div className="relative">
         <select
           aria-label="Origem"
           value={valor.origem ?? ''}
           onChange={(evento) => onMudar({ origem: evento.target.value || undefined })}
-          className={CLASSE_CAMPO}
+          className={CLASSE_SELETOR}
         >
           <option value="">Todas as origens</option>
           {origens.map((origem) => (
@@ -127,6 +148,9 @@ export function FiltrosLista({ valor, responsaveis, origens, onMudar, onLimpar }
             </option>
           ))}
         </select>
+        <SetaSeletor />
+        </div>
+        <div className="relative">
         <select
           aria-label="Ordenar por"
           value={chaveDaOrdenacao(valor.ordenarPor, valor.ordem)}
@@ -134,7 +158,7 @@ export function FiltrosLista({ valor, responsaveis, origens, onMudar, onLimpar }
             const opcao = OPCOES_ORDENACAO.find((item) => item.chave === evento.target.value);
             onMudar({ ordenarPor: opcao?.ordenarPor, ordem: opcao?.ordem });
           }}
-          className={CLASSE_CAMPO}
+          className={CLASSE_SELETOR}
         >
           <option value="">Mais recentes primeiro</option>
           {OPCOES_ORDENACAO.map((opcao) => (
@@ -143,6 +167,8 @@ export function FiltrosLista({ valor, responsaveis, origens, onMudar, onLimpar }
             </option>
           ))}
         </select>
+        <SetaSeletor />
+        </div>
         <button
           type="button"
           onClick={onLimpar}

@@ -72,6 +72,12 @@
 - Esforço: alto
 - Notas: achado por você ao testar no navegador (27/10): o quadro do funil ficou com card e coluna no desenho antigo (cores slate/índigo), o selo "Atrasado" saía cortado, cada coluna tinha barra de rolagem horizontal própria e os seletores de filtro estavam crus. Refaz card e coluna com as classes do `6._pipeline_funil_pipeline/code.html` (coluna `w-80` com fundo `surface-subtle`, card `rounded-xl p-3.5`, bloco de próxima ação, avatar do responsável, selo "Atrasado" dentro do card, filtros com `appearance-none` e seta própria), sem a rolagem interna da coluna. Só mostra dados que o card já traz (nome, valor, responsável, próxima ação): origem, telefone e barra de cadência do protótipo não têm dado no quadro e ficam de fora. A rota `/api/stream` passa a mandar `: conectado` assim que abre (o ping é de 25 s, e até ele chegar a tela mostrava "tempo real desconectado"); o teste do ping passa a ler primeiro essa linha de abertura. Feita direto (sem o executor headless) na branch da PR #37.
 
+## T-167 — Lista com topo completo e arquivados com filtros [concluida]
+- Refs: AC-417, AC-418
+- Arquivos: src/app/(app)/pipeline/lista/page.tsx, src/app/(app)/pipeline/arquivados/page.tsx, src/components/pipeline/filtros-arquivados.tsx, src/components/pipeline/novo-lead-api.ts, src/components/pipeline/board-kanban.tsx, test/components/pipeline/topo-lista-e-filtros-arquivados.test.tsx
+- Esforço: alto
+- Notas: achado ao conferir as telas contra o protótipo (27/10), por falha da spec: o AC-394 não pedia o topo da tela 7 (total, indicadores, "Alternar para Funil Kanban", "Novo Card", "Exportar" em breve) e o AC-402 só falava da API, não da barra de filtros da tela 8 (busca, motivo, consultor, data, limpar). Criação do lead extraída de `board-kanban.tsx` para `novo-lead-api.ts` e reaproveitada pela lista. Feita direto, sem o executor headless, na branch da PR #37.
+
 ## T-161 — Tela da lista [concluida]
 - Refs: AC-394, AC-395, AC-396, AC-399
 - Arquivos: src/app/(app)/pipeline/lista/page.tsx, src/components/pipeline/tabela-lista.tsx, src/components/pipeline/filtros-lista.tsx, test/components/pipeline/lista.test.tsx

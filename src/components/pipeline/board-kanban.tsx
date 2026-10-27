@@ -19,6 +19,7 @@ import { ModalDadoFaltante } from "./modal-dado-faltante";
 import { FiltrosFunil, type OpcaoResponsavelFunil, type ValorFiltrosFunil } from "./filtros-funil";
 import { IndicadoresFunil, type IndicadoresFunilView } from "./indicadores-funil";
 import { ModalNovoLead, type DadosNovoLead, type ResultadoSalvarNovoLead } from "./modal-novo-lead";
+import { criarCardNovoLead, criarLeadEIniciarCadencia } from "./novo-lead-api";
 
 // Espelha `pipeline_etapas` (drizzle/0005_seeds.sql) — as 15 etapas são seed
 // fixo, versionado por migration; não vale buscar isso por rede toda vez.
@@ -131,41 +132,6 @@ async function buscarIdsPermitidos(filtro: ValorFiltrosFunil): Promise<Set<strin
     ids.add(item.id);
   }
   return ids;
-}
-
-interface ResultadoCriarCard {
-  ok: boolean;
-  id?: string;
-  version?: number;
-  erro?: string;
-  campo?: "nome" | "telefone" | "origem";
-}
-
-/** T-165 (AC-391/AC-392): cria o lead e o card em "Entrada de leads" num só passo. */
-async function criarCardNovoLead(dados: DadosNovoLead): Promise<ResultadoCriarCard> {
-  const resposta = await fetch("/api/oportunidades", {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({
-      novoLead: { nome: dados.nome, telefone: dados.telefone, email: dados.email, origem: dados.origem },
-      valor: dados.valor,
-      responsavelId: dados.responsavelId,
-    }),
-  });
-
-  if (resposta.ok) {
-    const corpo = await resposta.json();
-    return { ok: true, id: corpo.id, version: corpo.version };
-  }
-
-  const erro = await resposta.json().catch(() => null);
-  if (erro?.codigo === "CAMPO_OBRIGATORIO") {
-    return { ok: false, erro: "Esse campo é obrigatório.", campo: erro.campo };
-  }
-  if (erro?.codigo === "RESPONSAVEL_INVALIDO") {
-    return { ok: false, erro: "Esse responsável não está ativo nesta empresa." };
-  }
-  return { ok: false, erro: "Não foi possível salvar o lead. Tente de novo." };
 }
 
 export function BoardKanban() {
@@ -463,15 +429,8 @@ export function BoardKanban() {
 
   const aoCriarLeadEIniciarCadencia = useCallback(
     async (dados: DadosNovoLead): Promise<ResultadoSalvarNovoLead> => {
-      const resultado = await criarCardNovoLead(dados);
+      const resultado = await criarLeadEIniciarCadencia(dados);
       if (!resultado.ok) return { ok: false, erro: resultado.erro, campo: resultado.campo };
-      if (resultado.id && typeof resultado.version === "number") {
-        await fetch(`/api/oportunidades/${resultado.id}/cadencia/iniciar`, {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({ version: resultado.version }),
-        });
-      }
       await carregarBoard();
       void carregarIndicadores();
       return { ok: true };

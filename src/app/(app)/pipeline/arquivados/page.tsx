@@ -25,6 +25,12 @@ import { Paginacao } from '@/components/pipeline/pecas/paginacao';
 import { CartaoIndicador } from '@/components/pipeline/pecas/cartao-indicador';
 import { ItemEmBreve } from '@/components/pipeline/pecas/selo-em-breve';
 import { TabelaArquivados, type ItemTabelaArquivados } from '@/components/pipeline/tabela-arquivados';
+import {
+  FiltrosArquivados,
+  filtroArquivadosAtivo,
+  type OpcaoFiltroArquivados,
+  type ValorFiltrosArquivados,
+} from '@/components/pipeline/filtros-arquivados';
 import { DistribuicaoMotivos, type MotivoDistribuicaoView } from '@/components/pipeline/distribuicao-motivos';
 
 type TamanhoPagina = 10 | 25 | 50;
@@ -78,11 +84,20 @@ interface UsuarioSessaoMinima {
   isSuperAdmin?: boolean;
 }
 
-function construirQuery(tipo: 'ganho' | 'perdido' | undefined, pagina: number, porPagina: number): string {
+function construirQuery(
+  tipo: 'ganho' | 'perdido' | undefined,
+  pagina: number,
+  porPagina: number,
+  filtro?: ValorFiltrosArquivados
+): string {
   const parametros = new URLSearchParams();
   parametros.set('pagina', String(pagina));
   parametros.set('porPagina', String(porPagina));
   if (tipo) parametros.set('tipo', tipo);
+  if (filtro?.busca) parametros.set('busca', filtro.busca);
+  if (filtro?.motivoPerdaId) parametros.set('motivoPerdaId', filtro.motivoPerdaId);
+  if (filtro?.responsavelId) parametros.set('responsavelId', filtro.responsavelId);
+  if (filtro?.de) parametros.set('de', filtro.de);
   return parametros.toString();
 }
 
@@ -107,6 +122,18 @@ function PipelineArquivadosConteudo() {
     normalizarPorPagina(searchParamsIniciais.get('porPagina'))
   );
 
+  // AC-418: filtros (busca, motivo, consultor, data) — vão para a URL junto com aba e página.
+  const [filtro, setFiltro] = useState<ValorFiltrosArquivados>(() => ({
+    busca: searchParamsIniciais.get('busca') ?? '',
+    motivoPerdaId: searchParamsIniciais.get('motivoPerdaId') ?? undefined,
+    responsavelId: searchParamsIniciais.get('responsavelId') ?? undefined,
+    de: searchParamsIniciais.get('de') ?? undefined,
+  }));
+  const [opcoesFiltro, setOpcoesFiltro] = useState<{ motivos: OpcaoFiltroArquivados[]; responsaveis: OpcaoFiltroArquivados[] }>({
+    motivos: [],
+    responsaveis: [],
+  });
+
   const [dados, setDados] = useState<RespostaArquivados | null>(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(false);
@@ -117,7 +144,7 @@ function PipelineArquivadosConteudo() {
   const [versao, setVersao] = useState(0);
 
   const tipo = tipoDaAba(aba);
-  const query = useMemo(() => construirQuery(tipo, pagina, porPagina), [tipo, pagina, porPagina]);
+  const query = useMemo(() => construirQuery(tipo, pagina, porPagina, filtro), [tipo, pagina, porPagina, filtro]);
 
   const carregar = useCallback(async () => {
     setErro(false);
@@ -198,6 +225,40 @@ function PipelineArquivadosConteudo() {
       cancelado = true;
     };
   }, []);
+
+  // AC-418: opções dos selects — motivos cadastrados e consultores que aparecem nos arquivados.
+  useEffect(() => {
+    let cancelado = false;
+    Promise.all([
+      fetch('/api/motivos-perda').then((r) => (r.ok ? r.json() : null)),
+      fetch('/api/oportunidades/arquivados?porPagina=50').then((r) => (r.ok ? r.json() : null)),
+    ])
+      .then(([motivos, arquivados]: [{ itens: OpcaoFiltroArquivados[] } | null, RespostaArquivados | null]) => {
+        if (cancelado) return;
+        const consultores = new Map<string, string>();
+        for (const item of arquivados?.itens ?? []) {
+          if (item.responsavel) consultores.set(item.responsavel.id, item.responsavel.nome);
+        }
+        setOpcoesFiltro({
+          motivos: motivos?.itens ?? [],
+          responsaveis: [...consultores.entries()].map(([id, nome]) => ({ id, nome })),
+        });
+      })
+      .catch(() => {});
+    return () => {
+      cancelado = true;
+    };
+  }, []);
+
+  function mudarFiltro(parcial: Partial<ValorFiltrosArquivados>) {
+    setFiltro((atual) => ({ ...atual, ...parcial }));
+    setPagina(1);
+  }
+
+  function limparFiltro() {
+    setFiltro({ busca: '' });
+    setPagina(1);
+  }
 
   function mudarAba(novaAba: Aba) {
     setAba(novaAba);
@@ -300,12 +361,22 @@ function PipelineArquivadosConteudo() {
           ))}
         </div>
 
+        <FiltrosArquivados
+          valor={filtro}
+          motivos={opcoesFiltro.motivos}
+          responsaveis={opcoesFiltro.responsaveis}
+          onMudar={mudarFiltro}
+          onLimpar={limparFiltro}
+        />
+
         {carregando && <EsqueletoCarregando />}
         {!carregando && erro && <EstadoErro onTentarDeNovo={carregar} />}
         {!carregando && !erro && dados && dados.total === 0 && (
           <EstadoVazio
-            titulo="Nenhum card arquivado ainda"
-            proximoPasso="feche ou perca um card no funil"
+            titulo={filtroArquivadosAtivo(filtro) ? 'Nenhum card arquivado com estes filtros' : 'Nenhum card arquivado ainda'}
+            proximoPasso={
+              filtroArquivadosAtivo(filtro) ? 'tente mudar ou limpar os filtros' : 'feche ou perca um card no funil'
+            }
             icone="archive"
           />
         )}

@@ -12,10 +12,15 @@
 // (nota da tarefa) — sem isso bloquear nenhum critério: a leitura inicial
 // cai para os defaults se a URL não tiver nada.
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import { EsqueletoCarregando, EstadoErro, EstadoVazio } from '@/components/pipeline/pecas/estados';
 import { Paginacao } from '@/components/pipeline/pecas/paginacao';
+import { ItemEmBreve } from '@/components/pipeline/pecas/selo-em-breve';
+import { IndicadoresFunil, type IndicadoresFunilView } from '@/components/pipeline/indicadores-funil';
+import { ModalNovoLead, type DadosNovoLead, type ResultadoSalvarNovoLead } from '@/components/pipeline/modal-novo-lead';
+import { criarCardNovoLead, criarLeadEIniciarCadencia } from '@/components/pipeline/novo-lead-api';
 import {
   FiltrosLista,
   type DirecaoOrdenacao,
@@ -87,6 +92,9 @@ function PipelineListaConteudo() {
     responsaveis: [],
     origens: [],
   });
+  // AC-417: indicadores do topo (os mesmos do funil) e o modal "Novo Card".
+  const [indicadores, setIndicadores] = useState<IndicadoresFunilView | null>(null);
+  const [modalNovoCardAberto, setModalNovoCardAberto] = useState(false);
 
   const query = useMemo(() => construirQuery(filtro, pagina, porPagina), [filtro, pagina, porPagina]);
 
@@ -109,6 +117,41 @@ function PipelineListaConteudo() {
   useEffect(() => {
     carregar();
   }, [carregar]);
+
+  const carregarIndicadores = useCallback(async () => {
+    try {
+      const resposta = await fetch('/api/pipeline/indicadores?visao=funil');
+      if (resposta.ok) setIndicadores(await resposta.json());
+    } catch {
+      // Indicadores são independentes da tabela: sem eles a lista segue funcionando.
+    }
+  }, []);
+
+  useEffect(() => {
+    void carregarIndicadores();
+  }, [carregarIndicadores]);
+
+  const aoCriarCard = useCallback(
+    async (dados: DadosNovoLead): Promise<ResultadoSalvarNovoLead> => {
+      const resultado = await criarCardNovoLead(dados);
+      if (!resultado.ok) return { ok: false, erro: resultado.erro, campo: resultado.campo };
+      await carregar();
+      void carregarIndicadores();
+      return { ok: true };
+    },
+    [carregar, carregarIndicadores]
+  );
+
+  const aoCriarCardEIniciarCadencia = useCallback(
+    async (dados: DadosNovoLead): Promise<ResultadoSalvarNovoLead> => {
+      const resultado = await criarLeadEIniciarCadencia(dados);
+      if (!resultado.ok) return { ok: false, erro: resultado.erro, campo: resultado.campo };
+      await carregar();
+      void carregarIndicadores();
+      return { ok: true };
+    },
+    [carregar, carregarIndicadores]
+  );
 
   useEffect(() => {
     router.replace(`/pipeline/lista?${query}`);
@@ -176,9 +219,47 @@ function PipelineListaConteudo() {
 
   return (
     <div className="p-space-md space-y-space-md">
-      <div>
-        <h1 className="font-headline-lg text-headline-lg text-text-primary tracking-tight">Pipeline em Lista</h1>
+      <div className="flex items-start justify-between flex-wrap gap-space-md">
+        <div>
+          <h1 className="font-headline-lg text-headline-lg text-text-primary tracking-tight">Pipeline em Lista</h1>
+          <p className="font-body-md text-body-md text-text-secondary mt-1 max-w-xl">
+            Gerenciamento estruturado de leads e clínicas em prospecção, com visão tabular.
+          </p>
+        </div>
+        <div className="flex items-center gap-space-sm flex-wrap">
+          {indicadores && (
+            <span className="h-10 px-4 rounded-xl bg-surface-card shadow-sm flex items-center gap-2 font-body-md text-body-md text-text-secondary">
+              <span aria-hidden="true" className="w-2 h-2 rounded-full bg-primary" />
+              <span>
+                Total: <strong className="text-text-primary">{indicadores.cardsAtivos.quantidade} leads</strong> (
+                {Number(indicadores.cardsAtivos.valorTotal).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })})
+              </span>
+            </span>
+          )}
+          <ItemEmBreve rotulo="Exportar CSV/XLS" icone="download" className="h-10 px-4 rounded-xl bg-surface-card shadow-sm" />
+          <Link
+            href="/pipeline"
+            className="h-10 px-4 rounded-xl bg-surface-card hover:bg-surface-subtle shadow-sm flex items-center gap-2 font-label-md text-label-md font-semibold text-text-primary transition-colors"
+          >
+            <span aria-hidden="true" className="material-symbols-outlined text-[19px]">
+              view_kanban
+            </span>
+            Alternar para Funil Kanban
+          </Link>
+          <button
+            type="button"
+            onClick={() => setModalNovoCardAberto(true)}
+            className="h-10 px-4 rounded-xl bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md font-semibold shadow-md flex items-center gap-2 transition-all"
+          >
+            <span aria-hidden="true" className="material-symbols-outlined text-[19px]">
+              add
+            </span>
+            Novo Card
+          </button>
+        </div>
       </div>
+
+      {indicadores && <IndicadoresFunil dados={indicadores} />}
 
       <FiltrosLista
         valor={filtro}
@@ -227,6 +308,15 @@ function PipelineListaConteudo() {
           />
         </>
       )}
+
+      <ModalNovoLead
+        aberto={modalNovoCardAberto}
+        origens={opcoes.origens}
+        responsaveis={opcoes.responsaveis}
+        onFechar={() => setModalNovoCardAberto(false)}
+        onCriar={aoCriarCard}
+        onCriarEIniciarCadencia={aoCriarCardEIniciarCadencia}
+      />
     </div>
   );
 }
