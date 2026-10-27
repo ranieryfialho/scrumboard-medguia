@@ -18,15 +18,13 @@
     (atalho: `onp-spec tarefa <feature> <T-xxx> <status>`)
 -->
 
-## T-168 — Nome original do anexo: migration 0013 e upload [pendente]
-
+## T-168 — Nome original do anexo: migration 0013 e upload [concluida]
 - Refs: AC-428
 - Arquivos: drizzle/0013_anexos_nome.sql, src/db/schema/pipeline.ts, src/lib/anexos/nome.ts, src/repositories/anexos.ts, src/app/api/anexos/route.ts, test/api/anexos-nome.test.ts
 - Esforço: alto
 - Notas: migration escrita à mão (mesmo estilo de 0011 e 0012; o diário `drizzle/meta` só registra as geradas): `ALTER TABLE anexos ADD COLUMN nome text` (nula, sem default), com a mesma política de acesso da tabela. `nome.ts` limpa o nome do arquivo (só o último trecho do caminho, sem caracteres de controle, até 120 caracteres; vazio vira nulo). O `POST /api/anexos` passa o `File.name` limpo para `criarAnexo`. Anexos antigos ficam com nome nulo (a tela mostra "Anexo PDF — data"). A migration entra na lista de pendências do cutover (como 0012). Não mexe no que já funciona: os testes de `anexos-upload` e `anexos-acesso` têm que continuar passando.
 
-## T-169 — Listagem dos anexos do card (servidor) [pendente]
-
+## T-169 — Listagem dos anexos do card (servidor) [concluida]
 - Refs: AC-423, AC-424
 - Arquivos: src/repositories/anexos-lista.ts, src/app/api/oportunidades/[id]/anexos/route.ts, test/api/oportunidade-anexos-lista.test.ts
 - Esforço: medio
