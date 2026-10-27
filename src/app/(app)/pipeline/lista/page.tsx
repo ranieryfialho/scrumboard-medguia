@@ -17,10 +17,15 @@ import { useRouter, useSearchParams } from 'next/navigation';
 
 import { EsqueletoCarregando, EstadoErro, EstadoVazio } from '@/components/pipeline/pecas/estados';
 import { Paginacao } from '@/components/pipeline/pecas/paginacao';
-import { ItemEmBreve } from '@/components/pipeline/pecas/selo-em-breve';
 import { IndicadoresFunil, type IndicadoresFunilView } from '@/components/pipeline/indicadores-funil';
 import { ModalNovoLead, type DadosNovoLead, type ResultadoSalvarNovoLead } from '@/components/pipeline/modal-novo-lead';
 import { criarCardNovoLead, criarLeadEIniciarCadencia } from '@/components/pipeline/novo-lead-api';
+import { ETAPAS_PIPELINE } from '@/components/pipeline/detalhe/jornada';
+import { BarraLote } from '@/components/pipeline/lote/barra-lote';
+import { DialogoLote, type OpcaoDoDialogo } from '@/components/pipeline/lote/dialogo-lote';
+import { BotaoExportar } from '@/components/pipeline/lote/botao-exportar';
+import { ResultadoLote } from '@/components/pipeline/lote/resultado-lote';
+import { MENSAGEM_DO_PEDIDO, type AcaoEmLote, type ResultadoDoLoteView } from '@/components/pipeline/lote/tipos';
 import {
   FiltrosLista,
   type DirecaoOrdenacao,
@@ -95,8 +100,27 @@ function PipelineListaConteudo() {
   // AC-417: indicadores do topo (os mesmos do funil) e o modal "Novo Card".
   const [indicadores, setIndicadores] = useState<IndicadoresFunilView | null>(null);
   const [modalNovoCardAberto, setModalNovoCardAberto] = useState(false);
+  // T-178 (AC-445 a AC-454): ações em lote sobre os cards selecionados.
+  const [podeReatribuir, setPodeReatribuir] = useState(false);
+  const [acaoAberta, setAcaoAberta] = useState<AcaoEmLote | null>(null);
+  const [opcoesDoDialogo, setOpcoesDoDialogo] = useState<OpcaoDoDialogo[]>([]);
+  const [carregandoOpcoes, setCarregandoOpcoes] = useState(false);
+  const [aplicandoLote, setAplicandoLote] = useState(false);
+  const [erroDoLote, setErroDoLote] = useState<string | null>(null);
+  const [resultadoDoLote, setResultadoDoLote] = useState<{
+    acao: AcaoEmLote;
+    lote: ResultadoDoLoteView;
+    nomes: Record<string, string>;
+  } | null>(null);
 
   const query = useMemo(() => construirQuery(filtro, pagina, porPagina), [filtro, pagina, porPagina]);
+  // AC-455: a exportação leva os mesmos filtros e a mesma ordenação da tela, mas não a página.
+  const consultaDaExportacao = useMemo(() => {
+    const parametros = new URLSearchParams(query);
+    parametros.delete('pagina');
+    parametros.delete('porPagina');
+    return parametros.toString();
+  }, [query]);
 
   const carregar = useCallback(async () => {
     setErro(false);
@@ -130,6 +154,96 @@ function PipelineListaConteudo() {
   useEffect(() => {
     void carregarIndicadores();
   }, [carregarIndicadores]);
+
+  // AC-451: só MASTER/GERENTE (ou super admin) reatribuem — a API confere de novo (403).
+  useEffect(() => {
+    let cancelado = false;
+    fetch('/api/me')
+      .then((resposta) => (resposta.ok ? resposta.json() : null))
+      .then((usuario: { papel?: string; isSuperAdmin?: boolean } | null) => {
+        if (cancelado || !usuario) return;
+        setPodeReatribuir(usuario.isSuperAdmin === true || usuario.papel === 'MASTER' || usuario.papel === 'GERENTE');
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelado = true;
+    };
+  }, []);
+
+  /** Abre o diálogo da ação e carrega as opções dela (etapas já são conhecidas; responsáveis e motivos vêm da API). */
+  async function abrirAcao(acao: AcaoEmLote) {
+    setErroDoLote(null);
+    setResultadoDoLote(null);
+    setAcaoAberta(acao);
+    if (acao === 'mover') {
+      setOpcoesDoDialogo(ETAPAS_PIPELINE.map((etapa) => ({ id: String(etapa.id), nome: etapa.nome })));
+      return;
+    }
+    setOpcoesDoDialogo([]);
+    setCarregandoOpcoes(true);
+    try {
+      if (acao === 'reatribuir') {
+        const resposta = await fetch('/api/pipeline/responsaveis');
+        const corpo = resposta.ok ? ((await resposta.json()) as { responsaveis: OpcaoDoDialogo[] }) : { responsaveis: [] };
+        setOpcoesDoDialogo(corpo.responsaveis);
+      } else {
+        const resposta = await fetch('/api/motivos-perda');
+        const corpo = resposta.ok ? ((await resposta.json()) as { itens: OpcaoDoDialogo[] }) : { itens: [] };
+        setOpcoesDoDialogo(corpo.itens);
+      }
+    } catch {
+      setOpcoesDoDialogo([]);
+    } finally {
+      setCarregandoOpcoes(false);
+    }
+  }
+
+  function fecharDialogo() {
+    setAcaoAberta(null);
+    setErroDoLote(null);
+  }
+
+  /** AC-446/AC-447/AC-450/AC-453: aplica a ação nos selecionados, mostra o resultado e deixa marcados os que falharam. */
+  async function aplicarLote(valor: string) {
+    if (!acaoAberta) return;
+    const acao = acaoAberta;
+    const ids = [...selecionados];
+    const nomes: Record<string, string> = {};
+    for (const item of dados?.itens ?? []) nomes[item.id] = item.lead.nome;
+
+    const corpo =
+      acao === 'mover'
+        ? { ids, etapaDestinoId: Number(valor) }
+        : acao === 'reatribuir'
+          ? { ids, responsavelId: valor }
+          : { ids, motivoPerdaId: valor };
+
+    setAplicandoLote(true);
+    setErroDoLote(null);
+    try {
+      const resposta = await fetch(`/api/oportunidades/lote/${acao}`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(corpo),
+      });
+      if (!resposta.ok) {
+        const erro = (await resposta.json().catch(() => null)) as { codigo?: string } | null;
+        setErroDoLote(MENSAGEM_DO_PEDIDO[erro?.codigo ?? ''] ?? 'Não foi possível aplicar a ação. Tente de novo.');
+        return;
+      }
+      const lote = (await resposta.json()) as ResultadoDoLoteView;
+      setAcaoAberta(null);
+      setResultadoDoLote({ acao, lote, nomes });
+      await carregar();
+      void carregarIndicadores();
+      // Os que falharam continuam marcados para o usuário corrigir.
+      setSelecionados(new Set(lote.resultados.filter((resultado) => !resultado.ok).map((resultado) => resultado.id)));
+    } catch {
+      setErroDoLote('Não foi possível aplicar a ação. Tente de novo.');
+    } finally {
+      setAplicandoLote(false);
+    }
+  }
 
   const aoCriarCard = useCallback(
     async (dados: DadosNovoLead): Promise<ResultadoSalvarNovoLead> => {
@@ -236,7 +350,8 @@ function PipelineListaConteudo() {
               </span>
             </span>
           )}
-          <ItemEmBreve rotulo="Exportar CSV/XLS" icone="download" className="h-10 px-4 rounded-xl bg-surface-card shadow-sm" />
+          {/* AC-457: só MASTER/GERENTE exportam (dado pessoal em massa); a API confere de novo. */}
+          {podeReatribuir && <BotaoExportar tela="lista" consulta={consultaDaExportacao} />}
           <Link
             href="/pipeline"
             className="h-10 px-4 rounded-xl bg-surface-card hover:bg-surface-subtle shadow-sm flex items-center gap-2 font-label-md text-label-md font-semibold text-text-primary transition-colors"
@@ -261,6 +376,15 @@ function PipelineListaConteudo() {
 
       {indicadores && <IndicadoresFunil dados={indicadores} />}
 
+      {resultadoDoLote && (
+        <ResultadoLote
+          acao={resultadoDoLote.acao}
+          lote={resultadoDoLote.lote}
+          nomes={resultadoDoLote.nomes}
+          onFechar={() => setResultadoDoLote(null)}
+        />
+      )}
+
       <FiltrosLista
         valor={filtro}
         responsaveis={opcoes.responsaveis}
@@ -281,6 +405,7 @@ function PipelineListaConteudo() {
             selecionados={selecionados}
             onAlternarSelecao={alternarSelecao}
             onAlternarTodos={alternarTodos}
+            barraDeAcoes={<BarraLote quantidade={selecionados.size} podeReatribuir={podeReatribuir} onAbrir={abrirAcao} />}
           />
           <div className="px-space-md py-2 flex items-center gap-1.5">
             <label htmlFor="pipeline-lista-exibir" className="font-body-sm text-body-sm text-text-muted">
@@ -307,6 +432,20 @@ function PipelineListaConteudo() {
             rotuloItem="leads"
           />
         </>
+      )}
+
+      {acaoAberta && (
+        <DialogoLote
+          key={acaoAberta}
+          acao={acaoAberta}
+          quantidade={selecionados.size}
+          opcoes={opcoesDoDialogo}
+          carregandoOpcoes={carregandoOpcoes}
+          enviando={aplicandoLote}
+          erro={erroDoLote}
+          onConfirmar={aplicarLote}
+          onFechar={fecharDialogo}
+        />
       )}
 
       <ModalNovoLead

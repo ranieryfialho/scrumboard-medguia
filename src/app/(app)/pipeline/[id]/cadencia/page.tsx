@@ -11,6 +11,7 @@ import { use, useCallback, useEffect, useState } from 'react';
 
 import { BotaoIniciarCadencia } from '@/components/pipeline/botao-iniciar-cadencia';
 import { MoldeDoCard } from '@/components/pipeline/card/molde-do-card';
+import { nomeDaEtapa } from '@/components/pipeline/detalhe/jornada';
 import { HistoricoToques } from '@/components/pipeline/cadencia/historico-toques';
 import { MatrizToques } from '@/components/pipeline/cadencia/matriz-toques';
 import { ResumoCadencia } from '@/components/pipeline/cadencia/resumo-cadencia';
@@ -18,6 +19,9 @@ import { ToqueDaVez } from '@/components/pipeline/cadencia/toque-da-vez';
 import type { CadenciaDoCardView } from '@/components/pipeline/cadencia/tipos';
 import { EsqueletoCarregando, EstadoErro, EstadoVazio } from '@/components/pipeline/pecas/estados';
 import { ItemEmBreve } from '@/components/pipeline/pecas/selo-em-breve';
+
+/** Só card em "Entrada de leads" inicia a cadência (a mesma regra do botão no funil). */
+const ETAPA_ENTRADA_DE_LEADS = 1;
 
 /** AC-434: mensagem de cada recusa da API de concluir o toque. */
 const MENSAGENS_DE_ERRO: Record<string, string> = {
@@ -99,7 +103,11 @@ function ConteudoCadencia({ cardId, onMudou }: { cardId: string; onMudou: () => 
         <div className="flex flex-col items-center gap-space-md">
           <EstadoVazio
             titulo="A cadência deste card ainda não foi iniciada"
-            proximoPasso="inicie a régua de 18 toques pelo botão abaixo, quando o card estiver em “Entrada de leads”"
+            proximoPasso={
+              cadencia.oportunidade.etapaId === ETAPA_ENTRADA_DE_LEADS
+                ? 'inicie a régua de 18 toques pelo botão abaixo'
+                : `a cadência só começa em card na etapa “Entrada de leads”; este card está em “${nomeDaEtapa(cadencia.oportunidade.etapaId)}”`
+            }
             icone="checklist"
           />
           <BotaoIniciarCadencia

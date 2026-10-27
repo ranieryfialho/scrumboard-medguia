@@ -6,10 +6,10 @@
 // (AC-399) e a marcação de linha/cabeçalho mostra "N selecionados" na barra
 // de ações; as ações em lote ficam "em breve" (feature `fase4-pipeline-lote`,
 // mesma peça `ItemEmBreve` de T-158).
+import type { ReactNode } from 'react';
 import Link from 'next/link';
 
 import { SeloEtapa } from './pecas/selo-etapa';
-import { ItemEmBreve } from './pecas/selo-em-breve';
 import { nomeDaEtapaLista } from './filtros-lista';
 
 export interface ItemTabelaLista {
@@ -31,6 +31,8 @@ interface TabelaListaProps {
   selecionados: Set<string>;
   onAlternarSelecao: (id: string) => void;
   onAlternarTodos: () => void;
+  /** T-178: a barra de ações em lote (feature `fase4-pipeline-lote`), desenhada acima da tabela. */
+  barraDeAcoes?: ReactNode;
 }
 
 function formatarValor(valor: string | null): string | null {
@@ -45,27 +47,12 @@ function formatarProximaAcao(iso: string | null): string {
   return new Date(iso).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
 }
 
-export function TabelaLista({ itens, selecionados, onAlternarSelecao, onAlternarTodos }: TabelaListaProps) {
+export function TabelaLista({ itens, selecionados, onAlternarSelecao, onAlternarTodos, barraDeAcoes }: TabelaListaProps) {
   const todosSelecionados = itens.length > 0 && itens.every((item) => selecionados.has(item.id));
 
   return (
     <div className="rounded-xl bg-surface-card shadow-sm overflow-hidden flex flex-col">
-      {selecionados.size > 0 && (
-        <div className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 bg-info-surface text-info-text text-label-md font-label-md">
-          <span className="flex items-center gap-2">
-            <span aria-hidden="true" className="material-symbols-outlined text-[18px]">
-              checklist
-            </span>
-            <strong>{selecionados.size} selecionados</strong>
-          </span>
-          <div className="flex items-center gap-3">
-            <ItemEmBreve rotulo="Mover Etapa em Lote" icone="drive_file_move" />
-            <ItemEmBreve rotulo="Reatribuir Comercial" icone="person_add" />
-            <ItemEmBreve rotulo="Disparar WhatsApp" icone="send" />
-            <ItemEmBreve rotulo="Arquivar" icone="archive" />
-          </div>
-        </div>
-      )}
+      {barraDeAcoes}
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>

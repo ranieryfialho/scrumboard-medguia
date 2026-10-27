@@ -128,13 +128,13 @@ servidor, para trabalhar com centenas de cards sem travar a tela.
 
 - **Dado** a lista renderizada
 - **Quando** o usuário clica no nome do lead, ou marca a caixa de uma linha ou a caixa do cabeçalho
-- **Então** o nome leva a `/pipeline/[id]`; a marcação mostra "N selecionados" na barra de ações; as ações em lote aparecem "em breve" (entram na feature `fase4-pipeline-lote`)
+- **Então** o nome leva a `/pipeline/[id]`; a marcação mostra "N selecionados" na barra de ações (as ações em lote em si são da feature `fase4-pipeline-lote`, AC-445 em diante)
 
 #### AC-417 — O topo da lista traz o total, os indicadores, o atalho para o funil e o "Novo Card"
 
 - **Dado** a lista aberta em `/pipeline/lista`
 - **Quando** o usuário olha o topo da tela
-- **Então** vê o total de leads ativos com o valor somado, os quatro cartões de indicadores do funil (os mesmos de `/pipeline`), o botão "Exportar CSV/XLS" marcado "em breve", o botão "Alternar para Funil Kanban" que leva a `/pipeline` e o botão "Novo Card", que abre o mesmo modal "Novo Lead" do funil e, ao salvar, recarrega a tabela e os indicadores
+- **Então** vê o total de leads ativos com o valor somado, os quatro cartões de indicadores do funil (os mesmos de `/pipeline`), o botão "Exportar CSV" (só para MASTER e GERENTE, AC-455 da feature `fase4-pipeline-lote`), o botão "Alternar para Funil Kanban" que leva a `/pipeline` e o botão "Novo Card", que abre o mesmo modal "Novo Lead" do funil e, ao salvar, recarrega a tabela e os indicadores
 
 ### US-108 — Consultar o histórico de ganhos e perdas
 
@@ -180,7 +180,7 @@ para entender por que ganhamos e perdemos.
 #### AC-405 — Os blocos de análise sem backend aparecem como "em breve"
 
 - **Dado** a tela de arquivados
-- **Quando** o usuário olha "Exportar Relatório", "Análise de Motivos de Perda", "Top Fechamentos do Trimestre" e o "Playbook de Reversão"
+- **Quando** o usuário olha "Análise de Motivos de Perda", "Top Fechamentos do Trimestre" e o "Playbook de Reversão" (a exportação em CSV passou a funcionar na feature `fase4-pipeline-lote`, AC-456)
 - **Então** aparecem visíveis, marcados "em breve", sem disparar ação (a campanha de reativação entra na fase de campanhas)
 
 ### US-109 — Entender e mover um card pela tela de detalhe

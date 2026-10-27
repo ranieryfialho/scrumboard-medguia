@@ -286,7 +286,7 @@ describe('T-161: tela da lista', () => {
       expect(link.getAttribute('href')).toBe('/pipeline/op-abc');
     });
 
-    test('marcar a linha mostra "1 selecionados" na barra, com as ações em lote "em breve" @spec:AC-399', async () => {
+    test('marcar a linha mostra "1 selecionados" na barra de ações; sem marcação a barra some @spec:AC-399', async () => {
       configurarLista([item({ lead: { id: 'l1', nome: 'Clínica Gama', email: null, telefoneE164: null } })]);
       render(<PipelineListaPage />);
       await screen.findByText('Clínica Gama');
@@ -297,8 +297,11 @@ describe('T-161: tela da lista', () => {
       await usuario.click(screen.getByLabelText('Selecionar Clínica Gama'));
 
       expect(screen.getByText('1 selecionados')).toBeTruthy();
-      const acao = screen.getByRole('button', { name: 'Mover Etapa em Lote (em breve)' });
-      expect(acao.getAttribute('aria-disabled')).toBe('true');
+      // As ações em lote em si são provadas em lote-tela.test.tsx (AC-445 em diante).
+      expect(screen.getByRole('button', { name: /Mover Etapa em Lote/ })).toBeTruthy();
+
+      await usuario.click(screen.getByLabelText('Selecionar Clínica Gama'));
+      expect(screen.queryByText(/selecionados/)).toBeNull();
     });
 
     test('marcar o cabeçalho seleciona todas as linhas da página @spec:AC-399', async () => {

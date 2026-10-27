@@ -153,7 +153,7 @@ do turno.
 
 - **Dado** um card sem cadência
 - **Quando** o usuário abre a aba Cadência
-- **Então** vê o estado vazio "A cadência deste card ainda não foi iniciada" com o botão "Iniciar cadência" (a mesma ação do funil, que só existe para card em "Entrada de leads"), e ao usar o botão a matriz aparece sem recarregar a página
+- **Então** vê o estado vazio "A cadência deste card ainda não foi iniciada" com o botão "Iniciar cadência" (a mesma ação do funil, que só existe para card em "Entrada de leads"), e ao usar o botão a matriz aparece sem recarregar a página; card em outra etapa não mostra o botão e a tela explica que a cadência só começa em "Entrada de leads", dizendo em que etapa o card está
 
 #### AC-434 — Concluir o toque da vez pela tela, com as regras da cadência
 

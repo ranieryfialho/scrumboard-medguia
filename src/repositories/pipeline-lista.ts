@@ -116,6 +116,52 @@ function colunaOrdenacaoLista(ordenarPor: OrdenacaoLista | undefined) {
   return oportunidades.criadoEm;
 }
 
+/** T-179: as condições da lista, reaproveitadas pela exportação (mesmos filtros da tela, nunca uma cópia da regra). */
+export function condicoesDaLista(contexto: ContextoTenant, filtro: FiltroLista): SQL[] {
+  const condicoes: SQL[] = [
+    eq(oportunidades.empresaId, contexto.empresaId),
+    notInArray(oportunidades.etapaId, [...ETAPAS_TERMINAIS]),
+  ];
+  if (filtro.etapaId !== undefined) condicoes.push(eq(oportunidades.etapaId, filtro.etapaId));
+  if (filtro.responsavelId !== undefined) condicoes.push(eq(oportunidades.responsavelId, filtro.responsavelId));
+  if (filtro.origem !== undefined) condicoes.push(eq(leads.origem, filtro.origem));
+  const busca = condicaoBusca(filtro.busca);
+  if (busca) condicoes.push(busca);
+  return condicoes;
+}
+
+/** T-179: a ordenação da lista (coluna e direção), a mesma na tela e na exportação. */
+export function ordenacaoDaLista(filtro: FiltroLista) {
+  const coluna = colunaOrdenacaoLista(filtro.ordenarPor);
+  const direcao = filtro.ordem === 'asc' ? asc : desc;
+  return [direcao(coluna), asc(oportunidades.id)] as const;
+}
+
+type LinhaDaLista = {
+  oportunidade: typeof oportunidades.$inferSelect;
+  lead: typeof leads.$inferSelect;
+  responsavel: typeof usuarios.$inferSelect | null;
+};
+
+/** T-179: uma linha da consulta da lista → `ItemLista` (usado na tela e na exportação). */
+export function mapearItemLista(linha: LinhaDaLista): ItemLista {
+  return {
+    id: linha.oportunidade.id,
+    etapaId: linha.oportunidade.etapaId,
+    valor: linha.oportunidade.valor,
+    proximaAcaoEm: linha.oportunidade.proximaAcaoEm,
+    criadoEm: linha.oportunidade.criadoEm,
+    lead: {
+      id: linha.lead.id,
+      nome: linha.lead.nome,
+      email: linha.lead.email,
+      telefoneE164: linha.lead.telefoneE164,
+      origem: linha.lead.origem,
+    },
+    responsavel: linha.responsavel ? { id: linha.responsavel.id, nome: linha.responsavel.nome } : null,
+  };
+}
+
 /**
  * Lista paginada das oportunidades ativas (AC-398: nunca as etapas
  * terminais 14/15 — essas estão em `listarArquivados`), filtrada e
@@ -132,15 +178,7 @@ export async function listarLista(
   const deslocamento = (pagina - 1) * porPagina;
 
   return comTenant(db, contexto, async (tx) => {
-    const condicoes: SQL[] = [
-      eq(oportunidades.empresaId, contexto.empresaId),
-      notInArray(oportunidades.etapaId, [...ETAPAS_TERMINAIS]),
-    ];
-    if (filtro.etapaId !== undefined) condicoes.push(eq(oportunidades.etapaId, filtro.etapaId));
-    if (filtro.responsavelId !== undefined) condicoes.push(eq(oportunidades.responsavelId, filtro.responsavelId));
-    if (filtro.origem !== undefined) condicoes.push(eq(leads.origem, filtro.origem));
-    const busca = condicaoBusca(filtro.busca);
-    if (busca) condicoes.push(busca);
+    const condicoes = condicoesDaLista(contexto, filtro);
 
     const [{ total }] = await tx
       .select({ total: sql<number>`count(*)::int` })
@@ -148,34 +186,17 @@ export async function listarLista(
       .innerJoin(leads, eq(oportunidades.leadId, leads.id))
       .where(and(...condicoes));
 
-    const coluna = colunaOrdenacaoLista(filtro.ordenarPor);
-    const direcao = filtro.ordem === 'asc' ? asc : desc;
-
     const linhas = await tx
       .select({ oportunidade: oportunidades, lead: leads, responsavel: usuarios })
       .from(oportunidades)
       .innerJoin(leads, eq(oportunidades.leadId, leads.id))
       .leftJoin(usuarios, eq(oportunidades.responsavelId, usuarios.id))
       .where(and(...condicoes))
-      .orderBy(direcao(coluna), asc(oportunidades.id))
+      .orderBy(...ordenacaoDaLista(filtro))
       .limit(porPagina)
       .offset(deslocamento);
 
-    const itens: ItemLista[] = linhas.map((linha) => ({
-      id: linha.oportunidade.id,
-      etapaId: linha.oportunidade.etapaId,
-      valor: linha.oportunidade.valor,
-      proximaAcaoEm: linha.oportunidade.proximaAcaoEm,
-      criadoEm: linha.oportunidade.criadoEm,
-      lead: {
-        id: linha.lead.id,
-        nome: linha.lead.nome,
-        email: linha.lead.email,
-        telefoneE164: linha.lead.telefoneE164,
-        origem: linha.lead.origem,
-      },
-      responsavel: linha.responsavel ? { id: linha.responsavel.id, nome: linha.responsavel.nome } : null,
-    }));
+    const itens: ItemLista[] = linhas.map(mapearItemLista);
 
     return { itens, total, pagina, porPagina };
   });
@@ -223,6 +244,57 @@ function inicioDoDiaSeguinteEmSaoPaulo(data: string): Date {
   return new Date(inicioDoDiaEmSaoPaulo(data).getTime() + 24 * 60 * 60 * 1000);
 }
 
+/** T-179: as condições dos arquivados, reaproveitadas pela exportação. */
+export function condicoesDosArquivados(contexto: ContextoTenant, filtro: FiltroArquivados): SQL[] {
+  const condicoes: SQL[] = [eq(oportunidades.empresaId, contexto.empresaId)];
+
+  if (filtro.tipo === 'ganho') condicoes.push(eq(oportunidades.etapaId, ETAPA_CONTRATO_GANHO));
+  else if (filtro.tipo === 'perdido') condicoes.push(eq(oportunidades.etapaId, ETAPA_PERDIDO));
+  else condicoes.push(inArray(oportunidades.etapaId, [...ETAPAS_TERMINAIS]));
+
+  if (filtro.motivoPerdaId !== undefined) condicoes.push(eq(oportunidades.motivoPerdaId, filtro.motivoPerdaId));
+  if (filtro.responsavelId !== undefined) condicoes.push(eq(oportunidades.responsavelId, filtro.responsavelId));
+  const busca = condicaoBusca(filtro.busca);
+  if (busca) condicoes.push(busca);
+  if (filtro.de !== undefined) {
+    condicoes.push(sql`${expressaoDataFechamento} >= ${inicioDoDiaEmSaoPaulo(filtro.de).toISOString()}::timestamptz`);
+  }
+  if (filtro.ate !== undefined) {
+    condicoes.push(
+      sql`${expressaoDataFechamento} < ${inicioDoDiaSeguinteEmSaoPaulo(filtro.ate).toISOString()}::timestamptz`
+    );
+  }
+  return condicoes;
+}
+
+type LinhaDoArquivado = {
+  oportunidade: typeof oportunidades.$inferSelect;
+  lead: typeof leads.$inferSelect;
+  responsavel: typeof usuarios.$inferSelect | null;
+  motivoPerda: typeof motivosPerda.$inferSelect | null;
+  dataFechamento: string;
+};
+
+/** T-179: uma linha da consulta dos arquivados → `ItemArquivado` (usado na tela e na exportação). */
+export function mapearItemArquivado(linha: LinhaDoArquivado): ItemArquivado {
+  return {
+    id: linha.oportunidade.id,
+    etapaId: linha.oportunidade.etapaId,
+    status: linha.oportunidade.etapaId === ETAPA_CONTRATO_GANHO ? 'ganho' : 'perdido',
+    valor: linha.oportunidade.valor,
+    dataFechamento: new Date(linha.dataFechamento),
+    lead: {
+      id: linha.lead.id,
+      nome: linha.lead.nome,
+      email: linha.lead.email,
+      telefoneE164: linha.lead.telefoneE164,
+      origem: linha.lead.origem,
+    },
+    responsavel: linha.responsavel ? { id: linha.responsavel.id, nome: linha.responsavel.nome } : null,
+    motivoPerda: linha.motivoPerda ? { id: linha.motivoPerda.id, nome: linha.motivoPerda.nome } : null,
+  };
+}
+
 /**
  * Lista paginada das oportunidades arquivadas (etapas 14/15, ASM-133),
  * filtrada por texto, motivo de perda, responsável e período de fechamento
@@ -241,24 +313,7 @@ export async function listarArquivados(
   const deslocamento = (pagina - 1) * porPagina;
 
   return comTenant(db, contexto, async (tx) => {
-    const condicoes: SQL[] = [eq(oportunidades.empresaId, contexto.empresaId)];
-
-    if (filtro.tipo === 'ganho') condicoes.push(eq(oportunidades.etapaId, ETAPA_CONTRATO_GANHO));
-    else if (filtro.tipo === 'perdido') condicoes.push(eq(oportunidades.etapaId, ETAPA_PERDIDO));
-    else condicoes.push(inArray(oportunidades.etapaId, [...ETAPAS_TERMINAIS]));
-
-    if (filtro.motivoPerdaId !== undefined) condicoes.push(eq(oportunidades.motivoPerdaId, filtro.motivoPerdaId));
-    if (filtro.responsavelId !== undefined) condicoes.push(eq(oportunidades.responsavelId, filtro.responsavelId));
-    const busca = condicaoBusca(filtro.busca);
-    if (busca) condicoes.push(busca);
-    if (filtro.de !== undefined) {
-      condicoes.push(sql`${expressaoDataFechamento} >= ${inicioDoDiaEmSaoPaulo(filtro.de).toISOString()}::timestamptz`);
-    }
-    if (filtro.ate !== undefined) {
-      condicoes.push(
-        sql`${expressaoDataFechamento} < ${inicioDoDiaSeguinteEmSaoPaulo(filtro.ate).toISOString()}::timestamptz`
-      );
-    }
+    const condicoes = condicoesDosArquivados(contexto, filtro);
 
     const [{ total }] = await tx
       .select({ total: sql<number>`count(*)::int` })
@@ -283,22 +338,7 @@ export async function listarArquivados(
       .limit(porPagina)
       .offset(deslocamento);
 
-    const itens: ItemArquivado[] = linhas.map((linha) => ({
-      id: linha.oportunidade.id,
-      etapaId: linha.oportunidade.etapaId,
-      status: linha.oportunidade.etapaId === ETAPA_CONTRATO_GANHO ? 'ganho' : 'perdido',
-      valor: linha.oportunidade.valor,
-      dataFechamento: new Date(linha.dataFechamento),
-      lead: {
-        id: linha.lead.id,
-        nome: linha.lead.nome,
-        email: linha.lead.email,
-        telefoneE164: linha.lead.telefoneE164,
-        origem: linha.lead.origem,
-      },
-      responsavel: linha.responsavel ? { id: linha.responsavel.id, nome: linha.responsavel.nome } : null,
-      motivoPerda: linha.motivoPerda ? { id: linha.motivoPerda.id, nome: linha.motivoPerda.nome } : null,
-    }));
+    const itens: ItemArquivado[] = linhas.map(mapearItemArquivado);
 
     return { itens, total, pagina, porPagina };
   });

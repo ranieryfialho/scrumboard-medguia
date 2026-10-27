@@ -309,23 +309,21 @@ describe('T-162: tela dos arquivados', () => {
   });
 
   describe('AC-405: os blocos de análise sem backend aparecem como "em breve"', () => {
-    test('Exportar Relatório, Análise de Motivos de Perda, Top Fechamentos e Playbook aparecem "em breve", sem disparar ação @spec:AC-405', async () => {
+    test('Análise de Motivos de Perda, Top Fechamentos e Playbook aparecem "em breve", sem disparar ação @spec:AC-405', async () => {
       configurarArquivados({ todos: { itens: [itemGanho()], total: 1 } });
       render(<PipelineArquivadosPage />);
       await screen.findByText('Cards Arquivados (Fechamentos)');
 
-      const exportar = screen.getByRole('button', { name: 'Exportar Relatório (em breve)' });
       const analise = screen.getByRole('button', { name: 'Análise de Motivos de Perda (em breve)' });
       const topFechamentos = screen.getByRole('button', { name: 'Top Fechamentos do Trimestre (em breve)' });
       const playbook = screen.getByRole('button', { name: 'Playbook de Reversão (em breve)' });
 
-      for (const bloco of [exportar, analise, topFechamentos, playbook]) {
+      for (const bloco of [analise, topFechamentos, playbook]) {
         expect(bloco.getAttribute('aria-disabled')).toBe('true');
       }
 
       const chamadasAntes = fetchFalso.mock.calls.length;
       const usuario = userEvent.setup();
-      await usuario.click(exportar);
       await usuario.click(analise);
       await usuario.click(topFechamentos);
       await usuario.click(playbook);

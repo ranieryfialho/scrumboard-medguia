@@ -46,17 +46,37 @@ async function trocarEmpresa(empresaId: string): Promise<void> {
   window.location.reload();
 }
 
-async function sair(): Promise<void> {
-  await fetch('/api/auth/sign-out', { method: 'POST' });
+/**
+ * AC-357: o sign-out do Better Auth exige `Content-Type: application/json` — sem ele
+ * responde 415 e a sessão continua valendo (a tela de login então devolvia a pessoa ao
+ * sistema, e o botão "Sair" parecia não fazer nada). Devolve `true` só se a sessão foi encerrada.
+ */
+async function sair(): Promise<boolean> {
+  try {
+    const resposta = await fetch('/api/auth/sign-out', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: '{}',
+    });
+    return resposta.ok;
+  } catch {
+    return false;
+  }
 }
 
 export function Topo({ usuario, aoAbrirGaveta }: TopoProps) {
   const router = useRouter();
   const estadoTempoReal = useTempoReal();
   const [menuUsuarioAberto, setMenuUsuarioAberto] = useState(false);
+  const [erroAoSair, setErroAoSair] = useState(false);
 
   async function aoClicarSair() {
-    await sair();
+    setErroAoSair(false);
+    // Só vai ao login se a sessão foi mesmo encerrada: senão a tela de acesso o traria de volta.
+    if (!(await sair())) {
+      setErroAoSair(true);
+      return;
+    }
     router.push('/login');
     router.refresh();
   }
@@ -193,6 +213,11 @@ export function Topo({ usuario, aoAbrirGaveta }: TopoProps) {
                 </span>
                 Sair
               </button>
+              {erroAoSair && (
+                <p role="alert" className="px-3 py-2 font-body-sm text-body-sm text-danger-text">
+                  Não foi possível sair. Tente de novo.
+                </p>
+              )}
             </div>
           )}
         </div>

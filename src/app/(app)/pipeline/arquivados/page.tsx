@@ -14,7 +14,7 @@
 // a spec mandam, não o texto fictício do Stitch). "Reabrir" (AC-404) fica
 // desabilitado para quem não é MASTER/GERENTE — o papel vem de
 // `GET /api/me` (mesma rota que `src/app/(app)/layout.tsx` já usa para a
-// casca). Os blocos sem backend (AC-405: Exportar Relatório, Análise de
+// casca). Os blocos sem backend (AC-405: Análise de
 // Motivos de Perda, Top Fechamentos do Trimestre, Playbook de Reversão)
 // usam `ItemEmBreve`/`SeloEmBreve` de T-158.
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
@@ -24,6 +24,7 @@ import { EsqueletoCarregando, EstadoErro, EstadoVazio } from '@/components/pipel
 import { Paginacao } from '@/components/pipeline/pecas/paginacao';
 import { CartaoIndicador } from '@/components/pipeline/pecas/cartao-indicador';
 import { ItemEmBreve } from '@/components/pipeline/pecas/selo-em-breve';
+import { BotaoExportar } from '@/components/pipeline/lote/botao-exportar';
 import { TabelaArquivados, type ItemTabelaArquivados } from '@/components/pipeline/tabela-arquivados';
 import {
   FiltrosArquivados,
@@ -145,6 +146,13 @@ function PipelineArquivadosConteudo() {
 
   const tipo = tipoDaAba(aba);
   const query = useMemo(() => construirQuery(tipo, pagina, porPagina, filtro), [tipo, pagina, porPagina, filtro]);
+  // AC-456: a exportação leva a aba e os filtros da tela, mas não a página.
+  const consultaDaExportacao = useMemo(() => {
+    const parametros = new URLSearchParams(query);
+    parametros.delete('pagina');
+    parametros.delete('porPagina');
+    return parametros.toString();
+  }, [query]);
 
   const carregar = useCallback(async () => {
     setErro(false);
@@ -286,11 +294,8 @@ function PipelineArquivadosConteudo() {
           </p>
         </div>
         <div className="flex items-center gap-space-sm flex-wrap">
-          <ItemEmBreve
-            rotulo="Exportar Relatório"
-            icone="file_download"
-            className="px-3.5 py-2 rounded-lg bg-surface-card shadow-sm"
-          />
+          {/* AC-457: só MASTER/GERENTE exportam; a API confere de novo. */}
+          {podeReabrir && <BotaoExportar tela="arquivados" consulta={consultaDaExportacao} />}
           <ItemEmBreve
             rotulo="Análise de Motivos de Perda"
             icone="query_stats"

@@ -102,6 +102,13 @@ export function criarAuth(db: NodePgDatabase, opcoes: CriarAuthOpcoes = {}) {
       enabled: true,
       window: 15 * 60,
       max: 5,
+      // O Better Auth aplica esse limite a TODA rota de `/api/auth/*`, mas ele foi decidido
+      // para tentativas de LOGIN (Q-005). "Sair" só funciona com a sessão válida e não é um
+      // vetor de ataque: com o limite, quem clicava em "Sair" umas 5 vezes (inclusive em
+      // cliques que falharam) ficava 15 minutos sem conseguir sair (429).
+      customRules: {
+        '/sign-out': false,
+      },
     },
     advanced: {
       // AC-033/TDD-001 §4.7: cookie sempre Secure, mesmo fora de produção —

@@ -47,6 +47,7 @@ const ICONES: Record<string, string> = {
   cadencia_esgotada: 'hourglass_disabled',
   cadencia_dia_avancado: 'update',
   conexao_whatsapp: 'chat',
+  reatribuicao: 'swap_horiz',
 };
 
 function formatarData(iso: string): string {
