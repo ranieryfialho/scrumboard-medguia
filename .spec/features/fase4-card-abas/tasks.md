@@ -48,8 +48,7 @@
 - Esforço: xalto
 - Notas: fonte visual `docs/ui/stitch_medcrm_interface_design/12._pipeline_id_anexos_prints_e_evid_ncias_do_card/` (`code.html` e `screen.png`). Lista de T-169, busca e chips (Todos, Evidências, PDFs, Imagens, com contagem), "Link Seguro (15m)" e baixar pela rota assinada `/api/anexos/[id]`, envio por arrastar ou escolher via `POST /api/anexos` (PDF até 10 MB; PNG, JPG e WebP até 5 MB; mensagens de 415 e 413). Nome do arquivo: o gravado, ou "Anexo PDF — data" quando nulo. "em breve": Exportar Dossiê, Mover Etapa, Tornar Evidência, excluir, marcar como evidência e vincular à etapa. **Fora** (sem dado): selos aprovada/em revisão, governança ISO e espaço usado. Reaproveita as peças de `src/components/pipeline/pecas/` (estados, selo em breve). Depende de T-168, T-169 e T-171.
 
-## T-173 — Tela da cadência de 18 toques [pendente]
-
+## T-173 — Tela da cadência de 18 toques [concluida]
 - Refs: AC-422, AC-431, AC-432, AC-433, AC-434, AC-435, AC-436
 - Arquivos: src/app/(app)/pipeline/[id]/cadencia/page.tsx, src/components/pipeline/cadencia/resumo-cadencia.tsx, src/components/pipeline/cadencia/toque-da-vez.tsx, src/components/pipeline/cadencia/matriz-toques.tsx, src/components/pipeline/cadencia/historico-toques.tsx, test/components/pipeline/cadencia-tela.test.tsx
 - Esforço: xalto
