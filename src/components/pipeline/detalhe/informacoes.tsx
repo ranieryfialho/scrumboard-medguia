@@ -5,6 +5,8 @@
 // CNPJ, estrutura da clínica, valor anual, unidade física, telefone extra
 // nem e-mail extra do protótipo; só o que existe de fato em `leads`/
 // `oportunidades`/`lead_telefones`.
+import { useState } from 'react';
+
 export interface TelefoneInformacao {
   numero: string;
   principal: boolean;
@@ -36,15 +38,17 @@ function formatarDataHora(iso: string): string {
   return new Date(iso).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
 }
 
-function haNDias(iso: string): string {
-  const dias = Math.max(0, Math.floor((Date.now() - new Date(iso).getTime()) / (24 * 60 * 60 * 1000)));
+function haNDias(iso: string, agora: number): string {
+  const dias = Math.max(0, Math.floor((agora - new Date(iso).getTime()) / (24 * 60 * 60 * 1000)));
   return dias === 1 ? 'há 1 dia' : `há ${dias} dias`;
 }
 
 /** AC-407: mostra valor estimado, origem, data de entrada, responsável, próxima ação, telefones e e-mail — nada além disso. */
 export function Informacoes({ valor, origem, criadoEm, responsavelNome, proximaAcaoEm, telefones, email }: InformacoesProps) {
   const valorFormatado = formatarMoeda(valor);
-  const proximaAcaoVencida = proximaAcaoEm ? new Date(proximaAcaoEm).getTime() < Date.now() : false;
+  // "agora" fixado na montagem: ler `Date.now()` direto no render é impuro (react-hooks/purity).
+  const [agora] = useState(() => Date.now());
+  const proximaAcaoVencida = proximaAcaoEm ? new Date(proximaAcaoEm).getTime() < agora : false;
 
   return (
     <div className="bg-surface-card rounded-xl p-space-lg shadow-sm flex flex-col gap-space-md">
@@ -92,7 +96,7 @@ export function Informacoes({ valor, origem, criadoEm, responsavelNome, proximaA
             Data de Entrada
           </span>
           <span className="font-label-md text-text-primary">
-            {formatarData(criadoEm)} <span className="text-text-muted">({haNDias(criadoEm)})</span>
+            {formatarData(criadoEm)} <span className="text-text-muted">({haNDias(criadoEm, agora)})</span>
           </span>
         </div>
       </div>

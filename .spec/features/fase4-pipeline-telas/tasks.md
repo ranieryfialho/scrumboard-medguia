@@ -84,8 +84,7 @@
 - Esforço: xalto
 - Notas: fonte visual `docs/ui/stitch_medcrm_interface_design/9._pipeline_id_detalhe_do_card/`. Move `/pipeline/[id]` para `(app)` e apaga `src/app/pipeline/[id]/page.tsx`. **Blocos sem dado ficam fora** (decisão do usuário, 26/10): CNPJ, estrutura da clínica, valor anual, unidade física, telefone extra e e-mail extra do protótipo. Jornada com os nomes reais das 15 etapas (ASM-132). "Mover de Etapa", "Marcar como Ganho" e "Perdido" usam `/api/oportunidades/[id]/transicao` e o modal de dado faltante já existentes. Abas Cadência, WhatsApp e Anexos levam às rotas atuais (telas 10 a 12 virão depois). Depende de T-156, T-157 e T-158.
 
-## T-164 — Permissões das novas rotas, menu e retirada da tela antiga [pendente]
-
+## T-164 — Permissões das novas rotas, menu e retirada da tela antiga [concluida]
 - Refs: AC-414, AC-415, AC-387
 - Arquivos: src/lib/auth/rotas.ts, src/components/shell/menu-config.ts, test/auth/rotas-pipeline.test.ts
 - Esforço: medio

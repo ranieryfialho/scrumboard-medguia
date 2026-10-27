@@ -230,11 +230,11 @@ quebrada.
 - **Quando** os dados estão carregando, voltam vazios ou a API falha
 - **Então** a tela mostra, respectivamente, um esqueleto de carregamento, uma mensagem de vazio com o próximo passo (ex.: "Nenhum lead ainda — crie o primeiro") e uma mensagem de erro com "Tentar de novo"
 
-#### AC-414 — Quem não tem permissão vai para a tela de sem acesso
+#### AC-414 — As quatro telas exigem sessão e estão liberadas aos três papéis
 
-- **Dado** um usuário cujo papel não acessa a rota pedida
-- **Quando** ele abre qualquer das quatro rotas
-- **Então** é levado a `/sem-acesso` (regra de permissões por rota da fase 4, estendida às novas rotas `/pipeline/lista` e `/pipeline/arquivados`), e o menu não mostra o que o papel não vê
+- **Dado** as rotas `/pipeline`, `/pipeline/lista`, `/pipeline/arquivados` e `/pipeline/[id]`
+- **Quando** um visitante sem sessão as abre, ou um ATENDENTE, um GERENTE ou um MASTER logado as abre
+- **Então** o visitante é mandado ao login (as rotas não são públicas) e os três papéis passam pela matriz de permissões (o pipeline é do ATENDENTE, não existe regra de papel mínimo para ele); o menu mostra "Funil Pipeline", "Lista" e "Arquivados" para os três papéis, cada um marcado ativo só na sua própria tela
 
 #### AC-415 — A tela legada de pipeline sai de cena
 
