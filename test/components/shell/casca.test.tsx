@@ -433,5 +433,34 @@ describe('AC-357: sair encerra a sessão', () => {
     const chamada = fetchFalso.mock.calls.find(([url]) => String(url).startsWith('/api/auth/sign-out'));
     expect(chamada).toBeTruthy();
     expect(chamada![1]?.method).toBe('POST');
+    // O Better Auth responde 415 (e não encerra a sessão) sem o Content-Type JSON.
+    expect(chamada![1]?.headers).toEqual({ 'content-type': 'application/json' });
+    expect(chamada![1]?.body).toBe('{}');
+  });
+
+  test('se o sign-out for recusado, não vai ao login e avisa que não saiu @spec:AC-357', async () => {
+    pushMock.mockClear();
+    refreshMock.mockClear();
+    instalarFetchFalso({ '/api/auth/sign-out': { status: 415, corpo: { code: 'UNSUPPORTED_MEDIA_TYPE' } } });
+    render(<Topo usuario={usuarioBase()} />);
+
+    await userEvent.click(screen.getByText('Ana Souza'));
+    await userEvent.click(screen.getByRole('button', { name: 'Sair' }));
+
+    expect((await screen.findByRole('alert')).textContent).toBe('Não foi possível sair. Tente de novo.');
+    expect(pushMock).not.toHaveBeenCalled();
+    expect(refreshMock).not.toHaveBeenCalled();
+  });
+
+  test('sem rede, também não vai ao login e avisa @spec:AC-357', async () => {
+    pushMock.mockClear();
+    globalThis.fetch = vi.fn(() => Promise.reject(new Error('sem rede'))) as unknown as typeof fetch;
+    render(<Topo usuario={usuarioBase()} />);
+
+    await userEvent.click(screen.getByText('Ana Souza'));
+    await userEvent.click(screen.getByRole('button', { name: 'Sair' }));
+
+    expect((await screen.findByRole('alert')).textContent).toBe('Não foi possível sair. Tente de novo.');
+    expect(pushMock).not.toHaveBeenCalled();
   });
 });
