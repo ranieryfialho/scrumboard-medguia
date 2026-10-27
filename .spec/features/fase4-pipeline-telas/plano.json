@@ -1,0 +1,111 @@
+{
+  "runId": "scrumboard-medguia-fase4-pipeline-telas-mvpmb80v",
+  "feature": "fase4-pipeline-telas",
+  "agent": "claude",
+  "modo": "sequencial",
+  "paralelizar": null,
+  "modeloForcado": null,
+  "esforcoForcado": null,
+  "geradoEm": "2026-10-26 18:56",
+  "branchTrabalho": "spec/fase4-pipeline-telas",
+  "baseDir": ".spec/features/fase4-pipeline-telas",
+  "specDir": ".spec",
+  "repoName": "scrumboard-medguia",
+  "logsDir": "../onp-worktrees/scrumboard-medguia-fase4-pipeline-telas-logs",
+  "ondas": [],
+  "faixas": [],
+  "sequenciais": [
+    {
+      "id": "T-165",
+      "titulo": "Criar lead e card em um passo (valor e responsável)",
+      "modelo": "claude-sonnet-5",
+      "esforco": "high",
+      "arquivos": [
+        "src/app/api/oportunidades/route.ts",
+        "src/repositories/oportunidades-novo-lead.ts",
+        "test/api/oportunidades-novo-lead.test.ts"
+      ],
+      "refs": [
+        "AC-391",
+        "AC-392"
+      ]
+    },
+    {
+      "id": "T-160",
+      "titulo": "Tela do funil (Kanban) com indicadores, filtros e novo lead",
+      "modelo": "claude-sonnet-5",
+      "esforco": "xhigh",
+      "arquivos": [
+        "src/app/(app)/pipeline/page.tsx",
+        "src/components/pipeline/board-kanban.tsx",
+        "src/components/pipeline/coluna-etapa.tsx",
+        "src/components/pipeline/card-oportunidade.tsx",
+        "src/components/pipeline/filtros-funil.tsx",
+        "src/components/pipeline/modal-novo-lead.tsx",
+        "src/components/pipeline/indicadores-funil.tsx",
+        "test/components/pipeline/funil.test.tsx",
+        "test/components/pipeline/modal-novo-lead.test.tsx"
+      ],
+      "refs": [
+        "AC-387",
+        "AC-388",
+        "AC-390",
+        "AC-391",
+        "AC-392",
+        "AC-393"
+      ]
+    },
+    {
+      "id": "T-163",
+      "titulo": "Tela de detalhe do card",
+      "modelo": "claude-sonnet-5",
+      "esforco": "xhigh",
+      "arquivos": [
+        "src/app/(app)/pipeline/[id]/page.tsx",
+        "src/components/pipeline/detalhe/cabecalho-card.tsx",
+        "src/components/pipeline/detalhe/jornada.tsx",
+        "src/components/pipeline/detalhe/informacoes.tsx",
+        "src/components/pipeline/detalhe/linha-do-tempo.tsx",
+        "src/components/pipeline/detalhe/registro-rapido.tsx",
+        "src/app/api/oportunidades/[id]/route.ts",
+        "test/components/pipeline/detalhe.test.tsx"
+      ],
+      "refs": [
+        "AC-406",
+        "AC-407",
+        "AC-408",
+        "AC-409",
+        "AC-410",
+        "AC-411",
+        "AC-412"
+      ]
+    },
+    {
+      "id": "T-164",
+      "titulo": "Permissões das novas rotas, menu e retirada da tela antiga",
+      "modelo": "claude-sonnet-5",
+      "esforco": "medium",
+      "arquivos": [
+        "src/lib/auth/rotas.ts",
+        "src/components/shell/menu-config.ts",
+        "test/auth/rotas-pipeline.test.ts"
+      ],
+      "refs": [
+        "AC-414",
+        "AC-415",
+        "AC-387"
+      ]
+    }
+  ],
+  "concluidas": [
+    "T-154",
+    "T-155",
+    "T-156",
+    "T-157",
+    "T-158",
+    "T-159",
+    "T-161",
+    "T-162"
+  ],
+  "avisos": []
+}

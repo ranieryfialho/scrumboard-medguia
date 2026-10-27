@@ -66,7 +66,8 @@ function resposta(status: number, corpo: unknown) {
 // Estrutura de ColunaEtapa (src/components/pipeline/coluna-etapa.tsx): div da
 // coluna > [div do cabeçalho com o <h3>nome</h3>, div com os cards].
 function coluna(nome: string): HTMLElement {
-  return screen.getByText(nome).closest('div')!.parentElement!;
+  // A coluna é marcada com `data-etapa-id` (coluna-etapa.tsx): não depende de como o cabeçalho é montado.
+  return screen.getByText(nome).closest<HTMLElement>('[data-etapa-id]')!;
 }
 
 describe('T-065: BoardKanban aplica oportunidade.movida sem recarregar', () => {

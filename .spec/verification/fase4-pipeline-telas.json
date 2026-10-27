@@ -1,0 +1,172 @@
+{
+  "feature": "fase4-pipeline-telas",
+  "timestamp": "2026-10-27T17:03:38.952Z",
+  "gitRev": "250bc11",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
+  "reporter": "vitest-json",
+  "exitCode": 0,
+  "testsParsed": 1251,
+  "results": {
+    "AC-387": {
+      "status": "pass",
+      "testName": "T-160: tela do funil AC-387: o funil aparece dentro da casca, com as 15 colunas a página nova mostra o quadro com as 15 etapas @spec:AC-387 a página nova mostra o quadro com as 15 etapas @spec:AC-387",
+      "method": "vitest-json"
+    },
+    "AC-388": {
+      "status": "pass",
+      "testName": "T-160: tela do funil AC-388: coluna e card mostram etapa, contagem, soma, responsável, valor, próxima ação e atraso a coluna \"Entrada de leads\" mostra 2 cards e a soma dos valores @spec:AC-388 a coluna \"Entrada de leads\" mostra 2 cards e a soma dos valores @spec:AC-388",
+      "method": "vitest-json"
+    },
+    "AC-389": {
+      "status": "pass",
+      "testName": "T-155: rotas de leitura do pipeline GET /api/pipeline/indicadores sem sessão: 401 NAO_AUTENTICADO @spec:AC-389 sem sessão: 401 NAO_AUTENTICADO @spec:AC-389",
+      "method": "vitest-json"
+    },
+    "AC-390": {
+      "status": "pass",
+      "testName": "T-160: tela do funil AC-390: os filtros do funil restringem o quadro escolher a origem \"Google Ads\" mostra só os cards dessa origem, mesmo um deles arquivado @spec:AC-390 escolher a origem \"Google Ads\" mostra só os cards dessa origem, mesmo um deles arquivado @spec:AC-390",
+      "method": "vitest-json"
+    },
+    "AC-391": {
+      "status": "pass",
+      "testName": "T-165: POST /api/oportunidades cria lead e card em um passo AC-391: o modal \"Novo Lead\" cria o card na entrada nome, telefone e origem preenchidos: cria lead e card na \"Entrada de leads\" @spec:AC-391 nome, telefone e origem preenchidos: cria lead e card na \"Entrada de leads\" @spec:AC-391",
+      "method": "vitest-json"
+    },
+    "AC-392": {
+      "status": "pass",
+      "testName": "T-165: POST /api/oportunidades cria lead e card em um passo AC-391: o modal \"Novo Lead\" cria o card na entrada \"Criar Card na Entrada\" cria só o card: sem cadência iniciada @spec:AC-392 \"Criar Card na Entrada\" cria só o card: sem cadência iniciada @spec:AC-392",
+      "method": "vitest-json"
+    },
+    "AC-393": {
+      "status": "pass",
+      "testName": "T-160: tela do funil AC-393: itens do funil sem backend aparecem \"em breve\" \"Iniciar Cadência em Massa\" e \"Período\" aparecem marcados, sem disparar ação @spec:AC-393 \"Iniciar Cadência em Massa\" e \"Período\" aparecem marcados, sem disparar ação @spec:AC-393",
+      "method": "vitest-json"
+    },
+    "AC-394": {
+      "status": "pass",
+      "testName": "T-161: tela da lista AC-394: a lista aparece dentro da casca, em /pipeline/lista mostra o título e a tabela com lead, etapa, responsável, valor e próxima ação @spec:AC-394 mostra o título e a tabela com lead, etapa, responsável, valor e próxima ação @spec:AC-394",
+      "method": "vitest-json"
+    },
+    "AC-395": {
+      "status": "pass",
+      "testName": "T-155: rotas de leitura do pipeline GET /api/oportunidades/lista página 2 de tamanho 10 traz os cards 11 a 20 (de 25) e o total geral @spec:AC-395 página 2 de tamanho 10 traz os cards 11 a 20 (de 25) e o total geral @spec:AC-395",
+      "method": "vitest-json"
+    },
+    "AC-396": {
+      "status": "pass",
+      "testName": "T-155: rotas de leitura do pipeline GET /api/oportunidades/lista filtro por etapa restringe aos cards daquela etapa @spec:AC-396 filtro por etapa restringe aos cards daquela etapa @spec:AC-396",
+      "method": "vitest-json"
+    },
+    "AC-397": {
+      "status": "pass",
+      "testName": "T-155: rotas de leitura do pipeline GET /api/oportunidades/lista sem sessão: 401 NAO_AUTENTICADO, antes de tocar no banco @spec:AC-397 sem sessão: 401 NAO_AUTENTICADO, antes de tocar no banco @spec:AC-397",
+      "method": "vitest-json"
+    },
+    "AC-398": {
+      "status": "pass",
+      "testName": "T-155: rotas de leitura do pipeline GET /api/oportunidades/lista cards em Perdido e Contrato (Ganho) nunca aparecem, e o total os ignora @spec:AC-398 cards em Perdido e Contrato (Ganho) nunca aparecem, e o total os ignora @spec:AC-398",
+      "method": "vitest-json"
+    },
+    "AC-399": {
+      "status": "pass",
+      "testName": "T-161: tela da lista AC-399: cada linha leva ao card e a seleção marca linhas o nome do lead leva a /pipeline/[id] @spec:AC-399 o nome do lead leva a /pipeline/[id] @spec:AC-399",
+      "method": "vitest-json"
+    },
+    "AC-417": {
+      "status": "pass",
+      "testName": "T-167: topo da lista e filtros dos arquivados AC-417: o topo da lista traz o total, os indicadores, o atalho para o funil e o \"Novo Card\" mostra o total de leads com o valor somado e os quatro cartões de indicadores @spec:AC-417 mostra o total de leads com o valor somado e os quatro cartões de indicadores @spec:AC-417",
+      "method": "vitest-json"
+    },
+    "AC-400": {
+      "status": "pass",
+      "testName": "T-162: tela dos arquivados AC-400: os arquivados aparecem em /pipeline/arquivados com as três abas mostra as abas Todos, Ganhos e Perdidos com a contagem de cada uma @spec:AC-400 mostra as abas Todos, Ganhos e Perdidos com a contagem de cada uma @spec:AC-400",
+      "method": "vitest-json"
+    },
+    "AC-401": {
+      "status": "pass",
+      "testName": "T-162: tela dos arquivados AC-401: cada linha traz status, responsável, motivo e data de fechamento o perdido mostra o selo \"Perdido\" e o motivo, com o consultor e a data de fechamento @spec:AC-401 o perdido mostra o selo \"Perdido\" e o motivo, com o consultor e a data de fechamento @spec:AC-401",
+      "method": "vitest-json"
+    },
+    "AC-402": {
+      "status": "pass",
+      "testName": "T-155: rotas de leitura do pipeline GET /api/oportunidades/arquivados sem sessão: 401 NAO_AUTENTICADO @spec:AC-402 sem sessão: 401 NAO_AUTENTICADO @spec:AC-402",
+      "method": "vitest-json"
+    },
+    "AC-418": {
+      "status": "pass",
+      "testName": "T-167: topo da lista e filtros dos arquivados AC-418: a tela de arquivados oferece os filtros que a API já aplica busca, motivo, consultor e data viram parâmetros do pedido ao servidor e voltam à página 1 @spec:AC-418 busca, motivo, consultor e data viram parâmetros do pedido ao servidor e voltam à página 1 @spec:AC-418",
+      "method": "vitest-json"
+    },
+    "AC-403": {
+      "status": "pass",
+      "testName": "T-155: rotas de leitura do pipeline GET /api/pipeline/indicadores visao=arquivados: os cartões e a distribuição de motivos refletem os dados reais só da empresa A @spec:AC-403 visao=arquivados: os cartões e a distribuição de motivos refletem os dados reais só da empresa A @spec:AC-403",
+      "method": "vitest-json"
+    },
+    "AC-404": {
+      "status": "pass",
+      "testName": "T-156: reabrir card e registrar anotação POST /api/oportunidades/:id/reabrir sem sessão: 401 NAO_AUTENTICADO, antes de tocar no banco @spec:AC-404 sem sessão: 401 NAO_AUTENTICADO, antes de tocar no banco @spec:AC-404",
+      "method": "vitest-json"
+    },
+    "AC-405": {
+      "status": "pass",
+      "testName": "T-162: tela dos arquivados AC-405: os blocos de análise sem backend aparecem como \"em breve\" Exportar Relatório, Análise de Motivos de Perda, Top Fechamentos e Playbook aparecem \"em breve\", sem disparar ação @spec:AC-405 Exportar Relatório, Análise de Motivos de Perda, Top Fechamentos e Playbook aparecem \"em breve\", sem disparar ação @spec:AC-405",
+      "method": "vitest-json"
+    },
+    "AC-406": {
+      "status": "pass",
+      "testName": "T-163: tela de detalhe do card AC-406: o detalhe mostra cabeçalho, etapa e jornada mostra o lead, a etapa atual, o responsável e a jornada com o percentual @spec:AC-406 mostra o lead, a etapa atual, o responsável e a jornada com o percentual @spec:AC-406",
+      "method": "vitest-json"
+    },
+    "AC-407": {
+      "status": "pass",
+      "testName": "T-157: linha do tempo do card GET /api/leads/:id/telefones (reaproveitado pelo detalhe do card, AC-407) o detalhe do card encontra o principal e os extras do lead pela rota já existente @spec:AC-407 o detalhe do card encontra o principal e os extras do lead pela rota já existente @spec:AC-407",
+      "method": "vitest-json"
+    },
+    "AC-408": {
+      "status": "pass",
+      "testName": "T-157: linha do tempo do card GET /api/oportunidades/:id/linha-do-tempo lista os eventos do mais novo para o mais antigo, com tipo, texto, autor e data @spec:AC-408 lista os eventos do mais novo para o mais antigo, com tipo, texto, autor e data @spec:AC-408",
+      "method": "vitest-json"
+    },
+    "AC-409": {
+      "status": "pass",
+      "testName": "T-156: reabrir card e registrar anotação POST /api/oportunidades/:id/anotacoes sem sessão: 401 NAO_AUTENTICADO, antes de tocar no banco @spec:AC-409 sem sessão: 401 NAO_AUTENTICADO, antes de tocar no banco @spec:AC-409",
+      "method": "vitest-json"
+    },
+    "AC-410": {
+      "status": "pass",
+      "testName": "T-163: tela de detalhe do card AC-410: as ações de mover, ganho e perdido respeitam as regras do pipeline só as etapas de destino alcançáveis pelo papel aparecem @spec:AC-410 só as etapas de destino alcançáveis pelo papel aparecem @spec:AC-410",
+      "method": "vitest-json"
+    },
+    "AC-411": {
+      "status": "pass",
+      "testName": "T-163: tela de detalhe do card AC-411: o detalhe leva às abas das telas irmãs \"Resumo\" está ativa; as outras levam às rotas irmãs; itens sem backend são \"em breve\" @spec:AC-411 \"Resumo\" está ativa; as outras levam às rotas irmãs; itens sem backend são \"em breve\" @spec:AC-411",
+      "method": "vitest-json"
+    },
+    "AC-412": {
+      "status": "pass",
+      "testName": "T-163: tela de detalhe do card AC-412: card de outra empresa ou inexistente mostra \"não encontrado\" id inexistente (ou de outra empresa, mesmo 404 fail-closed) mostra \"não encontrado\" com caminho de volta @spec:AC-412 id inexistente (ou de outra empresa, mesmo 404 fail-closed) mostra \"não encontrado\" com caminho de volta @spec:AC-412",
+      "method": "vitest-json"
+    },
+    "AC-413": {
+      "status": "pass",
+      "testName": "T-158: AC-413 — cada tela tem estado de carregamento, vazio e erro o esqueleto de carregamento mostra o papel \"status\" @spec:AC-413 o esqueleto de carregamento mostra o papel \"status\" @spec:AC-413",
+      "method": "vitest-json"
+    },
+    "AC-414": {
+      "status": "pass",
+      "testName": "T-164: permissões das telas do pipeline e retirada da tela antiga sem sessão, nenhuma das quatro rotas é pública (o middleware manda ao login) @spec:AC-414 sem sessão, nenhuma das quatro rotas é pública (o middleware manda ao login) @spec:AC-414",
+      "method": "vitest-json"
+    },
+    "AC-415": {
+      "status": "pass",
+      "testName": "T-164: permissões das telas do pipeline e retirada da tela antiga a tela antiga sem casca saiu de cena: só existe a versão do grupo (app) @spec:AC-415 a tela antiga sem casca saiu de cena: só existe a versão do grupo (app) @spec:AC-415",
+      "method": "vitest-json"
+    },
+    "AC-416": {
+      "status": "pass",
+      "testName": "T-062: rota GET /api/stream AC-416: a conexão é anunciada na hora, sem esperar o primeiro batimento a primeira coisa que o stream manda é a linha de abertura, bem antes de INTERVALO_PING_MS @spec:AC-416 a primeira coisa que o stream manda é a linha de abertura, bem antes de INTERVALO_PING_MS @spec:AC-416",
+      "method": "vitest-json"
+    }
+  },
+  "principles": {}
+}

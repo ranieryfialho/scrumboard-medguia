@@ -1,10 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { DndContext, DragOverlay, PointerSensor, useSensor, useSensors, type DragEndEvent, type DragStartEvent } from "@dnd-kit/core";
-import { RefreshCcw } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import type { CodigoErroTransicao } from "@/domain/pipeline/tipos";
 import { exigeDadoFaltante } from "@/domain/pipeline/classificar-erro-transicao";
 import {
@@ -12,9 +10,16 @@ import {
   type EventoOportunidadeMovidaCliente,
   type EventoStreamCliente,
 } from "@/hooks/use-stream-oportunidades";
+import { EsqueletoCarregando, EstadoErro, EstadoVazio } from "@/components/pipeline/pecas/estados";
+import { AvisoTempoReal } from "@/components/pipeline/pecas/aviso-tempo-real";
+import { ItemEmBreve } from "@/components/pipeline/pecas/selo-em-breve";
 import { CardOportunidade, type CardBoard } from "./card-oportunidade";
 import { ColunaEtapa } from "./coluna-etapa";
 import { ModalDadoFaltante } from "./modal-dado-faltante";
+import { FiltrosFunil, type OpcaoResponsavelFunil, type ValorFiltrosFunil } from "./filtros-funil";
+import { IndicadoresFunil, type IndicadoresFunilView } from "./indicadores-funil";
+import { ModalNovoLead, type DadosNovoLead, type ResultadoSalvarNovoLead } from "./modal-novo-lead";
+import { criarCardNovoLead, criarLeadEIniciarCadencia } from "./novo-lead-api";
 
 // Espelha `pipeline_etapas` (drizzle/0005_seeds.sql) — as 15 etapas são seed
 // fixo, versionado por migration; não vale buscar isso por rede toda vez.
@@ -48,8 +53,89 @@ interface DadoFaltantePendente {
   codigo: CodigoErroTransicao;
 }
 
+interface ItemPaginaComOrigem {
+  id: string;
+  origem: string | null;
+}
+
+/**
+ * AC-390: uma página de `/api/oportunidades/lista` ou `/api/oportunidades/arquivados`
+ * — já filtrada e paginada no servidor (T-154/T-155). Usada tanto para
+ * montar as opções dos selects (sem filtro) quanto para calcular quais ids
+ * um filtro ativo permite no quadro — nunca para substituir `/api/oportunidades`
+ * como fonte dos cards (só ela tem `version`, essencial pro arrastar e pro
+ * "iniciar cadência").
+ */
+async function buscarPaginas(
+  url: string,
+  parametrosBase: Record<string, string | undefined>
+): Promise<ItemPaginaComOrigem[]> {
+  const resultado: ItemPaginaComOrigem[] = [];
+  const porPagina = 50;
+
+  for (let pagina = 1; pagina <= 20; pagina += 1) {
+    const parametros = new URLSearchParams();
+    for (const [chave, valor] of Object.entries(parametrosBase)) {
+      if (valor) parametros.set(chave, valor);
+    }
+    parametros.set("pagina", String(pagina));
+    parametros.set("porPagina", String(porPagina));
+
+    let resposta: Response;
+    try {
+      resposta = await fetch(`${url}?${parametros.toString()}`);
+    } catch {
+      break;
+    }
+    if (!resposta.ok) break;
+
+    const corpo = await resposta.json().catch(() => null);
+    const itens = (corpo?.itens ?? []) as { id: string; lead?: { origem?: string | null } }[];
+    for (const item of itens) resultado.push({ id: item.id, origem: item.lead?.origem ?? null });
+
+    if (itens.length === 0 || resultado.length >= (corpo?.total ?? 0)) break;
+  }
+
+  return resultado;
+}
+
+function filtroFunilAtivo(filtro: ValorFiltrosFunil): boolean {
+  return filtro.busca.trim() !== "" || !!filtro.responsavelId || !!filtro.origem;
+}
+
+/**
+ * AC-390: restringe o quadro por responsável, origem e busca de texto.
+ * Reaproveita o filtro já pronto no servidor de `listarLista` (etapas 1-13,
+ * com origem) e `listarArquivados` (etapas 14/15 — sem filtro de origem no
+ * servidor, aplicado aqui sobre `lead.origem` de cada item) em vez de
+ * duplicar a regra ou exigir mudança nas rotas de leitura do board.
+ */
+async function buscarIdsPermitidos(filtro: ValorFiltrosFunil): Promise<Set<string>> {
+  const busca = filtro.busca.trim() || undefined;
+
+  const [itensLista, itensArquivados] = await Promise.all([
+    buscarPaginas("/api/oportunidades/lista", {
+      busca,
+      responsavelId: filtro.responsavelId,
+      origem: filtro.origem,
+    }),
+    buscarPaginas("/api/oportunidades/arquivados", {
+      busca,
+      responsavelId: filtro.responsavelId,
+    }),
+  ]);
+
+  const ids = new Set<string>();
+  for (const item of itensLista) ids.add(item.id);
+  for (const item of itensArquivados) {
+    if (filtro.origem && item.origem !== filtro.origem) continue;
+    ids.add(item.id);
+  }
+  return ids;
+}
+
 export function BoardKanban() {
-  const [itens, setItens] = useState<CardBoard[]>([]);
+  const [itensBrutos, setItensBrutos] = useState<CardBoard[]>([]);
   const [grafo, setGrafo] = useState<Record<number, number[]>>({});
   const [carregando, setCarregando] = useState(true);
   const [erroCarga, setErroCarga] = useState<string | null>(null);
@@ -57,6 +143,29 @@ export function BoardKanban() {
   const [cardAtivo, setCardAtivo] = useState<CardBoard | null>(null);
   const [dadoFaltante, setDadoFaltante] = useState<DadoFaltantePendente | null>(null);
   const [oportunidadesAtrasadas, setOportunidadesAtrasadas] = useState<Set<string>>(new Set());
+  const [proximasAcoes, setProximasAcoes] = useState<Map<string, string | null>>(new Map());
+
+  // AC-390.
+  const [filtro, setFiltro] = useState<ValorFiltrosFunil>({ busca: "" });
+  const [idsPermitidos, setIdsPermitidos] = useState<Set<string> | null>(null);
+  const [opcoes, setOpcoes] = useState<{ responsaveis: OpcaoResponsavelFunil[]; origens: string[] }>({
+    responsaveis: [],
+    origens: [],
+  });
+
+  // AC-389.
+  const [indicadores, setIndicadores] = useState<IndicadoresFunilView | null>(null);
+
+  // AC-391/AC-392.
+  const [modalNovoLeadAberto, setModalNovoLeadAberto] = useState(false);
+
+  const itens = useMemo<CardBoard[]>(() => {
+    const comProximaAcao = itensBrutos.map((item) => ({
+      ...item,
+      proximaAcaoEm: proximasAcoes.has(item.id) ? proximasAcoes.get(item.id) ?? null : item.proximaAcaoEm ?? null,
+    }));
+    return idsPermitidos ? comProximaAcao.filter((item) => idsPermitidos.has(item.id)) : comProximaAcao;
+  }, [itensBrutos, idsPermitidos, proximasAcoes]);
 
   const carregarBoard = useCallback(async () => {
     setErroCarga(null);
@@ -64,7 +173,7 @@ export function BoardKanban() {
       const resposta = await fetch("/api/oportunidades");
       if (!resposta.ok) throw new Error(`board respondeu ${resposta.status}`);
       const corpo = await resposta.json();
-      setItens(corpo.itens ?? []);
+      setItensBrutos(corpo.itens ?? []);
       setGrafo(corpo.grafo ?? {});
     } catch {
       setErroCarga("Não foi possível carregar o board. Tente de novo.");
@@ -77,18 +186,23 @@ export function BoardKanban() {
     carregarBoard();
   }, [carregarBoard]);
 
-  // AC-220: cruza o board com `?atrasados=1` (T-095) pra saber quais cards
-  // mostram o selo "Atrasado" — mesma rota que a fila (T-097), só que aqui
-  // só importa o conjunto de `oportunidadeId` com `atrasado: true`.
+  // AC-220/AC-388: cruza o board com `?atrasados=1` (T-095) pra saber quais
+  // cards mostram o selo "Atrasado" e, quando a fila trouxer o campo, a hora
+  // da próxima ação de cada um (card sem toque pendente mostra "Sem próxima
+  // ação" — `card-oportunidade.tsx`).
   const carregarAtrasados = useCallback(async () => {
     try {
       const resposta = await fetch("/api/atividades?atrasados=1");
       if (!resposta.ok) return;
       const corpo = await resposta.json();
-      const itensFila = (corpo.itens ?? []) as { oportunidade: { id: string }; atrasado: boolean }[];
+      const itensFila = (corpo.itens ?? []) as {
+        oportunidade: { id: string; proximaAcaoEm?: string | null };
+        atrasado: boolean;
+      }[];
       setOportunidadesAtrasadas(
         new Set(itensFila.filter((item) => item.atrasado).map((item) => item.oportunidade.id))
       );
+      setProximasAcoes(new Map(itensFila.map((item) => [item.oportunidade.id, item.oportunidade.proximaAcaoEm ?? null])));
     } catch {
       // Sem conectividade: mantém o selo como estava até a próxima tentativa.
     }
@@ -98,44 +212,114 @@ export function BoardKanban() {
     carregarAtrasados();
   }, [carregarAtrasados]);
 
+  // AC-389: indicadores do topo — independentes do board (uma falha aqui não bloqueia o quadro).
+  const carregarIndicadores = useCallback(async () => {
+    try {
+      const resposta = await fetch("/api/pipeline/indicadores?visao=funil");
+      if (!resposta.ok) return;
+      setIndicadores(await resposta.json());
+    } catch {
+      // mantém o que já tinha carregado.
+    }
+  }, []);
+
+  useEffect(() => {
+    carregarIndicadores();
+  }, [carregarIndicadores]);
+
+  // AC-390/AC-391/ASM-137: opções de responsável/origem a partir dos valores
+  // que já existem na empresa — mesma amostra sem lista oficial de
+  // `pipeline/lista/page.tsx` (T-161).
+  useEffect(() => {
+    let cancelado = false;
+    fetch("/api/oportunidades/lista?porPagina=50")
+      .then((resposta) => (resposta.ok ? resposta.json() : null))
+      .then((corpo: { itens?: { responsavel?: { id: string; nome: string } | null; lead?: { origem?: string | null } }[] } | null) => {
+        if (cancelado || !corpo) return;
+        const responsaveis = new Map<string, string>();
+        const origens = new Set<string>();
+        for (const item of corpo.itens ?? []) {
+          if (item.responsavel) responsaveis.set(item.responsavel.id, item.responsavel.nome);
+          if (item.lead?.origem) origens.add(item.lead.origem);
+        }
+        setOpcoes({
+          responsaveis: [...responsaveis.entries()].map(([id, nome]) => ({ id, nome })),
+          origens: [...origens].sort(),
+        });
+      })
+      .catch(() => {});
+    return () => {
+      cancelado = true;
+    };
+  }, []);
+
+  // AC-390: recalcula o conjunto de ids permitidos sempre que o filtro muda;
+  // sem nenhum filtro ativo, mostra o quadro inteiro sem chamada extra.
+  useEffect(() => {
+    if (!filtroFunilAtivo(filtro)) {
+      setIdsPermitidos(null);
+      return;
+    }
+    let cancelado = false;
+    buscarIdsPermitidos(filtro)
+      .then((ids) => {
+        if (!cancelado) setIdsPermitidos(ids);
+      })
+      .catch(() => {
+        if (!cancelado) setIdsPermitidos(new Set());
+      });
+    return () => {
+      cancelado = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filtro.busca, filtro.responsavelId, filtro.origem]);
+
   // T-065 (fase2c-sse, US-037): ref com o estado atual pra checar, no
   // momento em que o evento chega, se o card aparece no board — sem recriar
   // o EventSource a cada atualização de `itens` (useStreamOportunidades só
-  // reabre a conexão se a identidade do callback mudar).
+  // reabre a conexão se a identidade do callback mudar). AC-112: aponta pro
+  // conjunto já filtrado (AC-390) — card fora do filtro é "fora do board"
+  // igual a card fora do filtro antigo de etapa/responsável.
   const itensRef = useRef(itens);
   itensRef.current = itens;
 
-  const aplicarEventoMovido = useCallback(async (evento: EventoOportunidadeMovidaCliente) => {
-    // AC-112: card que o board não mostra (fora do filtro) é ignorado sem erro.
-    if (!itensRef.current.some((item) => item.id === evento.oportunidadeId)) return;
+  const aplicarEventoMovido = useCallback(
+    async (evento: EventoOportunidadeMovidaCliente) => {
+      // AC-112: card que o board não mostra (fora do board ou fora do
+      // filtro, AC-390) é ignorado sem nenhuma chamada extra.
+      if (!itensRef.current.some((item) => item.id === evento.oportunidadeId)) return;
 
-    const resposta = await fetch(`/api/oportunidades/${evento.oportunidadeId}`);
-    if (!resposta.ok) return;
-    const card = await resposta.json();
+      const resposta = await fetch(`/api/oportunidades/${evento.oportunidadeId}`);
+      if (!resposta.ok) return;
+      const card = await resposta.json();
 
-    setItens((atual) =>
-      atual.map((item) => {
-        if (item.id !== card.id) return item;
-        // Q-010: o próprio ator já recebeu essa versão via `carregarBoard`
-        // depois da transição — não há o que reposicionar.
-        if (card.version <= item.version) return item;
-        return {
-          ...item,
-          etapaId: card.etapaId,
-          responsavelId: card.responsavelId,
-          responsavelNome: card.responsavelNome,
-          valor: card.valor,
-          version: card.version,
-        };
-      })
-    );
-  }, []);
+      setItensBrutos((atual) =>
+        atual.map((item) => {
+          if (item.id !== card.id) return item;
+          // Q-010: o próprio ator já recebeu essa versão via `carregarBoard`
+          // depois da transição — não há o que reposicionar.
+          if (card.version <= item.version) return item;
+          return {
+            ...item,
+            etapaId: card.etapaId,
+            responsavelId: card.responsavelId,
+            responsavelNome: card.responsavelNome,
+            valor: card.valor,
+            version: card.version,
+          };
+        })
+      );
+      void carregarIndicadores();
+    },
+    [carregarIndicadores]
+  );
 
   const aoReceberEventoStream = useCallback(
     (evento: EventoStreamCliente) => {
       if (evento.tipo === "stream.reconectado") {
         void carregarBoard();
         void carregarAtrasados();
+        void carregarIndicadores();
         return;
       }
       // AC-220: o selo some sem recarregar a página — qualquer alteração na
@@ -147,7 +331,7 @@ export function BoardKanban() {
       if (evento.tipo !== "oportunidade.movida") return;
       void aplicarEventoMovido(evento);
     },
-    [carregarBoard, carregarAtrasados, aplicarEventoMovido]
+    [carregarBoard, carregarAtrasados, carregarIndicadores, aplicarEventoMovido]
   );
 
   const aoPolling = useCallback(() => {
@@ -155,7 +339,9 @@ export function BoardKanban() {
     void carregarAtrasados();
   }, [carregarBoard, carregarAtrasados]);
 
-  useStreamOportunidades({ aoReceberEvento: aoReceberEventoStream, aoPolling });
+  // AC-416: só expõe o estado da conexão pro aviso "tempo real desconectado"
+  // (`AvisoTempoReal`) — a reconciliação em si já roda pelos callbacks acima.
+  const { estadoConexao } = useStreamOportunidades({ aoReceberEvento: aoReceberEventoStream, aoPolling });
 
   useEffect(() => {
     if (!mensagem) return;
@@ -182,6 +368,7 @@ export function BoardKanban() {
 
       if (resposta.ok) {
         await carregarBoard();
+        void carregarIndicadores();
         setMensagem(null);
         setDadoFaltante(null);
         return;
@@ -206,7 +393,7 @@ export function BoardKanban() {
         setMensagem(MENSAGENS_ERRO[codigo] ?? "Não foi possível mover o card.");
       }
     },
-    [carregarBoard]
+    [carregarBoard, carregarIndicadores]
   );
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -228,40 +415,95 @@ export function BoardKanban() {
 
   const alcancaveisDoAtivo = cardAtivo ? new Set(grafo[cardAtivo.etapaId] ?? []) : null;
 
+  // AC-391/AC-392: cria o card e, só quando pedido, já inicia a cadência.
+  const aoCriarLead = useCallback(
+    async (dados: DadosNovoLead): Promise<ResultadoSalvarNovoLead> => {
+      const resultado = await criarCardNovoLead(dados);
+      if (!resultado.ok) return { ok: false, erro: resultado.erro, campo: resultado.campo };
+      await carregarBoard();
+      void carregarIndicadores();
+      return { ok: true };
+    },
+    [carregarBoard, carregarIndicadores]
+  );
+
+  const aoCriarLeadEIniciarCadencia = useCallback(
+    async (dados: DadosNovoLead): Promise<ResultadoSalvarNovoLead> => {
+      const resultado = await criarLeadEIniciarCadencia(dados);
+      if (!resultado.ok) return { ok: false, erro: resultado.erro, campo: resultado.campo };
+      await carregarBoard();
+      void carregarIndicadores();
+      return { ok: true };
+    },
+    [carregarBoard, carregarIndicadores]
+  );
+
   return (
-    <div className="flex flex-col gap-3">
-      <div className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold text-slate-800">Pipeline</h1>
-        <Button variant="outline" size="sm" onClick={carregarBoard} disabled={carregando}>
-          <RefreshCcw className={`size-4 mr-1.5 ${carregando ? "animate-spin" : ""}`} />
-          Atualizar
-        </Button>
+    <div className="flex flex-col gap-space-md p-space-md">
+      <div className="flex items-center justify-between flex-wrap gap-space-sm">
+        <h1 className="font-headline-lg text-headline-lg text-text-primary tracking-tight">Funil Pipeline de Vendas</h1>
+        <div className="flex items-center gap-space-sm">
+          <ItemEmBreve
+            rotulo="Iniciar Cadência em Massa"
+            icone="schedule_send"
+            className="h-10 px-4 rounded-xl bg-surface-card shadow-sm"
+          />
+          <button
+            type="button"
+            onClick={() => setModalNovoLeadAberto(true)}
+            className="h-10 px-4 rounded-xl bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md font-semibold shadow-md flex items-center gap-2 transition-all"
+          >
+            <span aria-hidden="true" className="material-symbols-outlined text-[19px]">
+              add
+            </span>
+            Novo Lead
+          </button>
+        </div>
       </div>
 
-      {erroCarga && <p className="text-sm text-rose-600">{erroCarga}</p>}
+      <AvisoTempoReal estadoConexao={estadoConexao} />
+
+      {indicadores ? <IndicadoresFunil dados={indicadores} /> : <EsqueletoCarregando linhas={1} />}
+
+      <FiltrosFunil
+        valor={filtro}
+        responsaveis={opcoes.responsaveis}
+        origens={opcoes.origens}
+        onMudar={(patch) => setFiltro((atual) => ({ ...atual, ...patch }))}
+        onLimpar={() => setFiltro({ busca: "" })}
+      />
+
       {mensagem && (
         <div className="text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
           {mensagem}
         </div>
       )}
 
-      <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd} onDragCancel={handleDragCancel}>
-        <div className="flex-1 flex w-full overflow-x-auto gap-3 pb-2">
-          {ETAPAS.map((etapa) => (
-            <ColunaEtapa
-              key={etapa.id}
-              etapaId={etapa.id}
-              nome={etapa.nome}
-              cards={itens.filter((item) => item.etapaId === etapa.id)}
-              podeReceberDrop={cardAtivo ? (alcancaveisDoAtivo?.has(etapa.id) ?? false) : true}
-              arrastando={cardAtivo !== null}
-              oportunidadesAtrasadas={oportunidadesAtrasadas}
-            />
-          ))}
-        </div>
+      {carregando && <EsqueletoCarregando />}
+      {!carregando && erroCarga && <EstadoErro mensagem={erroCarga} onTentarDeNovo={carregarBoard} />}
+      {!carregando && !erroCarga && itensBrutos.length === 0 && (
+        <EstadoVazio titulo="Nenhum lead ainda" proximoPasso="crie o primeiro em “Novo Lead”" icone="group_work" />
+      )}
 
-        <DragOverlay>{cardAtivo ? <CardOportunidade oportunidade={cardAtivo} isOverlay /> : null}</DragOverlay>
-      </DndContext>
+      {!carregando && !erroCarga && itensBrutos.length > 0 && (
+        <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd} onDragCancel={handleDragCancel}>
+          <div className="flex-1 flex w-full overflow-x-auto items-start gap-4 pb-10">
+            {ETAPAS.map((etapa) => (
+              <ColunaEtapa
+                key={etapa.id}
+                etapaId={etapa.id}
+                nome={etapa.nome}
+                cards={itens.filter((item) => item.etapaId === etapa.id)}
+                podeReceberDrop={cardAtivo ? (alcancaveisDoAtivo?.has(etapa.id) ?? false) : true}
+                arrastando={cardAtivo !== null}
+                oportunidadesAtrasadas={oportunidadesAtrasadas}
+              />
+            ))}
+          </div>
+
+          <DragOverlay>{cardAtivo ? <CardOportunidade oportunidade={cardAtivo} isOverlay /> : null}</DragOverlay>
+        </DndContext>
+      )}
 
       {dadoFaltante && (
         <ModalDadoFaltante
@@ -278,6 +520,15 @@ export function BoardKanban() {
           }
         />
       )}
+
+      <ModalNovoLead
+        aberto={modalNovoLeadAberto}
+        origens={opcoes.origens}
+        responsaveis={opcoes.responsaveis}
+        onFechar={() => setModalNovoLeadAberto(false)}
+        onCriar={aoCriarLead}
+        onCriarEIniciarCadencia={aoCriarLeadEIniciarCadencia}
+      />
     </div>
   );
 }

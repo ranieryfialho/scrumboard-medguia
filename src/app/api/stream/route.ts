@@ -65,6 +65,9 @@ export async function GET(request: NextRequest): Promise<Response> {
 
   const stream = new ReadableStream<Uint8Array>({
     start(controller) {
+      // Linha de abertura: faz os cabeçalhos chegarem já (o navegador dispara
+      // `open` na hora) em vez de só no primeiro ping, 25 s depois (AC-416).
+      controller.enqueue(encoder.encode(': conectado\n\n'));
       cancelarInscricao = getBarramento().inscrever(contexto.empresaId, (evento) => {
         controller.enqueue(encoder.encode(formatarEventoSse(evento)));
       });
@@ -84,6 +87,8 @@ export async function GET(request: NextRequest): Promise<Response> {
     headers: {
       'Content-Type': 'text/event-stream',
       'Cache-Control': 'no-cache, no-transform',
+      // Proxy reverso (nginx) não pode segurar o fluxo em buffer.
+      'X-Accel-Buffering': 'no',
     },
   });
 }
