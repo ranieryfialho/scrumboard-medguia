@@ -220,6 +220,19 @@ describe('T-173: tela da cadência de 18 toques', () => {
     });
   });
 
+  describe('AC-433: card fora de "Entrada de leads" não promete um botão que não existe', () => {
+    test('explica que a cadência só começa em "Entrada de leads", diz a etapa do card e não mostra o botão @spec:AC-433', async () => {
+      cadenciaDoServidor = { ...montarCadencia([]), iniciada: false, situacao: 'nao_iniciada', toqueDaVez: null };
+      cadenciaDoServidor.oportunidade = { id: CARD_ID, etapaId: 14, version: 1 };
+      await montar();
+
+      expect(await screen.findByText('A cadência deste card ainda não foi iniciada')).toBeTruthy();
+      expect(screen.getByText(/só começa em card na etapa “Entrada de leads”; este card está em “Perdido”/)).toBeTruthy();
+      expect(screen.queryByText(/pelo botão abaixo/)).toBeNull();
+      expect(screen.queryByRole('button', { name: 'Iniciar cadência' })).toBeNull();
+    });
+  });
+
   describe('AC-434: concluir o toque da vez pela tela, com as regras da cadência', () => {
     test('"Registrar Sucesso" conclui como "conectou" e a tela avança para o próximo toque @spec:AC-434', async () => {
       const usuario = userEvent.setup();
