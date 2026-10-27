@@ -242,7 +242,7 @@ cadência ao lado, para agir sem trocar de tela.
 
 | ID | Suposição | Status | Resolução |
 |---|---|---|---|
-| ASM-141 | O cabeçalho do card e a barra de abas, hoje dentro de `/pipeline/[id]`, viram componentes compartilhados pelas quatro telas (um layout do segmento `[id]`), sem mudar o que o Resumo mostra | aberta | Evita repetir o cabeçalho em quatro páginas; confirmar na tarefa |
+| ASM-141 | O cabeçalho do card e a barra de abas, hoje dentro de `/pipeline/[id]`, viram um componente compartilhado (`MoldeDoCard`) que as quatro páginas usam, sem mudar o que o Resumo mostra; não é um `layout.tsx`, para os testes atuais do Resumo (que montam a página inteira) seguirem valendo | aberta | Evita repetir o cabeçalho em quatro páginas sem reescrever os testes do Resumo |
 | ASM-142 | O nome original do anexo passa a ser guardado numa coluna nova `nome` em `anexos` (migration 0013, nula para os anexos antigos); a migration entra na lista a levar ao cutover | confirmada | Decisão do usuário em 27/10 |
 | ASM-143 | "Evidência" = anexo ligado a uma mudança de etapa (o `anexo_id` do evento de transição); não existe status de aprovação, então não há "aprovada/em revisão" | aberta | Vem do modelo atual (`oportunidade_eventos.anexo_id`) |
 | ASM-144 | Pela tela só se conclui um toque como "conectou" ("Registrar Sucesso") ou "sem resposta" ("Não Atendeu"), os dois resultados que a API de concluir aceita | aberta | O enum tem ainda `cancelada`, mas a API de concluir recusa |

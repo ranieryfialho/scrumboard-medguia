@@ -1,0 +1,240 @@
+{
+  "runId": "scrumboard-medguia-fase4-card-abas-mvqyjtac",
+  "feature": "fase4-card-abas",
+  "agent": "claude",
+  "modo": "paralelo",
+  "paralelizar": null,
+  "modeloForcado": null,
+  "esforcoForcado": null,
+  "geradoEm": "2026-10-27 17:26",
+  "branchTrabalho": "spec/fase4-card-abas",
+  "baseDir": ".spec/features/fase4-card-abas",
+  "specDir": ".spec",
+  "repoName": "scrumboard-medguia",
+  "logsDir": "../onp-worktrees/scrumboard-medguia-fase4-card-abas-logs",
+  "ondas": [
+    [
+      "faixa-1",
+      "faixa-2",
+      "faixa-3"
+    ],
+    [
+      "faixa-4",
+      "faixa-5",
+      "faixa-6"
+    ],
+    [
+      "faixa-7",
+      "faixa-8"
+    ]
+  ],
+  "faixas": [
+    {
+      "id": "faixa-1",
+      "branch": "spec/fase4-card-abas-faixa-1",
+      "worktree": "../onp-worktrees/scrumboard-medguia-fase4-card-abas-faixa-1",
+      "tarefas": [
+        {
+          "id": "T-168",
+          "titulo": "Nome original do anexo: migration 0013 e upload",
+          "modelo": "claude-sonnet-5",
+          "esforco": "high",
+          "arquivos": [
+            "drizzle/0013_anexos_nome.sql",
+            "src/db/schema/pipeline.ts",
+            "src/lib/anexos/nome.ts",
+            "src/repositories/anexos.ts",
+            "src/app/api/anexos/route.ts",
+            "test/api/anexos-nome.test.ts"
+          ],
+          "refs": [
+            "AC-428"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "faixa-2",
+      "branch": "spec/fase4-card-abas-faixa-2",
+      "worktree": "../onp-worktrees/scrumboard-medguia-fase4-card-abas-faixa-2",
+      "tarefas": [
+        {
+          "id": "T-169",
+          "titulo": "Listagem dos anexos do card (servidor)",
+          "modelo": "claude-sonnet-5",
+          "esforco": "medium",
+          "arquivos": [
+            "src/repositories/anexos-lista.ts",
+            "src/app/api/oportunidades/[id]/anexos/route.ts",
+            "test/api/oportunidade-anexos-lista.test.ts"
+          ],
+          "refs": [
+            "AC-423",
+            "AC-424"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "faixa-3",
+      "branch": "spec/fase4-card-abas-faixa-3",
+      "worktree": "../onp-worktrees/scrumboard-medguia-fase4-card-abas-faixa-3",
+      "tarefas": [
+        {
+          "id": "T-170",
+          "titulo": "Listagem da cadência do card (servidor)",
+          "modelo": "claude-sonnet-5",
+          "esforco": "medium",
+          "arquivos": [
+            "src/repositories/cadencia-card.ts",
+            "src/app/api/oportunidades/[id]/cadencia/route.ts",
+            "test/api/oportunidade-cadencia-lista.test.ts"
+          ],
+          "refs": [
+            "AC-430",
+            "AC-431"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "faixa-4",
+      "branch": "spec/fase4-card-abas-faixa-4",
+      "worktree": "../onp-worktrees/scrumboard-medguia-fase4-card-abas-faixa-4",
+      "tarefas": [
+        {
+          "id": "T-171",
+          "titulo": "Molde do card: cabeçalho e abas compartilhados",
+          "modelo": "claude-sonnet-5",
+          "esforco": "xhigh",
+          "arquivos": [
+            "src/components/pipeline/card/molde-do-card.tsx",
+            "src/components/pipeline/card/abas-do-card.tsx",
+            "src/components/pipeline/card/cabecalho-do-card.tsx",
+            "src/app/(app)/pipeline/[id]/page.tsx",
+            "test/components/pipeline/molde-do-card.test.tsx"
+          ],
+          "refs": [
+            "AC-419",
+            "AC-420",
+            "AC-421",
+            "AC-422"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "faixa-5",
+      "branch": "spec/fase4-card-abas-faixa-5",
+      "worktree": "../onp-worktrees/scrumboard-medguia-fase4-card-abas-faixa-5",
+      "tarefas": [
+        {
+          "id": "T-172",
+          "titulo": "Tela de anexos e evidências",
+          "modelo": "claude-sonnet-5",
+          "esforco": "xhigh",
+          "arquivos": [
+            "src/app/(app)/pipeline/[id]/anexos/page.tsx",
+            "src/components/pipeline/anexos/lista-anexos.tsx",
+            "src/components/pipeline/anexos/filtros-anexos.tsx",
+            "src/components/pipeline/anexos/envio-anexos.tsx",
+            "test/components/pipeline/anexos-tela.test.tsx"
+          ],
+          "refs": [
+            "AC-422",
+            "AC-424",
+            "AC-425",
+            "AC-426",
+            "AC-427",
+            "AC-428",
+            "AC-429"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "faixa-6",
+      "branch": "spec/fase4-card-abas-faixa-6",
+      "worktree": "../onp-worktrees/scrumboard-medguia-fase4-card-abas-faixa-6",
+      "tarefas": [
+        {
+          "id": "T-173",
+          "titulo": "Tela da cadência de 18 toques",
+          "modelo": "claude-sonnet-5",
+          "esforco": "xhigh",
+          "arquivos": [
+            "src/app/(app)/pipeline/[id]/cadencia/page.tsx",
+            "src/components/pipeline/cadencia/resumo-cadencia.tsx",
+            "src/components/pipeline/cadencia/toque-da-vez.tsx",
+            "src/components/pipeline/cadencia/matriz-toques.tsx",
+            "src/components/pipeline/cadencia/historico-toques.tsx",
+            "test/components/pipeline/cadencia-tela.test.tsx"
+          ],
+          "refs": [
+            "AC-422",
+            "AC-431",
+            "AC-432",
+            "AC-433",
+            "AC-434",
+            "AC-435",
+            "AC-436"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "faixa-7",
+      "branch": "spec/fase4-card-abas-faixa-7",
+      "worktree": "../onp-worktrees/scrumboard-medguia-fase4-card-abas-faixa-7",
+      "tarefas": [
+        {
+          "id": "T-174",
+          "titulo": "Tela da conversa de WhatsApp do lead",
+          "modelo": "claude-sonnet-5",
+          "esforco": "xhigh",
+          "arquivos": [
+            "src/app/(app)/pipeline/[id]/conversa/page.tsx",
+            "src/components/pipeline/conversa/conversa-lead.tsx",
+            "src/components/pipeline/conversa/seletor-telefone.tsx",
+            "src/components/pipeline/conversa/faixa-conexao.tsx",
+            "src/components/pipeline/conversa/painel-lateral.tsx",
+            "test/components/pipeline/conversa-tela.test.tsx"
+          ],
+          "refs": [
+            "AC-422",
+            "AC-437",
+            "AC-438",
+            "AC-439",
+            "AC-440",
+            "AC-441",
+            "AC-442",
+            "AC-443",
+            "AC-444"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "faixa-8",
+      "branch": "spec/fase4-card-abas-faixa-8",
+      "worktree": "../onp-worktrees/scrumboard-medguia-fase4-card-abas-faixa-8",
+      "tarefas": [
+        {
+          "id": "T-175",
+          "titulo": "Garantia: as quatro abas existem e nenhuma dá 404",
+          "modelo": "claude-sonnet-5",
+          "esforco": "low",
+          "arquivos": [
+            "test/components/pipeline/abas-sem-404.test.ts"
+          ],
+          "refs": [
+            "AC-419"
+          ]
+        }
+      ]
+    }
+  ],
+  "sequenciais": [],
+  "concluidas": [],
+  "avisos": []
+}
