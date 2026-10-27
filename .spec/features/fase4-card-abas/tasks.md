@@ -36,8 +36,7 @@
 - Esforço: medio
 - Notas: `GET /api/oportunidades/[id]/cadencia` (já existe a pasta com `iniciar/route.ts`; este é o `route.ts` irmão). Devolve os toques do card em ordem de `sequencia` (dia, turno, canal, tipo, resultado, `realizadaEm`, quem fez, observação), mais `concluidos`, `total` (18), o id e a sequência do toque da vez, `cadenciaEncerrada` e a situação da régua (ASM-145: encerrada, com toque atrasado ou em andamento; atrasado segue a mesma regra de `listarFilaDoTurno`, sem duplicá-la). Card sem cadência iniciada devolve lista vazia, não erro. Tenant-safe como as outras rotas.
 
-## T-171 — Molde do card: cabeçalho e abas compartilhados [pendente]
-
+## T-171 — Molde do card: cabeçalho e abas compartilhados [concluida]
 - Refs: AC-419, AC-420, AC-421, AC-422
 - Arquivos: src/components/pipeline/card/molde-do-card.tsx, src/components/pipeline/card/abas-do-card.tsx, src/components/pipeline/card/cabecalho-do-card.tsx, src/app/(app)/pipeline/[id]/page.tsx, test/components/pipeline/molde-do-card.test.tsx
 - Esforço: xalto
