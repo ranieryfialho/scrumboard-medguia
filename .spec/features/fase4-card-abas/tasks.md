@@ -42,8 +42,7 @@
 - Esforço: xalto
 - Notas: extrai do Resumo (`src/app/(app)/pipeline/[id]/page.tsx`) o caminho "Voltar ao funil", o nome, o selo da etapa, o responsável e a barra de abas, em `MoldeDoCard` (ASM-141: componente, não `layout.tsx`). O molde busca o card (`GET /api/oportunidades/[id]`), os contadores (`/anexos` e `/cadencia`) e trata "não encontrado", carregando e erro. O Resumo passa a usar o molde **sem mudar o que mostra**: `detalhe.test.tsx` e `iniciar-cadencia.test.tsx` continuam passando sem editar a asserção (podem precisar ajustar só o mock de fetch). Fonte visual: o cabeçalho de `docs/ui/stitch_medcrm_interface_design/10._pipeline_id_cadencia_cad_ncia_do_card/`. Depende de T-169 e T-170.
 
-## T-172 — Tela de anexos e evidências [pendente]
-
+## T-172 — Tela de anexos e evidências [concluida]
 - Refs: AC-422, AC-424, AC-425, AC-426, AC-427, AC-428, AC-429
 - Arquivos: src/app/(app)/pipeline/[id]/anexos/page.tsx, src/components/pipeline/anexos/lista-anexos.tsx, src/components/pipeline/anexos/filtros-anexos.tsx, src/components/pipeline/anexos/envio-anexos.tsx, test/components/pipeline/anexos-tela.test.tsx
 - Esforço: xalto
