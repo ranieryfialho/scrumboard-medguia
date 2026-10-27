@@ -38,7 +38,7 @@
 
 ## T-171 — Molde do card: cabeçalho e abas compartilhados [concluida]
 - Refs: AC-419, AC-420, AC-421, AC-422
-- Arquivos: src/components/pipeline/card/molde-do-card.tsx, src/components/pipeline/card/abas-do-card.tsx, src/components/pipeline/card/cabecalho-do-card.tsx, src/app/(app)/pipeline/[id]/page.tsx, test/components/pipeline/molde-do-card.test.tsx
+- Arquivos: src/components/pipeline/card/molde-do-card.tsx, src/components/pipeline/card/abas-do-card.tsx, src/components/pipeline/card/use-contadores-do-card.ts, src/components/pipeline/detalhe/cabecalho-card.tsx, src/app/(app)/pipeline/[id]/page.tsx, test/components/pipeline/molde-do-card.test.tsx
 - Esforço: xalto
 - Notas: extrai do Resumo (`src/app/(app)/pipeline/[id]/page.tsx`) o caminho "Voltar ao funil", o nome, o selo da etapa, o responsável e a barra de abas, em `MoldeDoCard` (ASM-141: componente, não `layout.tsx`). O molde busca o card (`GET /api/oportunidades/[id]`), os contadores (`/anexos` e `/cadencia`) e trata "não encontrado", carregando e erro. O Resumo passa a usar o molde **sem mudar o que mostra**: `detalhe.test.tsx` e `iniciar-cadencia.test.tsx` continuam passando sem editar a asserção (podem precisar ajustar só o mock de fetch). Fonte visual: o cabeçalho de `docs/ui/stitch_medcrm_interface_design/10._pipeline_id_cadencia_cad_ncia_do_card/`. Depende de T-169 e T-170.
 

@@ -1,0 +1,142 @@
+{
+  "feature": "fase4-card-abas",
+  "timestamp": "2026-10-27T19:03:35.282Z",
+  "gitRev": "efb7f91",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
+  "reporter": "vitest-json",
+  "exitCode": 0,
+  "testsParsed": 1332,
+  "results": {
+    "AC-419": {
+      "status": "pass",
+      "testName": "T-175: as abas do card não levam a 404 a barra tem as quatro abas: resumo, cadência, whatsapp e anexos @spec:AC-419 a barra tem as quatro abas: resumo, cadência, whatsapp e anexos @spec:AC-419",
+      "method": "vitest-json"
+    },
+    "AC-420": {
+      "status": "pass",
+      "testName": "T-171: molde do card AC-420: o cabeçalho do card é o mesmo nas quatro telas mostra voltar ao funil, nome, selo da etapa e responsável @spec:AC-420 mostra voltar ao funil, nome, selo da etapa e responsável @spec:AC-420",
+      "method": "vitest-json"
+    },
+    "AC-421": {
+      "status": "pass",
+      "testName": "T-171: molde do card AC-421: card de outra empresa ou inexistente mostra \"não encontrado\" 404 mostra \"Card não encontrado\" com o caminho de volta e não desenha a aba @spec:AC-421 404 mostra \"Card não encontrado\" com o caminho de volta e não desenha a aba @spec:AC-421",
+      "method": "vitest-json"
+    },
+    "AC-422": {
+      "status": "pass",
+      "testName": "T-172: tela de anexos e evidências AC-422: a tela tem estado de vazio e de erro sem anexos mostra o vazio com o próximo passo @spec:AC-422 sem anexos mostra o vazio com o próximo passo @spec:AC-422",
+      "method": "vitest-json"
+    },
+    "AC-423": {
+      "status": "pass",
+      "testName": "T-169: listagem dos anexos do card (servidor) lista os anexos do card do mais novo ao mais antigo, com nome, mime, tamanho, hash, quem enviou e quando @spec:AC-423 lista os anexos do card do mais novo ao mais antigo, com nome, mime, tamanho, hash, quem enviou e quando @spec:AC-423",
+      "method": "vitest-json"
+    },
+    "AC-424": {
+      "status": "pass",
+      "testName": "T-169: listagem dos anexos do card (servidor) anexo sem nome (anterior à migration 0013) aparece com nome nulo, não string vazia @spec:AC-424 anexo sem nome (anterior à migration 0013) aparece com nome nulo, não string vazia @spec:AC-424",
+      "method": "vitest-json"
+    },
+    "AC-425": {
+      "status": "pass",
+      "testName": "T-172: tela de anexos e evidências AC-425: busca e filtros por tipo restringem a lista cada chip mostra a contagem e filtra a lista @spec:AC-425 cada chip mostra a contagem e filtra a lista @spec:AC-425",
+      "method": "vitest-json"
+    },
+    "AC-426": {
+      "status": "pass",
+      "testName": "T-172: tela de anexos e evidências AC-426: \"Link Seguro\" abre o anexo por link de curta duração abrir e baixar apontam para a rota assinada /api/anexos/[id], em nova aba e sem opener @spec:AC-426 abrir e baixar apontam para a rota assinada /api/anexos/[id], em nova aba e sem opener @spec:AC-426",
+      "method": "vitest-json"
+    },
+    "AC-427": {
+      "status": "pass",
+      "testName": "T-172: tela de anexos e evidências AC-427: o envio de arquivo aceita escolher e mostra o resultado enviar um PDF faz o POST com o card e o arquivo, recarrega a lista e o contador da aba @spec:AC-427 enviar um PDF faz o POST com o card e o arquivo, recarrega a lista e o contador da aba @spec:AC-427",
+      "method": "vitest-json"
+    },
+    "AC-428": {
+      "status": "pass",
+      "testName": "T-168: nome original do anexo (migration 0013 e upload) o nome original do arquivo enviado é guardado e devolvido @spec:AC-428 o nome original do arquivo enviado é guardado e devolvido @spec:AC-428",
+      "method": "vitest-json"
+    },
+    "AC-429": {
+      "status": "pass",
+      "testName": "T-172: tela de anexos e evidências AC-429: ações do protótipo sem backend aparecem como \"em breve\" exportar dossiê, excluir, tornar evidência, marcar como evidência e vincular à etapa não disparam nada @spec:AC-429 exportar dossiê, excluir, tornar evidência, marcar como evidência e vincular à etapa não disparam nada @spec:AC-429",
+      "method": "vitest-json"
+    },
+    "AC-430": {
+      "status": "pass",
+      "testName": "T-170: listagem da cadência do card (servidor) card sem cadência iniciada: 200 com a matriz toda \"programado\" e situação \"nao_iniciada\" @spec:AC-430 card sem cadência iniciada: 200 com a matriz toda \"programado\" e situação \"nao_iniciada\" @spec:AC-430",
+      "method": "vitest-json"
+    },
+    "AC-431": {
+      "status": "pass",
+      "testName": "T-170: listagem da cadência do card (servidor) o resumo conta concluídos, \"conectou\" e \"sem resposta\" e diz quem concluiu o toque @spec:AC-431 o resumo conta concluídos, \"conectou\" e \"sem resposta\" e diz quem concluiu o toque @spec:AC-431",
+      "method": "vitest-json"
+    },
+    "AC-432": {
+      "status": "pass",
+      "testName": "T-170: listagem da cadência do card (servidor) um toque gravado com dia e turno fora da régua continua na posição da matriz @spec:AC-432 um toque gravado com dia e turno fora da régua continua na posição da matriz @spec:AC-432",
+      "method": "vitest-json"
+    },
+    "AC-433": {
+      "status": "pass",
+      "testName": "T-173: tela da cadência de 18 toques AC-433: sem cadência iniciada, a tela mostra o caminho para iniciar mostra o vazio com \"Iniciar cadência\" e, ao usar, a matriz aparece sem recarregar a página @spec:AC-433 mostra o vazio com \"Iniciar cadência\" e, ao usar, a matriz aparece sem recarregar a página @spec:AC-433",
+      "method": "vitest-json"
+    },
+    "AC-434": {
+      "status": "pass",
+      "testName": "T-173: tela da cadência de 18 toques AC-434: concluir o toque da vez pela tela, com as regras da cadência \"Registrar Sucesso\" conclui como \"conectou\" e a tela avança para o próximo toque @spec:AC-434 \"Registrar Sucesso\" conclui como \"conectou\" e a tela avança para o próximo toque @spec:AC-434",
+      "method": "vitest-json"
+    },
+    "AC-435": {
+      "status": "pass",
+      "testName": "T-173: tela da cadência de 18 toques AC-435: o histórico lista os toques já feitos, com atalho para a conversa lista do mais novo ao mais antigo, com \"Ver conversa\" só nos de WhatsApp @spec:AC-435 lista do mais novo ao mais antigo, com \"Ver conversa\" só nos de WhatsApp @spec:AC-435",
+      "method": "vitest-json"
+    },
+    "AC-436": {
+      "status": "pass",
+      "testName": "T-173: tela da cadência de 18 toques AC-436: ações e blocos da cadência sem backend pausar, reiniciar, retorno mais tarde, exportar e editar script ficam \"em breve\" e não disparam nada @spec:AC-436 pausar, reiniciar, retorno mais tarde, exportar e editar script ficam \"em breve\" e não disparam nada @spec:AC-436",
+      "method": "vitest-json"
+    },
+    "AC-437": {
+      "status": "pass",
+      "testName": "T-174: tela da conversa de WhatsApp do lead AC-437: a conversa do lead aparece com o histórico completo mostra as mensagens em ordem de hora, separadas por dia, com hora e status nas enviadas @spec:AC-437 mostra as mensagens em ordem de hora, separadas por dia, com hora e status nas enviadas @spec:AC-437",
+      "method": "vitest-json"
+    },
+    "AC-438": {
+      "status": "pass",
+      "testName": "T-174: tela da conversa de WhatsApp do lead AC-438: o seletor de telefone troca a conversa mostra cada número com o rótulo e \"Principal\", e a conversa passa a valer para o escolhido @spec:AC-438 mostra cada número com o rótulo e \"Principal\", e a conversa passa a valer para o escolhido @spec:AC-438",
+      "method": "vitest-json"
+    },
+    "AC-439": {
+      "status": "pass",
+      "testName": "T-174: tela da conversa de WhatsApp do lead AC-439: enviar uma mensagem pelo campo da conversa Enter envia, o campo é limpo e a conversa é relida; o botão também envia @spec:AC-439 Enter envia, o campo é limpo e a conversa é relida; o botão também envia @spec:AC-439",
+      "method": "vitest-json"
+    },
+    "AC-440": {
+      "status": "pass",
+      "testName": "T-174: tela da conversa de WhatsApp do lead AC-440: abrir a conversa marca as mensagens recebidas como lidas marca como lidas e avisa o menu lateral para reler o contador @spec:AC-440 marca como lidas e avisa o menu lateral para reler o contador @spec:AC-440",
+      "method": "vitest-json"
+    },
+    "AC-441": {
+      "status": "pass",
+      "testName": "T-174: tela da conversa de WhatsApp do lead AC-441: a conexão do WhatsApp aparece no topo da conversa conectada mostra o nome da instância e deixa enviar @spec:AC-441 conectada mostra o nome da instância e deixa enviar @spec:AC-441",
+      "method": "vitest-json"
+    },
+    "AC-442": {
+      "status": "pass",
+      "testName": "T-174: tela da conversa de WhatsApp do lead AC-442: mensagem nova do lead aparece sem recarregar o evento do stream para este lead relê a conversa e marca como lida @spec:AC-442 o evento do stream para este lead relê a conversa e marca como lida @spec:AC-442",
+      "method": "vitest-json"
+    },
+    "AC-443": {
+      "status": "pass",
+      "testName": "T-174: tela da conversa de WhatsApp do lead AC-443: o painel lateral mostra a cadência e as anotações internas do card mostra o toque atual e o progresso da cadência, sem proposta nem qualificação @spec:AC-443 mostra o toque atual e o progresso da cadência, sem proposta nem qualificação @spec:AC-443",
+      "method": "vitest-json"
+    },
+    "AC-444": {
+      "status": "pass",
+      "testName": "T-174: tela da conversa de WhatsApp do lead AC-444: ações da conversa sem backend ligar, novo número, busca, menu, anexar, templates e respostas rápidas ficam \"em breve\" e não disparam nada @spec:AC-444 ligar, novo número, busca, menu, anexar, templates e respostas rápidas ficam \"em breve\" e não disparam nada @spec:AC-444",
+      "method": "vitest-json"
+    }
+  },
+  "principles": {}
+}
