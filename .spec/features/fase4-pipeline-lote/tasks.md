@@ -30,8 +30,7 @@
 - Esforço: alto
 - Notas: `POST /api/oportunidades/lote/reatribuir` `{ ids, responsavelId }`: só MASTER/GERENTE/super admin (403 para ATENDENTE, ASM-152); responsável tem que ser usuário ativo da empresa da sessão (400 `RESPONSAVEL_INVALIDO`); atualiza cada card (função `atualizarOportunidade` do repositório, que já aceita `responsavelId`) e grava o evento `reatribuicao` em `oportunidade_eventos` com de, para e autor (ASM-153; confirmar que `tipo` aceita o valor sem migration). `POST /api/oportunidades/lote/arquivar` `{ ids, motivoPerdaId }` chama `transicionarCard` (de T-176) com destino 14 e o motivo; sem motivo = 400 `MOTIVO_OBRIGATORIO`. `GET /api/pipeline/responsaveis` lista id, nome e papel dos usuários **ativos da empresa da sessão** (a `/api/usuarios` existente é do legado em Supabase e não serve). A linha do tempo do detalhe passa a mostrar "Responsável alterado: de X para Y" (rótulo e ícone do novo tipo). Depende de T-176.
 
-## T-178 — Barra de ações em lote na lista (tela) [pendente]
-
+## T-178 — Barra de ações em lote na lista (tela) [concluida]
 - Refs: AC-445, AC-446, AC-447, AC-450, AC-451, AC-453, AC-454
 - Arquivos: src/components/pipeline/tabela-lista.tsx, src/components/pipeline/lote/barra-lote.tsx, src/components/pipeline/lote/dialogo-lote.tsx, src/components/pipeline/lote/resultado-lote.tsx, src/app/(app)/pipeline/lista/page.tsx, test/components/pipeline/lote-tela.test.tsx
 - Esforço: xalto

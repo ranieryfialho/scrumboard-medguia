@@ -128,7 +128,7 @@ servidor, para trabalhar com centenas de cards sem travar a tela.
 
 - **Dado** a lista renderizada
 - **Quando** o usuário clica no nome do lead, ou marca a caixa de uma linha ou a caixa do cabeçalho
-- **Então** o nome leva a `/pipeline/[id]`; a marcação mostra "N selecionados" na barra de ações; as ações em lote aparecem "em breve" (entram na feature `fase4-pipeline-lote`)
+- **Então** o nome leva a `/pipeline/[id]`; a marcação mostra "N selecionados" na barra de ações (as ações em lote em si são da feature `fase4-pipeline-lote`, AC-445 em diante)
 
 #### AC-417 — O topo da lista traz o total, os indicadores, o atalho para o funil e o "Novo Card"
 
