@@ -7,7 +7,7 @@
 import { and, eq } from 'drizzle-orm';
 import { NextResponse, type NextRequest } from 'next/server';
 
-import { campanhas } from '../../../../db/schema';
+import { campanhas, usuarios } from '../../../../db/schema';
 import { getDb } from '../../../../db/client';
 import { getAuth } from '../../../../lib/auth/instancia';
 import { ErroSessaoInvalida, resolverContextoTenant, type ContextoTenant } from '../../../../lib/auth/tenant';
@@ -118,8 +118,12 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
   try {
     const detalhe = await buscarDetalheCampanha(getDb(), contexto, id);
+    // AC-547: o nome de quem criou a campanha (usuários não têm RLS por empresa).
+    const [criador] = detalhe.campanha.criadoPor
+      ? await getDb().select({ nome: usuarios.nome }).from(usuarios).where(eq(usuarios.id, detalhe.campanha.criadoPor)).limit(1)
+      : [];
     return NextResponse.json({
-      campanha: campanhaParaJson(detalhe.campanha),
+      campanha: { ...campanhaParaJson(detalhe.campanha), criadoPorNome: criador?.nome ?? null },
       destinatarios: detalhe.destinatarios.map(destinatarioParaJson),
       contagemPorStatus: detalhe.contagemPorStatus,
     });

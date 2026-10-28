@@ -1,0 +1,127 @@
+{
+  "feature": "fase4-campanhas",
+  "timestamp": "2026-10-28T16:33:57.511Z",
+  "gitRev": "bd99ae3",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
+  "reporter": "vitest-json",
+  "exitCode": 1,
+  "testsParsed": 1522,
+  "results": {
+    "AC-532": {
+      "status": "pass",
+      "testName": "T-197: ListaCampanhas abre com o título dentro do grupo (app) e, para o atendente, avisa que é de gerente e master @spec:AC-532 abre com o título dentro do grupo (app) e, para o atendente, avisa que é de gerente e master @spec:AC-532",
+      "method": "vitest-json"
+    },
+    "AC-533": {
+      "status": "pass",
+      "testName": "T-196: API de campanhas para as telas a lista traz as contagens, os filtros e a paginação, só da empresa e só para gerente e master @spec:AC-533 a lista traz as contagens, os filtros e a paginação, só da empresa e só para gerente e master @spec:AC-533",
+      "method": "vitest-json"
+    },
+    "AC-534": {
+      "status": "pass",
+      "testName": "T-196: API de campanhas para as telas os indicadores são os disparos do mês e as taxas de entrega, abertura e cliques @spec:AC-534 os indicadores são os disparos do mês e as taxas de entrega, abertura e cliques @spec:AC-534",
+      "method": "vitest-json"
+    },
+    "AC-535": {
+      "status": "pass",
+      "testName": "T-197: ListaCampanhas a tabela mostra o andamento, as taxas e a data, sem código CMP nem segmentação @spec:AC-535 a tabela mostra o andamento, as taxas e a data, sem código CMP nem segmentação @spec:AC-535",
+      "method": "vitest-json"
+    },
+    "AC-536": {
+      "status": "pass",
+      "testName": "T-197: ListaCampanhas status, busca e período pedem só o recorte ao servidor; Limpar volta ao completo; sem resultado avisa @spec:AC-536 status, busca e período pedem só o recorte ao servidor; Limpar volta ao completo; sem resultado avisa @spec:AC-536",
+      "method": "vitest-json"
+    },
+    "AC-537": {
+      "status": "pass",
+      "testName": "T-197: ListaCampanhas abrir e criar levam às rotas certas; excluir pede confirmação, chama a API e relê; em envio não há excluir @spec:AC-537 abrir e criar levam às rotas certas; excluir pede confirmação, chama a API e relê; em envio não há excluir @spec:AC-537",
+      "method": "vitest-json"
+    },
+    "AC-538": {
+      "status": "pass",
+      "testName": "T-197: ListaCampanhas relê a cada 15 s só com campanha enviando, e Exportar e Auditar aparecem \"em breve\" @spec:AC-538 relê a cada 15 s só com campanha enviando, e Exportar e Auditar aparecem \"em breve\" @spec:AC-538",
+      "method": "vitest-json"
+    },
+    "AC-539": {
+      "status": "pass",
+      "testName": "T-198: NovaCampanha abre com o título, a volta para a lista e as três seções, dentro do grupo (app) @spec:AC-539 abre com o título, a volta para a lista e as três seções, dentro do grupo (app) @spec:AC-539",
+      "method": "vitest-json"
+    },
+    "AC-540": {
+      "status": "pass",
+      "testName": "T-196: API de campanhas para as telas a prévia conta os destinatários por etapa, o total único e o valor em pipeline, só da empresa @spec:AC-540 a prévia conta os destinatários por etapa, o total único e o valor em pipeline, só da empresa @spec:AC-540",
+      "method": "vitest-json"
+    },
+    "AC-541": {
+      "status": "pass",
+      "testName": "T-196: API de campanhas para as telas criar com várias etapas junta os leads com e-mail, sem repetir, e a origem de uma etapa segue valendo @spec:AC-541 criar com várias etapas junta os leads com e-mail, sem repetir, e a origem de uma etapa segue valendo @spec:AC-541",
+      "method": "vitest-json"
+    },
+    "AC-542": {
+      "status": "pass",
+      "testName": "T-198: NovaCampanha as etapas mostram a contagem real, o total único e a lista colada conta e-mails válidos sem repetir @spec:AC-542 as etapas mostram a contagem real, o total único e a lista colada conta e-mails válidos sem repetir @spec:AC-542",
+      "method": "vitest-json"
+    },
+    "AC-543": {
+      "status": "pass",
+      "testName": "T-198: NovaCampanha sem nome, assunto, corpo ou destinatário mostra o que falta e não envia; com tudo cria e navega @spec:AC-543 sem nome, assunto, corpo ou destinatário mostra o que falta e não envia; com tudo cria e navega @spec:AC-543",
+      "method": "vitest-json"
+    },
+    "AC-544": {
+      "status": "pass",
+      "testName": "T-196: API de campanhas para as telas editar só vale no rascunho e o detalhe traz quem criou @spec:AC-544 @spec:AC-547 editar só vale no rascunho e o detalhe traz quem criou @spec:AC-544 @spec:AC-547",
+      "method": "vitest-json"
+    },
+    "AC-545": {
+      "status": "pass",
+      "testName": "T-198: NovaCampanha a prévia isola o HTML, alterna desktop e mobile e a estimativa usa o volume e o pipeline reais @spec:AC-545 a prévia isola o HTML, alterna desktop e mobile e a estimativa usa o volume e o pipeline reais @spec:AC-545",
+      "method": "vitest-json"
+    },
+    "AC-546": {
+      "status": "pass",
+      "testName": "T-198: NovaCampanha canal, resposta, remetente, pré-cabeçalho, modelos, variáveis, formatação e e-mail de teste aparecem \"em breve\" @spec:AC-546 canal, resposta, remetente, pré-cabeçalho, modelos, variáveis, formatação e e-mail de teste aparecem \"em breve\" @spec:AC-546",
+      "method": "vitest-json"
+    },
+    "AC-547": {
+      "status": "pass",
+      "testName": "T-196: API de campanhas para as telas editar só vale no rascunho e o detalhe traz quem criou @spec:AC-544 @spec:AC-547 editar só vale no rascunho e o detalhe traz quem criou @spec:AC-544 @spec:AC-547",
+      "method": "vitest-json"
+    },
+    "AC-548": {
+      "status": "pass",
+      "testName": "T-199: DetalheCampanha a barra e os cartões vêm das contagens, sem benchmark nem bounce @spec:AC-548 a barra e os cartões vêm das contagens, sem benchmark nem bounce @spec:AC-548",
+      "method": "vitest-json"
+    },
+    "AC-549": {
+      "status": "pass",
+      "testName": "T-199: DetalheCampanha Play pede confirmação e chama iniciar; em envio fica desabilitado; reenviar falhas chama a rota e relê @spec:AC-549 Play pede confirmação e chama iniciar; em envio fica desabilitado; reenviar falhas chama a rota e relê @spec:AC-549",
+      "method": "vitest-json"
+    },
+    "AC-550": {
+      "status": "pass",
+      "testName": "T-199: DetalheCampanha a tabela filtra por status e busca, 20 por página, sem os campos que não existem @spec:AC-550 a tabela filtra por status e busca, 20 por página, sem os campos que não existem @spec:AC-550",
+      "method": "vitest-json"
+    },
+    "AC-551": {
+      "status": "pass",
+      "testName": "T-199: DetalheCampanha editar leva ao rascunho, excluir pede confirmação e volta à lista, e a prévia isola o conteúdo @spec:AC-551 editar leva ao rascunho, excluir pede confirmação e volta à lista, e a prévia isola o conteúdo @spec:AC-551",
+      "method": "vitest-json"
+    },
+    "AC-552": {
+      "status": "pass",
+      "testName": "T-199: DetalheCampanha relê a cada 15 s enquanto envia e para quando conclui @spec:AC-552 relê a cada 15 s enquanto envia e para quando conclui @spec:AC-552",
+      "method": "vitest-json"
+    },
+    "AC-553": {
+      "status": "pass",
+      "testName": "T-200: menu, rotas e páginas de campanhas o item Campanhas aparece aos três papéis e as três páginas existem @spec:AC-553 o item Campanhas aparece aos três papéis e as três páginas existem @spec:AC-553",
+      "method": "vitest-json"
+    },
+    "AC-554": {
+      "status": "pass",
+      "testName": "T-199: DetalheCampanha carregando mostra esqueleto, sem destinatários mostra o vazio e falha mostra erro com \"Tentar de novo\" @spec:AC-554 carregando mostra esqueleto, sem destinatários mostra o vazio e falha mostra erro com \"Tentar de novo\" @spec:AC-554",
+      "method": "vitest-json"
+    }
+  },
+  "principles": {}
+}
