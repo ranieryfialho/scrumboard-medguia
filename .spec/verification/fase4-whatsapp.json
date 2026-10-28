@@ -1,10 +1,10 @@
 {
   "feature": "fase4-whatsapp",
-  "timestamp": "2026-10-28T14:43:25.896Z",
-  "gitRev": "cf0908f",
+  "timestamp": "2026-10-28T15:34:49.160Z",
+  "gitRev": "4ebac5f",
   "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
-  "exitCode": 1,
+  "exitCode": 0,
   "testsParsed": 1494,
   "results": {
     "AC-499": {
