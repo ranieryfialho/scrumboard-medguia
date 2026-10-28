@@ -1,0 +1,202 @@
+{
+  "feature": "fase4-admin",
+  "timestamp": "2026-10-28T19:01:07.779Z",
+  "gitRev": "e44cab9",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
+  "reporter": "vitest-json",
+  "exitCode": 0,
+  "testsParsed": 1609,
+  "results": {
+    "AC-577": {
+      "status": "pass",
+      "testName": "T-213: Equipe abre com o título dentro do grupo (app) e o atalho para convidar @spec:AC-577 abre com o título dentro do grupo (app) e o atalho para convidar @spec:AC-577",
+      "method": "vitest-json"
+    },
+    "AC-578": {
+      "status": "pass",
+      "testName": "T-209: equipe da empresa lista só a equipe da empresa, com filtros, busca, paginação e resumo; atendente 403, sem sessão 401 @spec:AC-578 lista só a equipe da empresa, com filtros, busca, paginação e resumo; atendente 403, sem sessão 401 @spec:AC-578",
+      "method": "vitest-json"
+    },
+    "AC-579": {
+      "status": "pass",
+      "testName": "T-209: equipe da empresa a situação é ativo, pendente ou inativo e o último acesso é o login mais recente @spec:AC-579 a situação é ativo, pendente ou inativo e o último acesso é o login mais recente @spec:AC-579",
+      "method": "vitest-json"
+    },
+    "AC-580": {
+      "status": "pass",
+      "testName": "T-213: Equipe os quatro cartões vêm do resumo, sem assentos, login médio nem LGPD @spec:AC-580 os quatro cartões vêm do resumo, sem assentos, login médio nem LGPD @spec:AC-580",
+      "method": "vitest-json"
+    },
+    "AC-581": {
+      "status": "pass",
+      "testName": "T-213: Equipe a tabela mostra papel, situação e último acesso; busca, filtros e paginação pedem o recorte ao servidor @spec:AC-581 a tabela mostra papel, situação e último acesso; busca, filtros e paginação pedem o recorte ao servidor @spec:AC-581",
+      "method": "vitest-json"
+    },
+    "AC-582": {
+      "status": "pass",
+      "testName": "T-209: equipe da empresa só o master troca o papel; nunca o próprio, nunca o último master, nunca de outra empresa @spec:AC-582 só o master troca o papel; nunca o próprio, nunca o último master, nunca de outra empresa @spec:AC-582",
+      "method": "vitest-json"
+    },
+    "AC-583": {
+      "status": "pass",
+      "testName": "T-209: equipe da empresa desativar tira o acesso da pessoa, reativar devolve, e as mesmas recusas valem @spec:AC-583 desativar tira o acesso da pessoa, reativar devolve, e as mesmas recusas valem @spec:AC-583",
+      "method": "vitest-json"
+    },
+    "AC-584": {
+      "status": "pass",
+      "testName": "T-209: equipe da empresa reenviar convite gera token novo, invalida o antigo e só vale para quem está pendente @spec:AC-584 reenviar convite gera token novo, invalida o antigo e só vale para quem está pendente @spec:AC-584",
+      "method": "vitest-json"
+    },
+    "AC-585": {
+      "status": "pass",
+      "testName": "T-213: Equipe Políticas, exportar, frentes, logs e IP ficam \"em breve\" e a seleção em massa e o bloco LGPD não existem @spec:AC-585 Políticas, exportar, frentes, logs e IP ficam \"em breve\" e a seleção em massa e o bloco LGPD não existem @spec:AC-585",
+      "method": "vitest-json"
+    },
+    "AC-586": {
+      "status": "pass",
+      "testName": "T-214: ConvidarUsuario abre com o título, a volta para a equipe e o cancelar, dentro do grupo (app) @spec:AC-586 abre com o título, a volta para a equipe e o cancelar, dentro do grupo (app) @spec:AC-586",
+      "method": "vitest-json"
+    },
+    "AC-587": {
+      "status": "pass",
+      "testName": "T-210: convite de usuário cria o vínculo na empresa da sessão, grava o nome, gera o token de 24 h e devolve o link @spec:AC-587 cria o vínculo na empresa da sessão, grava o nome, gera o token de 24 h e devolve o link @spec:AC-587",
+      "method": "vitest-json"
+    },
+    "AC-588": {
+      "status": "pass",
+      "testName": "T-210: convite de usuário o gerente só convida atendente e as recusas não criam nada @spec:AC-588 o gerente só convida atendente e as recusas não criam nada @spec:AC-588",
+      "method": "vitest-json"
+    },
+    "AC-589": {
+      "status": "pass",
+      "testName": "T-214: ConvidarUsuario o botão só habilita com nome, e-mail válido e papel; a prévia e a matriz acompanham; o gerente só vê atendente @spec:AC-589 o botão só habilita com nome, e-mail válido e papel; a prévia e a matriz acompanham; o gerente só vê atendente @spec:AC-589",
+      "method": "vitest-json"
+    },
+    "AC-590": {
+      "status": "pass",
+      "testName": "T-214: ConvidarUsuario o resultado mostra o link copiável e avisa quando o e-mail não saiu; os erros mantêm o que foi digitado @spec:AC-590 o resultado mostra o link copiável e avisa quando o e-mail não saiu; os erros mantêm o que foi digitado @spec:AC-590",
+      "method": "vitest-json"
+    },
+    "AC-591": {
+      "status": "pass",
+      "testName": "T-214: ConvidarUsuario WhatsApp, departamento, 2FA, leads, validade e boas-vindas ficam \"em breve\"; licenças e garantias não existem @spec:AC-591 WhatsApp, departamento, 2FA, leads, validade e boas-vindas ficam \"em breve\"; licenças e garantias não existem @spec:AC-591",
+      "method": "vitest-json"
+    },
+    "AC-592": {
+      "status": "pass",
+      "testName": "T-215: MotivosPerda abre com o título dentro do grupo (app) e o aviso do requisito bloqueante @spec:AC-592 abre com o título dentro do grupo (app) e o aviso do requisito bloqueante @spec:AC-592",
+      "method": "vitest-json"
+    },
+    "AC-593": {
+      "status": "pass",
+      "testName": "T-211: motivos de perda (administração) lista todos os motivos, inclusive inativos, com o uso na empresa da sessão e os totais do catálogo @spec:AC-593 lista todos os motivos, inclusive inativos, com o uso na empresa da sessão e os totais do catálogo @spec:AC-593",
+      "method": "vitest-json"
+    },
+    "AC-594": {
+      "status": "pass",
+      "testName": "T-215: MotivosPerda os cartões mostram o catálogo, as perdas do mês e o principal motivo, sem impacto nem conformidade @spec:AC-594 os cartões mostram o catálogo, as perdas do mês e o principal motivo, sem impacto nem conformidade @spec:AC-594",
+      "method": "vitest-json"
+    },
+    "AC-595": {
+      "status": "pass",
+      "testName": "T-215: MotivosPerda a tabela mostra natureza, uso e situação; a busca, o tipo e a situação pedem o recorte; sem resultado avisa @spec:AC-595 a tabela mostra natureza, uso e situação; a busca, o tipo e a situação pedem o recorte; sem resultado avisa @spec:AC-595",
+      "method": "vitest-json"
+    },
+    "AC-596": {
+      "status": "pass",
+      "testName": "T-211: motivos de perda (administração) só o super admin cria e (des)ativa motivo personalizado; o sistêmico não muda @spec:AC-596 só o super admin cria e (des)ativa motivo personalizado; o sistêmico não muda @spec:AC-596",
+      "method": "vitest-json"
+    },
+    "AC-597": {
+      "status": "pass",
+      "testName": "T-215: MotivosPerda exportar, diretrizes, playbook e ver detalhes ficam \"em breve\" e os blocos sem dado não existem @spec:AC-597 exportar, diretrizes, playbook e ver detalhes ficam \"em breve\" e os blocos sem dado não existem @spec:AC-597",
+      "method": "vitest-json"
+    },
+    "AC-598": {
+      "status": "pass",
+      "testName": "T-216: Empresas abre com o título dentro do grupo (app) e o atalho para a nova empresa @spec:AC-598 abre com o título dentro do grupo (app) e o atalho para a nova empresa @spec:AC-598",
+      "method": "vitest-json"
+    },
+    "AC-599": {
+      "status": "pass",
+      "testName": "T-212: empresas da rede lista as empresas com a quantidade de pessoas, filtros e resumo; só o super admin @spec:AC-599 lista as empresas com a quantidade de pessoas, filtros e resumo; só o super admin @spec:AC-599",
+      "method": "vitest-json"
+    },
+    "AC-600": {
+      "status": "pass",
+      "testName": "T-216: Empresas os cartões e a lista mostram o que existe, com \"Atual\", usuários e atalhos, sem CNPJ nem plano @spec:AC-600 os cartões e a lista mostram o que existe, com \"Atual\", usuários e atalhos, sem CNPJ nem plano @spec:AC-600",
+      "method": "vitest-json"
+    },
+    "AC-601": {
+      "status": "pass",
+      "testName": "T-216: Empresas \"Acessar\" troca a empresa ativa pela rota existente; na atual fica desabilitado e a recusa aparece @spec:AC-601 \"Acessar\" troca a empresa ativa pela rota existente; na atual fica desabilitado e a recusa aparece @spec:AC-601",
+      "method": "vitest-json"
+    },
+    "AC-602": {
+      "status": "pass",
+      "testName": "T-216: Empresas exportar e planos ficam \"em breve\" e os blocos informativos do protótipo não existem @spec:AC-602 exportar e planos ficam \"em breve\" e os blocos informativos do protótipo não existem @spec:AC-602",
+      "method": "vitest-json"
+    },
+    "AC-603": {
+      "status": "pass",
+      "testName": "T-217: NovaEmpresa abre com o título, a volta e o cancelar, dentro do grupo (app) @spec:AC-603 abre com o título, a volta e o cancelar, dentro do grupo (app) @spec:AC-603",
+      "method": "vitest-json"
+    },
+    "AC-604": {
+      "status": "pass",
+      "testName": "T-212: criação de empresa com convite que falha a empresa e o vínculo não ficam no banco quando o convite falha @spec:AC-604 a empresa e o vínculo não ficam no banco quando o convite falha @spec:AC-604",
+      "method": "vitest-json"
+    },
+    "AC-605": {
+      "status": "pass",
+      "testName": "T-212: empresas da rede recusa nome, identificador e e-mail inválidos e identificador repetido sem criar nada @spec:AC-605 recusa nome, identificador e e-mail inválidos e identificador repetido sem criar nada @spec:AC-605",
+      "method": "vitest-json"
+    },
+    "AC-606": {
+      "status": "pass",
+      "testName": "T-217: NovaEmpresa sugere o identificador, mostra o resumo, envia e mostra o link; o erro de identificador aparece no campo @spec:AC-606 sugere o identificador, mostra o resumo, envia e mostra o link; o erro de identificador aparece no campo @spec:AC-606",
+      "method": "vitest-json"
+    },
+    "AC-607": {
+      "status": "pass",
+      "testName": "T-217: NovaEmpresa o plano e as cotas ficam num bloco \"em breve\" e razão social, CNPJ, endereço e assentos não existem @spec:AC-607 o plano e as cotas ficam num bloco \"em breve\" e razão social, CNPJ, endereço e assentos não existem @spec:AC-607",
+      "method": "vitest-json"
+    },
+    "AC-608": {
+      "status": "pass",
+      "testName": "T-212: empresas da rede o detalhe traz a empresa e as pessoas; desconhecida ou fora do formato é 404 @spec:AC-608 o detalhe traz a empresa e as pessoas; desconhecida ou fora do formato é 404 @spec:AC-608",
+      "method": "vitest-json"
+    },
+    "AC-609": {
+      "status": "pass",
+      "testName": "T-212: empresas da rede muda o nome e a situação, nunca o identificador, e não suspende a empresa atual do super admin @spec:AC-609 muda o nome e a situação, nunca o identificador, e não suspende a empresa atual do super admin @spec:AC-609",
+      "method": "vitest-json"
+    },
+    "AC-610": {
+      "status": "pass",
+      "testName": "T-212: empresas da rede empresa suspensa barra a sessão e a entrada dos usuários dela, e reativar devolve, sem afetar as outras @spec:AC-610 empresa suspensa barra a sessão e a entrada dos usuários dela, e reativar devolve, sem afetar as outras @spec:AC-610",
+      "method": "vitest-json"
+    },
+    "AC-611": {
+      "status": "pass",
+      "testName": "T-217: EditarEmpresa lista as pessoas da empresa com papel e situação e \"Acessar esta empresa\" troca a empresa ativa @spec:AC-611 lista as pessoas da empresa com papel e situação e \"Acessar esta empresa\" troca a empresa ativa @spec:AC-611",
+      "method": "vitest-json"
+    },
+    "AC-612": {
+      "status": "pass",
+      "testName": "T-217: EditarEmpresa impersonate, cota, integrações, políticas e arquivar ficam \"em breve\" e plano, CNPJ e infraestrutura não existem @spec:AC-612 impersonate, cota, integrações, políticas e arquivar ficam \"em breve\" e plano, CNPJ e infraestrutura não existem @spec:AC-612",
+      "method": "vitest-json"
+    },
+    "AC-613": {
+      "status": "pass",
+      "testName": "T-218: menu, rotas e páginas de administração as seis páginas existem e o menu mostra Equipe e Motivos a gerente e master, e Empresas só ao super admin @spec:AC-613 as seis páginas existem e o menu mostra Equipe e Motivos a gerente e master, e Empresas só ao super admin @spec:AC-613",
+      "method": "vitest-json"
+    },
+    "AC-614": {
+      "status": "pass",
+      "testName": "T-217: EditarEmpresa carregando mostra esqueleto e a falha mostra erro com \"Tentar de novo\" @spec:AC-614 carregando mostra esqueleto e a falha mostra erro com \"Tentar de novo\" @spec:AC-614",
+      "method": "vitest-json"
+    }
+  },
+  "principles": {}
+}
