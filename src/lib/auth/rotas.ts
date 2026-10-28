@@ -61,6 +61,10 @@ const REGRAS_PAPEL: RegraPapel[] = [
   { prefixo: '/relatorios-comerciais', papelMinimo: 'GERENTE' },
   { prefixo: '/relatorios', papelMinimo: 'GERENTE' },
   { prefixo: '/api/relatorios', papelMinimo: 'GERENTE' },
+  // fase4-admin: as rotas de administração seguem a mesma matriz das telas.
+  { prefixo: '/api/equipe', papelMinimo: 'GERENTE' },
+  { prefixo: '/api/configuracoes/motivos-perda', papelMinimo: 'GERENTE' },
+  { prefixo: '/api/admin/empresas', somenteSuperAdmin: true },
 ];
 
 /** A regra de prefixo mais específico vence — `/relatorios-comerciais` não cai na regra de `/relatorios`. */

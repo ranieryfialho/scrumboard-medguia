@@ -4,10 +4,10 @@
 // da sessão em `sessoes` (nunca do corpo da requisição, AC-043). Sessão
 // ausente, expirada ou revogada (linha apagada por T-030) é sempre recusada
 // (AC-044).
-import { and, eq, gt } from 'drizzle-orm';
+import { and, eq, gt, sql } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
-import { empresasUsuarios, sessoes, usuarios } from '../../db/schema';
+import { empresas, empresasUsuarios, sessoes, usuarios } from '../../db/schema';
 import type { PapelUsuario } from './convites';
 
 export class ErroSessaoInvalida extends Error {
@@ -81,10 +81,14 @@ export async function resolverContextoTenant(
     throw new ErroSessaoInvalida();
   }
 
+  // fase4-admin (AC-610, ASM-207): o vínculo só vale se a empresa está ativa — empresa suspensa não
+  // dá acesso (o super admin não é barrado: ele administra a rede inclusive as suspensas).
+  const empresaAtiva = usuario.isSuperAdmin ? sql`true` : eq(empresas.ativo, true);
   const vinculos = await db
     .select({ empresaId: empresasUsuarios.empresaId, papel: empresasUsuarios.papel })
     .from(empresasUsuarios)
-    .where(and(eq(empresasUsuarios.usuarioId, sessao.usuarioId), eq(empresasUsuarios.ativo, true)))
+    .innerJoin(empresas, eq(empresas.id, empresasUsuarios.empresaId))
+    .where(and(eq(empresasUsuarios.usuarioId, sessao.usuarioId), eq(empresasUsuarios.ativo, true), empresaAtiva))
     .limit(1);
 
   const vinculo = vinculos[0];
