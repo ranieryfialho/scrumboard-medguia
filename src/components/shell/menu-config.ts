@@ -62,6 +62,8 @@ export const GRUPOS_MENU: GrupoMenu[] = [
         icone: 'chat',
         contador: 'whatsappNaoLidas',
       },
+      { id: 'whatsapp-conexao', rotulo: 'Conexão & QR Code', href: '/whatsapp/conexao', icone: 'qr_code_2' },
+      { id: 'whatsapp-configuracao', rotulo: 'Configuração Evolution', href: '/whatsapp/configuracao', icone: 'settings_ethernet' },
       { id: 'campanhas', rotulo: 'Campanhas', href: '/campanhas', icone: 'send' },
     ],
   },

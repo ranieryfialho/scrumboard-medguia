@@ -9,6 +9,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { getDb } from '../../../../db/client';
 import { validarCorpoConfig } from '../../../../domain/whatsapp/config';
 import { getAuth } from '../../../../lib/auth/instancia';
+import { EVENTOS_DO_WEBHOOK, urlDoWebhookMascarada } from '../../../../lib/whatsapp/webhook-url';
 import { ErroSessaoInvalida, resolverContextoTenant, type ContextoTenant } from '../../../../lib/auth/tenant';
 import { ErroInstanciaEmUso, lerConfiguracao, salvarConfiguracao } from '../../../../repositories/whatsapp-config';
 
@@ -52,7 +53,17 @@ export async function GET(request: NextRequest) {
   if (!contexto) return semSessao();
 
   const config = await lerConfiguracao(getDb(), contexto);
-  return NextResponse.json({ empresaId: contexto.empresaId, config });
+  // T-193 (AC-524): além de `{ empresaId, config }`, o que a tela de configuração mostra —
+  // a URL do servidor e se a chave existe (nunca a chave), a URL do webhook com o
+  // segredo mascarado e os eventos que o CRM registra.
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || `https://${request.headers.get('host')}`;
+  return NextResponse.json({
+    empresaId: contexto.empresaId,
+    config,
+    servidor: { urlBase: process.env.EVOLUTION_API_URL ?? null, chaveConfigurada: Boolean(process.env.EVOLUTION_API_KEY) },
+    webhookUrl: urlDoWebhookMascarada(appUrl, contexto.empresaId),
+    eventos: [...EVENTOS_DO_WEBHOOK],
+  });
 }
 
 export async function POST(request: NextRequest) {
