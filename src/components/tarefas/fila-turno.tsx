@@ -200,9 +200,9 @@ export function FilaTurno() {
             </div>
 
             {filtrados.length === 0 ? (
-              <p className="px-space-md pb-space-md font-body-md text-body-md text-text-secondary">
-                {fila.length === 0 ? 'Nenhum toque pendente neste turno.' : 'Nenhum toque encontrado'}
-              </p>
+              fila.length === 0 && (
+                <p className="px-space-md pb-space-md font-body-md text-body-md text-text-secondary">Nenhum toque pendente neste turno.</p>
+              )
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left">

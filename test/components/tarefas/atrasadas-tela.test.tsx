@@ -84,7 +84,7 @@ describe('T-183: TarefasAtrasadas', () => {
     globalThis.fetch = fetchOriginal;
   });
 
-  const linhas = () => screen.getAllByRole('row').slice(1);
+  const linhas = () => screen.queryAllByRole('row').slice(1);
 
   test('a tela mostra o título do controle de atrasos e os estados de carregando, vazio e erro @spec:AC-472 @spec:AC-498', async () => {
     render(<TarefasAtrasadas />);
@@ -116,7 +116,7 @@ describe('T-183: TarefasAtrasadas', () => {
   test('a fila lista só os atrasados, do maior atraso para o menor, com faixa de cor @spec:AC-474', async () => {
     fila.push({ ...atrasado('Do turno', 10), atrasado: false });
     render(<TarefasAtrasadas />);
-    await screen.findByText('Cardio Vida');
+    await screen.findByRole('link', { name: 'Cardio Vida' });
     const l = linhas();
     expect(l).toHaveLength(4);
     expect(within(l[0]).getByText('Cardio Vida')).toBeTruthy();
@@ -131,7 +131,7 @@ describe('T-183: TarefasAtrasadas', () => {
   test('atraso mínimo, consultor, etapa, ordem e Limpar restringem a fila @spec:AC-475', async () => {
     const usuario = userEvent.setup({ advanceTimers: () => undefined });
     render(<TarefasAtrasadas />);
-    await screen.findByText('Cardio Vida');
+    await screen.findByRole('link', { name: 'Cardio Vida' });
     await usuario.selectOptions(screen.getByLabelText('Atraso'), '60');
     expect(linhas()).toHaveLength(3);
     await usuario.selectOptions(screen.getByLabelText('Atraso'), '240');
@@ -192,7 +192,7 @@ describe('T-183: TarefasAtrasadas', () => {
 
   test('os itens sem backend aparecem "em breve" e o que não existe no sistema não aparece @spec:AC-478', async () => {
     render(<TarefasAtrasadas />);
-    await screen.findByText('Cardio Vida');
+    await screen.findByRole('link', { name: 'Cardio Vida' });
     for (const rotulo of ['Forçar Mutirão de Regularização', 'Alertar Consultores', 'Exportar Auditoria', 'Notificar Atraso Urgente']) {
       expect(screen.getByRole('button', { name: `${rotulo} (em breve)` }).getAttribute('aria-disabled')).toBe('true');
     }
@@ -203,12 +203,12 @@ describe('T-183: TarefasAtrasadas', () => {
 
   test('a tela recarrega ao receber o evento da fila @spec:AC-479', async () => {
     render(<TarefasAtrasadas />);
-    await screen.findByText('Cardio Vida');
+    await screen.findByRole('link', { name: 'Cardio Vida' });
     fila = [atrasado('Novo Atrasado', 300)];
     await act(async () => {
       FakeEventSource.instancias[0].disparar('cadencia.fila_alterada', { data: JSON.stringify({ tipo: 'cadencia.fila_alterada', empresaId: 'e' }) });
     });
     expect(await screen.findByText('Novo Atrasado')).toBeTruthy();
-    expect(screen.queryByText('Cardio Vida')).toBeFalsy();
+    expect(screen.queryByRole('link', { name: 'Cardio Vida' })).toBeFalsy();
   });
 });
