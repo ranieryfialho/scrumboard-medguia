@@ -1,0 +1,177 @@
+{
+  "feature": "fase4-whatsapp",
+  "timestamp": "2026-10-28T14:43:25.896Z",
+  "gitRev": "cf0908f",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
+  "reporter": "vitest-json",
+  "exitCode": 1,
+  "testsParsed": 1494,
+  "results": {
+    "AC-499": {
+      "status": "pass",
+      "testName": "T-190: CaixaDeEntrada abre com o título e o selo da conexão (conectada, desconectada ou não configurada) @spec:AC-499 abre com o título e o selo da conexão (conectada, desconectada ou não configurada) @spec:AC-499",
+      "method": "vitest-json"
+    },
+    "AC-500": {
+      "status": "pass",
+      "testName": "T-189: conversas da caixa de entrada lista uma conversa por lead ou número (nono dígito junto), da mais recente à mais antiga, só da empresa @spec:AC-500 lista uma conversa por lead ou número (nono dígito junto), da mais recente à mais antiga, só da empresa @spec:AC-500",
+      "method": "vitest-json"
+    },
+    "AC-501": {
+      "status": "pass",
+      "testName": "T-189: conversas da caixa de entrada o atendente só vê as dos próprios cards, as avulsas e as de leads sem card; o gerente filtra por pessoa @spec:AC-501 o atendente só vê as dos próprios cards, as avulsas e as de leads sem card; o gerente filtra por pessoa @spec:AC-501",
+      "method": "vitest-json"
+    },
+    "AC-502": {
+      "status": "pass",
+      "testName": "T-190: CaixaDeEntrada as abas mostram as contagens e o filtro; a busca restringe; cada linha mostra os dados da conversa @spec:AC-502 as abas mostram as contagens e o filtro; a busca restringe; cada linha mostra os dados da conversa @spec:AC-502",
+      "method": "vitest-json"
+    },
+    "AC-503": {
+      "status": "pass",
+      "testName": "T-190: CaixaDeEntrada abrir uma conversa mostra o histórico, marca como lida e avisa o menu @spec:AC-503 abrir uma conversa mostra o histórico, marca como lida e avisa o menu @spec:AC-503",
+      "method": "vitest-json"
+    },
+    "AC-504": {
+      "status": "pass",
+      "testName": "T-190: CaixaDeEntrada Enter envia (com leadId ou número), Shift+Enter quebra a linha e o erro mantém o texto @spec:AC-504 Enter envia (com leadId ou número), Shift+Enter quebra a linha e o erro mantém o texto @spec:AC-504",
+      "method": "vitest-json"
+    },
+    "AC-505": {
+      "status": "pass",
+      "testName": "T-189: conversas da caixa de entrada \"todas\" marca como lidas só as recebidas da empresa da sessão e zera a lista @spec:AC-505 \"todas\" marca como lidas só as recebidas da empresa da sessão e zera a lista @spec:AC-505",
+      "method": "vitest-json"
+    },
+    "AC-506": {
+      "status": "pass",
+      "testName": "T-189: conversas da caixa de entrada os indicadores do topo são conversas ativas hoje e mensagens não lidas, sem tempo nem taxa de resposta @spec:AC-506 os indicadores do topo são conversas ativas hoje e mensagens não lidas, sem tempo nem taxa de resposta @spec:AC-506",
+      "method": "vitest-json"
+    },
+    "AC-507": {
+      "status": "pass",
+      "testName": "T-190: CaixaDeEntrada o contexto mostra o card (valor, responsável, etapa, Abrir card) ou \"Sem card no pipeline\" @spec:AC-507 o contexto mostra o card (valor, responsável, etapa, Abrir card) ou \"Sem card no pipeline\" @spec:AC-507",
+      "method": "vitest-json"
+    },
+    "AC-508": {
+      "status": "pass",
+      "testName": "T-190: CaixaDeEntrada a caixa relê ao chegar mensagem recebida e a cada 15 segundos @spec:AC-508 a caixa relê ao chegar mensagem recebida e a cada 15 segundos @spec:AC-508",
+      "method": "vitest-json"
+    },
+    "AC-509": {
+      "status": "pass",
+      "testName": "T-190: CaixaDeEntrada respostas rápidas, anexo, emoji, microfone e filtro de status aparecem \"em breve\" @spec:AC-509 respostas rápidas, anexo, emoji, microfone e filtro de status aparecem \"em breve\" @spec:AC-509",
+      "method": "vitest-json"
+    },
+    "AC-510": {
+      "status": "pass",
+      "testName": "T-191: NovaMensagem abre com o título, o aviso de governança e a volta para a caixa de entrada @spec:AC-510 abre com o título, o aviso de governança e a volta para a caixa de entrada @spec:AC-510",
+      "method": "vitest-json"
+    },
+    "AC-511": {
+      "status": "pass",
+      "testName": "T-191: NovaMensagem valida o número, mostra o contador e só habilita enviar com número válido e mensagem @spec:AC-511 valida o número, mostra o contador e só habilita enviar com número válido e mensagem @spec:AC-511",
+      "method": "vitest-json"
+    },
+    "AC-512": {
+      "status": "pass",
+      "testName": "T-191: NovaMensagem os modelos são as mensagens configuradas e preenchem a mensagem sem apagar o número; sem modelos, avisa @spec:AC-512 os modelos são as mensagens configuradas e preenchem a mensagem sem apagar o número; sem modelos, avisa @spec:AC-512",
+      "method": "vitest-json"
+    },
+    "AC-513": {
+      "status": "pass",
+      "testName": "T-191: NovaMensagem enviar manda o número normalizado, mostra \"Mensagem enviada\" com o atalho e limpa o formulário @spec:AC-513 enviar manda o número normalizado, mostra \"Mensagem enviada\" com o atalho e limpa o formulário @spec:AC-513",
+      "method": "vitest-json"
+    },
+    "AC-514": {
+      "status": "pass",
+      "testName": "T-191: NovaMensagem o envio recusado explica o motivo e mantém o número e a mensagem @spec:AC-514 o envio recusado explica o motivo e mantém o número e a mensagem @spec:AC-514",
+      "method": "vitest-json"
+    },
+    "AC-515": {
+      "status": "pass",
+      "testName": "T-191: NovaMensagem a pré-visualização mostra o texto e os últimos disparos vêm das conversas avulsas @spec:AC-515 a pré-visualização mostra o texto e os últimos disparos vêm das conversas avulsas @spec:AC-515",
+      "method": "vitest-json"
+    },
+    "AC-516": {
+      "status": "pass",
+      "testName": "T-191: NovaMensagem os itens sem backend aparecem \"em breve\" e a instância é só leitura @spec:AC-516 os itens sem backend aparecem \"em breve\" e a instância é só leitura @spec:AC-516",
+      "method": "vitest-json"
+    },
+    "AC-517": {
+      "status": "pass",
+      "testName": "T-192: ConexaoQr abre com o título, o selo do estado real e \"Atualizar Status\" @spec:AC-517 abre com o título, o selo do estado real e \"Atualizar Status\" @spec:AC-517",
+      "method": "vitest-json"
+    },
+    "AC-518": {
+      "status": "pass",
+      "testName": "T-192: ConexaoQr os cartões mostram o estado e as mensagens de hoje, sem latência, aparelho nem diagnóstico @spec:AC-518 os cartões mostram o estado e as mensagens de hoje, sem latência, aparelho nem diagnóstico @spec:AC-518",
+      "method": "vitest-json"
+    },
+    "AC-519": {
+      "status": "pass",
+      "testName": "T-192: ConexaoQr gerar o QR mostra a imagem e os passos, consulta o estado a cada 3 s e troca por \"Conectado\" @spec:AC-519 gerar o QR mostra a imagem e os passos, consulta o estado a cada 3 s e troca por \"Conectado\" @spec:AC-519",
+      "method": "vitest-json"
+    },
+    "AC-520": {
+      "status": "pass",
+      "testName": "T-192: ConexaoQr os erros do QR explicam o que fazer e o webhook inativo é avisado @spec:AC-520 os erros do QR explicam o que fazer e o webhook inativo é avisado @spec:AC-520",
+      "method": "vitest-json"
+    },
+    "AC-521": {
+      "status": "pass",
+      "testName": "T-192: ConexaoQr o estado é relido sozinho a cada 15 segundos @spec:AC-521 o estado é relido sozinho a cada 15 segundos @spec:AC-521",
+      "method": "vitest-json"
+    },
+    "AC-522": {
+      "status": "pass",
+      "testName": "T-192: ConexaoQr desconectar, pareamento e nova instância aparecem \"em breve\"; a instância é uma só @spec:AC-522 desconectar, pareamento e nova instância aparecem \"em breve\"; a instância é uma só @spec:AC-522",
+      "method": "vitest-json"
+    },
+    "AC-523": {
+      "status": "pass",
+      "testName": "T-194: ConfiguracaoEvolution abre com o título e as três seções, dentro do grupo (app) @spec:AC-523 abre com o título e as três seções, dentro do grupo (app) @spec:AC-523",
+      "method": "vitest-json"
+    },
+    "AC-524": {
+      "status": "pass",
+      "testName": "T-193: configuração do WhatsApp para a tela traz servidor, webhook mascarado e eventos, mantém o formato antigo e nunca vaza segredo @spec:AC-524 traz servidor, webhook mascarado e eventos, mantém o formato antigo e nunca vaza segredo @spec:AC-524",
+      "method": "vitest-json"
+    },
+    "AC-525": {
+      "status": "pass",
+      "testName": "T-194: ConfiguracaoEvolution salva o nome da instância, valida o formato e trata o nome em uso e o atendente @spec:AC-525 salva o nome da instância, valida o formato e trata o nome em uso e o atendente @spec:AC-525",
+      "method": "vitest-json"
+    },
+    "AC-526": {
+      "status": "pass",
+      "testName": "T-194: ConfiguracaoEvolution a URL base e a chave aparecem só como informação, sem revelar a chave @spec:AC-526 a URL base e a chave aparecem só como informação, sem revelar a chave @spec:AC-526",
+      "method": "vitest-json"
+    },
+    "AC-527": {
+      "status": "pass",
+      "testName": "T-194: ConfiguracaoEvolution \"Verificar Conexão\" mede o tempo da resposta ou avisa a falha @spec:AC-527 \"Verificar Conexão\" mede o tempo da resposta ou avisa a falha @spec:AC-527",
+      "method": "vitest-json"
+    },
+    "AC-528": {
+      "status": "pass",
+      "testName": "T-194: ConfiguracaoEvolution o webhook aparece somente leitura com os eventos registrados e os de teste \"em breve\" @spec:AC-528 o webhook aparece somente leitura com os eventos registrados e os de teste \"em breve\" @spec:AC-528",
+      "method": "vitest-json"
+    },
+    "AC-529": {
+      "status": "pass",
+      "testName": "T-194: ConfiguracaoEvolution as diretrizes anti-ban e restaurar padrões aparecem \"em breve\", sem versão nem manutenção @spec:AC-529 as diretrizes anti-ban e restaurar padrões aparecem \"em breve\", sem versão nem manutenção @spec:AC-529",
+      "method": "vitest-json"
+    },
+    "AC-530": {
+      "status": "pass",
+      "testName": "T-195: menu, rotas e páginas de WhatsApp o grupo Comunicação tem os três itens de WhatsApp e cada um tem a sua página, para os três papéis @spec:AC-530 o grupo Comunicação tem os três itens de WhatsApp e cada um tem a sua página, para os três papéis @spec:AC-530",
+      "method": "vitest-json"
+    },
+    "AC-531": {
+      "status": "pass",
+      "testName": "T-190: CaixaDeEntrada carregando mostra esqueleto, sem conversas mostra o vazio e falha mostra erro com \"Tentar de novo\" @spec:AC-531 carregando mostra esqueleto, sem conversas mostra o vazio e falha mostra erro com \"Tentar de novo\" @spec:AC-531",
+      "method": "vitest-json"
+    }
+  },
+  "principles": {}
+}
