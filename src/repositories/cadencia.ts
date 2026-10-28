@@ -27,7 +27,7 @@ import { and, asc, eq, inArray, isNull, or, type SQL } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { sql } from 'drizzle-orm';
 
-import { cadenciaAtividades, empresas, leads, oportunidades } from '../db/schema';
+import { cadenciaAtividades, empresas, leads, oportunidades, usuarios } from '../db/schema';
 import { podeLiberar } from '../domain/cadencia/feriados';
 import { dataLocalEmSaoPaulo, turnoVigente, type Turno } from '../domain/cadencia/turno';
 import type { ContextoTenant } from '../lib/auth/tenant';
@@ -212,6 +212,10 @@ export async function concluirAtividade(
   });
 }
 
+function responsavelDe(id: string | null, nome: string | null): { id: string; nome: string } | null {
+  return id && nome ? { id, nome } : null;
+}
+
 export interface FiltroFilaDoTurno {
   /**
    * Restringe aos cards deste responsável (ASM-061: ATENDENTE só os
@@ -237,6 +241,10 @@ export interface ItemFilaCadencia {
   lead: { id: string; nome: string; telefoneE164: string | null };
   /** AC-212: `true` só para os toques trazidos por `incluirAtrasados`. */
   atrasado: boolean;
+  /** AC-469: instante em que o toque foi liberado (ISO). */
+  liberadaEm: string | null;
+  /** AC-469: responsável do card, ou `null` se não houver. */
+  responsavel: { id: string; nome: string } | null;
 }
 
 /**
@@ -298,10 +306,13 @@ export async function listarFilaDoTurno(
           leadId: leads.id,
           leadNome: leads.nome,
           leadTelefoneE164: leads.telefoneE164,
+          liberadaEm: sql<string | null>`to_char("cadencia_atividades"."liberada_em" at time zone 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"')`,
+          responsavelNome: usuarios.nome,
         })
         .from(cadenciaAtividades)
         .innerJoin(oportunidades, eq(cadenciaAtividades.oportunidadeId, oportunidades.id))
         .innerJoin(leads, eq(oportunidades.leadId, leads.id))
+        .leftJoin(usuarios, eq(oportunidades.responsavelId, usuarios.id))
         .where(and(...condicoes))
         .orderBy(asc(cadenciaAtividades.sequencia));
 
@@ -310,6 +321,8 @@ export async function listarFilaDoTurno(
         oportunidade: linha.oportunidade,
         lead: { id: linha.leadId, nome: linha.leadNome, telefoneE164: linha.leadTelefoneE164 },
         atrasado: false,
+        liberadaEm: linha.liberadaEm,
+        responsavel: responsavelDe(linha.oportunidade.responsavelId, linha.responsavelNome),
       }));
     });
   }
@@ -344,11 +357,13 @@ export async function listarFilaDoTurno(
         leadId: leads.id,
         leadNome: leads.nome,
         leadTelefoneE164: leads.telefoneE164,
-        liberadaEm: sql<string>`"cadencia_atividades"."liberada_em"`,
+        liberadaEm: sql<string>`to_char("cadencia_atividades"."liberada_em" at time zone 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"')`,
+        responsavelNome: usuarios.nome,
       })
       .from(cadenciaAtividades)
       .innerJoin(oportunidades, eq(cadenciaAtividades.oportunidadeId, oportunidades.id))
       .innerJoin(leads, eq(oportunidades.leadId, leads.id))
+      .leftJoin(usuarios, eq(oportunidades.responsavelId, usuarios.id))
       .where(and(...condicoes))
       .orderBy(asc(cadenciaAtividades.sequencia));
 
@@ -357,6 +372,8 @@ export async function listarFilaDoTurno(
       oportunidade: linha.oportunidade,
       lead: { id: linha.leadId, nome: linha.leadNome, telefoneE164: linha.leadTelefoneE164 },
       atrasado: new Date(linha.liberadaEm).getTime() < corte.getTime(),
+      liberadaEm: linha.liberadaEm,
+      responsavel: responsavelDe(linha.oportunidade.responsavelId, linha.responsavelNome),
     }));
 
     // Atrasados primeiro (AC-213: a seção "Atrasadas" fica acima do turno

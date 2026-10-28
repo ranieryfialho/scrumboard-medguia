@@ -38,6 +38,13 @@ function podeVerTodoTenant(contexto: ContextoTenant): boolean {
   return contexto.isSuperAdmin || contexto.papel === 'MASTER' || contexto.papel === 'GERENTE';
 }
 
+/** AC-468: ATENDENTE vê sempre só os seus; gerente pode filtrar por pessoa (UUID válido). */
+function responsavelDoFiltro(contexto: ContextoTenant, request: NextRequest): string | undefined {
+  if (!podeVerTodoTenant(contexto)) return contexto.usuarioId;
+  const pedido = request.nextUrl.searchParams.get('responsavelId');
+  return pedido && /^[0-9a-f-]{36}$/i.test(pedido) ? pedido : undefined;
+}
+
 /**
  * AC-192: lista os toques pendentes do turno vigente, dos cards do
  * responsável (ou do tenant inteiro, ASM-061). AC-212: com
@@ -50,7 +57,7 @@ export async function GET(request: NextRequest) {
   if (!contexto) return semSessao();
 
   const itens = await listarFilaDoTurno(getDb(), contexto, {
-    responsavelId: podeVerTodoTenant(contexto) ? undefined : contexto.usuarioId,
+    responsavelId: responsavelDoFiltro(contexto, request),
     agora: new Date(),
     incluirAtrasados: request.nextUrl.searchParams.get('atrasados') === '1',
   });

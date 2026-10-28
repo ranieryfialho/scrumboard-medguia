@@ -1,0 +1,202 @@
+{
+  "feature": "fase4-tarefas-agenda",
+  "timestamp": "2026-10-28T13:34:08.558Z",
+  "gitRev": "1b27a82",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
+  "reporter": "vitest-json",
+  "exitCode": 0,
+  "testsParsed": 1453,
+  "results": {
+    "AC-461": {
+      "status": "pass",
+      "testName": "T-182: FilaTurno a fila abre com título, selo do turno e sem a tela antiga fora da casca @spec:AC-461 a fila abre com título, selo do turno e sem a tela antiga fora da casca @spec:AC-461",
+      "method": "vitest-json"
+    },
+    "AC-462": {
+      "status": "pass",
+      "testName": "T-181: resumo do turno e fila com liberação e responsável o resumo conta o turno, o dia, os atrasados e a receita sob risco só da empresa @spec:AC-462 @spec:AC-463 o resumo conta o turno, o dia, os atrasados e a receita sob risco só da empresa @spec:AC-462 @spec:AC-463",
+      "method": "vitest-json"
+    },
+    "AC-463": {
+      "status": "pass",
+      "testName": "T-181: resumo do turno e fila com liberação e responsável o resumo conta o turno, o dia, os atrasados e a receita sob risco só da empresa @spec:AC-462 @spec:AC-463 o resumo conta o turno, o dia, os atrasados e a receita sob risco só da empresa @spec:AC-462 @spec:AC-463",
+      "method": "vitest-json"
+    },
+    "AC-464": {
+      "status": "pass",
+      "testName": "T-182: FilaTurno o destaque mostra o primeiro toque, sem SLA estimado nem script, e a fila vazia mostra o vazio @spec:AC-464 o destaque mostra o primeiro toque, sem SLA estimado nem script, e a fila vazia mostra o vazio @spec:AC-464",
+      "method": "vitest-json"
+    },
+    "AC-465": {
+      "status": "pass",
+      "testName": "T-182: FilaTurno concluir com sucesso e \"não atendeu\" chamam a API com a versão do card e recarregam @spec:AC-465 concluir com sucesso e \"não atendeu\" chamam a API com a versão do card e recarregam @spec:AC-465",
+      "method": "vitest-json"
+    },
+    "AC-466": {
+      "status": "pass",
+      "testName": "T-182: FilaTurno a tabela mostra horário, lead com responsável, etapa, toque e ações, atrasados primeiro @spec:AC-466 a tabela mostra horário, lead com responsável, etapa, toque e ações, atrasados primeiro @spec:AC-466",
+      "method": "vitest-json"
+    },
+    "AC-467": {
+      "status": "pass",
+      "testName": "T-182: FilaTurno a busca filtra pelo nome, a página mostra 10 por vez e sem resultado avisa @spec:AC-467 a busca filtra pelo nome, a página mostra 10 por vez e sem resultado avisa @spec:AC-467",
+      "method": "vitest-json"
+    },
+    "AC-468": {
+      "status": "pass",
+      "testName": "T-181: resumo do turno e fila com liberação e responsável o filtro por responsável restringe o resumo e a fila @spec:AC-468 o filtro por responsável restringe o resumo e a fila @spec:AC-468",
+      "method": "vitest-json"
+    },
+    "AC-469": {
+      "status": "pass",
+      "testName": "T-181: resumo do turno e fila com liberação e responsável cada item da fila traz liberadaEm e o responsável, e só da empresa da sessão @spec:AC-469 cada item da fila traz liberadaEm e o responsável, e só da empresa da sessão @spec:AC-469",
+      "method": "vitest-json"
+    },
+    "AC-470": {
+      "status": "pass",
+      "testName": "T-182: FilaTurno a fila recarrega ao receber o evento e avisa quando o tempo real cai @spec:AC-470 a fila recarrega ao receber o evento e avisa quando o tempo real cai @spec:AC-470",
+      "method": "vitest-json"
+    },
+    "AC-471": {
+      "status": "pass",
+      "testName": "T-182: FilaTurno Bloco de 3 Toques, Play e exportar aparecem \"em breve\" e sem as métricas sem dado @spec:AC-471 Bloco de 3 Toques, Play e exportar aparecem \"em breve\" e sem as métricas sem dado @spec:AC-471",
+      "method": "vitest-json"
+    },
+    "AC-472": {
+      "status": "pass",
+      "testName": "T-183: TarefasAtrasadas a tela mostra o título do controle de atrasos e os estados de carregando, vazio e erro @spec:AC-472 @spec:AC-498 a tela mostra o título do controle de atrasos e os estados de carregando, vazio e erro @spec:AC-472 @spec:AC-498",
+      "method": "vitest-json"
+    },
+    "AC-473": {
+      "status": "pass",
+      "testName": "T-183: TarefasAtrasadas os indicadores mostram atrasados, receita sob risco com ticket médio e o maior atraso @spec:AC-473 os indicadores mostram atrasados, receita sob risco com ticket médio e o maior atraso @spec:AC-473",
+      "method": "vitest-json"
+    },
+    "AC-474": {
+      "status": "pass",
+      "testName": "T-183: TarefasAtrasadas a fila lista só os atrasados, do maior atraso para o menor, com faixa de cor @spec:AC-474 a fila lista só os atrasados, do maior atraso para o menor, com faixa de cor @spec:AC-474",
+      "method": "vitest-json"
+    },
+    "AC-475": {
+      "status": "pass",
+      "testName": "T-183: TarefasAtrasadas atraso mínimo, consultor, etapa, ordem e Limpar restringem a fila @spec:AC-475 atraso mínimo, consultor, etapa, ordem e Limpar restringem a fila @spec:AC-475",
+      "method": "vitest-json"
+    },
+    "AC-476": {
+      "status": "pass",
+      "testName": "T-183: TarefasAtrasadas concluir com sucesso e não atendeu usam a API de concluir com a versão do card @spec:AC-476 concluir com sucesso e não atendeu usam a API de concluir com a versão do card @spec:AC-476",
+      "method": "vitest-json"
+    },
+    "AC-477": {
+      "status": "pass",
+      "testName": "T-183: TarefasAtrasadas o gerente reatribui os cards marcados (um por card) e vê \"N reatribuídos\"; o atendente fica desabilitado @spec:AC-477 o gerente reatribui os cards marcados (um por card) e vê \"N reatribuídos\"; o atendente fica desabilitado @spec:AC-477",
+      "method": "vitest-json"
+    },
+    "AC-478": {
+      "status": "pass",
+      "testName": "T-183: TarefasAtrasadas os itens sem backend aparecem \"em breve\" e o que não existe no sistema não aparece @spec:AC-478 os itens sem backend aparecem \"em breve\" e o que não existe no sistema não aparece @spec:AC-478",
+      "method": "vitest-json"
+    },
+    "AC-479": {
+      "status": "pass",
+      "testName": "T-183: TarefasAtrasadas a tela recarrega ao receber o evento da fila @spec:AC-479 a tela recarrega ao receber o evento da fila @spec:AC-479",
+      "method": "vitest-json"
+    },
+    "AC-480": {
+      "status": "pass",
+      "testName": "T-186: AgendaTela a agenda abre com o título dentro do grupo (app) e a semana atual @spec:AC-480 a agenda abre com o título dentro do grupo (app) e a semana atual @spec:AC-480",
+      "method": "vitest-json"
+    },
+    "AC-481": {
+      "status": "pass",
+      "testName": "T-184: leitura das reuniões e indicadores da agenda lista só as reuniões da empresa da sessão no período, com lead, valor, etapa e closer @spec:AC-481 lista só as reuniões da empresa da sessão no período, com lead, valor, etapa e closer @spec:AC-481",
+      "method": "vitest-json"
+    },
+    "AC-482": {
+      "status": "pass",
+      "testName": "T-184: leitura das reuniões e indicadores da agenda o status é derivado dos dados e o filtro por status devolve só o pedido @spec:AC-482 o status é derivado dos dados e o filtro por status devolve só o pedido @spec:AC-482",
+      "method": "vitest-json"
+    },
+    "AC-483": {
+      "status": "pass",
+      "testName": "T-184: leitura das reuniões e indicadores da agenda os indicadores da semana vêm dos dados: hoje, presença, no-show e pipeline em demonstração @spec:AC-483 os indicadores da semana vêm dos dados: hoje, presença, no-show e pipeline em demonstração @spec:AC-483",
+      "method": "vitest-json"
+    },
+    "AC-484": {
+      "status": "pass",
+      "testName": "T-186: AgendaTela alterna entre Lista, Dia, Semana e Mês e pede só o período visível @spec:AC-484 alterna entre Lista, Dia, Semana e Mês e pede só o período visível @spec:AC-484",
+      "method": "vitest-json"
+    },
+    "AC-485": {
+      "status": "pass",
+      "testName": "T-186: AgendaTela os filtros por closer e por status restringem a lista e Limpar volta ao completo @spec:AC-485 os filtros por closer e por status restringem a lista e Limpar volta ao completo @spec:AC-485",
+      "method": "vitest-json"
+    },
+    "AC-486": {
+      "status": "pass",
+      "testName": "T-186: AgendaTela a fila de hoje mostra horário, lead, valor, closer, status e a evidência, sem campos que não existem @spec:AC-486 a fila de hoje mostra horário, lead, valor, closer, status e a evidência, sem campos que não existem @spec:AC-486",
+      "method": "vitest-json"
+    },
+    "AC-487": {
+      "status": "pass",
+      "testName": "T-184: leitura das reuniões e indicadores da agenda o resgate de no-shows e o desempenho por closer vêm da semana @spec:AC-487 o resgate de no-shows e o desempenho por closer vêm da semana @spec:AC-487",
+      "method": "vitest-json"
+    },
+    "AC-488": {
+      "status": "pass",
+      "testName": "T-186: AgendaTela o que não tem backend aparece \"em breve\" e o que não existe no sistema não aparece @spec:AC-488 o que não tem backend aparece \"em breve\" e o que não existe no sistema não aparece @spec:AC-488",
+      "method": "vitest-json"
+    },
+    "AC-489": {
+      "status": "pass",
+      "testName": "T-185: ações da agenda agendar cria a reunião e leva o card de \"Qualificado p/ reunião\" para \"Reunião agendada\" @spec:AC-489 agendar cria a reunião e leva o card de \"Qualificado p/ reunião\" para \"Reunião agendada\" @spec:AC-489",
+      "method": "vitest-json"
+    },
+    "AC-490": {
+      "status": "pass",
+      "testName": "T-185: ações da agenda agendar recusa data no passado, card fora da etapa, card alheio e falta de sessão sem gravar nada @spec:AC-490 agendar recusa data no passado, card fora da etapa, card alheio e falta de sessão sem gravar nada @spec:AC-490",
+      "method": "vitest-json"
+    },
+    "AC-491": {
+      "status": "pass",
+      "testName": "T-185: ações da agenda no-show marca a reunião e leva o card para \"No-show\"; antes do horário e com resultado é recusado @spec:AC-491 no-show marca a reunião e leva o card para \"No-show\"; antes do horário e com resultado é recusado @spec:AC-491",
+      "method": "vitest-json"
+    },
+    "AC-492": {
+      "status": "pass",
+      "testName": "T-185: ações da agenda concluir exige a evidência do card e, com ela, grava o resumo e leva o card para \"Reunião realizada\" @spec:AC-492 concluir exige a evidência do card e, com ela, grava o resumo e leva o card para \"Reunião realizada\" @spec:AC-492",
+      "method": "vitest-json"
+    },
+    "AC-493": {
+      "status": "pass",
+      "testName": "T-185: ações da agenda reagendar do \"No-show\" cria outra reunião ligada à anterior e volta o card para \"Reunião agendada\" @spec:AC-493 reagendar do \"No-show\" cria outra reunião ligada à anterior e volta o card para \"Reunião agendada\" @spec:AC-493",
+      "method": "vitest-json"
+    },
+    "AC-494": {
+      "status": "pass",
+      "testName": "T-185: ações da agenda reunião alheia, id inválido e falta de sessão não alteram nada; ATENDENTE só age nos próprios cards @spec:AC-494 reunião alheia, id inválido e falta de sessão não alteram nada; ATENDENTE só age nos próprios cards @spec:AC-494",
+      "method": "vitest-json"
+    },
+    "AC-495": {
+      "status": "pass",
+      "testName": "T-185: ações da agenda cada mudança de etapa da agenda avisa só a empresa dela @spec:AC-495 cada mudança de etapa da agenda avisa só a empresa dela @spec:AC-495",
+      "method": "vitest-json"
+    },
+    "AC-496": {
+      "status": "pass",
+      "testName": "T-187: modais da agenda agendar lista só os cards elegíveis, exige card, data e hora e envia o instante de Brasília @spec:AC-489 @spec:AC-496 agendar lista só os cards elegíveis, exige card, data e hora e envia o instante de Brasília @spec:AC-489 @spec:AC-496",
+      "method": "vitest-json"
+    },
+    "AC-497": {
+      "status": "pass",
+      "testName": "T-188: menu, rotas e páginas de tarefas e agenda cada item do menu aponta para uma página que existe, para os três papéis @spec:AC-497 cada item do menu aponta para uma página que existe, para os três papéis @spec:AC-497",
+      "method": "vitest-json"
+    },
+    "AC-498": {
+      "status": "pass",
+      "testName": "T-186: AgendaTela carregando mostra esqueleto, período sem reuniões mostra o vazio e falha mostra erro com \"Tentar de novo\" @spec:AC-498 carregando mostra esqueleto, período sem reuniões mostra o vazio e falha mostra erro com \"Tentar de novo\" @spec:AC-498",
+      "method": "vitest-json"
+    }
+  },
+  "principles": {}
+}
