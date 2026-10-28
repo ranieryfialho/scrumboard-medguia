@@ -91,7 +91,7 @@ trocar papel, desativar e reenviar convites, para manter os acessos em dia.
 
 - **Dado** a lista de pessoas
 - **Quando** a tabela é renderizada e o usuário usa a busca, "Todos os Papéis", "Todos os Status", "Limpar" ou troca de página
-- **Então** cada linha mostra iniciais, nome, e-mail, o selo do papel (MASTER, GERENTE, ATENDENTE), o selo da situação (Ativo, Pendente, Inativo) e o último acesso ("Nunca acessou" para pendente, "Há N min/h/dias" ou a data); a tela pede ao servidor só o recorte (10 por página) e mostra "Mostrando N a M de T colaboradores"; sem resultado diz "Nenhum colaborador encontrado"; "squad e função", segurança 2FA e IP do protótipo **não aparecem**
+- **Então** cada linha mostra iniciais, nome, e-mail, o selo do papel (MASTER, GERENTE, ATENDENTE), o selo da situação (Ativo, Pendente, Inativo) e o último acesso ("Nunca acessou" para pendente, "Há N min/h/dias" ou a data); a tela pede ao servidor só o recorte (10 por página) e mostra "Exibindo N a M de T colaboradores"; sem resultado diz "Nenhum colaborador encontrado"; "squad e função", segurança 2FA e IP do protótipo **não aparecem**
 
 #### AC-582 — Trocar o papel (só master)
 
@@ -138,7 +138,7 @@ criar a própria senha e entrar.
 
 - **Dado** um pedido de convite
 - **Quando** o e-mail é inválido ou o nome está vazio, o papel é inválido, o GERENTE pede um papel que não é ATENDENTE, ou a pessoa já está ativa na empresa
-- **Então** a resposta é, respectivamente, 400, 400, 403 `SEM_PERMISSAO` e 409 `JA_E_COLABORADOR`, sem criar vínculo nem token; sem sessão é 401 e ATENDENTE é 403; e-mail de quem já está desativado na empresa reativa o vínculo e reenvia o convite em vez de duplicar
+- **Então** a resposta é, respectivamente, 400, 400, 403 `SEM_PERMISSAO` e 409 `JA_E_COLABORADOR`, sem criar vínculo nem token; sem sessão é 401 e ATENDENTE é 403; e-mail de quem já está desativado na empresa reativa o vínculo (e reenvia o convite se a pessoa ainda não definiu a senha) em vez de duplicar
 
 #### AC-589 — O formulário valida, mostra a prévia e a matriz de acessos do papel
 

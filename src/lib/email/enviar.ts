@@ -5,7 +5,7 @@
 // vez de este módulo reconsultar o banco, quem chama (T-145) passa `token`
 // como `null` para a conta inexistente/inativa, e o envio é pulado aqui —
 // a mesma regra que "nenhum e-mail é enviado" sem duplicar a consulta.
-import { templateRedefinicaoSenha } from './templates';
+import { templateConvite, templateRedefinicaoSenha } from './templates';
 
 export interface EmailParaEnviar {
   destinatario: string;
@@ -104,4 +104,17 @@ export async function enviarEmailRedefinicaoSenha(
   });
 
   return { enviado: true };
+}
+
+export interface EnviarEmailConviteOpcoes {
+  transporte?: TransporteEmail;
+  baseUrl?: string;
+  convidadoPor?: string;
+}
+
+/** AC-587: envia o e-mail de convite (MedCRM) com o link do token; quem chama trata a falha (`emailEnviado: false`). */
+export async function enviarEmailConvite(destinatario: string, token: string, opcoes: EnviarEmailConviteOpcoes = {}): Promise<void> {
+  const transporte = opcoes.transporte ?? criarTransporteResend();
+  const template = templateConvite(token, { baseUrl: opcoes.baseUrl, convidadoPor: opcoes.convidadoPor });
+  await transporte.enviar({ destinatario, assunto: template.assunto, html: template.html, texto: template.texto });
 }

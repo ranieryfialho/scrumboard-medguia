@@ -60,6 +60,8 @@ export interface AtorConvite {
 
 export interface ConvidarUsuarioInput {
   email: string;
+  /** Nome da pessoa convidada; só é gravado quando o usuário ainda não existe (fase4-admin, AC-587). */
+  nome?: string;
   papel: PapelUsuario;
   /** Só é lido quando o ator é super admin (AC-038) — obrigatório nesse caso. */
   empresaId?: string;
@@ -158,7 +160,7 @@ export async function convidarUsuario(
         email: input.email,
         // Convite ainda não coletou o nome — quem aceita o convite (T-029)
         // é quem tem essa informação; placeholder até lá.
-        nome: input.email,
+        nome: input.nome?.trim() || input.email,
         isSuperAdmin: false,
         ativo: true,
       });

@@ -42,3 +42,34 @@ export function templateRedefinicaoSenha(
     ].join('\n\n'),
   };
 }
+
+export interface OpcoesTemplateConvite {
+  baseUrl?: string;
+  /** Nome de quem convidou, para a primeira linha do e-mail. */
+  convidadoPor?: string;
+}
+
+/** AC-587: e-mail de convite marcado MedCRM com o link `/convite/<token>` (prazo de 24 horas, ASM-205). */
+export function templateConvite(token: string, opcoes: OpcoesTemplateConvite = {}): TemplateEmail {
+  const baseUrl = opcoes.baseUrl ?? baseUrlPadrao();
+  const link = `${baseUrl}/convite/${token}`;
+  const quem = opcoes.convidadoPor ? `${opcoes.convidadoPor} convidou você` : 'Você foi convidado';
+
+  return {
+    assunto: 'MedCRM — Convite para entrar na equipe',
+    html: `
+      <p>Olá,</p>
+      <p>${quem} para entrar na equipe no <strong>MedCRM</strong>.</p>
+      <p><a href="${link}">Clique aqui para criar sua senha e entrar</a></p>
+      <p>Este link expira em 24 horas e só pode ser usado uma vez.</p>
+      <p>MedCRM</p>
+    `.trim(),
+    texto: [
+      'Olá,',
+      `${quem} para entrar na equipe no MedCRM.`,
+      `Para criar sua senha e entrar, acesse: ${link}`,
+      'Este link expira em 24 horas e só pode ser usado uma vez.',
+      'MedCRM',
+    ].join('\n\n'),
+  };
+}

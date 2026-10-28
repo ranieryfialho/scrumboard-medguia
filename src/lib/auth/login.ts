@@ -2,10 +2,10 @@
 // `auth.api.signInEmail` do Better Auth configurado em `server.ts` (T-026).
 // A sessão criada por essa chamada já cai em `sessoes`, no formato que
 // `resolverContextoTenant` (T-031) lê.
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
-import { sessoes, usuarios } from '../../db/schema';
+import { empresas, empresasUsuarios, sessoes, usuarios } from '../../db/schema';
 import type { Auth } from './server';
 
 export class ErroLoginInvalido extends Error {
@@ -47,6 +47,19 @@ export async function login(
   const usuario = usuariosEncontrados[0];
   if (usuario && !usuario.ativo) {
     throw new ErroLoginInvalido();
+  }
+
+  // fase4-admin (AC-610): quem só tem vínculo em empresa suspensa não entra (o super admin entra sempre).
+  if (usuario) {
+    const [superAdmin] = await db.select({ s: usuarios.isSuperAdmin }).from(usuarios).where(eq(usuarios.id, usuario.id)).limit(1);
+    if (!superAdmin?.s) {
+      const vinculos = await db
+        .select({ empresaAtiva: empresas.ativo })
+        .from(empresasUsuarios)
+        .innerJoin(empresas, eq(empresas.id, empresasUsuarios.empresaId))
+        .where(and(eq(empresasUsuarios.usuarioId, usuario.id), eq(empresasUsuarios.ativo, true)));
+      if (vinculos.length > 0 && vinculos.every((v) => !v.empresaAtiva)) throw new ErroLoginInvalido();
+    }
   }
 
   let resultado;
