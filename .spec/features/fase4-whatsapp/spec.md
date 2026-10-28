@@ -69,11 +69,11 @@ responder e marcar como lida, para atender os leads sem sair do CRM.
 - **Quando** a tela pede `GET /api/whatsapp/conversas?filtro=nao_lidas|minhas|todas&busca=&responsavelId=`
 - **Então** voltam só conversas da empresa da sessão, uma por lead (todos os telefones dele reunidos) ou por número avulso (as duas grafias do nono dígito contam como uma), da mais recente para a mais antiga, cada uma com nome do lead (ou o número), telefone, última mensagem, horário, quantidade de não lidas, etapa e responsável do card; a resposta traz também as contagens das três abas; sem sessão é 401
 
-#### AC-501 — Quem vê o quê: atendente só as dos próprios cards e as avulsas
+#### AC-501 — Quem vê o quê: atendente só as dos próprios cards, as avulsas e as de leads sem card
 
 - **Dado** conversas de cards de responsáveis diferentes e conversas de número avulso
 - **Quando** um ATENDENTE, e depois um GERENTE, pedem a lista
-- **Então** o atendente recebe só as conversas dos leads cujo card é dele e as avulsas, mesmo que passe o `responsavelId` de outra pessoa; o gerente (ou master) recebe todas e pode filtrar por `responsavelId`; "Minhas" é sempre as dos cards do próprio usuário
+- **Então** o atendente recebe só as conversas dos leads cujo card é dele, as avulsas e as de leads sem card, mesmo que passe o `responsavelId` de outra pessoa; o gerente (ou master) recebe todas e pode filtrar por `responsavelId`; "Minhas" é sempre as dos cards do próprio usuário
 
 #### AC-502 — A tela mostra as abas, a busca e a lista
 
@@ -114,7 +114,7 @@ responder e marcar como lida, para atender os leads sem sair do CRM.
 #### AC-508 — A lista se atualiza sozinha
 
 - **Dado** a caixa de entrada aberta
-- **Quando** passam 15 segundos, ou chega uma mensagem nova de um lead
+- **Quando** passam 15 segundos, ou chega o evento de mensagem recebida (`mensagem.recebida`, do fluxo de eventos que já existe)
 - **Então** a lista, as contagens e o histórico da conversa aberta são relidos sem recarregar a página, sem apagar o que o usuário está digitando
 
 #### AC-509 — Itens do protótipo sem backend aparecem "em breve"
@@ -277,7 +277,6 @@ carregando, vazio e erro, para nunca cair numa página quebrada.
 
 ## Fora de escopo
 
-- **Receber mensagens em tempo real por SSE:** a entrada continua pelo webhook; a tela relê a lista a cada 15 s (AC-508). Evento próprio de mensagem fica para depois.
 - **Respostas rápidas, anexos, áudio, emoji e filtro por status de pipeline** na caixa de entrada: sem backend; "em breve".
 - **Desconectar sessão, código de pareamento, várias instâncias e "Nova Instância":** o sistema tem uma instância por empresa; "em breve".
 - **Eventos de webhook além de `MESSAGES_UPSERT`, teste/ping de webhook, regenerar chave, anti-ban e restaurar padrões:** o CRM não os implementa; "em breve" ou removidos.
@@ -294,9 +293,9 @@ carregando, vazio e erro, para nunca cair numa página quebrada.
 |---|---|---|---|
 | ASM-171 | A "conversa" é a mesma unidade já usada pelas não lidas: uma por lead (todos os telefones) ou por número avulso canônico (as duas grafias do nono dígito) | aberta | Reaproveita `chaveCanonicaNumero` de `src/repositories/whatsapp.ts` |
 | ASM-172 | "Minhas" = conversas dos leads cujo card tem o usuário como responsável; conversa avulsa não tem responsável e aparece em "Todas" (e "Não lidas") para todos os papéis | aberta | O protótipo mostra "Minhas (12)" sem dizer o critério |
-| ASM-173 | ATENDENTE vê as conversas dos próprios cards e as avulsas; MASTER, GERENTE e super admin veem todas | aberta | Mesma regra de visibilidade das telas anteriores (ASM-163), estendida às avulsas |
+| ASM-173 | ATENDENTE vê as conversas dos próprios cards, as avulsas e as de leads ainda sem card; MASTER, GERENTE e super admin veem todas | aberta | Mesma regra de visibilidade das telas anteriores (ASM-163), estendida às avulsas |
 | ASM-174 | "Conversas ativas hoje" = conversas com pelo menos uma mensagem (enviada ou recebida) no dia de hoje em São Paulo | aberta | O protótipo não define "ativa" |
-| ASM-175 | A tela relê tudo a cada 15 segundos (polling); não há evento SSE de mensagem | aberta | O webhook grava a mensagem mas não emite evento; criar o evento seria outra feature |
+| ASM-175 | A tela relê tudo ao chegar o evento `mensagem.recebida` do `/api/stream` (já existe, da aba de conversa do card) e, como garantia, a cada 15 segundos | aberta | Mesmo evento que `conversa-lead.tsx` já escuta |
 | ASM-176 | A URL e a chave da Evolution são do servidor (ambiente), não da empresa; a tela só mostra a URL e se a chave existe, nunca a chave; o segredo do webhook aparece sempre mascarado | aberta | `buildConfig` lê `EVOLUTION_API_URL`/`EVOLUTION_API_KEY` do ambiente |
 | ASM-177 | O "tempo da resposta" do servidor na verificação é medido no navegador (duração da chamada a `/api/whatsapp/status`), não um ping à Evolution | aberta | A Evolution não devolve latência ao CRM |
 | ASM-178 | Os modelos da tela de mensagem avulsa são as cinco mensagens automáticas já gravadas em `/api/whatsapp/config` | aberta | É o único texto pré-pronto que existe por empresa |

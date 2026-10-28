@@ -9,6 +9,7 @@ import { normalizarNumero } from '../../../../domain/whatsapp/numero';
 import { getAuth } from '../../../../lib/auth/instancia';
 import { ErroSessaoInvalida, resolverContextoTenant, type ContextoTenant } from '../../../../lib/auth/tenant';
 import { marcarConversaComoLida, type AlvoConversa } from '../../../../repositories/whatsapp';
+import { marcarTodasComoLidas } from '../../../../repositories/whatsapp-conversas';
 
 export const dynamic = 'force-dynamic';
 
@@ -58,6 +59,13 @@ export async function POST(request: NextRequest) {
   if (!contexto) return semSessao();
 
   const corpoBruto = await request.json().catch(() => null);
+
+  // T-189 (AC-505): `{ todas: true }` marca todas as não lidas da empresa — só esse corpo, sem leadId/numero.
+  if (corpoBruto && typeof corpoBruto === 'object' && (corpoBruto as Record<string, unknown>).todas === true) {
+    if (Object.keys(corpoBruto).length !== 1) return requisicaoInvalida();
+    return NextResponse.json({ marcadas: await marcarTodasComoLidas(getDb(), contexto) });
+  }
+
   const alvo = validarCorpo(corpoBruto);
   if (!alvo) return requisicaoInvalida();
 

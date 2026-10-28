@@ -322,7 +322,7 @@ export async function buscarHistoricoPorLead(
 }
 
 /** Escolhe, entre as variações do nono dígito de `numero`, a mais curta (sem o nono) como chave estável de agrupamento (AC-155). */
-function chaveCanonicaNumero(numero: string): string {
+export function chaveCanonicaNumero(numero: string): string {
   return [...variantesNumero(numero)].sort((a, b) => a.length - b.length)[0];
 }
 

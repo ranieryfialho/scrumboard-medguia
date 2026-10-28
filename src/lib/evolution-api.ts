@@ -1,3 +1,5 @@
+import { EVENTOS_DO_WEBHOOK } from './whatsapp/webhook-url';
+
 export interface EvolutionConfig {
   url: string;
   apiKey: string;
@@ -127,7 +129,7 @@ export async function setWebhook(config: EvolutionConfig, webhookUrl: string): P
           url: webhookUrl,
           webhookByEvents: false,
           webhookBase64: false,
-          events: ['MESSAGES_UPSERT'],
+          events: [...EVENTOS_DO_WEBHOOK],
         },
       }),
     });
