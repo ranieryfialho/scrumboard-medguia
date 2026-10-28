@@ -55,6 +55,8 @@ const REGRAS_PAPEL: RegraPapel[] = [
   // Administração — Equipe e Motivos de Perda: GERENTE+.
   { prefixo: '/equipe', papelMinimo: 'GERENTE' },
   { prefixo: '/configuracoes/motivos-perda', papelMinimo: 'GERENTE' },
+  // fase5-metas: a tela de metas é de gestão; a leitura (`GET /api/metas`) é de qualquer sessão.
+  { prefixo: '/configuracoes/metas', papelMinimo: 'GERENTE' },
   // Análises: GERENTE+ (mesmo mínimo já aplicado em /api/relatorios/kpis,
   // ASM-074/AC-229).
   { prefixo: '/indicadores', papelMinimo: 'GERENTE' },

@@ -6,6 +6,8 @@
 // dos últimos 30 dias — nunca os números fixos do protótipo
 // (`6._pipeline_funil_pipeline/code.html`: "+12%", "Meta 22%", "Ticket
 // médio"), que não têm fonte no sistema.
+import { descreverMeta } from '@/lib/metas/catalogo';
+import { useMetas } from '@/lib/metas/usar-metas';
 import { CartaoIndicador } from './pecas/cartao-indicador';
 
 export interface IndicadoresFunilView {
@@ -27,6 +29,7 @@ function formatarPercentual(valor: number | null): string {
 }
 
 export function IndicadoresFunil({ dados }: { dados: IndicadoresFunilView }) {
+  const metas = useMetas();
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md">
       <CartaoIndicador
@@ -56,6 +59,7 @@ export function IndicadoresFunil({ dados }: { dados: IndicadoresFunilView }) {
         legenda="últimos 30 dias"
         icone="trending_up"
         cor="success"
+        meta={descreverMeta(dados.conversao30Dias.valor === null ? null : dados.conversao30Dias.valor * 100, metas.taxa_conversao)}
       />
     </div>
   );
