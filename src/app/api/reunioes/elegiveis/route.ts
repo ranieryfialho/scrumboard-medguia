@@ -1,0 +1,30 @@
+// T-185 (fase4-tarefas-agenda, AC-489): cards que podem receber uma reunião
+// (etapa "Qualificado p/ reunião"; só os do próprio usuário para ATENDENTE). 401 sem sessão.
+import { NextResponse, type NextRequest } from 'next/server';
+
+import { getDb } from '../../../../db/client';
+import { getAuth } from '../../../../lib/auth/instancia';
+import { ErroSessaoInvalida, resolverContextoTenant, type ContextoTenant } from '../../../../lib/auth/tenant';
+import { listarCardsParaAgendar } from '../../../../repositories/reunioes';
+
+export const dynamic = 'force-dynamic';
+
+async function resolverContexto(request: NextRequest): Promise<ContextoTenant | null> {
+  const sessao = await getAuth().api.getSession({ headers: request.headers });
+  if (!sessao) return null;
+  try {
+    return await resolverContextoTenant(getDb(), { token: sessao.session.token });
+  } catch (erro) {
+    if (erro instanceof ErroSessaoInvalida) return null;
+    throw erro;
+  }
+}
+
+export async function GET(request: NextRequest) {
+  const contexto = await resolverContexto(request);
+  if (!contexto) return NextResponse.json({ codigo: 'NAO_AUTENTICADO' }, { status: 401 });
+
+  const todos = contexto.isSuperAdmin || contexto.papel === 'MASTER' || contexto.papel === 'GERENTE';
+  const cards = await listarCardsParaAgendar(getDb(), contexto, todos ? undefined : contexto.usuarioId);
+  return NextResponse.json({ cards });
+}

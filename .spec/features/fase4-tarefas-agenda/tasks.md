@@ -26,13 +26,13 @@
 
 ## T-182 — Fila do turno: tela nova dentro da casca [pendente]
 - Refs: US-119, AC-461, AC-464, AC-465, AC-466, AC-467, AC-470, AC-471
-- Arquivos: src/app/(app)/tarefas/page.tsx, src/components/tarefas/fila-tarefas.tsx, src/components/tarefas/toque-item.tsx, src/components/tarefas/destaque-tarefa.tsx, src/components/tarefas/indicadores-turno.tsx, test/components/tarefas/fila-turno-tela.test.tsx
+- Arquivos: src/app/(app)/tarefas/page.tsx, src/components/tarefas/fila-turno.tsx, src/components/tarefas/comum.ts, src/components/tarefas/destaque-tarefa.tsx, src/components/tarefas/indicadores-turno.tsx, test/components/tarefas/fila-turno-tela.test.tsx
 - Esforço: xalto
-- Notas: fonte `docs/ui/stitch_medcrm_interface_design/13*`. Remove `src/app/tarefas/page.tsx` com `git rm`. Migra (não apaga) os testes de `test/components/tarefas/fila-tarefas.test.tsx` conforme ASM-169. Depende de T-181.
+- Notas: fonte `docs/ui/stitch_medcrm_interface_design/13*`. A tela antiga `src/app/tarefas/page.tsx` foi removida (`git rm`). Os componentes `fila-tarefas.tsx` e `toque-item.tsx` da fase2b e os testes deles ficam como estão (ASM-169). Depende de T-181.
 
 ## T-183 — Tarefas atrasadas: tela e reatribuição em lote [pendente]
 - Refs: US-120, AC-472, AC-473, AC-474, AC-475, AC-476, AC-477, AC-478, AC-479
-- Arquivos: src/app/(app)/tarefas/atrasadas/page.tsx, src/components/tarefas/tarefas-atrasadas.tsx, src/components/tarefas/faixa-atraso.ts, test/components/tarefas/atrasadas-tela.test.tsx
+- Arquivos: src/app/(app)/tarefas/atrasadas/page.tsx, src/components/tarefas/tarefas-atrasadas.tsx, test/components/tarefas/atrasadas-tela.test.tsx
 - Esforço: xalto
 - Notas: fonte `docs/ui/stitch_medcrm_interface_design/14*`. Reaproveita `DialogoLote`/`ResultadoLote` e `POST /api/oportunidades/lote/reatribuir`. Depende de T-181 e T-182.
 
@@ -44,24 +44,24 @@
 
 ## T-185 — Reuniões: agendar, no-show, concluir e reagendar (servidor) [pendente]
 - Refs: US-122, AC-489, AC-490, AC-491, AC-492, AC-493, AC-494, AC-495
-- Arquivos: src/repositories/reunioes-acoes.ts, src/app/api/reunioes/route.ts, src/app/api/reunioes/[id]/no-show/route.ts, src/app/api/reunioes/[id]/concluir/route.ts, src/app/api/reunioes/[id]/reagendar/route.ts, test/api/reunioes-acoes.test.ts
+- Arquivos: src/repositories/reunioes-acoes.ts, src/app/api/reunioes/route.ts, src/app/api/reunioes/elegiveis/route.ts, src/app/api/reunioes/[id]/no-show/route.ts, src/app/api/reunioes/[id]/concluir/route.ts, src/app/api/reunioes/[id]/reagendar/route.ts, test/api/reunioes-acoes.test.ts
 - Esforço: xalto
 - Notas: cada ação grava a reunião e chama `transicionarCard` na mesma transação (tudo ou nada). Depende de T-184 (arquivo `route.ts` compartilhado: POST fica aqui). Cards elegíveis para agendar via `GET /api/reunioes/elegiveis` se necessário.
 
 ## T-186 — Agenda: tela com as quatro visões e filtros [pendente]
 - Refs: AC-480, AC-484, AC-485, AC-486, AC-487, AC-488
-- Arquivos: src/app/(app)/agenda/page.tsx, src/components/agenda/agenda-tela.tsx, src/components/agenda/visao-mes.tsx, src/components/agenda/visao-semana.tsx, src/components/agenda/visao-dia.tsx, src/components/agenda/visao-lista.tsx, src/components/agenda/fila-hoje.tsx, src/components/agenda/lateral-agenda.tsx, test/components/agenda/agenda-tela.test.tsx
+- Arquivos: src/app/(app)/agenda/page.tsx, src/components/agenda/agenda-tela.tsx, src/components/agenda/cartao-reuniao.tsx, src/components/agenda/visoes.tsx, src/components/agenda/lateral-agenda.tsx, src/components/agenda/datas.ts, src/components/agenda/tipos.ts, test/components/agenda/agenda-tela.test.tsx
 - Esforço: xalto
 - Notas: fonte `docs/ui/stitch_medcrm_interface_design/15*`. Depende de T-184.
 
 ## T-187 — Agenda: modais das ações e eventos em tempo real [pendente]
 - Refs: AC-489, AC-490, AC-491, AC-492, AC-493, AC-495, AC-496
-- Arquivos: src/components/agenda/modal-agendar.tsx, src/components/agenda/modal-reagendar.tsx, src/components/agenda/modal-concluir.tsx, src/components/agenda/acoes-reuniao.ts, test/components/agenda/modais-agenda.test.tsx
+- Arquivos: src/components/agenda/modais.tsx, src/components/agenda/acoes-reuniao.ts, test/components/agenda/modais-agenda.test.tsx
 - Esforço: alto
 - Notas: reaproveita o modal de evidência do funil. Depende de T-185 e T-186.
 
 ## T-188 — Navegação sem 404, estados de tela e limpeza [pendente]
 - Refs: US-123, AC-497, AC-498
-- Arquivos: test/auth/rotas-tarefas-agenda.test.ts, src/components/shell/menu-config.ts, src/components/tarefas/estados.tsx
+- Arquivos: test/auth/rotas-tarefas-agenda.test.ts, src/components/tarefas/estados.tsx
 - Esforço: medio
 - Notas: teste no molde de `test/auth/rotas-pipeline.test.ts`. Depende das demais.
