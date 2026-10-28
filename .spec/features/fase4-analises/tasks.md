@@ -62,6 +62,6 @@
 
 ## T-208 — Navegação sem tela antiga e estados [pendente]
 - Refs: US-136, AC-575, AC-576
-- Arquivos: src/app/indicadores/page.tsx, src/app/relatorios/page.tsx, src/app/relatorios-comerciais/page.tsx, test/auth/rotas-analises.test.ts
+- Arquivos: test/auth/rotas-analises.test.ts
 - Esforço: medio
 - Notas: remove as três páginas antigas (`git rm`; as duas de relatórios liam a planilha). O teste confere os três itens do menu por papel, as páginas novas, a ausência das antigas, `podeAcessarRota` falso para ATENDENTE (inclusive `/api/relatorios/funil`) e a casca marcando o item certo. Depende das demais.
