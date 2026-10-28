@@ -12,10 +12,10 @@ import { getAuth } from '../../../lib/auth/instancia';
 import { ErroSessaoInvalida, resolverContextoTenant, type ContextoTenant } from '../../../lib/auth/tenant';
 import {
   criarCampanha,
-  listarCampanhas,
   type ContatoBruto,
   type OrigemDestinatarios,
 } from '../../../repositories/campanhas';
+import { listarCampanhasComResumo, type FiltroStatusCampanha } from '../../../repositories/campanhas-resumo';
 
 export const dynamic = 'force-dynamic';
 
@@ -88,6 +88,12 @@ function validarOrigem(corpo: unknown): OrigemDestinatarios | null {
 
   const { tipo } = origem as Record<string, unknown>;
 
+  if (tipo === 'etapas') {
+    const { etapaIds } = origem as Record<string, unknown>;
+    if (!Array.isArray(etapaIds) || etapaIds.length === 0 || !etapaIds.every((id) => typeof id === 'number' && Number.isInteger(id))) return null;
+    return { tipo: 'etapas', etapaIds: [...new Set(etapaIds as number[])] };
+  }
+
   if (tipo === 'planilha') {
     const { contatos } = origem as Record<string, unknown>;
     if (!Array.isArray(contatos) || !contatos.every(contatoValido)) return null;
@@ -103,22 +109,54 @@ function validarOrigem(corpo: unknown): OrigemDestinatarios | null {
   return null;
 }
 
-/** AC-243: campanhas do tenant da sessão, da mais nova para a mais antiga. */
+const FILTROS_DE_STATUS: readonly FiltroStatusCampanha[] = ['rascunho', 'enviando', 'concluida'];
+const FILTROS_DE_DIAS = [7, 30, 90];
+
+/**
+ * AC-243/AC-533/AC-534: campanhas do tenant da sessão, da mais nova para a mais antiga, com as
+ * contagens por status e os indicadores. `status`, `busca`, `dias`, `pagina` e `porPagina` são
+ * opcionais; sem eles devolve todas, como antes.
+ */
 export async function GET(request: NextRequest) {
   const contexto = await resolverContexto(request);
   if (!contexto) return semSessao();
   if (!podeAcessarCampanhas(contexto)) return semPermissao();
 
-  const lista = await listarCampanhas(getDb(), contexto);
+  const p = request.nextUrl.searchParams;
+  const status = p.get('status');
+  if (status && !FILTROS_DE_STATUS.includes(status as FiltroStatusCampanha)) return parametroInvalido('O filtro de status é inválido.');
+  const dias = p.get('dias') ? Number(p.get('dias')) : undefined;
+  if (dias !== undefined && !FILTROS_DE_DIAS.includes(dias)) return parametroInvalido('O filtro de dias é inválido.');
+  const pagina = p.get('pagina') ? Number(p.get('pagina')) : undefined;
+  const porPagina = p.get('porPagina') ? Number(p.get('porPagina')) : undefined;
+  if (
+    (pagina !== undefined && (!Number.isInteger(pagina) || pagina < 1)) ||
+    (porPagina !== undefined && (!Number.isInteger(porPagina) || porPagina < 1 || porPagina > 100))
+  ) {
+    return parametroInvalido('A paginação é inválida.');
+  }
+
+  const lista = await listarCampanhasComResumo(getDb(), contexto, {
+    status: (status as FiltroStatusCampanha | null) ?? undefined,
+    busca: p.get('busca') ?? undefined,
+    dias,
+    pagina,
+    porPagina,
+    agora: new Date(),
+  });
 
   return NextResponse.json({
-    campanhas: lista.map(({ campanha, totalDestinatarios }) => ({
+    campanhas: lista.itens.map(({ campanha, totalDestinatarios, contagens }) => ({
       id: campanha.id,
       nome: campanha.nome,
       assunto: campanha.assunto,
       status: campanha.status,
       totalDestinatarios,
+      criadoEm: campanha.criadoEm,
+      contagens,
     })),
+    total: lista.total,
+    resumo: lista.resumo,
   });
 }
 

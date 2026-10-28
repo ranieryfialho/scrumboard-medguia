@@ -85,7 +85,7 @@ os resultados de cada uma, para decidir o que abrir, continuar ou excluir.
 
 - **Dado** mais de 10 campanhas
 - **Quando** o usuário escolhe um status, digita na busca, escolhe "Últimos 7/30/90 dias", usa "Limpar" ou troca de página
-- **Então** a tela pede ao servidor só o recorte pedido (10 por página), mostra "Mostrando N a M de T campanhas registradas" e os botões de página, e sem resultado diz "Nenhuma campanha encontrada"; o filtro "Todos os Tipos" do protótipo **não aparece** (não há tipo de campanha)
+- **Então** a tela pede ao servidor só o recorte pedido (10 por página), mostra "Exibindo N a M de T campanhas" e os botões de página, e sem resultado diz "Nenhuma campanha encontrada"; o filtro "Todos os Tipos" do protótipo **não aparece** (não há tipo de campanha)
 
 #### AC-537 — Abrir, criar e excluir
 

@@ -133,7 +133,13 @@ export interface OrigemEtapa {
   etapaId: number;
 }
 
-export type OrigemDestinatarios = OrigemPlanilha | OrigemEtapa;
+/** AC-541: destinatários dos cards de várias etapas do pipeline, sem repetir e-mail. */
+export interface OrigemEtapas {
+  tipo: 'etapas';
+  etapaIds: number[];
+}
+
+export type OrigemDestinatarios = OrigemPlanilha | OrigemEtapa | OrigemEtapas;
 
 export interface DadosNovaCampanha {
   nome: string;
@@ -176,7 +182,9 @@ export async function criarCampanha(
           and(
             eq(oportunidades.empresaId, contexto.empresaId),
             eq(leads.empresaId, contexto.empresaId),
-            eq(oportunidades.etapaId, dados.origem.etapaId),
+            dados.origem.tipo === 'etapas'
+              ? inArray(oportunidades.etapaId, dados.origem.etapaIds)
+              : eq(oportunidades.etapaId, dados.origem.etapaId),
             isNotNull(leads.email)
           )
         );
