@@ -1,0 +1,92 @@
+{
+  "feature": "fase4-pipeline-lote",
+  "timestamp": "2026-10-28T11:40:29.573Z",
+  "gitRev": "890be59",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
+  "reporter": "vitest-json",
+  "exitCode": 0,
+  "testsParsed": 1401,
+  "results": {
+    "AC-445": {
+      "status": "pass",
+      "testName": "T-178: ações em lote na lista AC-445: marcar cards mostra a barra de ações em lote com o que funciona mostra \"N selecionados\" e as três ações funcionando; \"Disparar WhatsApp\" fica \"em breve\" @spec:AC-445 mostra \"N selecionados\" e as três ações funcionando; \"Disparar WhatsApp\" fica \"em breve\" @spec:AC-445",
+      "method": "vitest-json"
+    },
+    "AC-446": {
+      "status": "pass",
+      "testName": "T-176: mover em lote (servidor) move os cards que podem e lista os que não, cada um com o seu motivo @spec:AC-446 move os cards que podem e lista os que não, cada um com o seu motivo @spec:AC-446",
+      "method": "vitest-json"
+    },
+    "AC-447": {
+      "status": "pass",
+      "testName": "T-176: mover em lote (servidor) card que exige dado que o lote não traz falha com o código do dado e fica onde estava @spec:AC-447 card que exige dado que o lote não traz falha com o código do dado e fica onde estava @spec:AC-447",
+      "method": "vitest-json"
+    },
+    "AC-448": {
+      "status": "pass",
+      "testName": "T-176: mover em lote (servidor) card de outra empresa, inexistente e id inválido voltam \"não encontrado\" sem alterar nada; repetido conta uma vez @spec:AC-448 card de outra empresa, inexistente e id inválido voltam \"não encontrado\" sem alterar nada; repetido conta uma vez @spec:AC-448",
+      "method": "vitest-json"
+    },
+    "AC-449": {
+      "status": "pass",
+      "testName": "T-176: mover em lote (servidor) cada card movido emite um evento de card movido, só para a empresa dele @spec:AC-449 cada card movido emite um evento de card movido, só para a empresa dele @spec:AC-449",
+      "method": "vitest-json"
+    },
+    "AC-450": {
+      "status": "pass",
+      "testName": "T-177: reatribuir e arquivar em lote (servidor) AC-450: reatribuir muda o responsável de todos os selecionados GERENTE passa os cards para uma pessoa ativa e o resultado diz quantos @spec:AC-450 GERENTE passa os cards para uma pessoa ativa e o resultado diz quantos @spec:AC-450",
+      "method": "vitest-json"
+    },
+    "AC-451": {
+      "status": "pass",
+      "testName": "T-177: reatribuir e arquivar em lote (servidor) AC-451: só MASTER e GERENTE reatribuem, e só para gente ativa da própria empresa ATENDENTE é 403 e nada muda; sem sessão é 401 @spec:AC-451 ATENDENTE é 403 e nada muda; sem sessão é 401 @spec:AC-451",
+      "method": "vitest-json"
+    },
+    "AC-452": {
+      "status": "pass",
+      "testName": "T-177: reatribuir e arquivar em lote (servidor) AC-452: cada reatribuição fica no histórico do card a linha do tempo mostra o evento com quem estava, quem ficou e quem fez @spec:AC-452 a linha do tempo mostra o evento com quem estava, quem ficou e quem fez @spec:AC-452",
+      "method": "vitest-json"
+    },
+    "AC-453": {
+      "status": "pass",
+      "testName": "T-177: reatribuir e arquivar em lote (servidor) AC-453: arquivar leva os selecionados para \"Perdido\" com o motivo escolhido os que podem vão para Perdido com o motivo; o que já estava lá falha com o código do domínio @spec:AC-453 os que podem vão para Perdido com o motivo; o que já estava lá falha com o código do domínio @spec:AC-453",
+      "method": "vitest-json"
+    },
+    "AC-454": {
+      "status": "pass",
+      "testName": "T-177: reatribuir e arquivar em lote (servidor) AC-454: arquivar exige o motivo sem motivo é 400 MOTIVO_OBRIGATORIO; motivo que não existe é 400 MOTIVO_INVALIDO; nada é alterado @spec:AC-454 sem motivo é 400 MOTIVO_OBRIGATORIO; motivo que não existe é 400 MOTIVO_INVALIDO; nada é alterado @spec:AC-454",
+      "method": "vitest-json"
+    },
+    "AC-455": {
+      "status": "pass",
+      "testName": "T-179: exportar em CSV (servidor) AC-455: exportar a lista baixa um CSV com tudo que atende aos filtros traz todos os 60 cards do filtro (mais que uma página), com o cabeçalho e o nome do arquivo @spec:AC-455 traz todos os 60 cards do filtro (mais que uma página), com o cabeçalho e o nome do arquivo @spec:AC-455",
+      "method": "vitest-json"
+    },
+    "AC-456": {
+      "status": "pass",
+      "testName": "T-179: exportar em CSV (servidor) AC-456: exportar os arquivados respeita a aba e os filtros sem aba traz ganhos e perdidos, com status, consultor, valor, motivo e data de fechamento @spec:AC-456 sem aba traz ganhos e perdidos, com status, consultor, valor, motivo e data de fechamento @spec:AC-456",
+      "method": "vitest-json"
+    },
+    "AC-457": {
+      "status": "pass",
+      "testName": "T-179: exportar em CSV (servidor) AC-457: só MASTER e GERENTE exportam, e só da própria empresa ATENDENTE é 403 e sem sessão é 401, nas duas exportações, sem registrar nada @spec:AC-457 ATENDENTE é 403 e sem sessão é 401, nas duas exportações, sem registrar nada @spec:AC-457",
+      "method": "vitest-json"
+    },
+    "AC-458": {
+      "status": "pass",
+      "testName": "T-179: exportar em CSV (servidor) AC-458: o arquivo abre certo no Excel e não executa fórmulas começa com BOM, protege campos especiais com aspas e põe apóstrofo antes de fórmulas @spec:AC-458 começa com BOM, protege campos especiais com aspas e põe apóstrofo antes de fórmulas @spec:AC-458",
+      "method": "vitest-json"
+    },
+    "AC-459": {
+      "status": "pass",
+      "testName": "T-179: exportar em CSV (servidor) AC-459: há um teto de linhas e cada exportação fica registrada cada arquivo entregue grava quem, quando, a tela, os filtros e a quantidade de linhas @spec:AC-459 cada arquivo entregue grava quem, quando, a tela, os filtros e a quantidade de linhas @spec:AC-459",
+      "method": "vitest-json"
+    },
+    "AC-460": {
+      "status": "pass",
+      "testName": "T-180: botão \"Exportar CSV\" da lista e dos arquivados AC-460: a tela mostra o andamento da exportação e o erro enquanto baixa, mostra \"Gerando...\" com o botão desabilitado, e depois volta ao normal @spec:AC-460 enquanto baixa, mostra \"Gerando...\" com o botão desabilitado, e depois volta ao normal @spec:AC-460",
+      "method": "vitest-json"
+    }
+  },
+  "principles": {}
+}
