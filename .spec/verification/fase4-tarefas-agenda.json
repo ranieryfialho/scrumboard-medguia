@@ -1,7 +1,7 @@
 {
   "feature": "fase4-tarefas-agenda",
-  "timestamp": "2026-10-28T13:34:08.558Z",
-  "gitRev": "1b27a82",
+  "timestamp": "2026-10-28T14:09:12.118Z",
+  "gitRev": "7c52b73",
   "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
   "reporter": "vitest-json",
   "exitCode": 0,
