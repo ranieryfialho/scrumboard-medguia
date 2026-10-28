@@ -25,6 +25,8 @@ const R_REALIZADA = ID(25);
 const R_ATENDENTE = ID(26);
 const OUTRA_PESSOA = 'eeeeeeee-1850-0000-0000-0000000000f9';
 
+type RotaComPost = { POST: (request: NextRequest, contexto: { params: Promise<{ id: string }> }) => Promise<Response> };
+
 const AGORA = new Date('2026-06-11T14:00:00Z');
 const FUTURO = '2026-06-15T17:00:00.000Z';
 
@@ -46,13 +48,13 @@ describe('T-185: ações da agenda', () => {
   const etapaDe = (card: string) => Number(sql(`SELECT etapa_id FROM oportunidades WHERE id = '${card}'`));
   const totalReunioes = () => Number(sql('SELECT count(*) FROM reunioes'));
 
-  function post(rota: { POST: (...a: never[]) => Promise<Response> } | { POST: Function }, url: string, corpo: unknown, cookie: string | null, id?: string) {
+  function post(rota: RotaComPost, url: string, corpo: unknown, cookie: string | null, id?: string) {
     const request = new NextRequest(`http://localhost${url}`, {
       method: 'POST',
       headers: { ...(cookie ? { Cookie: cookie } : {}), 'content-type': 'application/json' },
       body: JSON.stringify(corpo ?? {}),
     });
-    return (rota.POST as Function)(request, { params: Promise.resolve({ id }) }) as Promise<Response>;
+    return rota.POST(request, { params: Promise.resolve({ id: id ?? "" }) });
   }
   const agendar = (oportunidadeId: string, agendadaPara: string, cookie: string | null = amb.cookieA) =>
     post(rotaLista, '/api/reunioes', { oportunidadeId, agendadaPara }, cookie);
