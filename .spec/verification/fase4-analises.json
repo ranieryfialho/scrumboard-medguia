@@ -1,0 +1,122 @@
+{
+  "feature": "fase4-analises",
+  "timestamp": "2026-10-28T17:35:08.722Z",
+  "gitRev": "fe1ab00",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
+  "reporter": "vitest-json",
+  "exitCode": 0,
+  "testsParsed": 1529,
+  "results": {
+    "AC-555": {
+      "status": "pass",
+      "testName": "T-205: IndicadoresFunil abre com o título dentro do grupo (app) e o padrão \"Este mês\" @spec:AC-555 abre com o título dentro do grupo (app) e o padrão \"Este mês\" @spec:AC-555",
+      "method": "vitest-json"
+    },
+    "AC-556": {
+      "status": "pass",
+      "testName": "T-205: IndicadoresFunil período, responsável e \"Atualizar Métricas\" pedem as duas APIs de novo @spec:AC-556 período, responsável e \"Atualizar Métricas\" pedem as duas APIs de novo @spec:AC-556",
+      "method": "vitest-json"
+    },
+    "AC-557": {
+      "status": "pass",
+      "testName": "T-201: funil e desempenho por responsável devolve o funil por etapa e o desempenho de cada responsável, só da empresa e só da coorte do período @spec:AC-557 devolve o funil por etapa e o desempenho de cada responsável, só da empresa e só da coorte do período @spec:AC-557",
+      "method": "vitest-json"
+    },
+    "AC-558": {
+      "status": "pass",
+      "testName": "T-205: IndicadoresFunil os sete cartões mostram o valor e \"N de M\", ou \"Sem dados\", sem metas nem variação @spec:AC-558 os sete cartões mostram o valor e \"N de M\", ou \"Sem dados\", sem metas nem variação @spec:AC-558",
+      "method": "vitest-json"
+    },
+    "AC-559": {
+      "status": "pass",
+      "testName": "T-205: IndicadoresFunil o funil mostra as seis etapas com retenção e perda a partir da segunda @spec:AC-559 o funil mostra as seis etapas com retenção e perda a partir da segunda @spec:AC-559",
+      "method": "vitest-json"
+    },
+    "AC-560": {
+      "status": "pass",
+      "testName": "T-205: IndicadoresFunil a tabela por responsável mostra os números, a receita e a linha sem responsável @spec:AC-560 a tabela por responsável mostra os números, a receita e a linha sem responsável @spec:AC-560",
+      "method": "vitest-json"
+    },
+    "AC-561": {
+      "status": "pass",
+      "testName": "T-205: IndicadoresFunil Relatório Executivo, Exportar CSV e Configurar Metas aparecem \"em breve\" e a meta e os alertas não existem @spec:AC-561 Relatório Executivo, Exportar CSV e Configurar Metas aparecem \"em breve\" e a meta e os alertas não existem @spec:AC-561",
+      "method": "vitest-json"
+    },
+    "AC-562": {
+      "status": "pass",
+      "testName": "T-206: RelatorioMarketing abre com o título dentro do grupo (app), sem \"Tráfego e Atribuição\" @spec:AC-562 abre com o título dentro do grupo (app), sem \"Tráfego e Atribuição\" @spec:AC-562",
+      "method": "vitest-json"
+    },
+    "AC-563": {
+      "status": "pass",
+      "testName": "T-202: relatório de marketing devolve o resumo, a série e o desempenho por origem do período, só da empresa @spec:AC-563 devolve o resumo, a série e o desempenho por origem do período, só da empresa @spec:AC-563",
+      "method": "vitest-json"
+    },
+    "AC-564": {
+      "status": "pass",
+      "testName": "T-204: peças compartilhadas de análises os períodos prontos viram de/ate de calendário em São Paulo @spec:AC-556 @spec:AC-564 os períodos prontos viram de/ate de calendário em São Paulo @spec:AC-556 @spec:AC-564",
+      "method": "vitest-json"
+    },
+    "AC-565": {
+      "status": "pass",
+      "testName": "T-204: peças compartilhadas de análises o gráfico desenha uma linha por série, o eixo e uma tabela para leitor de tela @spec:AC-565 @spec:AC-571 o gráfico desenha uma linha por série, o eixo e uma tabela para leitor de tela @spec:AC-565 @spec:AC-571",
+      "method": "vitest-json"
+    },
+    "AC-566": {
+      "status": "pass",
+      "testName": "T-206: RelatorioMarketing a tabela por origem mostra os números e a linha de totais; sem leads avisa @spec:AC-566 a tabela por origem mostra os números e a linha de totais; sem leads avisa @spec:AC-566",
+      "method": "vitest-json"
+    },
+    "AC-567": {
+      "status": "pass",
+      "testName": "T-206: RelatorioMarketing o que depende de mídia não aparece e exportar e especialidade ficam \"em breve\" @spec:AC-567 o que depende de mídia não aparece e exportar e especialidade ficam \"em breve\" @spec:AC-567",
+      "method": "vitest-json"
+    },
+    "AC-568": {
+      "status": "pass",
+      "testName": "T-204: peças compartilhadas de análises o filtro mostra os botões, marca o escolhido e avisa a troca @spec:AC-556 @spec:AC-564 @spec:AC-568 o filtro mostra os botões, marca o escolhido e avisa a troca @spec:AC-556 @spec:AC-564 @spec:AC-568",
+      "method": "vitest-json"
+    },
+    "AC-569": {
+      "status": "pass",
+      "testName": "T-203: relatório comercial o resumo traz MRR, ticket, pipeline, ciclo e win rate do período, só da empresa @spec:AC-569 o resumo traz MRR, ticket, pipeline, ciclo e win rate do período, só da empresa @spec:AC-569",
+      "method": "vitest-json"
+    },
+    "AC-570": {
+      "status": "pass",
+      "testName": "T-207: RelatorioComercial os quatro cartões mostram MRR, pipeline, ciclo e win rate, sem meta nem ponderado @spec:AC-570 os quatro cartões mostram MRR, pipeline, ciclo e win rate, sem meta nem ponderado @spec:AC-570",
+      "method": "vitest-json"
+    },
+    "AC-571": {
+      "status": "pass",
+      "testName": "T-204: peças compartilhadas de análises o gráfico desenha uma linha por série, o eixo e uma tabela para leitor de tela @spec:AC-565 @spec:AC-571 o gráfico desenha uma linha por série, o eixo e uma tabela para leitor de tela @spec:AC-565 @spec:AC-571",
+      "method": "vitest-json"
+    },
+    "AC-572": {
+      "status": "pass",
+      "testName": "T-207: RelatorioComercial o ranking ordena por valor, win rate ou contratos e fecha com a linha de totais @spec:AC-572 o ranking ordena por valor, win rate ou contratos e fecha com a linha de totais @spec:AC-572",
+      "method": "vitest-json"
+    },
+    "AC-573": {
+      "status": "pass",
+      "testName": "T-207: RelatorioComercial os motivos de perda mostram os cinco primeiros, \"Outros\" e o total; sem perdas avisa @spec:AC-573 os motivos de perda mostram os cinco primeiros, \"Outros\" e o total; sem perdas avisa @spec:AC-573",
+      "method": "vitest-json"
+    },
+    "AC-574": {
+      "status": "pass",
+      "testName": "T-207: RelatorioComercial exportar, metas e especialidade ficam \"em breve\" e a distribuição por especialidade não aparece @spec:AC-574 exportar, metas e especialidade ficam \"em breve\" e a distribuição por especialidade não aparece @spec:AC-574",
+      "method": "vitest-json"
+    },
+    "AC-575": {
+      "status": "pass",
+      "testName": "T-208: menu, rotas e páginas de análises GERENTE e MASTER veem os três itens, cada um com a página nova, e as antigas não existem @spec:AC-575 GERENTE e MASTER veem os três itens, cada um com a página nova, e as antigas não existem @spec:AC-575",
+      "method": "vitest-json"
+    },
+    "AC-576": {
+      "status": "pass",
+      "testName": "T-205: IndicadoresFunil carregando mostra esqueleto e a falha mostra erro com \"Tentar de novo\", sem apagar os números @spec:AC-576 carregando mostra esqueleto e a falha mostra erro com \"Tentar de novo\", sem apagar os números @spec:AC-576",
+      "method": "vitest-json"
+    }
+  },
+  "principles": {}
+}
