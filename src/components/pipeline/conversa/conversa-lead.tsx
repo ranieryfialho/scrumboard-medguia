@@ -226,28 +226,28 @@ export function ConversaLead({ leadId }: ConversaLeadProps) {
       </div>
 
       <div className="p-space-md border-t border-border-subtle flex flex-col gap-space-sm">
-        <div className="flex flex-wrap items-center gap-2 font-label-sm text-label-sm text-text-muted uppercase tracking-wider">
-          <ItemEmBreve rotulo="Respostas rápidas" icone="bolt" className="py-1" />
+        <div className="flex flex-wrap items-center gap-2">
+          <ItemEmBreve rotulo="Respostas rápidas" icone="bolt" className="h-9 px-2 rounded-lg bg-surface-subtle" />
+          <ItemEmBreve rotulo="Anexar arquivo" icone="attach_file" className="h-9 px-2 rounded-lg bg-surface-subtle" />
+          <ItemEmBreve rotulo="Templates" icone="chat_paste_go" className="h-9 px-2 rounded-lg bg-surface-subtle" />
         </div>
         <div className="flex items-end gap-2">
-          <ItemEmBreve rotulo="Anexar arquivo" icone="attach_file" className="h-10 px-2 rounded-lg bg-surface-subtle" />
-          <ItemEmBreve rotulo="Templates" icone="chat_paste_go" className="h-10 px-2 rounded-lg bg-surface-subtle" />
           <textarea
             value={texto}
             onChange={(evento) => setTexto(evento.target.value)}
             onKeyDown={aoTeclar}
             disabled={!whatsappConectado(status)}
-            rows={2}
+            rows={3}
             placeholder="Digite uma mensagem..."
             aria-label="Mensagem para o lead"
-            className="flex-1 rounded-xl bg-surface-subtle px-3 py-2 font-body-md text-body-md text-text-primary placeholder:text-text-muted focus:bg-surface-card focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-60"
+            className="flex-1 min-h-[84px] resize-y rounded-xl border border-border-subtle bg-surface-card px-3 py-2 font-body-md text-body-md text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-60"
           />
           <button
             type="button"
             onClick={() => void enviar()}
             disabled={!podeEnviar || texto.trim() === ''}
             aria-label="Enviar mensagem"
-            className="h-12 w-12 rounded-xl bg-primary text-on-primary flex items-center justify-center shadow-md disabled:opacity-50"
+            className="h-12 w-12 shrink-0 rounded-xl bg-primary text-on-primary flex items-center justify-center shadow-md disabled:opacity-50"
           >
             <span aria-hidden="true" className="material-symbols-outlined">
               send
