@@ -93,6 +93,7 @@ export const GRUPOS_MENU: GrupoMenu[] = [
       },
       { id: 'metas', rotulo: 'Metas', href: '/configuracoes/metas', icone: 'flag' },
       { id: 'investimento-midia', rotulo: 'Investimento em Mídia', href: '/configuracoes/investimento', icone: 'paid' },
+      { id: 'email-empresa', rotulo: 'E-mail', href: '/configuracoes/email', icone: 'mail' },
       { id: 'empresas', rotulo: 'Empresas', href: '/admin/empresas', icone: 'apartment' },
     ],
   },

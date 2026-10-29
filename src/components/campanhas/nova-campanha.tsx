@@ -5,11 +5,13 @@
 // Cria em rascunho por `POST /api/campanhas` (origem: várias etapas do funil ou lista
 // colada) e edita nome, assunto e corpo por `PATCH` (`?rascunho=<id>`). Nada é enviado
 // aqui: o Play é do detalhe (ASM-189).
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 
+import { VariaveisDisponiveis, NOME_DE_EXEMPLO } from '@/components/comum/variaveis-disponiveis';
 import { ETAPAS_PIPELINE } from '@/components/pipeline/detalhe/jornada';
+import { renderizarCorpoDeCampanha } from '@/lib/email/campanha-corpo';
 import { ItemEmBreve } from '@/components/pipeline/pecas/selo-em-breve';
 import { mensagemDeErro } from './comum';
 import { EsqueletoCarregando, EstadoErro } from './estados';
@@ -46,6 +48,7 @@ export function NovaCampanha() {
   const [nome, setNome] = useState('');
   const [assunto, setAssunto] = useState('');
   const [corpoHtml, setCorpoHtml] = useState('');
+  const campoDoCorpo = useRef<HTMLTextAreaElement>(null);
   const [modo, setModo] = useState<'etapas' | 'lista'>('etapas');
   const [etapasEscolhidas, setEtapasEscolhidas] = useState<number[]>([]);
   const [lista, setLista] = useState('');
@@ -122,6 +125,20 @@ export function NovaCampanha() {
   }, [rascunhoId, carregarPrevia]);
 
   const contatosDaLista = useMemo(() => lerListaColada(lista), [lista]);
+  /** AC-700: coloca o shortcode onde está o cursor do corpo (ou no fim, se o campo nunca foi tocado). */
+  function inserirVariavel(variavel: string) {
+    const campo = campoDoCorpo.current;
+    const inicio = campo?.selectionStart ?? corpoHtml.length;
+    const fim = campo?.selectionEnd ?? inicio;
+    const codigo = `{{${variavel}}}`;
+    setCorpoHtml(corpoHtml.slice(0, inicio) + codigo + corpoHtml.slice(fim));
+    const posicao = inicio + codigo.length;
+    setTimeout(() => {
+      campo?.focus();
+      campo?.setSelectionRange(posicao, posicao);
+    }, 0);
+  }
+
   const totalDestinatarios = rascunhoId ? totalDoRascunho : modo === 'lista' ? contatosDaLista.length : (previa?.total ?? 0);
 
   function alternarEtapa(id: number) {
@@ -313,17 +330,21 @@ export function NovaCampanha() {
               <span className="self-end font-body-sm text-body-sm text-text-muted">{assunto.length} caracteres</span>
             </label>
             <div className="flex flex-wrap gap-2">
-              <ItemEmBreve rotulo="+ Variável" className="h-9 px-3 rounded-lg bg-surface-subtle" />
               <ItemEmBreve rotulo="Texto de pré-cabeçalho" className="h-9 px-3 rounded-lg bg-surface-subtle" />
               <ItemEmBreve rotulo="Barra de formatação" icone="format_bold" className="h-9 px-3 rounded-lg bg-surface-subtle" />
               <ItemEmBreve rotulo="Inserir tag" className="h-9 px-3 rounded-lg bg-surface-subtle" />
             </div>
             <label className="flex flex-col gap-1 font-label-md text-label-md text-text-secondary">
               Corpo do e-mail (HTML) *
-              <textarea value={corpoHtml} onChange={(e) => setCorpoHtml(e.target.value)} disabled={bloqueada} rows={12} aria-label="Corpo do e-mail" className="rounded-xl bg-surface-subtle p-3 font-body-md text-body-md text-text-primary" />
+              <textarea ref={campoDoCorpo} value={corpoHtml} onChange={(e) => setCorpoHtml(e.target.value)} disabled={bloqueada} rows={12} aria-label="Corpo do e-mail" className="rounded-xl bg-surface-subtle p-3 font-body-md text-body-md text-text-primary" />
             </label>
             <ItemEmBreve rotulo="Enviar E-mail de Teste para Mim" icone="send" className="self-start h-9 px-3 rounded-lg bg-surface-subtle" />
           </section>
+
+          <VariaveisDisponiveis
+            observacao="Escreva o shortcode no corpo e ele é trocado pelo nome de cada destinatário no envio. A prévia ao lado já mostra um nome de exemplo. Outras variáveis ficam como estão no e-mail."
+            onInserir={bloqueada ? undefined : inserirVariavel}
+          />
         </div>
 
         <div className="flex flex-col gap-space-md">
@@ -338,7 +359,7 @@ export function NovaCampanha() {
                 ))}
               </div>
             </div>
-            <PreviaEmail assunto={assunto} corpoHtml={corpoHtml} largura={largura} />
+            <PreviaEmail assunto={assunto} corpoHtml={renderizarCorpoDeCampanha(corpoHtml, NOME_DE_EXEMPLO)} largura={largura} />
           </section>
 
           <section aria-label="Estimativa de Impacto Comercial" className="bg-surface-card rounded-2xl p-space-md shadow-sm grid grid-cols-2 gap-space-sm">

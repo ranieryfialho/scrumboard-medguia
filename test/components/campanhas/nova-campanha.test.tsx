@@ -197,7 +197,7 @@ describe('T-198: NovaCampanha', () => {
     expect(screen.queryByText(/Checklist de Qualidade|Taxa média esperada/i)).toBeFalsy();
   });
 
-  test('canal, resposta, remetente, pré-cabeçalho, modelos, variáveis, formatação e e-mail de teste aparecem "em breve" @spec:AC-546', async () => {
+  test('canal, resposta, remetente, pré-cabeçalho, modelos, formatação e e-mail de teste aparecem "em breve" @spec:AC-546', async () => {
     render(<NovaCampanha />);
     for (const rotulo of [
       'Canal de envio',
@@ -207,7 +207,6 @@ describe('T-198: NovaCampanha', () => {
       'Modelo Institucional',
       'Modelo TISS & Propostas',
       'Modelo Reativação',
-      '+ Variável',
       'Barra de formatação',
       'Inserir tag',
       'Enviar E-mail de Teste para Mim',

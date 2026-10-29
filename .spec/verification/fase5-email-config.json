@@ -1,0 +1,47 @@
+{
+  "feature": "fase5-email-config",
+  "timestamp": "2026-10-29T19:10:29.524Z",
+  "gitRev": "be2f100",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json test/lib/cifra.test.ts test/lib/email-campanha-corpo.test.ts test/api/email-config.test.ts test/auth/rotas-email.test.ts test/components/admin/email-empresa.test.tsx test/components/campanhas/variaveis-email.test.tsx",
+  "reporter": "vitest-json",
+  "exitCode": 0,
+  "testsParsed": 18,
+  "results": {
+    "AC-694": {
+      "status": "pass",
+      "testName": "T-263: tela de e-mail da empresa mostra só o final da chave, nunca a chave, e o remetente atual @spec:AC-694 mostra só o final da chave, nunca a chave, e o remetente atual @spec:AC-694",
+      "method": "vitest-json"
+    },
+    "AC-695": {
+      "status": "pass",
+      "testName": "T-263: API de configuração de e-mail a API nunca devolve a chave: só se há chave e os 4 últimos caracteres; valida chave e remetente @spec:AC-695 a API nunca devolve a chave: só se há chave e os 4 últimos caracteres; valida chave e remetente @spec:AC-695",
+      "method": "vitest-json"
+    },
+    "AC-696": {
+      "status": "pass",
+      "testName": "T-263: API de configuração de e-mail a chave fica cifrada no banco e só o worker a decifra; sem o segredo, salvar dá 503 e nada é gravado @spec:AC-696 a chave fica cifrada no banco e só o worker a decifra; sem o segredo, salvar dá 503 e nada é gravado @spec:AC-696",
+      "method": "vitest-json"
+    },
+    "AC-697": {
+      "status": "pass",
+      "testName": "T-263: API de configuração de e-mail cada empresa tem a sua; trocar ou remover a da A não mexe na da B @spec:AC-697 cada empresa tem a sua; trocar ou remover a da A não mexe na da B @spec:AC-697",
+      "method": "vitest-json"
+    },
+    "AC-698": {
+      "status": "pass",
+      "testName": "T-263: menu e rotas do e-mail da empresa a página existe e o menu mostra \"E-mail\" a gerente e master, não ao atendente @spec:AC-698 a página existe e o menu mostra \"E-mail\" a gerente e master, não ao atendente @spec:AC-698",
+      "method": "vitest-json"
+    },
+    "AC-699": {
+      "status": "pass",
+      "testName": "T-263: variáveis do e-mail {{nome}} é o nome completo e {{primeiro_nome}} o primeiro @spec:AC-699 {{nome}} é o nome completo e {{primeiro_nome}} o primeiro @spec:AC-699",
+      "method": "vitest-json"
+    },
+    "AC-700": {
+      "status": "pass",
+      "testName": "T-263: variáveis na nova campanha a seção explica {{nome}} e {{primeiro_nome}} com exemplo; Inserir coloca o shortcode onde está o cursor @spec:AC-700 a seção explica {{nome}} e {{primeiro_nome}} com exemplo; Inserir coloca o shortcode onde está o cursor @spec:AC-700",
+      "method": "vitest-json"
+    }
+  },
+  "principles": {}
+}

@@ -93,6 +93,7 @@ O `.env` é lido pelo app **e** pelo worker (`env_file: .env` no `docker-compose
 | `CRON_SEGREDO` | protege `/api/cron/cadencia` e `/api/cron/whatsapp-lote` | sim |
 | `EVOLUTION_API_URL`, `EVOLUTION_API_KEY` | envio e conexão do WhatsApp (inbox, ações rápidas e lote) | sim, para WhatsApp |
 | `RESEND_API_KEY`, `RESEND_REMETENTE` | e-mail de convite, de redefinição de senha e campanhas (sem a chave o convite é criado e a tela mostra o link para copiar; o remetente padrão é `no-reply@medguia.cloud`) | recomendada |
+| `SEGREDO_CONFIGURACOES` | cifra a chave do Resend de cada empresa no banco (mínimo de 32 caracteres; gere um aleatório e guarde em lugar seguro). **Trocar depois invalida as chaves salvas**: cada empresa precisa cadastrá-la de novo em `/configuracoes/email`. Sem ela só salvar a chave fica indisponível (503) | sim, para campanhas |
 | `RESEND_WEBHOOK_SECRET` | aceitar os eventos de entrega, abertura e clique das campanhas | sim, para campanhas |
 | `GOOGLE_*`, `SUPABASE_*`, `SUPABASE_LP_*` | ETL e espelho do Sheets durante a migração dos dados | só enquanto houver ETL |
 
