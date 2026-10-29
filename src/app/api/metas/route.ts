@@ -6,7 +6,7 @@ import { getDb } from '../../../db/client';
 import { getAuth } from '../../../lib/auth/instancia';
 import { ErroSessaoInvalida, resolverContextoTenant, type ContextoTenant } from '../../../lib/auth/tenant';
 import { exigirGerente } from '../../../lib/equipe/acesso';
-import { ehChaveMeta, metaValida, type ChaveMeta } from '../../../lib/metas/catalogo';
+import { ehChaveMeta, metaValida, unidadeDaMeta, type ChaveMeta } from '../../../lib/metas/catalogo';
 import { comoMapa, gravarMetas, lerMetas } from '../../../repositories/metas';
 
 export const dynamic = 'force-dynamic';
@@ -43,9 +43,10 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ codigo: 'PARAMETRO_INVALIDO', campo: chave, mensagem: 'Meta desconhecida.' }, { status: 400 });
     }
     if (valor === null) alteracoes[chave] = null;
-    else if (metaValida(valor)) alteracoes[chave] = valor;
+    else if (metaValida(chave, valor)) alteracoes[chave] = valor;
     else {
-      return NextResponse.json({ codigo: 'PARAMETRO_INVALIDO', campo: chave, mensagem: 'A meta deve ser um número de 0,1 a 100.' }, { status: 400 });
+      const mensagem = unidadeDaMeta(chave) === 'reais' ? 'A meta de receita deve ser um valor em reais de R$ 0,01 a R$ 99.999.999,99, com até duas casas.' : 'A meta deve ser um número de 0,1 a 100.';
+      return NextResponse.json({ codigo: 'PARAMETRO_INVALIDO', campo: chave, mensagem }, { status: 400 });
     }
   }
   await gravarMetas(getDb(), acesso.contexto, alteracoes);

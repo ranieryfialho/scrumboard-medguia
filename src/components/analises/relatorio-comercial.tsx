@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { CartaoIndicador } from '@/components/pipeline/pecas/cartao-indicador';
-import { descreverMeta } from '@/lib/metas/catalogo';
+import { descreverMeta, ehMesInteiro } from '@/lib/metas/catalogo';
 import { useMetas } from '@/lib/metas/usar-metas';
 import { ItemEmBreve } from '@/components/pipeline/pecas/selo-em-breve';
 import { diaEMes, inteiro, moeda, periodoDoPreset, porcentagem, type Preset, type Responsavel } from './comum';
@@ -66,6 +66,9 @@ export function RelatorioComercial() {
   const [ordem, setOrdem] = useState<Ordem>('valor');
   const [dados, setDados] = useState<Dados | null>(null);
   const [erro, setErro] = useState(false);
+  // fase5-meta-receita (AC-690/AC-691, ASM-255): a meta mensal só vale quando os dados NA TELA são de um mês inteiro e sem
+  // filtro de responsável (guardados junto dos dados, para a meta não aparecer sobre números de outro período).
+  const [recorteDosDados, setRecorteDosDados] = useState<{ de: string; ate: string; responsavelId: string } | null>(null);
 
   const carregar = useCallback(async () => {
     const { de, ate } = periodoDoPreset(preset);
@@ -75,6 +78,7 @@ export function RelatorioComercial() {
       const r = await fetch(`/api/relatorios/comercial?${q}`);
       if (!r.ok) throw new Error(`comercial respondeu ${r.status}`);
       setDados((await r.json()) as Dados);
+      setRecorteDosDados({ de, ate, responsavelId });
       setErro(false);
     } catch {
       setErro(true);
@@ -159,6 +163,11 @@ export function RelatorioComercial() {
               legenda={`/mês · ${inteiro(dados.resumo.contratos)} contratos · ticket médio ${moeda(dados.resumo.ticketMedio)}`}
               icone="payments"
               cor="success"
+              meta={
+                recorteDosDados && !recorteDosDados.responsavelId && ehMesInteiro(recorteDosDados.de, recorteDosDados.ate)
+                  ? descreverMeta(dados.resumo.mrrNovo, metas.receita_mensal, 'reais')
+                  : null
+              }
             />
             <CartaoIndicador titulo="Pipeline em negociação" valor={moeda(dados.resumo.pipelineEmNegociacao.valor)} legenda={`${inteiro(dados.resumo.pipelineEmNegociacao.propostas)} propostas`} icone="request_quote" cor="info" />
             <CartaoIndicador titulo="Ciclo médio" valor={dados.resumo.cicloMedioDias === null ? '—' : `${dados.resumo.cicloMedioDias.toLocaleString('pt-BR')} dias`} legenda="da criação ao contrato" icone="schedule" cor="warning" />

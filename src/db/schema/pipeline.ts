@@ -266,7 +266,7 @@ export const empresaMetas = pgTable(
       .notNull()
       .references(() => empresas.id, { onDelete: 'cascade' }),
     chave: text('chave').notNull(),
-    valor: numeric('valor', { precision: 4, scale: 1 }).notNull(),
+    valor: numeric('valor', { precision: 12, scale: 2 }).notNull(),
     atualizadoPor: uuid('atualizado_por').references(() => usuarios.id, { onDelete: 'set null' }),
     atualizadoEm: timestamp('atualizado_em', { withTimezone: true }).notNull().defaultNow(),
   },

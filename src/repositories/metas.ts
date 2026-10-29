@@ -46,10 +46,10 @@ export async function gravarMetas(
       }
       await tx
         .insert(empresaMetas)
-        .values({ empresaId: contexto.empresaId, chave, valor: valor.toFixed(1), atualizadoPor: contexto.usuarioId })
+        .values({ empresaId: contexto.empresaId, chave, valor: valor.toFixed(2), atualizadoPor: contexto.usuarioId })
         .onConflictDoUpdate({
           target: [empresaMetas.empresaId, empresaMetas.chave],
-          set: { valor: valor.toFixed(1), atualizadoPor: contexto.usuarioId, atualizadoEm: sql`now()` },
+          set: { valor: valor.toFixed(2), atualizadoPor: contexto.usuarioId, atualizadoEm: sql`now()` },
         });
     }
   });
