@@ -69,6 +69,9 @@ export const MENSAGENS_DE_ERRO: Record<string, string> = {
   MOTIVO_JA_EXISTE: 'Já existe um motivo com esse nome.',
   MOTIVO_SISTEMICO: 'Motivo sistêmico não pode ser alterado.',
   SLUG_EM_USO: 'Esse identificador já está em uso.',
+  CNPJ_EM_USO: 'Já existe uma empresa com este CNPJ.',
+  SEM_ASSENTOS: 'A empresa atingiu o limite de assentos do plano.',
+  ASSENTOS_ABAIXO_DO_EM_USO: 'Os assentos não podem ficar abaixo das pessoas já em uso.',
   EMPRESA_ATUAL: 'Você não pode suspender a empresa em que está agora.',
   EMPRESA_NAO_ENCONTRADA: 'Empresa não encontrada.',
 };
@@ -85,6 +88,18 @@ export interface EmpresaView {
   slug: string;
   ativo: boolean;
   criadoEm: string;
+  /** fase5-empresa-dados: dados cadastrais, plano e cota (anuláveis; ausentes nas empresas antigas). */
+  razaoSocial?: string | null;
+  cnpj?: string | null;
+  cep?: string | null;
+  logradouro?: string | null;
+  numero?: string | null;
+  complemento?: string | null;
+  bairro?: string | null;
+  cidade?: string | null;
+  uf?: string | null;
+  plano?: string | null;
+  assentos?: number | null;
 }
 
 /** AC-606: o identificador sugerido a partir do nome (minúsculas, sem acento, hífens, até 40). */

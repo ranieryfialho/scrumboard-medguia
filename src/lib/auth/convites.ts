@@ -8,6 +8,7 @@
 // (AC-038) é um ponto de extensão injetável, com um default que emite o
 // evento via `console.info`, para não deixar a obrigação de "registra"
 // sem efeito nenhum enquanto uma tabela dedicada não existir.
+import { garantirAssento } from '../empresa/assentos';
 import { randomBytes, randomUUID } from 'node:crypto';
 
 import { eq } from 'drizzle-orm';
@@ -165,6 +166,8 @@ export async function convidarUsuario(
         ativo: true,
       });
     }
+
+    await garantirAssento(tx, empresaDestinoId);
 
     await tx.insert(empresasUsuarios).values({
       empresaId: empresaDestinoId,

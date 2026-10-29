@@ -6,6 +6,7 @@ import { getDb } from '../../../../db/client';
 import { baseDaUrl, exigirSuperAdmin } from '../../../../lib/equipe/acesso';
 import { enviarConviteSemFalhar } from '../../../../lib/equipe/enviar-convite';
 import { SLUG_VALIDO, criarEmpresa, listarEmpresas } from '../../../../repositories/empresas-admin';
+import { validarDadosDaEmpresa } from '../../../../lib/empresa/validacao';
 import { emailValido } from '../../../../repositories/equipe';
 
 export const dynamic = 'force-dynamic';
@@ -38,7 +39,10 @@ export async function POST(request: NextRequest) {
   if (masterNome.length === 0 || masterNome.length > 120) return recusa('masterNome', 'Informe o nome do administrador master.');
   if (!emailValido(masterEmail)) return recusa('masterEmail', 'Informe um e-mail válido para o administrador master.');
 
-  const r = await criarEmpresa(getDb(), acesso.contexto, { nome, slug, masterNome, masterEmail });
+  const validacao = validarDadosDaEmpresa(corpo ?? {}, { completo: true });
+  if (!validacao.ok) return recusa(validacao.campo, validacao.mensagem);
+
+  const r = await criarEmpresa(getDb(), acesso.contexto, { nome, slug, masterNome, masterEmail, dados: validacao.dados });
   if (!r.ok) return NextResponse.json({ codigo: r.codigo }, { status: 409 });
 
   const envio = await enviarConviteSemFalhar(r.masterEmail, r.token, baseDaUrl(request));

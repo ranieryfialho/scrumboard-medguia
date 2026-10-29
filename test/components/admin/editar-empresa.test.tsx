@@ -79,7 +79,7 @@ describe('T-217: EditarEmpresa', () => {
     expect(await screen.findByText('Empresa não encontrada')).toBeTruthy();
   });
 
-  test('salvar muda só o nome; suspender e reativar pedem confirmação com o nome; a empresa atual não suspende @spec:AC-609', async () => {
+  test('salvar manda o nome (e os dados cadastrais); suspender e reativar pedem confirmação com o nome; a empresa atual não suspende @spec:AC-609', async () => {
     const u = usuario();
     render(<EditarEmpresa id="e-1" />);
     const salvar = (await screen.findByRole('button', { name: 'Salvar Alterações' })) as HTMLButtonElement;
@@ -90,7 +90,7 @@ describe('T-217: EditarEmpresa', () => {
     expect(salvar.disabled).toBe(false);
     await u.click(salvar);
     await waitFor(() => expect(chamadas('PATCH')).toHaveLength(1));
-    expect(JSON.parse(chamadas('PATCH')[0][1].body)).toEqual({ nome: 'Clínica São Lucas Matriz' });
+    expect(JSON.parse(chamadas('PATCH')[0][1].body)).toMatchObject({ nome: 'Clínica São Lucas Matriz' });
     expect(await screen.findByText('Alterações salvas.')).toBeTruthy();
 
     await u.click(screen.getByRole('button', { name: 'Suspender' }));
@@ -140,10 +140,11 @@ describe('T-217: EditarEmpresa', () => {
   test('impersonate, cota, integrações, políticas e arquivar ficam "em breve" e plano, CNPJ e infraestrutura não existem @spec:AC-612', async () => {
     render(<EditarEmpresa id="e-1" />);
     await screen.findByRole('heading', { name: 'Clínica São Lucas' });
-    for (const rotulo of ['Impersonate / Acessar como Master', 'Alterar Cota', 'Integrações & WhatsApp Evolution', 'Logs de Auditoria', 'Políticas de governança e dados', 'Desativar e Arquivar Tenant']) {
+    for (const rotulo of ['Impersonate / Acessar como Master', 'Integrações & WhatsApp Evolution', 'Logs de Auditoria', 'Políticas de governança e dados', 'Desativar e Arquivar Tenant']) {
       expect(screen.getByRole('button', { name: `${rotulo} (em breve)` }).getAttribute('aria-disabled')).toBe('true');
     }
-    expect(screen.queryByText(/Enterprise|CNPJ|Razão Social|Volume no Pipeline|Fechamentos|PostgreSQL|Backup/i)).toBeFalsy();
+    expect(screen.queryByText(/Volume no Pipeline|Fechamentos|PostgreSQL|Backup/i)).toBeFalsy();
+    expect(screen.queryByRole('button', { name: 'Alterar Cota (em breve)' })).toBeNull(); // virou o campo de assentos (fase5-empresa-dados)
   });
 
   test('carregando mostra esqueleto e a falha mostra erro com "Tentar de novo" @spec:AC-614', async () => {

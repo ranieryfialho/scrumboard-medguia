@@ -3,11 +3,11 @@
 // T-217 (fase4-admin, US-141): tela "Cadastrar Nova Empresa ou Filial" — fonte visual
 // `docs/ui/stitch_medcrm_interface_design/30._admin_empresas_nova_criar_empresa/`. Só o super
 // admin. Cria por `POST /api/admin/empresas` (empresa + convite do master). O CRM só guarda nome
-// e identificador: razão social, CNPJ, endereço, plano e assentos não existem (Q-059).
+// e identificador, mais (fase5-empresa-dados) razão social, CNPJ, endereço, plano e assentos.
 import { useState } from 'react';
 import Link from 'next/link';
 
-import { ItemEmBreve } from '@/components/pipeline/pecas/selo-em-breve';
+import { CamposDeEndereco, CamposDeIdentificacao, CamposDePlano, VALORES_VAZIOS, corpoDosDados, type ErrosDaEmpresa, type ValoresDaEmpresa } from './campos-da-empresa';
 import { mensagemDeErro, sugerirSlug } from './comum';
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -25,8 +25,9 @@ export function NovaEmpresa() {
   const [slugEditado, setSlugEditado] = useState(false);
   const [masterNome, setMasterNome] = useState('');
   const [masterEmail, setMasterEmail] = useState('');
+  const [dados, setDados] = useState<ValoresDaEmpresa>(VALORES_VAZIOS);
   const [enviando, setEnviando] = useState(false);
-  const [erros, setErros] = useState<Partial<Record<'nome' | 'slug' | 'masterNome' | 'masterEmail' | 'geral', string>>>({});
+  const [erros, setErros] = useState<Partial<Record<'nome' | 'slug' | 'masterNome' | 'masterEmail' | 'geral', string>> & ErrosDaEmpresa>({});
   const [criada, setCriada] = useState<Criada | null>(null);
   const [copiado, setCopiado] = useState(false);
 
@@ -35,7 +36,7 @@ export function NovaEmpresa() {
     if (!slugEditado) setSlug(sugerirSlug(valor));
   }
 
-  const completo = nome.trim().length >= 3 && slug.length >= 3 && masterNome.trim() !== '' && EMAIL.test(masterEmail.trim());
+  const completo = nome.trim().length >= 3 && slug.length >= 3 && masterNome.trim() !== '' && EMAIL.test(masterEmail.trim()) && dados.razaoSocial.trim() !== '' && dados.cnpj.trim() !== '' && dados.plano !== '' && dados.assentos.trim() !== '';
 
   async function criar() {
     if (!completo || enviando) return;
@@ -45,7 +46,7 @@ export function NovaEmpresa() {
       const r = await fetch('/api/admin/empresas', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ nome: nome.trim(), slug, masterNome: masterNome.trim(), masterEmail: masterEmail.trim() }),
+        body: JSON.stringify({ nome: nome.trim(), slug, masterNome: masterNome.trim(), masterEmail: masterEmail.trim(), ...corpoDosDados(dados) }),
       });
       const corpo = (await r.json().catch(() => null)) as (Criada & { codigo?: string; campo?: string; mensagem?: string }) | null;
       if (r.ok && corpo) {
@@ -53,6 +54,7 @@ export function NovaEmpresa() {
         return;
       }
       if (corpo?.codigo === 'SLUG_EM_USO') setErros({ slug: 'Esse identificador já está em uso.' });
+      else if (corpo?.codigo === 'CNPJ_EM_USO') setErros({ cnpj: mensagemDeErro('CNPJ_EM_USO') });
       else if (corpo?.campo) setErros({ [corpo.campo]: corpo.mensagem ?? 'Valor inválido.' });
       else setErros({ geral: mensagemDeErro(corpo?.codigo) });
     } catch {
@@ -140,6 +142,12 @@ export function NovaEmpresa() {
               <span className="text-text-muted">De 3 a 40 letras minúsculas, números e hífens. Não muda depois de criado.</span>
               <Erro campo="slug" />
             </label>
+            <CamposDeIdentificacao criando valores={dados} onMudar={setDados} erros={erros} />
+          </section>
+
+          <section aria-label="Endereço" className="bg-surface-card rounded-2xl p-space-md shadow-sm flex flex-col gap-space-md">
+            <h2 className="font-headline-sm text-headline-sm text-text-primary">Endereço (opcional)</h2>
+            <CamposDeEndereco valores={dados} onMudar={setDados} erros={erros} />
           </section>
 
           <section aria-label="Administrador Master Inicial" className="bg-surface-card rounded-2xl p-space-md shadow-sm flex flex-col gap-space-md">
@@ -168,7 +176,7 @@ export function NovaEmpresa() {
           </section>
           <section aria-label="Plano de Assinatura & Cotas" className="bg-surface-card rounded-2xl p-space-md shadow-sm flex flex-col gap-2">
             <h2 className="font-headline-sm text-headline-sm text-text-primary">Plano de Assinatura &amp; Cotas</h2>
-            <ItemEmBreve rotulo="Plano e cotas de recursos" icone="workspace_premium" className="h-9 px-3 rounded-lg bg-surface-subtle" />
+            <CamposDePlano criando valores={dados} onMudar={setDados} erros={erros} />
           </section>
         </div>
       </div>

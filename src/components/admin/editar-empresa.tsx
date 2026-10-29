@@ -3,7 +3,8 @@
 // T-217 (fase4-admin, US-142): tela de edição da empresa — fonte visual
 // `docs/ui/stitch_medcrm_interface_design/31._admin_empresas_id_editar_empresa/`. Só o super
 // admin. Detalhe de `GET /api/admin/empresas/[id]`; salva o nome e suspende/reativa por `PATCH`.
-// O identificador não muda. Plano, cota, CNPJ, integrações e logs não existem no sistema.
+// O identificador não muda. Razão social, CNPJ, endereço, plano e assentos (fase5-empresa-dados)
+// são editáveis; integrações e logs não existem no sistema.
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 
@@ -11,11 +12,13 @@ import { CartaoIndicador } from '@/components/pipeline/pecas/cartao-indicador';
 import { ItemEmBreve } from '@/components/pipeline/pecas/selo-em-breve';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { CamposDeEndereco, CamposDeIdentificacao, CamposDePlano, corpoDosDados, valoresDaEmpresa, type ErrosDaEmpresa, type ValoresDaEmpresa } from './campos-da-empresa';
 import { COR_DA_SITUACAO, COR_DO_PAPEL, ROTULO_DA_SITUACAO, formatarData, iniciais, mensagemDeErro, trocarEmpresaAtiva, type ColaboradorView, type EmpresaView } from './comum';
 import { EsqueletoCarregando, EstadoErro, EstadoVazio } from './estados';
 
 interface Detalhe {
   empresa: EmpresaView;
+  assentosEmUso?: number;
   colaboradores: ColaboradorView[];
   resumo: { total: number; ativos: number; pendentes: number; inativos: number };
 }
@@ -24,6 +27,8 @@ export function EditarEmpresa({ id }: { id: string }) {
   const [dados, setDados] = useState<Detalhe | null>(null);
   const [estado, setEstado] = useState<'carregando' | 'ok' | 'erro' | 'nao-encontrada'>('carregando');
   const [nome, setNome] = useState('');
+  const [valores, setValores] = useState<ValoresDaEmpresa | null>(null);
+  const [erros, setErros] = useState<ErrosDaEmpresa>({});
   const [aviso, setAviso] = useState<{ ok: boolean; texto: string } | null>(null);
   const [confirmando, setConfirmando] = useState(false);
   const [trabalhando, setTrabalhando] = useState(false);
@@ -36,6 +41,7 @@ export function EditarEmpresa({ id }: { id: string }) {
       const d = (await r.json()) as Detalhe;
       setDados(d);
       setNome((atual) => atual || d.empresa.nome);
+      setValores(valoresDaEmpresa(d.empresa as never));
       setEstado('ok');
     } catch {
       setEstado('erro');
@@ -46,13 +52,17 @@ export function EditarEmpresa({ id }: { id: string }) {
     void carregar();
   }, [carregar]);
 
-  async function salvar(corpo: { nome?: string; ativo?: boolean }, sucesso: string) {
+  async function salvar(corpo: Record<string, unknown>, sucesso: string) {
     setTrabalhando(true);
     setAviso(null);
+    setErros({});
     try {
       const r = await fetch(`/api/admin/empresas/${id}`, { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify(corpo) });
       if (!r.ok) {
-        const e = (await r.json().catch(() => null)) as { codigo?: string; mensagem?: string } | null;
+        const e = (await r.json().catch(() => null)) as { codigo?: string; campo?: string; mensagem?: string } | null;
+        if (e?.campo) setErros({ [e.campo]: e.mensagem ?? 'Valor inválido.' });
+        else if (e?.codigo === 'CNPJ_EM_USO') setErros({ cnpj: mensagemDeErro(e.codigo) });
+        else if (e?.codigo === 'ASSENTOS_ABAIXO_DO_EM_USO') setErros({ assentos: mensagemDeErro(e.codigo) });
         setAviso({ ok: false, texto: e?.mensagem ?? mensagemDeErro(e?.codigo) });
         return;
       }
@@ -84,7 +94,8 @@ export function EditarEmpresa({ id }: { id: string }) {
   }
 
   const { empresa, colaboradores, resumo } = dados;
-  const mudou = nome.trim() !== empresa.nome;
+  const original = valoresDaEmpresa(empresa as never);
+  const mudou = nome.trim() !== empresa.nome || (valores !== null && JSON.stringify(valores) !== JSON.stringify(original));
 
   return (
     <div className="p-space-md space-y-space-md">
@@ -107,7 +118,7 @@ export function EditarEmpresa({ id }: { id: string }) {
             Acessar esta empresa
           </button>
           <ItemEmBreve rotulo="Impersonate / Acessar como Master" icone="bolt" className="h-10 px-4 rounded-xl bg-surface-subtle" />
-          <button type="button" onClick={() => void salvar({ nome: nome.trim() }, 'Alterações salvas.')} disabled={!mudou || nome.trim().length < 3 || trabalhando} className="h-10 px-4 rounded-xl bg-primary text-on-primary font-label-md text-label-md font-semibold shadow-md disabled:opacity-50">
+          <button type="button" onClick={() => void salvar({ nome: nome.trim(), ...(valores ? corpoDosDados(valores) : {}) }, 'Alterações salvas.')} disabled={!mudou || nome.trim().length < 3 || trabalhando} className="h-10 px-4 rounded-xl bg-primary text-on-primary font-label-md text-label-md font-semibold shadow-md disabled:opacity-50">
             Salvar Alterações
           </button>
         </div>
@@ -141,8 +152,16 @@ export function EditarEmpresa({ id }: { id: string }) {
             <p className="h-10 px-3 rounded-xl bg-surface-subtle flex items-center font-mono text-body-md text-text-primary">{empresa.slug}</p>
             <span className="text-text-muted">Inalterável após a criação.</span>
           </div>
+          {valores && (
+            <>
+              <CamposDeIdentificacao valores={valores} onMudar={setValores} erros={erros} />
+              <h3 className="font-label-lg text-label-lg text-text-primary">Endereço</h3>
+              <CamposDeEndereco valores={valores} onMudar={setValores} erros={erros} />
+              <h3 className="font-label-lg text-label-lg text-text-primary">Plano e cota</h3>
+              <CamposDePlano valores={valores} onMudar={setValores} erros={erros} emUso={dados.assentosEmUso ?? resumo.ativos + resumo.pendentes} />
+            </>
+          )}
           <div className="flex flex-wrap gap-2">
-            <ItemEmBreve rotulo="Alterar Cota" icone="tune" className="h-9 px-3 rounded-lg bg-surface-subtle" />
             <ItemEmBreve rotulo="Políticas de governança e dados" icone="policy" className="h-9 px-3 rounded-lg bg-surface-subtle" />
           </div>
         </section>

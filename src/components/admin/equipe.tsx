@@ -34,6 +34,7 @@ interface Resposta {
   colaboradores: ColaboradorView[];
   total: number;
   resumo: { total: number; ativos: number; pendentes: number; inativos: number };
+  assentos?: { emUso: number; limite: number | null };
 }
 
 export function Equipe() {
@@ -157,6 +158,7 @@ export function Equipe() {
             <CartaoIndicador titulo="Usuários ativos" valor={String(dados.resumo.ativos)} legenda="com acesso" icone="check_circle" cor="success" />
             <CartaoIndicador titulo="Convites pendentes" valor={String(dados.resumo.pendentes)} legenda="aguardando a senha" icone="mark_email_unread" cor="warning" />
             <CartaoIndicador titulo="Inativos" valor={String(dados.resumo.inativos)} legenda="sem acesso" icone="person_off" cor="danger" />
+            {dados.assentos?.limite && <CartaoIndicador titulo="Assentos" valor={`${dados.assentos.emUso} de ${dados.assentos.limite}`} legenda="assentos em uso" icone="event_seat" />}
           </div>
 
           <section aria-label="Filtros" className="bg-surface-card rounded-2xl p-space-md shadow-sm flex items-center gap-2 flex-wrap">

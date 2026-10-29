@@ -34,7 +34,7 @@ describe('T-212: empresas da rede', () => {
   const editar = (id: string, corpo: unknown, cookie: string | null = superAdmin) =>
     rotaId.PATCH(req(`/api/admin/empresas/${id}`, cookie, 'PATCH', corpo), { params: Promise.resolve({ id }) });
   const equipeDaB = () => rotaEquipe.GET(req('/api/equipe', amb.cookieB));
-  const novaEmpresa = { nome: 'Hospital Santa Helena', slug: 'santa-helena', masterNome: 'Dr. Eduardo Sampaio', masterEmail: 'Eduardo@SantaHelena.com' };
+  const novaEmpresa = { nome: 'Hospital Santa Helena', slug: 'santa-helena', masterNome: 'Dr. Eduardo Sampaio', masterEmail: 'Eduardo@SantaHelena.com', razaoSocial: 'Hospital Santa Helena Ltda', cnpj: '11222333000181', plano: 'clinica', assentos: 10 };
 
   beforeAll(async () => {
     amb = await prepararAmbienteAnexos();
@@ -85,7 +85,7 @@ describe('T-212: empresas da rede', () => {
 
   test('recusa nome, identificador e e-mail inválidos e identificador repetido sem criar nada @spec:AC-605', async () => {
     const antes = sql('SELECT count(*) FROM empresas');
-    const com = (mudanca: Record<string, string>) => criar({ ...novaEmpresa, slug: 'outra-clinica', masterEmail: 'outro@x.com', ...mudanca });
+    const com = (mudanca: Record<string, string | number>) => criar({ ...novaEmpresa, slug: 'outra-clinica', masterEmail: 'outro@x.com', ...mudanca });
     for (const [mudanca, campo] of [
       [{ nome: 'ab' }, 'nome'],
       [{ slug: 'AB' }, 'slug'],

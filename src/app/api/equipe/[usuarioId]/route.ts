@@ -11,7 +11,7 @@ import type { PapelUsuario } from '../../../../lib/auth/convites';
 export const dynamic = 'force-dynamic';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const STATUS_HTTP: Record<string, number> = { COLABORADOR_NAO_ENCONTRADO: 404, NAO_PODE_ALTERAR_A_SI: 422, ULTIMO_MASTER: 422 };
+const STATUS_HTTP: Record<string, number> = { COLABORADOR_NAO_ENCONTRADO: 404, NAO_PODE_ALTERAR_A_SI: 422, ULTIMO_MASTER: 422, SEM_ASSENTOS: 409 };
 
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ usuarioId: string }> }) {
   const acesso = await exigirGerente(request);

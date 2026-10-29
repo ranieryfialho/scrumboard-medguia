@@ -3,12 +3,13 @@
 // `empresas_usuarios` e `usuarios` não têm RLS por empresa, então todo filtro de empresa é
 // explícito aqui. Regras: ASM-200 (situação), ASM-202 (quem pode o quê), ASM-203 (ninguém
 // mexe em si e sempre sobra um MASTER), ASM-204 (último acesso = última sessão).
+import { ErroSemAssentos, garantirAssento } from '../lib/empresa/assentos';
 import { randomBytes } from 'node:crypto';
 
 import { and, eq, inArray, isNotNull, sql } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
-import { contas, empresasUsuarios, sessoes, tokensVerificacao, usuarios } from '../db/schema';
+import { contas, empresasUsuarios, sessoes, tokensVerificacao, usuarios, empresas } from '../db/schema';
 import { TTL_CONVITE_MS, convidarUsuario, identificadorConvite, type PapelUsuario } from '../lib/auth/convites';
 import type { ContextoTenant } from '../lib/auth/tenant';
 
@@ -28,6 +29,8 @@ export interface ListaDaEquipe {
   colaboradores: Colaborador[];
   total: number;
   resumo: { total: number; ativos: number; pendentes: number; inativos: number };
+  /** fase5-empresa-dados (AC-659): vínculos ativos e o limite da empresa (`null` = sem limite). */
+  assentos: { emUso: number; limite: number | null };
 }
 
 export async function todosOsColaboradores(db: NodePgDatabase, empresaId: string): Promise<Colaborador[]> {
@@ -94,10 +97,12 @@ export async function listarEquipe(
   );
   const total = filtrados.length;
   if (filtro.pagina && filtro.porPagina) filtrados = filtrados.slice((filtro.pagina - 1) * filtro.porPagina, filtro.pagina * filtro.porPagina);
-  return { colaboradores: filtrados, total, resumo };
+  const [empresa] = await db.select({ assentos: empresas.assentos }).from(empresas).where(eq(empresas.id, contexto.empresaId)).limit(1);
+  const assentos = { emUso: todos.filter((c) => c.status !== 'inativo').length, limite: empresa?.assentos ?? null };
+  return { colaboradores: filtrados, total, resumo, assentos };
 }
 
-export type ResultadoAlteracao = { ok: true; colaborador: Colaborador } | { ok: false; codigo: 'COLABORADOR_NAO_ENCONTRADO' | 'NAO_PODE_ALTERAR_A_SI' | 'ULTIMO_MASTER' };
+export type ResultadoAlteracao = { ok: true; colaborador: Colaborador } | { ok: false; codigo: 'COLABORADOR_NAO_ENCONTRADO' | 'NAO_PODE_ALTERAR_A_SI' | 'ULTIMO_MASTER' | 'SEM_ASSENTOS' };
 
 /** AC-582/AC-583: troca o papel e/ou ativa e desativa o vínculo da pessoa nesta empresa. */
 export async function alterarColaborador(
@@ -119,10 +124,19 @@ export async function alterarColaborador(
     if (outros.length === 0) return { ok: false, codigo: 'ULTIMO_MASTER' };
   }
 
-  await db
-    .update(empresasUsuarios)
-    .set({ papel: novoPapel, ativo: ficaAtivo })
-    .where(and(eq(empresasUsuarios.empresaId, contexto.empresaId), eq(empresasUsuarios.usuarioId, usuarioId)));
+  const reativando = alvo.status === 'inativo' && ficaAtivo;
+  try {
+    await db.transaction(async (tx) => {
+      if (reativando) await garantirAssento(tx, contexto.empresaId); // AC-656
+      await tx
+        .update(empresasUsuarios)
+        .set({ papel: novoPapel, ativo: ficaAtivo })
+        .where(and(eq(empresasUsuarios.empresaId, contexto.empresaId), eq(empresasUsuarios.usuarioId, usuarioId)));
+    });
+  } catch (erro) {
+    if (erro instanceof ErroSemAssentos) return { ok: false, codigo: 'SEM_ASSENTOS' };
+    throw erro;
+  }
 
   const [atualizado] = (await todosOsColaboradores(db, contexto.empresaId)).filter((c) => c.usuarioId === usuarioId);
   return { ok: true, colaborador: atualizado };
@@ -153,7 +167,7 @@ export async function reenviarConvite(db: NodePgDatabase, contexto: ContextoTena
 
 export type ResultadoConvite =
   | { ok: true; usuarioId: string; papel: PapelUsuario; token: string | null; expiraEm: Date | null; reativado: boolean; email: string }
-  | { ok: false; codigo: 'JA_E_COLABORADOR' | 'SEM_PERMISSAO' };
+  | { ok: false; codigo: 'JA_E_COLABORADOR' | 'SEM_PERMISSAO' | 'SEM_ASSENTOS' };
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -181,21 +195,35 @@ export async function convidarParaEquipe(
       .from(contas)
       .where(and(eq(contas.usuarioId, existente.usuarioId), isNotNull(contas.senha)))
       .limit(1);
-    await db
-      .update(empresasUsuarios)
-      .set({ papel: entrada.papel, ativo: true })
-      .where(and(eq(empresasUsuarios.empresaId, contexto.empresaId), eq(empresasUsuarios.usuarioId, existente.usuarioId)));
-    await db.update(usuarios).set({ ativo: true }).where(eq(usuarios.id, existente.usuarioId));
+    try {
+      await db.transaction(async (tx) => {
+        await garantirAssento(tx, contexto.empresaId); // AC-656
+        await tx
+          .update(empresasUsuarios)
+          .set({ papel: entrada.papel, ativo: true })
+          .where(and(eq(empresasUsuarios.empresaId, contexto.empresaId), eq(empresasUsuarios.usuarioId, existente.usuarioId)));
+        await tx.update(usuarios).set({ ativo: true }).where(eq(usuarios.id, existente.usuarioId));
+      });
+    } catch (erro) {
+      if (erro instanceof ErroSemAssentos) return { ok: false, codigo: 'SEM_ASSENTOS' };
+      throw erro;
+    }
     if (comConta) return { ok: true, usuarioId: existente.usuarioId, papel: entrada.papel, token: null, expiraEm: null, reativado: true, email };
     const { token, expiraEm } = await emitirToken(db, email);
     return { ok: true, usuarioId: existente.usuarioId, papel: entrada.papel, token, expiraEm, reativado: true, email };
   }
 
-  const resultado = await convidarUsuario(
-    db,
-    { usuarioId: contexto.usuarioId, empresaId: contexto.empresaId, papel: contexto.papel, isSuperAdmin: contexto.isSuperAdmin },
-    { email, nome: entrada.nome, papel: entrada.papel, empresaId: contexto.empresaId }
-  );
+  let resultado;
+  try {
+    resultado = await convidarUsuario(
+      db,
+      { usuarioId: contexto.usuarioId, empresaId: contexto.empresaId, papel: contexto.papel, isSuperAdmin: contexto.isSuperAdmin },
+      { email, nome: entrada.nome, papel: entrada.papel, empresaId: contexto.empresaId }
+    );
+  } catch (erro) {
+    if (erro instanceof ErroSemAssentos) return { ok: false, codigo: 'SEM_ASSENTOS' };
+    throw erro;
+  }
   return { ok: true, usuarioId: resultado.usuarioId, papel: resultado.papel, token: resultado.token, expiraEm: resultado.expiraEm, reativado: false, email };
 }
 

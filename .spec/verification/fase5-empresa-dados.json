@@ -1,0 +1,57 @@
+{
+  "feature": "fase5-empresa-dados",
+  "timestamp": "2026-10-29T14:35:58.794Z",
+  "gitRev": "62c47e8",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json test/lib/empresa-validacao.test.ts test/api/empresas-dados.test.ts test/api/equipe-assentos.test.ts test/components/admin/empresa-dados.test.tsx",
+  "reporter": "vitest-json",
+  "exitCode": 0,
+  "testsParsed": 16,
+  "results": {
+    "AC-651": {
+      "status": "pass",
+      "testName": "T-239: dados da empresa criar grava razão social, CNPJ só com dígitos, endereço normalizado, plano e assentos @spec:AC-651 criar grava razão social, CNPJ só com dígitos, endereço normalizado, plano e assentos @spec:AC-651",
+      "method": "vitest-json"
+    },
+    "AC-652": {
+      "status": "pass",
+      "testName": "T-239: dados da empresa CNPJ inválido ou repetido, plano, assentos, UF e CEP inválidos são recusados sem criar nada @spec:AC-652 CNPJ inválido ou repetido, plano, assentos, UF e CEP inválidos são recusados sem criar nada @spec:AC-652",
+      "method": "vitest-json"
+    },
+    "AC-653": {
+      "status": "pass",
+      "testName": "T-239: dados da empresa editar muda os dados, mantém o CNPJ único e não deixa os assentos abaixo do uso @spec:AC-653 editar muda os dados, mantém o CNPJ único e não deixa os assentos abaixo do uso @spec:AC-653",
+      "method": "vitest-json"
+    },
+    "AC-654": {
+      "status": "pass",
+      "testName": "T-239: dados da empresa detalhe e lista trazem os dados, com vazio nas empresas antigas; a lista mostra plano e assentos @spec:AC-654 detalhe e lista trazem os dados, com vazio nas empresas antigas; a lista mostra plano e assentos @spec:AC-654",
+      "method": "vitest-json"
+    },
+    "AC-655": {
+      "status": "pass",
+      "testName": "T-239: cota de assentos sem cota o convite passa; com a cota cheia dá 409 SEM_ASSENTOS sem criar nada; desativar libera um assento @spec:AC-655 sem cota o convite passa; com a cota cheia dá 409 SEM_ASSENTOS sem criar nada; desativar libera um assento @spec:AC-655",
+      "method": "vitest-json"
+    },
+    "AC-656": {
+      "status": "pass",
+      "testName": "T-239: cota de assentos reativar com a cota cheia dá 409 SEM_ASSENTOS e a pessoa continua desativada, pela troca de situação e pelo convite @spec:AC-656 reativar com a cota cheia dá 409 SEM_ASSENTOS e a pessoa continua desativada, pela troca de situação e pelo convite @spec:AC-656",
+      "method": "vitest-json"
+    },
+    "AC-657": {
+      "status": "pass",
+      "testName": "T-239: telas com os dados da empresa nova empresa mostra o erro de cada campo junto dele, inclusive CNPJ repetido @spec:AC-657 nova empresa mostra o erro de cada campo junto dele, inclusive CNPJ repetido @spec:AC-657",
+      "method": "vitest-json"
+    },
+    "AC-658": {
+      "status": "pass",
+      "testName": "T-239: telas com os dados da empresa editar mostra os dados salvos, envia as mudanças e mostra o erro dos assentos; \"Alterar Cota\" virou o campo @spec:AC-658 editar mostra os dados salvos, envia as mudanças e mostra o erro dos assentos; \"Alterar Cota\" virou o campo @spec:AC-658",
+      "method": "vitest-json"
+    },
+    "AC-659": {
+      "status": "pass",
+      "testName": "T-239: cota de assentos a equipe devolve os assentos em uso e o limite @spec:AC-659 a equipe devolve os assentos em uso e o limite @spec:AC-659",
+      "method": "vitest-json"
+    }
+  },
+  "principles": {}
+}

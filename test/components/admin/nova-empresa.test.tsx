@@ -33,6 +33,13 @@ describe('T-217: NovaEmpresa', () => {
   });
 
   const usuario = () => userEvent.setup();
+  /** fase5-empresa-dados: razão social, CNPJ, plano e assentos passaram a ser obrigatórios. */
+  async function preencherDados(u: ReturnType<typeof usuario>) {
+    await u.type(campo('Razão social'), 'Hospital Santa Helena Ltda');
+    await u.type(campo('CNPJ'), '11.222.333/0001-81');
+    await u.selectOptions(screen.getByLabelText('Plano'), 'clinica');
+    await u.type(campo('Assentos'), '30');
+  }
 
   test('abre com o título, a volta e o cancelar, dentro do grupo (app) @spec:AC-603', () => {
     render(<NovaEmpresa />);
@@ -57,6 +64,8 @@ describe('T-217: NovaEmpresa', () => {
     await u.type(campo('Nome do gestor master'), 'Dr. Eduardo Sampaio');
     await u.type(campo('E-mail do master'), 'eduardo@hospital.com');
     expect(within(resumo).getByText('Dr. Eduardo Sampaio')).toBeTruthy();
+    expect(botao().disabled).toBe(true);
+    await preencherDados(u);
     expect(botao().disabled).toBe(false);
 
     // ao editar o identificador, o nome deixa de sobrescrevê-lo
@@ -82,18 +91,18 @@ describe('T-217: NovaEmpresa', () => {
     expect(screen.getByRole('link', { name: 'Abrir a empresa' }).getAttribute('href')).toBe('/admin/empresas/e-9');
     await u.click(screen.getByRole('button', { name: 'Copiar link' }));
     expect(escrever).toHaveBeenCalledWith('https://crm.teste/convite/abc');
-    expect(JSON.parse(posts().at(-1)![1].body)).toEqual({ nome: 'Hospital Santa Hélena SP', slug: 'santa-helena', masterNome: 'Dr. Eduardo Sampaio', masterEmail: 'eduardo@hospital.com' });
+    expect(JSON.parse(posts().at(-1)![1].body)).toMatchObject({ nome: 'Hospital Santa Hélena SP', slug: 'santa-helena', masterNome: 'Dr. Eduardo Sampaio', masterEmail: 'eduardo@hospital.com', razaoSocial: 'Hospital Santa Helena Ltda', cnpj: '11.222.333/0001-81', plano: 'clinica', assentos: 30 });
     expect(botao().disabled).toBe(true);
 
     expect(sugerirSlug('  Clínica São Lucás — Matriz!! ')).toBe('clinica-sao-lucas-matriz');
     expect(sugerirSlug('A'.repeat(60)).length).toBe(40);
   });
 
-  test('o plano e as cotas ficam num bloco "em breve" e razão social, CNPJ, endereço e assentos não existem @spec:AC-607', () => {
+  test('o item genérico "em breve" de plano e cotas foi trocado pelos campos reais; o que o CRM não usa continua fora @spec:AC-607', () => {
     render(<NovaEmpresa />);
-    expect(screen.getByRole('button', { name: 'Plano e cotas de recursos (em breve)' }).getAttribute('aria-disabled')).toBe('true');
-    expect(screen.queryByText(/Razão Social|CNPJ|Localização|Especialidade|Cargo|Celular|Conformidade CFM|Manual Técnico/i)).toBeFalsy();
-    expect(screen.queryByLabelText(/CNPJ|Razão|CEP/i)).toBeFalsy();
+    expect(screen.queryByRole('button', { name: 'Plano e cotas de recursos (em breve)' })).toBeNull();
+    for (const rotulo of ['Razão social', 'CNPJ', 'CEP', 'Logradouro', 'Número', 'Complemento', 'Bairro', 'Cidade', 'UF', 'Plano', 'Assentos']) expect(screen.getByLabelText(rotulo)).toBeTruthy();
+    expect(screen.queryByText(/Especialidade|Cargo|Celular|Conformidade CFM|Manual Técnico/i)).toBeFalsy();
   });
 
   test('o envio falho mantém o que foi digitado e mostra o motivo @spec:AC-614', async () => {
@@ -103,6 +112,7 @@ describe('T-217: NovaEmpresa', () => {
     await u.type(campo('Nome da empresa'), 'Clínica Teste');
     await u.type(campo('Nome do gestor master'), 'Fulano');
     await u.type(campo('E-mail do master'), 'fulano@x.com');
+    await preencherDados(u);
     await u.click(botao());
     await waitFor(() => expect(screen.getByRole('alert').textContent).toMatch(/Não foi possível criar a empresa/));
     expect(campo('Nome da empresa').value).toBe('Clínica Teste');

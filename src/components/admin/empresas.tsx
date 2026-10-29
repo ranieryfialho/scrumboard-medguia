@@ -4,6 +4,7 @@
 // `docs/ui/stitch_medcrm_interface_design/29._admin_empresas_empresas/`. Só o super admin.
 // Lista de `GET /api/admin/empresas`; "Acessar" troca a empresa ativa pela rota que já
 // existe (`POST /api/empresa-ativa`). CNPJ, plano, licenças e pipeline da rede não existem.
+import { ROTULO_DO_PLANO, type Plano } from '@/lib/empresa/validacao';
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 
@@ -14,6 +15,8 @@ import { EsqueletoCarregando, EstadoErro, EstadoVazio } from './estados';
 
 interface EmpresaDaLista extends EmpresaView {
   usuariosAtivos: number;
+  plano?: string | null;
+  assentos?: number | null;
   usuariosTotal: number;
 }
 interface Resposta {
@@ -157,6 +160,7 @@ export function Empresas() {
                       <th className="px-space-md py-3">Organização / Clínica</th>
                       <th className="px-space-md py-3">Status</th>
                       <th className="px-space-md py-3">Usuários</th>
+                      <th className="px-space-md py-3">Plano e assentos</th>
                       <th className="px-space-md py-3">Criada em</th>
                       <th className="px-space-md py-3 text-right">Ações</th>
                     </tr>
@@ -180,6 +184,9 @@ export function Empresas() {
                           <span className={`px-2.5 py-1 rounded-full font-label-sm text-label-sm ${e.ativo ? 'bg-success-surface text-success-text' : 'bg-surface-container text-text-muted'}`}>{e.ativo ? 'Ativa' : 'Inativa'}</span>
                         </td>
                         <td className="px-space-md py-3 font-body-md text-body-md">{e.usuariosAtivos} ativos / {e.usuariosTotal}</td>
+                        <td className="px-space-md py-3 font-body-md text-body-md">
+                          {e.plano ? ROTULO_DO_PLANO[e.plano as Plano] ?? e.plano : '—'} · {e.assentos ? `${e.usuariosAtivos} de ${e.assentos} assentos` : `${e.usuariosAtivos} assentos, sem limite`}
+                        </td>
                         <td className="px-space-md py-3 font-body-sm text-body-sm text-text-muted">{formatarData(e.criadoEm)}</td>
                         <td className="px-space-md py-3">
                           <div className="flex items-center justify-end gap-2">
