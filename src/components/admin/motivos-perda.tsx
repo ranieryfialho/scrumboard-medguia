@@ -2,9 +2,9 @@
 
 // T-215 (fase4-admin, US-139): tela "Motivos de Perda & Churn Comercial" — fonte visual
 // `docs/ui/stitch_medcrm_interface_design/28._configuracoes_motivos_perda_motivos_de_perda/`.
-// O catálogo é global (ASM-201): MASTER e GERENTE consultam; só o super admin cria e
-// (des)ativa motivo personalizado. O motivo só tem nome e situação, então categoria,
-// descrição e "Top 1" do protótipo não existem.
+// fase5-motivos-por-empresa: cada empresa cria e (des)ativa os seus motivos (gerente, master e super
+// admin); os globais ("Da rede") só o super admin altera e os sistêmicos são travados. O motivo só tem
+// nome e situação, então categoria, descrição e "Top 1" do protótipo não existem.
 import { useCallback, useEffect, useState } from 'react';
 
 import { CartaoIndicador } from '@/components/pipeline/pecas/cartao-indicador';
@@ -21,6 +21,7 @@ interface Motivo {
   id: string;
   nome: string;
   sistemico: boolean;
+  escopo?: 'sistemico' | 'rede' | 'empresa';
   ativo: boolean;
   usadoNoMes: number;
   usadoTotal: number;
@@ -116,7 +117,7 @@ export function MotivosPerda() {
     }
   }
 
-  const superAdmin = eu?.isSuperAdmin === true;
+  const podeCriar = eu?.isSuperAdmin === true || eu?.papel === 'MASTER' || eu?.papel === 'GERENTE';
   const visiveis = dados?.motivos.slice((pagina - 1) * POR_PAGINA, pagina * POR_PAGINA) ?? [];
 
   return (
@@ -128,7 +129,7 @@ export function MotivosPerda() {
         </div>
         <div className="flex items-center gap-space-sm flex-wrap">
           <ItemEmBreve rotulo="Exportar Relatório de Churn (CSV)" icone="download" className="h-10 px-4 rounded-xl bg-surface-card shadow-sm" />
-          {superAdmin && (
+          {podeCriar && (
             <button type="button" onClick={() => { setErroDoNome(null); setCriando(true); }} className="h-10 px-4 rounded-xl bg-primary text-on-primary font-label-md text-label-md font-semibold shadow-md">
               + Novo Motivo de Perda
             </button>
@@ -222,7 +223,7 @@ export function MotivosPerda() {
                         <td className="px-space-md py-3">
                           <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full font-label-sm text-label-sm ${m.sistemico ? 'bg-info-surface text-info-text' : 'bg-surface-container text-text-secondary'}`}>
                             {m.sistemico && <span aria-hidden="true" className="material-symbols-outlined text-[14px]">lock</span>}
-                            {m.sistemico ? 'Sistêmico' : 'Personalizado'}
+                            {m.sistemico ? 'Sistêmico' : m.escopo === 'rede' ? 'Da rede' : 'Da empresa'}
                           </span>
                         </td>
                         <td className="px-space-md py-3 font-body-md text-body-md">

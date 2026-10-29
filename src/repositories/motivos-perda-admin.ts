@@ -1,6 +1,6 @@
 // T-211 (fase4-admin, US-139): o catálogo de motivos de perda para a tela de administração.
-// O catálogo é GLOBAL (ASM-201, `motivos_perda` não tem `empresa_id`): todos os tenants o
-// compartilham; o uso (cards perdidos) é sempre da empresa da sessão, por `comTenant`.
+// fase5-motivos-por-empresa: o que a empresa enxerga são os motivos globais (`empresa_id` vazio, os que
+// já existiam) e os dela; o uso (cards perdidos) é sempre da empresa da sessão, por `comTenant`.
 import { and, eq, sql } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
@@ -8,6 +8,7 @@ import { motivosPerda } from '../db/schema';
 import { dataLocalEmSaoPaulo } from '../domain/cadencia/turno';
 import type { ContextoTenant } from '../lib/auth/tenant';
 import { comTenant } from './contexto';
+import { motivosDaEmpresa } from './motivos-perda';
 
 const ETAPA_PERDIDO = 14;
 
@@ -15,6 +16,8 @@ export interface MotivoDaLista {
   id: string;
   nome: string;
   sistemico: boolean;
+  /** AC-663: "sistemico" (travado), "rede" (global não sistêmico) ou "empresa" (da empresa da sessão). */
+  escopo: 'sistemico' | 'rede' | 'empresa';
   ativo: boolean;
   usadoNoMes: number;
   usadoTotal: number;
@@ -36,7 +39,7 @@ export async function listarMotivos(
   const inicioDoMes = new Date(Date.UTC(l.ano, l.mes - 1, 1, 3));
 
   return comTenant(db, contexto, async (tx) => {
-    const catalogo = await tx.select().from(motivosPerda).orderBy(motivosPerda.nome);
+    const catalogo = await tx.select().from(motivosPerda).where(motivosDaEmpresa(contexto.empresaId)).orderBy(motivosPerda.nome);
 
     const totais = await tx.execute<{ motivo: string | null; total: number }>(sql`
       SELECT o.motivo_perda_id AS motivo, count(*)::int AS total
@@ -60,10 +63,11 @@ export async function listarMotivos(
       id: m.id,
       nome: m.nome,
       sistemico: m.eSistemico,
+      escopo: m.eSistemico ? ('sistemico' as const) : m.empresaId ? ('empresa' as const) : ('rede' as const),
       ativo: m.ativo,
       usadoNoMes: usoMes.get(m.id) ?? 0,
       usadoTotal: usoTotal.get(m.id) ?? 0,
-      podeEditar: contexto.isSuperAdmin && !m.eSistemico,
+      podeEditar: !m.eSistemico && (m.empresaId !== null || contexto.isSuperAdmin),
     }));
 
     const termo = filtro.busca?.trim().toLowerCase();
@@ -92,21 +96,41 @@ export async function listarMotivos(
 }
 
 export type ResultadoMotivo =
-  | { ok: true; motivo: { id: string; nome: string; sistemico: boolean; ativo: boolean } }
-  | { ok: false; codigo: 'MOTIVO_JA_EXISTE' | 'MOTIVO_SISTEMICO' | 'MOTIVO_NAO_ENCONTRADO' };
+  | { ok: true; motivo: { id: string; nome: string; sistemico: boolean; ativo: boolean; escopo: 'sistemico' | 'rede' | 'empresa' } }
+  | { ok: false; codigo: 'MOTIVO_JA_EXISTE' | 'MOTIVO_SISTEMICO' | 'MOTIVO_DA_REDE' | 'MOTIVO_NAO_ENCONTRADO' };
 
-export async function criarMotivo(db: NodePgDatabase, nome: string): Promise<ResultadoMotivo> {
-  const limpo = nome.trim();
-  const [existe] = await db.select({ id: motivosPerda.id }).from(motivosPerda).where(sql`lower(${motivosPerda.nome}) = lower(${limpo})`).limit(1);
+type LinhaDeMotivo = typeof motivosPerda.$inferSelect;
+const comoResultado = (m: LinhaDeMotivo) => ({
+  id: m.id,
+  nome: m.nome,
+  sistemico: m.eSistemico,
+  ativo: m.ativo,
+  escopo: m.eSistemico ? ('sistemico' as const) : m.empresaId ? ('empresa' as const) : ('rede' as const),
+});
+
+/** AC-660/AC-661: cria um motivo da empresa da sessão; o nome não pode repetir um global nem outro da empresa. */
+export async function criarMotivo(db: NodePgDatabase, contexto: ContextoTenant, nome: string): Promise<ResultadoMotivo> {
+  const limpo = nome.trim().replace(/\s+/g, ' ');
+  const [existe] = await db
+    .select({ id: motivosPerda.id })
+    .from(motivosPerda)
+    .where(and(sql`lower(${motivosPerda.nome}) = lower(${limpo})`, motivosDaEmpresa(contexto.empresaId)))
+    .limit(1);
   if (existe) return { ok: false, codigo: 'MOTIVO_JA_EXISTE' };
-  const [criado] = await db.insert(motivosPerda).values({ nome: limpo, ativo: true, eSistemico: false }).returning();
-  return { ok: true, motivo: { id: criado.id, nome: criado.nome, sistemico: criado.eSistemico, ativo: criado.ativo } };
+  try {
+    const [criado] = await db.insert(motivosPerda).values({ nome: limpo, ativo: true, eSistemico: false, empresaId: contexto.empresaId }).returning();
+    return { ok: true, motivo: comoResultado(criado) };
+  } catch {
+    return { ok: false, codigo: 'MOTIVO_JA_EXISTE' }; // corrida com outro gerente da mesma empresa
+  }
 }
 
-export async function alterarMotivo(db: NodePgDatabase, id: string, ativo: boolean): Promise<ResultadoMotivo> {
-  const [atual] = await db.select().from(motivosPerda).where(eq(motivosPerda.id, id)).limit(1);
+/** AC-662: ativa ou desativa só o motivo da própria empresa (o super admin também os globais não sistêmicos). */
+export async function alterarMotivo(db: NodePgDatabase, contexto: ContextoTenant, id: string, ativo: boolean): Promise<ResultadoMotivo> {
+  const [atual] = await db.select().from(motivosPerda).where(and(eq(motivosPerda.id, id), motivosDaEmpresa(contexto.empresaId))).limit(1);
   if (!atual) return { ok: false, codigo: 'MOTIVO_NAO_ENCONTRADO' };
   if (atual.eSistemico) return { ok: false, codigo: 'MOTIVO_SISTEMICO' };
+  if (atual.empresaId === null && !contexto.isSuperAdmin) return { ok: false, codigo: 'MOTIVO_DA_REDE' };
   const [novo] = await db.update(motivosPerda).set({ ativo }).where(and(eq(motivosPerda.id, id), eq(motivosPerda.eSistemico, false))).returning();
-  return { ok: true, motivo: { id: novo.id, nome: novo.nome, sistemico: novo.eSistemico, ativo: novo.ativo } };
+  return { ok: true, motivo: comoResultado(novo) };
 }

@@ -104,4 +104,7 @@ VALUES
   ('Decisor não disponível/trocou', true, false),
   ('Cadência esgotada', true, true),
   ('Legado — arquivado', false, false)
-ON CONFLICT ("nome") DO NOTHING;
+-- fase5-motivos-por-empresa (migration 0019): o índice único de `nome` virou dois índices parciais
+-- (globais e por empresa); sem alvo, o `DO NOTHING` vale para qualquer um deles e o seed segue
+-- reaplicável (AC-017). Antes: ON CONFLICT ("nome") DO NOTHING.
+ON CONFLICT DO NOTHING;

@@ -94,10 +94,14 @@ describe('T-211: motivos de perda (administração)', () => {
     expect(resumo.principal).toEqual({ nome: 'Zz Preço do teste', quantidade: 2, percentual: 100 });
   });
 
-  test('só o super admin cria e (des)ativa motivo personalizado; o sistêmico não muda @spec:AC-596', async () => {
-    expect((await criar({ nome: 'Motivo novo' }, gerente)).status).toBe(403);
+  test('gerente cria e (des)ativa motivo da empresa; o atendente não; o global e o sistêmico não mudam para ele @spec:AC-596', async () => {
+    expect((await criar({ nome: 'Motivo novo' }, atendente)).status).toBe(403);
     expect((await criar({ nome: 'Motivo novo' }, null)).status).toBe(401);
-    expect((await alterar(MOTIVO_B, { ativo: false }, gerente)).status).toBe(403);
+    expect((await alterar(MOTIVO_B, { ativo: false }, atendente)).status).toBe(403);
+    // fase5: o global não sistêmico é "da rede" — só o super admin altera
+    const daRede = await alterar(MOTIVO_B, { ativo: false }, gerente);
+    expect(daRede.status).toBe(422);
+    expect((await daRede.json()).codigo).toBe('MOTIVO_DA_REDE');
 
     const r = await criar({ nome: '  Motivo novo do teste  ' });
     expect(r.status).toBe(201);

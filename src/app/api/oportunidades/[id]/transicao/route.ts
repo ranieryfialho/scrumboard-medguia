@@ -74,5 +74,8 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   if (resultado.codigo === 'CONFLITO_DE_VERSAO') {
     return NextResponse.json({ codigo: resultado.codigo }, { status: 409 });
   }
+  if (resultado.codigo === 'MOTIVO_INVALIDO') {
+    return NextResponse.json({ codigo: resultado.codigo }, { status: 400 }); // fase5-motivos-por-empresa, AC-665
+  }
   return NextResponse.json({ codigo: resultado.codigo }, { status: 422 });
 }

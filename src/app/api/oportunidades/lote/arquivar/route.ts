@@ -4,11 +4,10 @@
 // aparece na lista de falhas. Sem motivo é 400 `MOTIVO_OBRIGATORIO` e motivo que
 // não existe ou está inativo é 400 `MOTIVO_INVALIDO`, ambos antes de tocar em
 // qualquer card.
-import { eq } from 'drizzle-orm';
 import { NextResponse, type NextRequest } from 'next/server';
 
 import { getDb } from '../../../../../db/client';
-import { motivosPerda } from '../../../../../db/schema';
+import { motivoDaEmpresaOuGlobal } from '../../../../../repositories/motivos-perda';
 import { getAuth } from '../../../../../lib/auth/instancia';
 import { ErroSessaoInvalida, resolverContextoTenant, type ContextoTenant } from '../../../../../lib/auth/tenant';
 import { idsDeLoteValidos, moverEmLote } from '../../../../../repositories/lote-oportunidades';
@@ -43,11 +42,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ codigo: 'MOTIVO_OBRIGATORIO' }, { status: 400 });
   }
 
-  // Motivo de perda é tabela global; um id que não existe (ou inativo) nunca chega à transição.
+  // Um id que não existe, inativo ou de outra empresa nunca chega à transição (AC-665).
   const db = getDb();
-  const [motivo] = UUID.test(corpo.motivoPerdaId)
-    ? await db.select({ ativo: motivosPerda.ativo }).from(motivosPerda).where(eq(motivosPerda.id, corpo.motivoPerdaId)).limit(1)
-    : [];
+  const motivo = UUID.test(corpo.motivoPerdaId) ? await motivoDaEmpresaOuGlobal(db, contexto.empresaId, corpo.motivoPerdaId) : null;
   if (!motivo || !motivo.ativo) {
     return NextResponse.json({ codigo: 'MOTIVO_INVALIDO' }, { status: 400 });
   }
