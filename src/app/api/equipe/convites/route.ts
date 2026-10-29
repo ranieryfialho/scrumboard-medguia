@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
   }
 
   const r = await convidarParaEquipe(getDb(), acesso.contexto, { email, nome, papel: papel as PapelUsuario });
-  if (!r.ok) return NextResponse.json({ codigo: r.codigo }, { status: r.codigo === 'JA_E_COLABORADOR' ? 409 : 403 });
+  if (!r.ok) return NextResponse.json({ codigo: r.codigo }, { status: r.codigo === 'JA_E_COLABORADOR' || r.codigo === 'SEM_ASSENTOS' ? 409 : 403 });
 
   const envio = r.token ? await enviarConviteSemFalhar(r.email, r.token, baseDaUrl(request), undefined) : { emailEnviado: false, linkConvite: null };
   return NextResponse.json(

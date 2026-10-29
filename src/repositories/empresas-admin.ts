@@ -3,12 +3,13 @@
 // `empresas_usuarios` não têm RLS por empresa; quem decide o acesso é a rota (só super admin).
 import { randomUUID } from 'node:crypto';
 
-import { and, desc, eq, sql } from 'drizzle-orm';
+import { and, desc, eq, ne, sql } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
 import { empresas, empresasUsuarios } from '../db/schema';
 import { convidarUsuario } from '../lib/auth/convites';
 import type { ContextoTenant } from '../lib/auth/tenant';
+import type { DadosDaEmpresa } from '../lib/empresa/validacao';
 import { todosOsColaboradores, type Colaborador } from './equipe';
 
 /** ASM-208: de 3 a 40 letras minúsculas, números e hífens, sem hífen no começo ou no fim. */
@@ -22,6 +23,9 @@ export interface EmpresaDaLista {
   criadoEm: string;
   usuariosAtivos: number;
   usuariosTotal: number;
+  /** fase5-empresa-dados (AC-654). */
+  plano: string | null;
+  assentos: number | null;
 }
 
 export interface ListaDeEmpresas {
@@ -37,6 +41,8 @@ export async function listarEmpresas(db: NodePgDatabase, filtro: { status?: 'ati
       slug: empresas.slug,
       ativo: empresas.ativo,
       criadoEm: empresas.criadoEm,
+      plano: empresas.plano,
+      assentos: empresas.assentos,
       usuariosAtivos: sql<number>`count(${empresasUsuarios.usuarioId}) filter (where ${empresasUsuarios.ativo})::int`,
       usuariosTotal: sql<number>`count(${empresasUsuarios.usuarioId})::int`,
     })
@@ -64,22 +70,27 @@ export async function listarEmpresas(db: NodePgDatabase, filtro: { status?: 'ati
 
 export type ResultadoCriacao =
   | { ok: true; id: string; slug: string; masterUsuarioId: string; token: string; masterEmail: string }
-  | { ok: false; codigo: 'SLUG_EM_USO' };
+  | { ok: false; codigo: 'SLUG_EM_USO' | 'CNPJ_EM_USO' };
 
 /** AC-604: cria a empresa e convida o master; se o convite falhar a empresa não fica criada. */
 export async function criarEmpresa(
   db: NodePgDatabase,
   ator: ContextoTenant,
-  entrada: { nome: string; slug: string; masterNome: string; masterEmail: string }
+  entrada: { nome: string; slug: string; masterNome: string; masterEmail: string; dados?: Partial<DadosDaEmpresa> }
 ): Promise<ResultadoCriacao> {
   const [existente] = await db.select({ id: empresas.id }).from(empresas).where(eq(empresas.slug, entrada.slug)).limit(1);
   if (existente) return { ok: false, codigo: 'SLUG_EM_USO' };
 
+  if (entrada.dados?.cnpj) {
+    const [cnpjUsado] = await db.select({ id: empresas.id }).from(empresas).where(eq(empresas.cnpj, entrada.dados.cnpj)).limit(1);
+    if (cnpjUsado) return { ok: false, codigo: 'CNPJ_EM_USO' };
+  }
+
   const id = randomUUID();
   try {
-    await db.insert(empresas).values({ id, nome: entrada.nome, slug: entrada.slug, ativo: true });
+    await db.insert(empresas).values({ id, nome: entrada.nome, slug: entrada.slug, ativo: true, ...entrada.dados });
   } catch {
-    return { ok: false, codigo: 'SLUG_EM_USO' }; // corrida: outro super admin criou o mesmo identificador
+    return { ok: false, codigo: 'SLUG_EM_USO' }; // corrida: outro super admin criou o mesmo identificador (ou CNPJ)
   }
 
   const email = entrada.masterEmail.trim().toLowerCase();
@@ -98,9 +109,26 @@ export async function criarEmpresa(
 }
 
 export interface DetalheDaEmpresa {
-  empresa: { id: string; nome: string; slug: string; ativo: boolean; criadoEm: string };
+  empresa: { id: string; nome: string; slug: string; ativo: boolean; criadoEm: string } & DadosDaEmpresa;
+  assentosEmUso: number;
   colaboradores: Colaborador[];
   resumo: { ativos: number; pendentes: number; inativos: number; total: number };
+}
+
+function dadosDaLinha(e: typeof empresas.$inferSelect): DadosDaEmpresa {
+  return {
+    razaoSocial: e.razaoSocial,
+    cnpj: e.cnpj,
+    cep: e.cep,
+    logradouro: e.logradouro,
+    numero: e.numero,
+    complemento: e.complemento,
+    bairro: e.bairro,
+    cidade: e.cidade,
+    uf: e.uf,
+    plano: e.plano as DadosDaEmpresa['plano'],
+    assentos: e.assentos,
+  };
 }
 
 export async function detalharEmpresa(db: NodePgDatabase, id: string): Promise<DetalheDaEmpresa | null> {
@@ -108,7 +136,8 @@ export async function detalharEmpresa(db: NodePgDatabase, id: string): Promise<D
   if (!e) return null;
   const colaboradores = await todosOsColaboradores(db, id);
   return {
-    empresa: { id: e.id, nome: e.nome, slug: e.slug, ativo: e.ativo, criadoEm: e.criadoEm.toISOString() },
+    empresa: { id: e.id, nome: e.nome, slug: e.slug, ativo: e.ativo, criadoEm: e.criadoEm.toISOString(), ...dadosDaLinha(e) },
+    assentosEmUso: colaboradores.filter((c) => c.status !== 'inativo').length,
     colaboradores,
     resumo: {
       total: colaboradores.length,
@@ -119,24 +148,41 @@ export async function detalharEmpresa(db: NodePgDatabase, id: string): Promise<D
   };
 }
 
-export type ResultadoEdicao = { ok: true; empresa: DetalheDaEmpresa['empresa'] } | { ok: false; codigo: 'EMPRESA_NAO_ENCONTRADA' | 'EMPRESA_ATUAL' };
+export type ResultadoEdicao =
+  | { ok: true; empresa: DetalheDaEmpresa['empresa'] }
+  | { ok: false; codigo: 'EMPRESA_NAO_ENCONTRADA' | 'EMPRESA_ATUAL' | 'CNPJ_EM_USO' | 'ASSENTOS_ABAIXO_DO_EM_USO' };
 
-/** AC-609: muda o nome e/ou a situação; o identificador nunca muda e a empresa em que o próprio super admin está não é suspensa. */
+/**
+ * AC-609/AC-653: muda nome, situação e os dados cadastrais; o identificador nunca muda, a empresa em
+ * que o próprio super admin está não é suspensa, o CNPJ é único e os assentos não ficam abaixo do uso.
+ */
 export async function editarEmpresa(
   db: NodePgDatabase,
   ator: ContextoTenant,
   id: string,
-  alteracao: { nome?: string; ativo?: boolean }
+  alteracao: { nome?: string; ativo?: boolean; dados?: Partial<DadosDaEmpresa> }
 ): Promise<ResultadoEdicao> {
   const [atual] = await db.select().from(empresas).where(eq(empresas.id, id)).limit(1);
   if (!atual) return { ok: false, codigo: 'EMPRESA_NAO_ENCONTRADA' };
   if (alteracao.ativo === false && id === ator.empresaId) return { ok: false, codigo: 'EMPRESA_ATUAL' };
 
+  const dados = alteracao.dados ?? {};
+  if (dados.cnpj) {
+    const [outra] = await db.select({ id: empresas.id }).from(empresas).where(and(eq(empresas.cnpj, dados.cnpj), ne(empresas.id, id))).limit(1);
+    if (outra) return { ok: false, codigo: 'CNPJ_EM_USO' };
+  }
+  if (typeof dados.assentos === 'number') {
+    const [uso] = await db
+      .select({ total: sql<number>`count(*)::int` })
+      .from(empresasUsuarios)
+      .where(and(eq(empresasUsuarios.empresaId, id), eq(empresasUsuarios.ativo, true)));
+    if (dados.assentos < uso.total) return { ok: false, codigo: 'ASSENTOS_ABAIXO_DO_EM_USO' };
+  }
+
   const [novo] = await db
     .update(empresas)
-    .set({ nome: alteracao.nome ?? atual.nome, ativo: alteracao.ativo ?? atual.ativo, atualizadoEm: new Date() })
+    .set({ ...dados, nome: alteracao.nome ?? atual.nome, ativo: alteracao.ativo ?? atual.ativo, atualizadoEm: new Date() })
     .where(and(eq(empresas.id, id)))
     .returning();
-  return { ok: true, empresa: { id: novo.id, nome: novo.nome, slug: novo.slug, ativo: novo.ativo, criadoEm: novo.criadoEm.toISOString() } };
+  return { ok: true, empresa: { id: novo.id, nome: novo.nome, slug: novo.slug, ativo: novo.ativo, criadoEm: novo.criadoEm.toISOString(), ...dadosDaLinha(novo) } };
 }
-
