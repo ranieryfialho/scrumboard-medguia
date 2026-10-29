@@ -1,0 +1,52 @@
+{
+  "feature": "fase5-email-descadastro",
+  "timestamp": "2026-10-29T20:19:31.577Z",
+  "gitRev": "22c5d0b",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json test/lib/descadastro-token.test.ts test/lib/descadastro-rodape.test.ts test/auth/rotas-descadastro.test.ts test/api/descadastro.test.ts test/api/campanhas-descadastro.test.ts test/components/email/descadastro.test.tsx test/components/campanhas/descadastro-campanha.test.tsx",
+  "reporter": "vitest-json",
+  "exitCode": 0,
+  "testsParsed": 22,
+  "results": {
+    "AC-714": {
+      "status": "pass",
+      "testName": "T-274: token de descadastro gera e confere: o e-mail vale sem diferenciar maiúsculas e volta em minúsculas @spec:AC-714 gera e confere: o e-mail vale sem diferenciar maiúsculas e volta em minúsculas @spec:AC-714",
+      "method": "vitest-json"
+    },
+    "AC-715": {
+      "status": "pass",
+      "testName": "T-274: descadastro (rota pública e lista por empresa) o GET só informa a empresa e o e-mail mascarado e NÃO descadastra; link inválido dá 404 sem revelar nada @spec:AC-715 o GET só informa a empresa e o e-mail mascarado e NÃO descadastra; link inválido dá 404 sem revelar nada @spec:AC-715",
+      "method": "vitest-json"
+    },
+    "AC-716": {
+      "status": "pass",
+      "testName": "T-274: descadastro (rota pública e lista por empresa) o clique único do cliente de e-mail (corpo List-Unsubscribe=One-Click) descadastra sem tela; token ruim dá 400 sem gravar @spec:AC-716 o clique único do cliente de e-mail (corpo List-Unsubscribe=One-Click) descadastra sem tela; token ruim dá 400 sem gravar @spec:AC-716",
+      "method": "vitest-json"
+    },
+    "AC-717": {
+      "status": "pass",
+      "testName": "T-274: descadastro (rota pública e lista por empresa) o POST descadastra; repetir é inofensivo e o e-mail fica uma vez só, em qualquer caixa @spec:AC-715 @spec:AC-717 o POST descadastra; repetir é inofensivo e o e-mail fica uma vez só, em qualquer caixa @spec:AC-715 @spec:AC-717",
+      "method": "vitest-json"
+    },
+    "AC-718": {
+      "status": "pass",
+      "testName": "T-274: campanha sem descadastrados a prévia desconta os descadastrados da empresa (e só os dela), e o valor em pipeline também @spec:AC-718 a prévia desconta os descadastrados da empresa (e só os dela), e o valor em pipeline também @spec:AC-718",
+      "method": "vitest-json"
+    },
+    "AC-719": {
+      "status": "pass",
+      "testName": "T-274: descadastro (rota pública e lista por empresa) a tela de e-mail da empresa mostra só a contagem de descadastrados e não oferece recadastrar @spec:AC-719 a tela de e-mail da empresa mostra só a contagem de descadastrados e não oferece recadastrar @spec:AC-719",
+      "method": "vitest-json"
+    },
+    "AC-720": {
+      "status": "pass",
+      "testName": "T-274: rodapé e cabeçalhos de descadastro o rodapé entra antes de </body> quando existe, e no fim quando não @spec:AC-720 o rodapé entra antes de </body> quando existe, e no fim quando não @spec:AC-720",
+      "method": "vitest-json"
+    },
+    "AC-721": {
+      "status": "pass",
+      "testName": "T-274: rotas públicas do descadastro a página e a API do descadastro respondem sem sessão @spec:AC-721 a página e a API do descadastro respondem sem sessão @spec:AC-721",
+      "method": "vitest-json"
+    }
+  },
+  "principles": {}
+}

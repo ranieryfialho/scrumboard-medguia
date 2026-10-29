@@ -6,6 +6,7 @@ import { getDb } from '../../../../db/client';
 import { exigirGerente } from '../../../../lib/equipe/acesso';
 import { ErroConfiguracaoIndisponivel } from '../../../../lib/seguranca/cifra';
 import { gravarConfiguracaoDeEmail, lerConfiguracaoDeEmailPublica } from '../../../../repositories/email-config';
+import { contarDescadastrados } from '../../../../repositories/email-descadastros';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,7 +17,12 @@ const recusa = (campo: string, mensagem: string) => NextResponse.json({ codigo: 
 export async function GET(request: NextRequest) {
   const acesso = await exigirGerente(request);
   if ('resposta' in acesso) return acesso.resposta;
-  return NextResponse.json(await lerConfiguracaoDeEmailPublica(getDb(), acesso.contexto));
+  return NextResponse.json(await configuracaoComDescadastrados(acesso.contexto));
+}
+
+/** AC-719: a configuração pública mais a contagem de descadastrados (só o número, sem lista nem ação de recadastrar). */
+async function configuracaoComDescadastrados(contexto: Parameters<typeof lerConfiguracaoDeEmailPublica>[1]) {
+  return { ...(await lerConfiguracaoDeEmailPublica(getDb(), contexto)), descadastrados: await contarDescadastrados(getDb(), contexto) };
 }
 
 export async function PUT(request: NextRequest) {
@@ -47,5 +53,5 @@ export async function PUT(request: NextRequest) {
     }
     throw erro;
   }
-  return NextResponse.json(await lerConfiguracaoDeEmailPublica(getDb(), acesso.contexto));
+  return NextResponse.json(await configuracaoComDescadastrados(acesso.contexto));
 }

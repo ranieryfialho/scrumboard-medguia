@@ -9,6 +9,7 @@ import { campanhas, enviosCampanha, leads, oportunidades } from '../db/schema';
 import { dataLocalEmSaoPaulo } from '../domain/cadencia/turno';
 import type { ContextoTenant } from '../lib/auth/tenant';
 import { comTenant } from './contexto';
+import { emailsDescadastrados } from './email-descadastros';
 import { normalizarDestinatarios, type Campanha } from './campanhas';
 
 export type FiltroStatusCampanha = 'rascunho' | 'enviando' | 'concluida';
@@ -148,6 +149,8 @@ export interface PreviaDeDestinatarios {
   porEtapa: { etapaId: number; total: number }[];
   total: number;
   valorEmPipeline: number;
+  /** fase5-email-descadastro (AC-718): e-mails da seleção que a empresa já descadastrou — ficam fora de `total`. */
+  descadastrados: number;
 }
 
 /** AC-540: quantos leads com e-mail válido cada etapa tem, o total único e o valor em pipeline (ASM-187). */
@@ -170,7 +173,9 @@ export async function preverDestinatarios(
       .where(and(...condicoes));
 
     const comEmail = linhas.filter((l) => l.email !== null && l.email.trim() !== '');
-    const validos = (contatos: { nome: string; email: string }[]) => normalizarDestinatarios(contatos).destinatarios;
+    const fora = await emailsDescadastrados(tx, contexto.empresaId, comEmail.map((l) => l.email as string));
+    const validos = (contatos: { nome: string; email: string }[]) => normalizarDestinatarios(contatos).destinatarios.filter((d) => !fora.has(d.email));
+    const descadastrados = normalizarDestinatarios(comEmail.map((l) => ({ nome: l.nome, email: l.email as string }))).destinatarios.filter((d) => fora.has(d.email)).length;
 
     const porEtapa = etapaIds.map((etapaId) => ({
       etapaId,
@@ -187,6 +192,6 @@ export async function preverDestinatarios(
       valorEmPipeline += l.valor === null ? 0 : Number(l.valor);
     }
 
-    return { porEtapa, total, valorEmPipeline };
+    return { porEtapa, total, valorEmPipeline, descadastrados };
   });
 }

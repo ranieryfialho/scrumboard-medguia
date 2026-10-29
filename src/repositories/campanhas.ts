@@ -27,6 +27,7 @@ import { sql } from 'drizzle-orm';
 import { campanhas, enviosCampanha, leads, oportunidades } from '../db/schema';
 import type { ContextoTenant } from '../lib/auth/tenant';
 import { comTenant } from './contexto';
+import { emailsDescadastrados } from './email-descadastros';
 
 export type Campanha = typeof campanhas.$inferSelect;
 export type EnvioCampanha = typeof enviosCampanha.$inferSelect;
@@ -154,6 +155,8 @@ export interface ResultadoCriarCampanha {
   totalDestinatarios: number;
   descartadosInvalidos: number;
   descartadosRepetidos: number;
+  /** fase5-email-descadastro (AC-718): destinatários que a empresa já descadastrou, deixados de fora. */
+  descartadosDescadastrados: number;
 }
 
 /**
@@ -193,7 +196,12 @@ export async function criarCampanha(
         .map((linha) => ({ nome: linha.nome, email: linha.email as string }));
     }
 
-    const { destinatarios, descartadosInvalidos, descartadosRepetidos } = normalizarDestinatarios(contatosBrutos);
+    const normalizados = normalizarDestinatarios(contatosBrutos);
+    const { descartadosInvalidos, descartadosRepetidos } = normalizados;
+    // AC-718: quem a empresa descadastrou nunca vira destinatário.
+    const fora = await emailsDescadastrados(tx, contexto.empresaId, normalizados.destinatarios.map((d) => d.email));
+    const destinatarios = normalizados.destinatarios.filter((d) => !fora.has(d.email));
+    const descartadosDescadastrados = normalizados.destinatarios.length - destinatarios.length;
 
     const [campanha] = await tx
       .insert(campanhas)
@@ -222,6 +230,7 @@ export async function criarCampanha(
       totalDestinatarios: destinatarios.length,
       descartadosInvalidos,
       descartadosRepetidos,
+      descartadosDescadastrados,
     };
   });
 }

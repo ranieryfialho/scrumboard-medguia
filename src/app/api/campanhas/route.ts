@@ -188,6 +188,7 @@ export async function POST(request: NextRequest) {
       totalDestinatarios: resultado.totalDestinatarios,
       descartadosInvalidos: resultado.descartadosInvalidos,
       descartadosRepetidos: resultado.descartadosRepetidos,
+      descartadosDescadastrados: resultado.descartadosDescadastrados,
     },
     { status: 201 }
   );
