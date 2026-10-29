@@ -153,10 +153,12 @@ describe('T-191: NovaMensagem', () => {
   test('os itens sem backend aparecem "em breve" e a instância é só leitura @spec:AC-516', async () => {
     render(<NovaMensagem />);
     await screen.findByText('matriz');
-    for (const rotulo of ['Nome do destinatário', 'Motivo / Categoria', 'Anexo complementar', 'Criar lead se houver resposta', 'Salvar como Rascunho', 'Promover a Lead', 'Reenviar']) {
+    for (const rotulo of ['Nome do destinatário', 'Motivo / Categoria', 'Anexo complementar', 'Criar lead se houver resposta', 'Salvar como Rascunho', 'Reenviar']) {
       expect(screen.getByRole('button', { name: `${rotulo} (em breve)` }).getAttribute('aria-disabled')).toBe('true');
     }
     expect(screen.getByRole('region', { name: 'Parâmetros do Envio' }).querySelector('select')).toBeFalsy();
+    // @spec:AC-650: o item genérico "em breve" foi trocado pelo botão de promover em cada disparo avulso
+    expect(screen.queryByRole('button', { name: 'Promover a Lead (em breve)' })).toBeNull();
   });
 
   test('sem disparos mostra o vazio e a falha da lista não derruba a tela @spec:AC-531', async () => {

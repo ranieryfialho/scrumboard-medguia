@@ -8,6 +8,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
+import { PromoverLead } from './promover-lead';
 import { ItemEmBreve } from '@/components/pipeline/pecas/selo-em-breve';
 import { normalizarNumero } from '@/domain/whatsapp/numero';
 import { formatarNumero, horarioCurto, mensagemDeErroDoEnvio, MENSAGEM_ERRO_PADRAO_DO_ENVIO, type ConversaView } from './comum';
@@ -240,9 +241,9 @@ export function NovaMensagem() {
                     Abrir Chat
                   </Link>
                 </div>
+                <PromoverLead numero={d.numero} />
               </article>
             ))}
-            <ItemEmBreve rotulo="Promover a Lead" icone="person_add" className="font-body-sm" />
             <ItemEmBreve rotulo="Reenviar" icone="replay" className="font-body-sm" />
           </section>
         </div>

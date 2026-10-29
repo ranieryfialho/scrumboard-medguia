@@ -1,0 +1,67 @@
+{
+  "feature": "fase5-acoes-rapidas",
+  "timestamp": "2026-10-29T14:03:43.373Z",
+  "gitRev": "62c47e8",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json test/lib/telefone.test.ts test/components/pipeline/ligar-agora.test.tsx test/components/whatsapp/promover-lead.test.tsx test/components/whatsapp/nova-mensagem.test.tsx test/components/agenda/agenda-tela.test.tsx test/api/reunioes-cancelar.test.ts test/api/whatsapp-promover.test.ts",
+  "reporter": "vitest-json",
+  "exitCode": 0,
+  "testsParsed": 33,
+  "results": {
+    "AC-640": {
+      "status": "pass",
+      "testName": "T-234: cancelar reunião cancelar apaga a reunião, devolve o card para \"Qualificado p/ reunião\" e registra a mudança @spec:AC-640 @spec:AC-644 cancelar apaga a reunião, devolve o card para \"Qualificado p/ reunião\" e registra a mudança @spec:AC-640 @spec:AC-644",
+      "method": "vitest-json"
+    },
+    "AC-641": {
+      "status": "pass",
+      "testName": "T-234: cancelar reunião só reunião agendada cancela: em andamento, com no-show e remarcada são recusadas sem mudar nada @spec:AC-641 só reunião agendada cancela: em andamento, com no-show e remarcada são recusadas sem mudar nada @spec:AC-641",
+      "method": "vitest-json"
+    },
+    "AC-642": {
+      "status": "pass",
+      "testName": "T-234: cancelar reunião atendente só cancela o próprio card; reunião de outra empresa e id inválido são \"não encontrada\"; sem sessão dá 401 @spec:AC-642 atendente só cancela o próprio card; reunião de outra empresa e id inválido são \"não encontrada\"; sem sessão dá 401 @spec:AC-642",
+      "method": "vitest-json"
+    },
+    "AC-643": {
+      "status": "pass",
+      "testName": "T-186: AgendaTela Cancelar pede confirmação, chama a API e recarrega; sem confirmar não faz nada; a recusa aparece @spec:AC-643 Cancelar pede confirmação, chama a API e recarrega; sem confirmar não faz nada; a recusa aparece @spec:AC-643",
+      "method": "vitest-json"
+    },
+    "AC-644": {
+      "status": "pass",
+      "testName": "T-234: cancelar reunião cancelar apaga a reunião, devolve o card para \"Qualificado p/ reunião\" e registra a mudança @spec:AC-640 @spec:AC-644 cancelar apaga a reunião, devolve o card para \"Qualificado p/ reunião\" e registra a mudança @spec:AC-640 @spec:AC-644",
+      "method": "vitest-json"
+    },
+    "AC-645": {
+      "status": "pass",
+      "testName": "T-234: link de ligação dígitos viram tel:+número; vazio ou curto não vira link @spec:AC-645 dígitos viram tel:+número; vazio ou curto não vira link @spec:AC-645",
+      "method": "vitest-json"
+    },
+    "AC-646": {
+      "status": "pass",
+      "testName": "T-186: AgendaTela \"Ligar para Clínica\" é um link tel: quando o lead tem telefone e some quando não tem @spec:AC-646 \"Ligar para Clínica\" é um link tel: quando o lead tem telefone e some quando não tem @spec:AC-646",
+      "method": "vitest-json"
+    },
+    "AC-647": {
+      "status": "pass",
+      "testName": "T-234: promover número avulso promover cria o lead, o card em \"Entrada de leads\" com o responsável e liga as mensagens das duas grafias @spec:AC-647 promover cria o lead, o card em \"Entrada de leads\" com o responsável e liga as mensagens das duas grafias @spec:AC-647",
+      "method": "vitest-json"
+    },
+    "AC-648": {
+      "status": "pass",
+      "testName": "T-234: promover número avulso nome vazio, número inválido, número que já é de um lead e falta de sessão são recusados sem criar nada @spec:AC-648 nome vazio, número inválido, número que já é de um lead e falta de sessão são recusados sem criar nada @spec:AC-648",
+      "method": "vitest-json"
+    },
+    "AC-649": {
+      "status": "pass",
+      "testName": "T-234: promover número avulso só a empresa que promoveu tem as mensagens ligadas; a outra continua avulsa @spec:AC-649 só a empresa que promoveu tem as mensagens ligadas; a outra continua avulsa @spec:AC-649",
+      "method": "vitest-json"
+    },
+    "AC-650": {
+      "status": "pass",
+      "testName": "T-234: promover a lead digitar o nome e promover envia número e nome e leva ao card @spec:AC-650 digitar o nome e promover envia número e nome e leva ao card @spec:AC-650",
+      "method": "vitest-json"
+    }
+  },
+  "principles": {}
+}

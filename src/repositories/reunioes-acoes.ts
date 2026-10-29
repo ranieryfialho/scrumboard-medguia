@@ -152,3 +152,22 @@ export async function reagendarReuniao(
   const novaId = await inserir(db, contexto, { oportunidadeId: r.oportunidadeId, agendadaPara: entrada.agendadaPara, remarcadaDe: id });
   return reuniaoPorId(db, contexto, novaId);
 }
+
+/**
+ * T-229 (fase5-acoes-rapidas, AC-640 a AC-642): cancela uma reunião ainda agendada — o card volta
+ * para "Qualificado p/ reunião" pelas regras do funil e, só depois, a reunião é apagada (ASM-222;
+ * a mudança de etapa fica no histórico do card). Se o card não puder voltar, nada é apagado.
+ */
+export async function cancelarReuniao(db: NodePgDatabase, contexto: ContextoTenant, id: string, agora: Date): Promise<{ ok: true } | { ok: false; codigo: string }> {
+  const r = await reuniaoDoUsuario(db, contexto, id);
+  if (!r) return { ok: false, codigo: 'REUNIAO_NAO_ENCONTRADA' };
+  if (r.status !== 'agendada' || new Date(r.agendadaPara).getTime() <= agora.getTime() || r.etapaId !== ETAPA_REUNIAO_AGENDADA) {
+    return { ok: false, codigo: 'REUNIAO_NAO_PODE_CANCELAR' };
+  }
+
+  const movido = await transicionarCard(db, contexto, r.oportunidadeId, { version: r.version, etapaDestinoId: ETAPA_QUALIFICADO_P_REUNIAO });
+  if (!movido.ok) return movido;
+
+  await comTenant(db, contexto, (tx) => tx.delete(reunioes).where(and(eq(reunioes.id, id), eq(reunioes.empresaId, contexto.empresaId))));
+  return { ok: true };
+}

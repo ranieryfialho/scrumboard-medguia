@@ -1,10 +1,11 @@
 // T-186 (fase4-tarefas-agenda, AC-486/AC-488): o cartão de uma reunião, só com
 // o que existe no sistema (horário, lead, valor do card, closer, status, resumo
 // e evidência) e as ações que o status permite. O que ainda não tem backend
-// (Meet, cancelar, resgate por WhatsApp...) aparece "em breve".
+// (Meet, resgate por WhatsApp...) aparece "em breve".
 import Link from 'next/link';
 
 import { ItemEmBreve } from '@/components/pipeline/pecas/selo-em-breve';
+import { linkDeLigacao } from '@/lib/telefone';
 import { ROTULO_DO_STATUS } from '@/lib/reunioes/status';
 import { horaDe } from './datas';
 import { COR_DO_STATUS, type ReuniaoView } from './tipos';
@@ -13,6 +14,7 @@ export interface AcoesDaReuniao {
   onNoShow: (r: ReuniaoView) => void;
   onConcluir: (r: ReuniaoView) => void;
   onReagendar: (r: ReuniaoView) => void;
+  onCancelar: (r: ReuniaoView) => void;
 }
 
 const MOEDA = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
@@ -47,10 +49,18 @@ export function BotoesDaReuniao({ reuniao, acoes, ocupado }: { reuniao: ReuniaoV
           Reagendar
         </button>
       )}
-      {s === 'agendada' && <ItemEmBreve rotulo="Cancelar" className="h-9 px-3 rounded-lg bg-surface-subtle" />}
+      {s === 'agendada' && (
+        <button type="button" disabled={ocupado} onClick={() => acoes.onCancelar(reuniao)} aria-label={`Cancelar: ${nome}`} className={`${CLASSE_BOTAO} bg-surface-subtle text-text-primary`}>
+          Cancelar
+        </button>
+      )}
       {s === 'aguardando_resultado' && (
         <>
-          <ItemEmBreve rotulo="Ligar para Clínica" className="h-9 px-3 rounded-lg bg-surface-subtle" />
+          {linkDeLigacao(reuniao.lead.telefoneE164) && (
+            <a href={linkDeLigacao(reuniao.lead.telefoneE164)!} className={`${CLASSE_BOTAO} bg-surface-subtle text-text-primary inline-flex items-center`}>
+              Ligar para Clínica
+            </a>
+          )}
           <ItemEmBreve rotulo="Confirmar Manualmente" className="h-9 px-3 rounded-lg bg-surface-subtle" />
         </>
       )}

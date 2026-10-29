@@ -351,16 +351,15 @@ describe('T-174: tela da conversa de WhatsApp do lead', () => {
   });
 
   describe('AC-444: ações da conversa sem backend', () => {
-    test('ligar, novo número, busca, menu, anexar, templates e respostas rápidas ficam "em breve" e não disparam nada @spec:AC-444', async () => {
+    test('novo número, busca, menu, anexar, templates e respostas rápidas ficam "em breve" e não disparam nada @spec:AC-444', async () => {
       const usuario = userEvent.setup();
       await abrirTela();
 
-      for (const rotulo of ['Ligar Agora', 'Novo Número', 'Buscar na conversa', 'Mais opções', 'Anexar arquivo', 'Templates', 'Respostas rápidas']) {
+      for (const rotulo of ['Novo Número', 'Buscar na conversa', 'Mais opções', 'Anexar arquivo', 'Templates', 'Respostas rápidas']) {
         expect(screen.getByText(rotulo).closest('*[class*="rounded"], *[class*="py-1"]')!.textContent!.toLowerCase()).toContain('em breve');
       }
 
       const antes = fetchFalso.mock.calls.length;
-      await usuario.click(screen.getByText('Ligar Agora'));
       await usuario.click(screen.getByText('Templates'));
       expect(fetchFalso.mock.calls.length).toBe(antes);
     });
