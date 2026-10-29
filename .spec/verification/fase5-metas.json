@@ -1,0 +1,72 @@
+{
+  "feature": "fase5-metas",
+  "timestamp": "2026-10-29T12:14:42.089Z",
+  "gitRev": "08ca8cf",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
+  "reporter": "vitest-json",
+  "exitCode": 0,
+  "testsParsed": 1629,
+  "results": {
+    "AC-615": {
+      "status": "pass",
+      "testName": "T-223: API de metas sem meta cadastrada a leitura vem vazia; salvar grava e devolve quem e quando @spec:AC-615 @spec:AC-616 sem meta cadastrada a leitura vem vazia; salvar grava e devolve quem e quando @spec:AC-615 @spec:AC-616",
+      "method": "vitest-json"
+    },
+    "AC-616": {
+      "status": "pass",
+      "testName": "T-223: API de metas sem meta cadastrada a leitura vem vazia; salvar grava e devolve quem e quando @spec:AC-615 @spec:AC-616 sem meta cadastrada a leitura vem vazia; salvar grava e devolve quem e quando @spec:AC-615 @spec:AC-616",
+      "method": "vitest-json"
+    },
+    "AC-617": {
+      "status": "pass",
+      "testName": "T-223: API de metas valor inválido ou meta desconhecida dá 400 e nada é gravado @spec:AC-617 valor inválido ou meta desconhecida dá 400 e nada é gravado @spec:AC-617",
+      "method": "vitest-json"
+    },
+    "AC-618": {
+      "status": "pass",
+      "testName": "T-223: API de metas null remove a meta @spec:AC-618 null remove a meta @spec:AC-618",
+      "method": "vitest-json"
+    },
+    "AC-619": {
+      "status": "pass",
+      "testName": "T-223: API de metas cada empresa só vê as próprias metas @spec:AC-619 cada empresa só vê as próprias metas @spec:AC-619",
+      "method": "vitest-json"
+    },
+    "AC-620": {
+      "status": "pass",
+      "testName": "T-223: menu e rotas de metas o atendente é barrado na tela de metas e os gerentes entram @spec:AC-620 o atendente é barrado na tela de metas e os gerentes entram @spec:AC-620",
+      "method": "vitest-json"
+    },
+    "AC-621": {
+      "status": "pass",
+      "testName": "T-223: selo de meta taxa de conversão do pipeline: 30% com meta 25% é atingida, 20% não @spec:AC-621 taxa de conversão do pipeline: 30% com meta 25% é atingida, 20% não @spec:AC-621",
+      "method": "vitest-json"
+    },
+    "AC-622": {
+      "status": "pass",
+      "testName": "T-186: AgendaTela a taxa de presença mostra a meta e \"Meta atingida\" quando alcança @spec:AC-622 a taxa de presença mostra a meta e \"Meta atingida\" quando alcança @spec:AC-622",
+      "method": "vitest-json"
+    },
+    "AC-623": {
+      "status": "pass",
+      "testName": "T-207: RelatorioComercial o win rate mostra a meta de conversão e \"Meta atingida\" quando alcança (igualdade conta) @spec:AC-623 o win rate mostra a meta de conversão e \"Meta atingida\" quando alcança (igualdade conta) @spec:AC-623",
+      "method": "vitest-json"
+    },
+    "AC-624": {
+      "status": "pass",
+      "testName": "T-199: DetalheCampanha os três cartões de taxa mostram a meta e \"Meta atingida\" quando alcançam @spec:AC-624 os três cartões de taxa mostram a meta e \"Meta atingida\" quando alcançam @spec:AC-624",
+      "method": "vitest-json"
+    },
+    "AC-625": {
+      "status": "pass",
+      "testName": "T-223: selo de meta \"atingida\" é valor >= meta; sem meta ou sem valor não há selo @spec:AC-625 \"atingida\" é valor >= meta; sem meta ou sem valor não há selo @spec:AC-625",
+      "method": "vitest-json"
+    },
+    "AC-626": {
+      "status": "pass",
+      "testName": "T-223: menu e rotas de metas a página existe, o menu mostra Metas a gerente e master e não ao atendente @spec:AC-626 a página existe, o menu mostra Metas a gerente e master e não ao atendente @spec:AC-626",
+      "method": "vitest-json"
+    }
+  },
+  "principles": {}
+}
