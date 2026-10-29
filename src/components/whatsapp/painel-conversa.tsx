@@ -149,25 +149,27 @@ export function PainelConversa({ conversa, versao, onAtualizou }: PainelConversa
       </div>
 
       <div className="p-space-md border-t border-border-subtle flex flex-col gap-space-sm">
-        <ItemEmBreve rotulo="Respostas rápidas" icone="bolt" className="py-1" />
+        <div className="flex items-center gap-2 flex-wrap">
+          <ItemEmBreve rotulo="Respostas rápidas" icone="bolt" className="h-9 px-2 rounded-lg bg-surface-subtle" />
+          <ItemEmBreve rotulo="Anexar arquivo" icone="attach_file" className="h-9 px-2 rounded-lg bg-surface-subtle" />
+          <ItemEmBreve rotulo="Emoji" icone="mood" className="h-9 px-2 rounded-lg bg-surface-subtle" />
+          <ItemEmBreve rotulo="Microfone" icone="mic" className="h-9 px-2 rounded-lg bg-surface-subtle" />
+        </div>
         <div className="flex items-end gap-2">
-          <ItemEmBreve rotulo="Anexar arquivo" icone="attach_file" className="h-10 px-2 rounded-lg bg-surface-subtle" />
-          <ItemEmBreve rotulo="Emoji" icone="mood" className="h-10 px-2 rounded-lg bg-surface-subtle" />
           <textarea
             value={texto}
             onChange={(e) => setTexto(e.target.value)}
             onKeyDown={aoTeclar}
-            rows={2}
+            rows={3}
             placeholder={`Digite uma mensagem para ${nome} (Enter para enviar)`}
             aria-label="Mensagem"
-            className="flex-1 rounded-xl bg-surface-subtle px-3 py-2 font-body-md text-body-md text-text-primary placeholder:text-text-muted focus:bg-surface-card focus:outline-none focus:ring-2 focus:ring-primary/20"
+            className="flex-1 min-h-[84px] resize-y rounded-xl border border-border-subtle bg-surface-card px-3 py-2 font-body-md text-body-md text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/30"
           />
-          <ItemEmBreve rotulo="Microfone" icone="mic" className="h-10 px-2 rounded-lg bg-surface-subtle" />
           <button
             type="button"
             onClick={() => void enviar()}
             disabled={enviando || texto.trim() === ''}
-            className="h-12 px-4 rounded-xl bg-primary text-on-primary font-label-lg text-label-lg font-semibold shadow-md disabled:opacity-50"
+            className="h-12 px-5 rounded-xl bg-primary text-on-primary font-label-lg text-label-lg font-semibold shadow-md disabled:opacity-50"
           >
             Enviar
           </button>
