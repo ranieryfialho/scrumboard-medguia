@@ -24,5 +24,5 @@
 
 ## T-228 — Testes dos critérios de aceite [concluida]
 - Refs: AC-627, AC-628, AC-629, AC-630, AC-631, AC-632, AC-633, AC-634, AC-635, AC-636, AC-637, AC-638, AC-639
-- Arquivos: test/api/investimento.test.ts, test/api/marketing-custo.test.ts, test/auth/rotas-investimento.test.ts, test/components/admin/investimento.test.tsx, test/components/analises/marketing-custo.test.tsx, test/lib/investimento-calculo.test.ts
+- Arquivos: test/api/investimento.test.ts, test/api/marketing-custo.test.ts, test/auth/rotas-investimento.test.ts, test/components/admin/investimento.test.tsx, test/components/analises/relatorio-marketing.test.tsx, test/lib/investimento-calculo.test.ts
 - Notas: o teste de rota segue `test/auth/rotas-metas.test.ts`
