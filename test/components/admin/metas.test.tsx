@@ -28,13 +28,13 @@ describe('T-223: tela de metas', () => {
     vi.unstubAllGlobals();
   });
 
-  test('mostra as cinco metas por área, a cadastrada com o valor e as outras "Sem meta" @spec:AC-615', async () => {
+  test('mostra as metas por área (seis, com a receita), a cadastrada com o valor e as outras "Sem meta" @spec:AC-615', async () => {
     render(<Metas />);
     expect(await screen.findByText('Taxa de conversão')).toBeTruthy();
     for (const area of ['Pipeline', 'Agenda', 'E-mail']) expect(screen.getByRole('region', { name: area })).toBeTruthy();
     for (const rotulo of ['Taxa de presença', 'Taxa de entrega de e-mail', 'Taxa de abertura de e-mail', 'Taxa de cliques de e-mail']) expect(screen.getByLabelText(rotulo)).toBeTruthy();
     expect((screen.getByLabelText('Taxa de conversão') as HTMLInputElement).value).toBe('25');
-    expect(screen.getAllByText('Sem meta')).toHaveLength(4);
+    expect(screen.getAllByText('Sem meta')).toHaveLength(5); // as outras quatro em porcentagem + a receita (fase5-meta-receita)
   });
 
   test('salvar envia só os campos e confirma "Meta salva" @spec:AC-616', async () => {
@@ -58,7 +58,7 @@ describe('T-223: tela de metas', () => {
     render(<Metas />);
     await userEvent.clear(await screen.findByLabelText('Taxa de conversão'));
     await userEvent.click(screen.getByRole('button', { name: 'Salvar metas' }));
-    await waitFor(() => expect(screen.getAllByText('Sem meta')).toHaveLength(5));
+    await waitFor(() => expect(screen.getAllByText('Sem meta')).toHaveLength(6));
     expect(JSON.parse(String(chamadas.find((c) => c.init?.method === 'PUT')!.init!.body)).metas.taxa_conversao).toBeNull();
   });
 });

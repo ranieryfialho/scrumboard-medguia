@@ -1,0 +1,47 @@
+{
+  "feature": "fase5-meta-receita",
+  "timestamp": "2026-10-29T18:15:03.490Z",
+  "gitRev": "5082fd1",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json test/lib/metas-receita.test.ts test/api/metas-receita.test.ts test/db/metas-receita.test.ts test/components/admin/metas-receita.test.tsx test/components/analises/meta-receita.test.tsx",
+  "reporter": "vitest-json",
+  "exitCode": 0,
+  "testsParsed": 10,
+  "results": {
+    "AC-687": {
+      "status": "pass",
+      "testName": "T-258: tela de metas com a receita a receita fica no bloco Comercial, em R$, com o valor formatado; as taxas seguem em % @spec:AC-687 @spec:AC-689 a receita fica no bloco Comercial, em R$, com o valor formatado; as taxas seguem em % @spec:AC-687 @spec:AC-689",
+      "method": "vitest-json"
+    },
+    "AC-688": {
+      "status": "pass",
+      "testName": "T-258: API da meta de receita a receita aceita reais com até duas casas e recusa 0, negativo, texto, três casas e acima do limite; taxa não aceita 5000 @spec:AC-688 a receita aceita reais com até duas casas e recusa 0, negativo, texto, três casas e acima do limite; taxa não aceita 5000 @spec:AC-688",
+      "method": "vitest-json"
+    },
+    "AC-689": {
+      "status": "pass",
+      "testName": "T-258: API da meta de receita cada empresa lê a própria receita; as taxas seguem iguais; null remove @spec:AC-689 cada empresa lê a própria receita; as taxas seguem iguais; null remove @spec:AC-689",
+      "method": "vitest-json"
+    },
+    "AC-690": {
+      "status": "pass",
+      "testName": "T-258: meta de receita o selo em reais compara sem arredondar, e igualdade conta como atingida @spec:AC-690 o selo em reais compara sem arredondar, e igualdade conta como atingida @spec:AC-690",
+      "method": "vitest-json"
+    },
+    "AC-691": {
+      "status": "pass",
+      "testName": "T-258: selo da meta de receita em outros períodos, com filtro de responsável ou sem meta cadastrada o cartão não mostra meta @spec:AC-691 em outros períodos, com filtro de responsável ou sem meta cadastrada o cartão não mostra meta @spec:AC-691",
+      "method": "vitest-json"
+    },
+    "AC-692": {
+      "status": "pass",
+      "testName": "T-258: meta de receita mês inteiro é do dia 1 ao último dia do mesmo mês, com bissexto, e datas inválidas não valem @spec:AC-692 mês inteiro é do dia 1 ao último dia do mesmo mês, com bissexto, e datas inválidas não valem @spec:AC-692",
+      "method": "vitest-json"
+    },
+    "AC-693": {
+      "status": "pass",
+      "testName": "T-258: schema da meta de receita a receita aceita centavos de 0,01 a 99.999.999,99; a porcentagem segue de 0,1 a 100; chave desconhecida é recusada @spec:AC-693 a receita aceita centavos de 0,01 a 99.999.999,99; a porcentagem segue de 0,1 a 100; chave desconhecida é recusada @spec:AC-693",
+      "method": "vitest-json"
+    }
+  },
+  "principles": {}
+}

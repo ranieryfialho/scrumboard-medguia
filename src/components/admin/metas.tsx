@@ -1,11 +1,11 @@
 'use client';
 
-// T-221 (fase5-metas, US-144): tela de metas dos indicadores. O catálogo é fixo (cinco metas em
-// porcentagem, `src/lib/metas/catalogo.ts`); campo vazio = sem meta (AC-618).
+// T-221 (fase5-metas, US-144): tela de metas dos indicadores. O catálogo é fixo (`src/lib/metas/catalogo.ts`): cinco
+// metas em porcentagem e, desde a fase5-meta-receita, a receita mensal em reais (AC-687); campo vazio = sem meta (AC-618).
 import { useCallback, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { CATALOGO_METAS, type ChaveMeta } from '@/lib/metas/catalogo';
+import { CATALOGO_METAS, formatarAlvo, metaValida, type ChaveMeta, type UnidadeMeta } from '@/lib/metas/catalogo';
 import { EsqueletoCarregando, EstadoErro } from './estados';
 
 interface Detalhe {
@@ -13,6 +13,17 @@ interface Detalhe {
   valor: number;
   atualizadoEm: string;
   atualizadoPorNome: string | null;
+}
+
+/** O valor gravado como aparece no campo: "25" para porcentagem, "50.000,00" para reais. */
+function paraCampo(valor: number, unidade: UnidadeMeta): string {
+  return unidade === 'reais' ? valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : String(valor).replace('.', ',');
+}
+
+/** O que foi digitado como número: em reais, o ponto é milhar (`50.000,50`); em porcentagem só a vírgula decimal. */
+function lerCampo(texto: string, unidade: UnidadeMeta): number {
+  const limpo = texto.trim();
+  return Number(unidade === 'reais' ? limpo.replace(/\./g, '').replace(',', '.') : limpo.replace(',', '.'));
 }
 
 function dataHora(iso: string): string {
@@ -28,7 +39,7 @@ export function Metas() {
 
   const aplicar = (lista: Detalhe[]) => {
     setDetalhes(lista);
-    setCampos(Object.fromEntries(lista.map((d) => [d.chave, String(d.valor).replace('.', ',')])));
+    setCampos(Object.fromEntries(lista.map((d) => [d.chave, paraCampo(d.valor, CATALOGO_METAS.find((m) => m.chave === d.chave)?.unidade ?? 'porcentagem')])));
   };
 
   const carregar = useCallback(async () => {
@@ -48,15 +59,18 @@ export function Metas() {
 
   async function salvar() {
     const metas: Record<string, number | null> = {};
-    for (const { chave, rotulo } of CATALOGO_METAS) {
-      const texto = (campos[chave] ?? '').trim().replace(',', '.');
+    for (const { chave, rotulo, unidade } of CATALOGO_METAS) {
+      const texto = (campos[chave] ?? '').trim();
       if (texto === '') {
         metas[chave] = null;
         continue;
       }
-      const numero = Number(texto);
-      if (!Number.isFinite(numero) || numero < 0.1 || numero > 100 || Math.abs(numero * 10 - Math.round(numero * 10)) > 1e-9) {
-        setAviso({ ok: false, texto: `${rotulo}: a meta deve ser um número de 0,1 a 100, com até uma casa decimal.` });
+      const numero = lerCampo(texto, unidade);
+      if (!metaValida(chave, numero)) {
+        setAviso({
+          ok: false,
+          texto: unidade === 'reais' ? `${rotulo}: a meta deve ser um valor de R$ 0,01 a R$ 99.999.999,99, com até duas casas.` : `${rotulo}: a meta deve ser um número de 0,1 a 100, com até uma casa decimal.`,
+        });
         return;
       }
       metas[chave] = numero;
@@ -103,19 +117,20 @@ export function Metas() {
                       </label>
                       <span className="font-body-sm text-body-sm text-text-muted">{m.ajuda}</span>
                       <span className="font-body-sm text-body-sm text-text-muted">
-                        {atual ? `${String(atual.valor).replace('.', ',')}%${atual.atualizadoPorNome ? ` · ${atual.atualizadoPorNome}` : ''} · ${dataHora(atual.atualizadoEm)}` : 'Sem meta'}
+                        {atual ? `${formatarAlvo(atual.valor, m.unidade)}${atual.atualizadoPorNome ? ` · ${atual.atualizadoPorNome}` : ''} · ${dataHora(atual.atualizadoEm)}` : 'Sem meta'}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
+                      {m.unidade === 'reais' && <span className="font-body-md text-body-md text-text-muted">R$</span>}
                       <input
                         id={`meta-${m.chave}`}
                         inputMode="decimal"
                         value={campos[m.chave] ?? ''}
                         onChange={(e) => setCampos({ ...campos, [m.chave]: e.target.value })}
                         placeholder="Sem meta"
-                        className="h-10 w-28 rounded-xl border border-border-subtle bg-surface-card px-3 text-right"
+                        className="h-10 w-32 rounded-xl border border-border-subtle bg-surface-card px-3 text-right"
                       />
-                      <span className="font-body-md text-body-md text-text-muted">%</span>
+                      {m.unidade === 'porcentagem' && <span className="font-body-md text-body-md text-text-muted">%</span>}
                     </div>
                   </div>
                 );
