@@ -1,6 +1,11 @@
 // T-245 (fase5-whatsapp-lote-base, AC-670/AC-675, ASM-242): regras puras do template de mensagem —
 // as únicas variáveis aceitas e o preenchimento com o nome do lead.
 export const VARIAVEIS_DO_TEMPLATE = ['nome', 'primeiro_nome'] as const;
+/** AC-673: o que cada variável vira, para a tela explicar todos os shortcodes que existem. */
+export const AJUDA_DAS_VARIAVEIS: Record<(typeof VARIAVEIS_DO_TEMPLATE)[number], string> = {
+  nome: 'O nome completo do lead, como está no cadastro.',
+  primeiro_nome: 'Só o primeiro nome do lead.',
+};
 export const NOME_MINIMO = 2;
 export const NOME_MAXIMO = 60;
 export const CORPO_MAXIMO = 1000;

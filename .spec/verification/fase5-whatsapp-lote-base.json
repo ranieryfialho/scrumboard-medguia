@@ -1,11 +1,11 @@
 {
   "feature": "fase5-whatsapp-lote-base",
-  "timestamp": "2026-10-29T15:53:30.099Z",
-  "gitRev": "e7bb0e2",
+  "timestamp": "2026-10-29T16:57:33.105Z",
+  "gitRev": "1d2fa1c",
   "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json test/lib/whatsapp-lote-regras.test.ts test/auth/rotas-templates.test.ts test/api/lead-consentimento.test.ts test/api/whatsapp-templates.test.ts test/api/whatsapp-lote-previa.test.ts test/components/pipeline/consentimento-whatsapp.test.tsx test/components/whatsapp/templates.test.tsx",
   "reporter": "vitest-json",
   "exitCode": 0,
-  "testsParsed": 17,
+  "testsParsed": 18,
   "results": {
     "AC-667": {
       "status": "pass",

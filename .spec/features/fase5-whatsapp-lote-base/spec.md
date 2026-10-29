@@ -61,7 +61,7 @@ Como gerente, quero cadastrar mensagens-modelo e aprová-las, para que só texto
 
 - **Dado** o menu de Comunicação e a tela `/whatsapp/templates`
 - **Quando** o usuário a abre
-- **Então** "Templates" está no menu e leva a uma página que existe; a tela lista os templates com a situação e uma prévia com um nome de exemplo; gerente e master veem "Novo template", "Aprovar", "Arquivar" e "Editar"; o atendente só lê; erros da API aparecem junto do campo
+- **Então** "Templates" está no menu e leva a uma página que existe; a tela explica todas as variáveis que existem (`{{nome}}` e `{{primeiro_nome}}`, o que cada uma vira e um exemplo) e, com o formulário aberto, tem o botão "Inserir" que coloca o shortcode onde está o cursor; a tela lista os templates com a situação e uma prévia com um nome de exemplo; gerente e master veem "Novo template", "Aprovar", "Arquivar" e "Editar"; o atendente só lê; erros da API aparecem junto do campo
 
 ### US-161 — Regras do lote e prévia de quem receberia
 

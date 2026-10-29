@@ -74,6 +74,26 @@ describe('T-249: tela de templates', () => {
     expect(JSON.parse(String(posts.at(-1)!.init!.body))).toEqual({ nome: 'Promoção', corpo: 'Oi {{primeiro_nome}}, temos novidades' });
   });
 
+  test('explica todos os shortcodes e o botão Inserir os coloca onde está o cursor @spec:AC-673', async () => {
+    const u = userEvent.setup();
+    render(<Templates />);
+    const ajuda = await screen.findByRole('region', { name: 'Variáveis disponíveis' });
+    for (const codigo of ['{{nome}}', '{{primeiro_nome}}']) expect(within(ajuda).getByText(codigo)).toBeTruthy();
+    expect(within(ajuda).getByText('O nome completo do lead, como está no cadastro.')).toBeTruthy();
+    expect(within(ajuda).getByText('Só o primeiro nome do lead.')).toBeTruthy();
+    expect(within(ajuda).getByText(/vira "Maria Souza"/)).toBeTruthy();
+    expect(within(ajuda).getByText(/vira "Maria"/)).toBeTruthy();
+    expect(within(ajuda).queryByRole('button', { name: /^Inserir/ })).toBeNull(); // sem formulário aberto
+
+    await u.click(screen.getByRole('button', { name: 'Novo template' }));
+    const campo = screen.getByLabelText('Mensagem do template') as HTMLTextAreaElement;
+    await u.click(campo);
+    await u.paste('Olá, ! Tudo bem?');
+    campo.setSelectionRange(5, 5);
+    await u.click(within(screen.getByRole('region', { name: 'Variáveis disponíveis' })).getByRole('button', { name: 'Inserir {{primeiro_nome}}' }));
+    expect(campo.value).toBe('Olá, {{primeiro_nome}}! Tudo bem?');
+  });
+
   test('aprovar e arquivar chamam a API com a ação @spec:AC-673', async () => {
     const u = userEvent.setup();
     render(<Templates />);

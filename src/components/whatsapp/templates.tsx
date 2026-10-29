@@ -3,10 +3,10 @@
 // T-248 (fase5-whatsapp-lote-base, US-160, AC-673): tela de templates de mensagem do WhatsApp. Todos leem; gerente,
 // master e super admin criam, editam, aprovam e arquivam (a API decide: `podeGerir`). Só o template aprovado vale em
 // lote; editar um aprovado o devolve a rascunho. As variáveis são {{nome}} e {{primeiro_nome}}.
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { renderizarTemplate } from '@/lib/whatsapp/template';
+import { AJUDA_DAS_VARIAVEIS, VARIAVEIS_DO_TEMPLATE, renderizarTemplate } from '@/lib/whatsapp/template';
 import { EsqueletoCarregando, EstadoErro, EstadoVazio } from '@/components/pipeline/pecas/estados';
 
 interface Template {
@@ -40,6 +40,7 @@ export function Templates() {
   const [formulario, setFormulario] = useState<{ id: string | null; nome: string; corpo: string } | null>(null);
   const [erroDoCampo, setErroDoCampo] = useState<{ campo: string; mensagem: string } | null>(null);
   const [trabalhando, setTrabalhando] = useState(false);
+  const campoDaMensagem = useRef<HTMLTextAreaElement>(null);
 
   const carregar = useCallback(async () => {
     try {
@@ -81,6 +82,21 @@ export function Templates() {
     }
   }
 
+  /** Coloca o shortcode onde está o cursor da mensagem (ou no fim, se o campo nunca foi tocado). */
+  function inserir(variavel: string) {
+    if (!formulario) return;
+    const campo = campoDaMensagem.current;
+    const inicio = campo?.selectionStart ?? formulario.corpo.length;
+    const fim = campo?.selectionEnd ?? inicio;
+    const codigo = `{{${variavel}}}`;
+    setFormulario({ ...formulario, corpo: formulario.corpo.slice(0, inicio) + codigo + formulario.corpo.slice(fim) });
+    const posicao = inicio + codigo.length;
+    setTimeout(() => {
+      campo?.focus();
+      campo?.setSelectionRange(posicao, posicao);
+    }, 0);
+  }
+
   async function salvar() {
     if (!formulario) return;
     const corpo = { nome: formulario.nome, corpo: formulario.corpo };
@@ -106,6 +122,27 @@ export function Templates() {
         )}
       </div>
 
+      <section aria-label="Variáveis disponíveis" className="bg-surface-card rounded-2xl p-space-md shadow-sm flex flex-col gap-space-sm">
+        <h2 className="font-headline-sm text-headline-sm text-text-primary">Variáveis disponíveis</h2>
+        <p className="font-body-sm text-body-sm text-text-muted">Escreva o shortcode na mensagem e ele é trocado pelo dado do lead na hora do envio. Outras variáveis não funcionam e o template é recusado.</p>
+        <ul className="flex flex-col gap-2">
+          {VARIAVEIS_DO_TEMPLATE.map((v) => (
+            <li key={v} className="rounded-xl bg-surface-subtle p-3 flex items-center justify-between gap-3 flex-wrap">
+              <div className="flex flex-col gap-0.5 min-w-0">
+                <code className="font-mono text-body-md text-primary">{`{{${v}}}`}</code>
+                <span className="font-body-sm text-body-sm text-text-secondary">{AJUDA_DAS_VARIAVEIS[v]}</span>
+                <span className="font-body-sm text-body-sm text-text-muted">Exemplo: para &quot;{EXEMPLO}&quot; vira &quot;{renderizarTemplate(`{{${v}}}`, EXEMPLO)}&quot;</span>
+              </div>
+              {formulario && (
+                <button type="button" onClick={() => inserir(v)} aria-label={`Inserir {{${v}}}`} className="h-9 px-3 rounded-lg bg-primary text-on-primary font-label-md text-label-md font-semibold">
+                  Inserir
+                </button>
+              )}
+            </li>
+          ))}
+        </ul>
+      </section>
+
       {aviso && (
         <p role={aviso.ok ? 'status' : 'alert'} className={`font-body-md text-body-md rounded-lg px-3 py-2 ${aviso.ok ? 'text-success-text bg-success-surface' : 'text-danger-text bg-danger-surface'}`}>
           {aviso.texto}
@@ -122,7 +159,7 @@ export function Templates() {
           </label>
           <label className="flex flex-col gap-1 font-label-md text-label-md text-text-secondary">
             Mensagem
-            <textarea value={formulario.corpo} onChange={(e) => setFormulario({ ...formulario, corpo: e.target.value })} aria-label="Mensagem do template" rows={5} className="px-3 py-2 rounded-xl bg-surface-subtle font-body-md text-body-md text-text-primary" />
+            <textarea ref={campoDaMensagem} value={formulario.corpo} onChange={(e) => setFormulario({ ...formulario, corpo: e.target.value })} aria-label="Mensagem do template" rows={5} className="px-3 py-2 rounded-xl bg-surface-subtle font-body-md text-body-md text-text-primary" />
             {erroDoCampo?.campo === 'corpo' && <span role="alert" className="text-danger-text">{erroDoCampo.mensagem}</span>}
           </label>
           <p className="font-body-sm text-body-sm text-text-muted">Prévia para &quot;{EXEMPLO}&quot;: {renderizarTemplate(formulario.corpo, EXEMPLO) || '—'}</p>
