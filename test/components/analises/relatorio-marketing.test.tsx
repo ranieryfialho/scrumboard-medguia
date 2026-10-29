@@ -132,7 +132,40 @@ describe('T-206: RelatorioMarketing', () => {
     for (const rotulo of ['Exportar Relatório Completo (CSV/PDF)', 'Filtrar por especialidade']) {
       expect(screen.getByRole('button', { name: `${rotulo} (em breve)` }).getAttribute('aria-disabled')).toBe('true');
     }
-    expect(screen.queryByText(/Investimento|CAC|ROAS|CPL|CPM|Cliques|Top Campanhas|Segmentação por Especialidade|Melhor Horário/i)).toBeFalsy();
+    // sem investimento cadastrado, nada de custo (o atalho "Cadastrar investimento" é um link, não um número)
+    expect(screen.queryByText(/CAC|ROAS|CPL|CPM|Cliques|Top Campanhas|Segmentação por Especialidade|Melhor Horário/i)).toBeFalsy();
+    expect(screen.queryByRole('group', { name: 'Custo de aquisição' })).toBeNull();
+  });
+
+  test('sem investimento no período não há cartões nem colunas de custo, só o atalho para cadastrar @spec:AC-637', async () => {
+    render(<RelatorioMarketing />);
+    const tabela = await screen.findByRole('region', { name: 'Desempenho por Origem' });
+    expect(screen.queryByRole('group', { name: 'Custo de aquisição' })).toBeNull();
+    expect(within(tabela).queryByRole('columnheader', { name: 'CPL' })).toBeNull();
+    expect(screen.getByRole('link', { name: /Cadastrar investimento/ }).getAttribute('href')).toBe('/configuracoes/investimento');
+  });
+
+  test('com investimento aparecem os cartões e as colunas, com traço quando não há base @spec:AC-634 @spec:AC-636 @spec:AC-638', async () => {
+    corpo = {
+      ...DADOS,
+      custo: { investimento: 4500, cpl: 50, cac: 500, roas: 6 },
+      porOrigem: [
+        { ...DADOS.porOrigem[0], investimento: 4000, cpl: 50, cac: 800, roas: 10 },
+        { origem: 'TikTok Ads', leads: 0, conectados: 0, reunioesRealizadas: 0, contratos: 0, conversaoFinal: null, valorGanho: 0, investimento: 500, cpl: null, cac: null, roas: 0 },
+      ],
+    } as never;
+    render(<RelatorioMarketing />);
+    const cartoes = await screen.findByRole('group', { name: 'Custo de aquisição' });
+    expect(within(cartoes).getByText('Investimento')).toBeTruthy();
+    expect(within(cartoes).getByText(/4\.500/)).toBeTruthy();
+    expect(within(cartoes).getByText('Custo por lead')).toBeTruthy();
+    expect(within(cartoes).getByText('CAC')).toBeTruthy();
+    expect(within(cartoes).getByText('6,0x')).toBeTruthy();
+    const tabela = screen.getByRole('region', { name: 'Desempenho por Origem' });
+    for (const coluna of ['Investimento', 'CPL', 'CAC', 'ROAS']) expect(within(tabela).getByRole('columnheader', { name: coluna })).toBeTruthy();
+    const linha = within(tabela).getByRole('row', { name: /TikTok Ads/ });
+    expect(within(linha).getAllByText('—')).toHaveLength(3); // conversão final, CPL e CAC
+    expect(within(linha).getByText('0,0x')).toBeTruthy();
   });
 
   test('carregando mostra esqueleto e a falha mostra erro com "Tentar de novo" @spec:AC-576', async () => {

@@ -1,0 +1,77 @@
+{
+  "feature": "fase5-investimento-midia",
+  "timestamp": "2026-10-29T13:31:21.545Z",
+  "gitRev": "429d74c",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json test/lib/investimento-calculo.test.ts test/auth/rotas-investimento.test.ts test/api/investimento.test.ts test/api/marketing-custo.test.ts test/components/admin/investimento.test.tsx test/components/analises/relatorio-marketing.test.tsx",
+  "reporter": "vitest-json",
+  "exitCode": 0,
+  "testsParsed": 31,
+  "results": {
+    "AC-627": {
+      "status": "pass",
+      "testName": "T-228: API de investimento lista as origens dos leads e os canais já cadastrados do mês, com o total @spec:AC-627 lista as origens dos leads e os canais já cadastrados do mês, com o total @spec:AC-627",
+      "method": "vitest-json"
+    },
+    "AC-628": {
+      "status": "pass",
+      "testName": "T-228: API de investimento salvar grava o valor e atualiza o total do mês @spec:AC-628 salvar grava o valor e atualiza o total do mês @spec:AC-628",
+      "method": "vitest-json"
+    },
+    "AC-629": {
+      "status": "pass",
+      "testName": "T-228: API de investimento valor inválido, canal inválido ou mês inválido dá 400 e nada é gravado @spec:AC-629 valor inválido, canal inválido ou mês inválido dá 400 e nada é gravado @spec:AC-629",
+      "method": "vitest-json"
+    },
+    "AC-630": {
+      "status": "pass",
+      "testName": "T-228: API de investimento null remove o investimento do canal @spec:AC-630 null remove o investimento do canal @spec:AC-630",
+      "method": "vitest-json"
+    },
+    "AC-631": {
+      "status": "pass",
+      "testName": "T-228: API de investimento canal novo entra; grafia só com maiúsculas ou espaços diferentes usa o canal existente @spec:AC-631 canal novo entra; grafia só com maiúsculas ou espaços diferentes usa o canal existente @spec:AC-631",
+      "method": "vitest-json"
+    },
+    "AC-632": {
+      "status": "pass",
+      "testName": "T-228: API de investimento cada empresa só vê o próprio investimento @spec:AC-632 cada empresa só vê o próprio investimento @spec:AC-632",
+      "method": "vitest-json"
+    },
+    "AC-633": {
+      "status": "pass",
+      "testName": "T-228: menu e rotas de investimento o atendente é barrado na tela e na API; gerente e master entram @spec:AC-633 o atendente é barrado na tela e na API; gerente e master entram @spec:AC-633",
+      "method": "vitest-json"
+    },
+    "AC-634": {
+      "status": "pass",
+      "testName": "T-228: custo no relatório de marketing com investimento no período aparecem investimento, CPL, CAC e ROAS sobre a coorte do período @spec:AC-634 com investimento no período aparecem investimento, CPL, CAC e ROAS sobre a coorte do período @spec:AC-634",
+      "method": "vitest-json"
+    },
+    "AC-635": {
+      "status": "pass",
+      "testName": "T-228: custo no relatório de marketing o período parcial usa o rateio por dias e o filtro de origem restringe o canal @spec:AC-635 o período parcial usa o rateio por dias e o filtro de origem restringe o canal @spec:AC-635",
+      "method": "vitest-json"
+    },
+    "AC-636": {
+      "status": "pass",
+      "testName": "T-228: custo no relatório de marketing colunas por origem; canal com investimento e sem lead aparece com traço no CPL e no CAC @spec:AC-636 colunas por origem; canal com investimento e sem lead aparece com traço no CPL e no CAC @spec:AC-636",
+      "method": "vitest-json"
+    },
+    "AC-637": {
+      "status": "pass",
+      "testName": "T-228: custo no relatório de marketing sem investimento no período não há bloco de custo nem campos de custo nas linhas @spec:AC-637 sem investimento no período não há bloco de custo nem campos de custo nas linhas @spec:AC-637",
+      "method": "vitest-json"
+    },
+    "AC-638": {
+      "status": "pass",
+      "testName": "T-228: custo no relatório de marketing divisão por zero (sem lead ou sem contrato) dá nulo, nunca zero ou erro @spec:AC-638 divisão por zero (sem lead ou sem contrato) dá nulo, nunca zero ou erro @spec:AC-638",
+      "method": "vitest-json"
+    },
+    "AC-639": {
+      "status": "pass",
+      "testName": "T-228: menu e rotas de investimento a página existe e o menu mostra \"Investimento em Mídia\" a gerente e master, não ao atendente @spec:AC-639 a página existe e o menu mostra \"Investimento em Mídia\" a gerente e master, não ao atendente @spec:AC-639",
+      "method": "vitest-json"
+    }
+  },
+  "principles": {}
+}
