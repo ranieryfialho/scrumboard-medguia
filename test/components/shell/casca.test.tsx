@@ -134,6 +134,7 @@ describe('AC-348: o menu traz os grupos e itens do protótipo', () => {
       'whatsapp-conexao',
       'whatsapp-configuracao',
       'whatsapp-templates',
+      'whatsapp-lote',
       'campanhas',
       'indicadores',
       'relatorios',

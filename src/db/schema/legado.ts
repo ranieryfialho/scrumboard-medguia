@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import { integer, pgEnum, pgTable, text, timestamp, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
+import { index, integer, pgEnum, pgTable, text, timestamp, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
 
 import { empresas, usuarios } from './identidade';
 import { leads } from './pipeline';
@@ -71,4 +71,50 @@ export const whatsappTemplates = pgTable(
     atualizadoEm: timestamp('atualizado_em', { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [uniqueIndex('whatsapp_templates_empresa_nome_unico').on(t.empresaId, sql`lower(${t.nome})`)]
+);
+
+/** T-250 (fase5-whatsapp-lote-disparo, ASM-246): lote de WhatsApp; um em andamento por empresa (migration 0021). */
+export const whatsappLotes = pgTable(
+  'whatsapp_lotes',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    empresaId: uuid('empresa_id')
+      .notNull()
+      .references(() => empresas.id, { onDelete: 'cascade' }),
+    templateId: uuid('template_id').references(() => whatsappTemplates.id, { onDelete: 'set null' }),
+    templateNome: text('template_nome').notNull(),
+    criadoPor: uuid('criado_por').references(() => usuarios.id, { onDelete: 'set null' }),
+    status: text('status').notNull().default('em_andamento'),
+    total: integer('total').notNull(),
+    proximoEnvioEm: timestamp('proximo_envio_em', { withTimezone: true }).notNull().defaultNow(),
+    criadoEm: timestamp('criado_em', { withTimezone: true }).notNull().defaultNow(),
+    finalizadoEm: timestamp('finalizado_em', { withTimezone: true }),
+  },
+  (t) => [
+    uniqueIndex('whatsapp_lotes_um_em_andamento').on(t.empresaId).where(sql`${t.status} = 'em_andamento'`),
+    index('whatsapp_lotes_empresa_criado_em').on(t.empresaId, t.criadoEm),
+  ]
+);
+
+/** T-250: destinatário de um lote, com a mensagem já preenchida (ASM-249) e a situação do envio. */
+export const whatsappLoteItens = pgTable(
+  'whatsapp_lote_itens',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    loteId: uuid('lote_id')
+      .notNull()
+      .references(() => whatsappLotes.id, { onDelete: 'cascade' }),
+    empresaId: uuid('empresa_id')
+      .notNull()
+      .references(() => empresas.id, { onDelete: 'cascade' }),
+    leadId: uuid('lead_id').references(() => leads.id, { onDelete: 'set null' }),
+    ordem: integer('ordem').notNull(),
+    nome: text('nome').notNull(),
+    telefone: text('telefone').notNull(),
+    mensagem: text('mensagem').notNull(),
+    status: text('status').notNull().default('pendente'),
+    erro: text('erro'),
+    enviadoEm: timestamp('enviado_em', { withTimezone: true }),
+  },
+  (t) => [index('whatsapp_lote_itens_lote_status_ordem').on(t.loteId, t.status, t.ordem)]
 );

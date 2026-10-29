@@ -98,7 +98,7 @@ async function abrirComSelecionados(nomes: string[]) {
 
 describe('T-178: ações em lote na lista', () => {
   describe('AC-445: marcar cards mostra a barra de ações em lote com o que funciona', () => {
-    test('mostra "N selecionados" e as três ações funcionando; "Disparar WhatsApp" fica "em breve" @spec:AC-445', async () => {
+    test('mostra "N selecionados" e as ações funcionando, inclusive "Disparar WhatsApp" para quem é gerente @spec:AC-445', async () => {
       await abrirComSelecionados(['Clínica Alfa', 'Clínica Beta']);
 
       expect(screen.getByText('2 selecionados')).toBeTruthy();
@@ -106,16 +106,19 @@ describe('T-178: ações em lote na lista', () => {
         const botao = screen.getByRole('button', { name: new RegExp(rotulo) }) as HTMLButtonElement;
         expect(botao.disabled).toBe(false);
       }
-      // O item "em breve" é o contêiner do rótulo (rótulo + selo).
-      expect(screen.getByText('Disparar WhatsApp').parentElement!.textContent!.toLowerCase()).toContain('em breve');
+      // fase5-whatsapp-lote-disparo: o botão deixou de ser "em breve" e é de verdade (gerente+).
+      const disparar = screen.getByRole('button', { name: /Disparar WhatsApp/ }) as HTMLButtonElement;
+      expect(disparar.disabled).toBe(false);
+      expect(disparar.textContent!.toLowerCase()).not.toContain('em breve');
     });
 
-    test('"Disparar WhatsApp" não dispara nada e sem marcação a barra some @spec:AC-445', async () => {
+    test('"Disparar WhatsApp" só abre o diálogo (nada é enviado) e sem marcação a barra some @spec:AC-445', async () => {
       const usuario = await abrirComSelecionados(['Clínica Alfa']);
 
-      const antes = fetchFalso.mock.calls.length;
-      await usuario.click(screen.getByText('Disparar WhatsApp'));
-      expect(fetchFalso.mock.calls.length).toBe(antes);
+      await usuario.click(screen.getByRole('button', { name: /Disparar WhatsApp/ }));
+      expect(screen.getByRole('dialog', { name: 'Disparar WhatsApp' })).toBeTruthy();
+      expect(fetchFalso.mock.calls.some((c) => String(c[0]).includes('/api/whatsapp/lote') && (c[1] as { method?: string } | undefined)?.method === 'POST')).toBe(false);
+      await usuario.click(screen.getByRole('button', { name: 'Cancelar' }));
 
       await usuario.click(screen.getByLabelText('Selecionar Clínica Alfa'));
       expect(screen.queryByText(/selecionados/)).toBeNull();

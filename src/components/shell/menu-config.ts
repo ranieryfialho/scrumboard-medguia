@@ -11,6 +11,8 @@ export interface ItemMenu {
   rotulo: string;
   href: string;
   icone: string;
+  /** fase5-whatsapp-lote-disparo (AC-686): papel mínimo deste item, quando o grupo é de todos (ASM-247). */
+  papelMinimo?: PapelUsuario;
   /** Qual contador de `useContadores` (T-146) este item mostra, se algum (AC-351). */
   contador?: 'tarefasDoTurno' | 'tarefasAtrasadas' | 'whatsappNaoLidas';
 }
@@ -65,6 +67,7 @@ export const GRUPOS_MENU: GrupoMenu[] = [
       { id: 'whatsapp-conexao', rotulo: 'Conexão & QR Code', href: '/whatsapp/conexao', icone: 'qr_code_2' },
       { id: 'whatsapp-configuracao', rotulo: 'Configuração Evolution', href: '/whatsapp/configuracao', icone: 'settings_ethernet' },
       { id: 'whatsapp-templates', rotulo: 'Templates', href: '/whatsapp/templates', icone: 'article' },
+      { id: 'whatsapp-lote', rotulo: 'Envio em Lote', href: '/whatsapp/lote', icone: 'forward_to_inbox', papelMinimo: 'GERENTE' },
       { id: 'campanhas', rotulo: 'Campanhas', href: '/campanhas', icone: 'send' },
     ],
   },
@@ -96,8 +99,9 @@ export const GRUPOS_MENU: GrupoMenu[] = [
 ];
 
 /** AC-349/ASM-123: "Empresas" é o único item restrito ao super admin — mesmo MASTER não o vê. */
-function podeVerItem(item: ItemMenu, isSuperAdmin: boolean): boolean {
+function podeVerItem(item: ItemMenu, papel: PapelUsuario, isSuperAdmin: boolean): boolean {
   if (item.id === 'empresas') return isSuperAdmin;
+  if (item.papelMinimo && !isSuperAdmin) return HIERARQUIA_PAPEL[papel] >= HIERARQUIA_PAPEL[item.papelMinimo];
   return true;
 }
 
@@ -107,7 +111,7 @@ export function menuParaPapel(papel: PapelUsuario, isSuperAdmin: boolean): Grupo
     (grupo) => isSuperAdmin || !grupo.papelMinimo || HIERARQUIA_PAPEL[papel] >= HIERARQUIA_PAPEL[grupo.papelMinimo]
   ).map((grupo) => ({
     ...grupo,
-    itens: grupo.itens.filter((item) => podeVerItem(item, isSuperAdmin)),
+    itens: grupo.itens.filter((item) => podeVerItem(item, papel, isSuperAdmin)),
   }));
 }
 

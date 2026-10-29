@@ -1,0 +1,62 @@
+{
+  "feature": "fase5-whatsapp-lote-disparo",
+  "timestamp": "2026-10-29T17:27:07.500Z",
+  "gitRev": "1976a9a",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json test/api/whatsapp-lote.test.ts test/api/whatsapp-lote-worker.test.ts test/components/pipeline/dialogo-whatsapp-lote.test.tsx test/components/whatsapp/lotes.test.tsx test/auth/rotas-lote.test.ts",
+  "reporter": "vitest-json",
+  "exitCode": 0,
+  "testsParsed": 18,
+  "results": {
+    "AC-677": {
+      "status": "pass",
+      "testName": "T-254: lotes de WhatsApp (API) criar grava o lote só com os elegíveis e a mensagem já preenchida; atendente 403, sem sessão 401 @spec:AC-677 criar grava o lote só com os elegíveis e a mensagem já preenchida; atendente 403, sem sessão 401 @spec:AC-677",
+      "method": "vitest-json"
+    },
+    "AC-678": {
+      "status": "pass",
+      "testName": "T-254: lotes de WhatsApp (API) recusas na criação: template não aprovado ou de outra empresa, sem destinatários, WhatsApp não configurado — nada é gravado @spec:AC-678 recusas na criação: template não aprovado ou de outra empresa, sem destinatários, WhatsApp não configurado — nada é gravado @spec:AC-678",
+      "method": "vitest-json"
+    },
+    "AC-679": {
+      "status": "pass",
+      "testName": "T-254: worker do lote de WhatsApp envia um item por vez com 15 a 45 s entre eles, grava a conversa e conclui o lote @spec:AC-679 envia um item por vez com 15 a 45 s entre eles, grava a conversa e conclui o lote @spec:AC-679",
+      "method": "vitest-json"
+    },
+    "AC-680": {
+      "status": "pass",
+      "testName": "T-254: worker do lote de WhatsApp a falha de um número não para o lote: o item fica \"falhou\" com o motivo e os outros seguem @spec:AC-680 a falha de um número não para o lote: o item fica \"falhou\" com o motivo e os outros seguem @spec:AC-680",
+      "method": "vitest-json"
+    },
+    "AC-681": {
+      "status": "pass",
+      "testName": "T-254: worker do lote de WhatsApp consentimento revogado antes do envio cancela o item, sem enviar nem contar para o intervalo @spec:AC-681 consentimento revogado antes do envio cancela o item, sem enviar nem contar para o intervalo @spec:AC-681",
+      "method": "vitest-json"
+    },
+    "AC-682": {
+      "status": "pass",
+      "testName": "T-254: worker do lote de WhatsApp a rota do cron recusa sem o segredo e, com ele, processa e registra a execução @spec:AC-682 a rota do cron recusa sem o segredo e, com ele, processa e registra a execução @spec:AC-682",
+      "method": "vitest-json"
+    },
+    "AC-683": {
+      "status": "pass",
+      "testName": "T-254: lotes de WhatsApp (API) a lista e o detalhe mostram só a empresa, com contagens e destinatários; atendente 403, outra empresa 404 @spec:AC-683 a lista e o detalhe mostram só a empresa, com contagens e destinatários; atendente 403, outra empresa 404 @spec:AC-683",
+      "method": "vitest-json"
+    },
+    "AC-684": {
+      "status": "pass",
+      "testName": "T-254: lotes de WhatsApp (API) cancelar converte os pendentes e encerra o lote, sem desfazer o que saiu; repetir dá 422 @spec:AC-684 cancelar converte os pendentes e encerra o lote, sem desfazer o que saiu; repetir dá 422 @spec:AC-684",
+      "method": "vitest-json"
+    },
+    "AC-685": {
+      "status": "pass",
+      "testName": "T-254: diálogo de disparo em lote só os aprovados aparecem; escolher mostra a prévia com os motivos; confirmar cria o lote e oferece acompanhar @spec:AC-685 só os aprovados aparecem; escolher mostra a prévia com os motivos; confirmar cria o lote e oferece acompanhar @spec:AC-685",
+      "method": "vitest-json"
+    },
+    "AC-686": {
+      "status": "pass",
+      "testName": "T-254: menu e rotas do envio em lote a página existe; \"Envio em Lote\" aparece para gerente e master (e super admin), não para o atendente @spec:AC-686 a página existe; \"Envio em Lote\" aparece para gerente e master (e super admin), não para o atendente @spec:AC-686",
+      "method": "vitest-json"
+    }
+  },
+  "principles": {}
+}
