@@ -22,7 +22,7 @@ Como gerente, quero que a campanha iniciada seja enviada sozinha, com a chave da
 
 - **Dado** uma campanha em andamento com destinatários `PENDENTE` e a chave do Resend da empresa configurada
 - **Quando** o worker roda um ciclo
-- **Então** ele pega até 10 envios por empresa, marcando-os `ENVIANDO` na mesma transação (dois ciclos nunca pegam o mesmo envio), manda cada um com a chave e o remetente da empresa, com o corpo já preenchido com o nome do destinatário e as tags `envio_id` e `empresa_id` (as duas, porque o webhook do Resend as exige); o envio vira `ENVIADO` com `enviado_em` e `tentativas` + 1
+- **Então** ele pega até 10 envios por empresa, marcando-os `ENVIANDO` na mesma transação (dois ciclos nunca pegam o mesmo envio), manda cada um com a chave e o remetente da empresa, com o corpo já preenchido com o nome do destinatário, com o rodapé e os cabeçalhos de descadastro (`fase5-email-descadastro`) e as tags `envio_id` e `empresa_id` (as duas, porque o webhook do Resend as exige); o envio vira `ENVIADO` com `enviado_em` e `tentativas` + 1
 
 #### AC-702 — Ritmo entre os envios
 
@@ -92,11 +92,17 @@ Como gerente, quero pausar uma campanha em andamento e retomá-la depois, sem pe
 
 Como gerente, quero ver a campanha pausada, o motivo de cada falha e ser avisado quando falta a chave.
 
+#### AC-722 — Quem saiu da lista não recebe
+
+- **Dado** um destinatário `PENDENTE` cujo e-mail a empresa descadastrou (inclusive depois de a campanha ser criada)
+- **Quando** chega a vez dele no worker
+- **Então** nada é enviado e o envio vira `DESCADASTRADO` (um estado próprio, que **não** volta com "Reenviar falhas" e não conta como falha); o descadastro de outra empresa não o afeta
+
 #### AC-712 — Detalhe e lista com pausa e motivo
 
 - **Dado** o detalhe e a lista de campanhas
 - **Quando** a campanha está em andamento, pausada ou tem falhas
-- **Então** em andamento mostra "Pausar", pausada mostra "Retomar" e o selo "Pausada" (também na lista), os contadores incluem "Pausados", e cada falha mostra o motivo em português (`SEM_CHAVE_RESEND`: "Chave do Resend não configurada" com o atalho para `/configuracoes/email`; `RESEND_RECUSOU`, `FALHA_DE_REDE` e `INTERROMPIDO` com texto próprio)
+- **Então** em andamento mostra "Pausar", pausada mostra "Retomar" e o selo "Pausada" (também na lista), os contadores incluem "Pausados" e "Descadastrados", e cada falha mostra o motivo em português (`SEM_CHAVE_RESEND`: "Chave do Resend não configurada" com o atalho para `/configuracoes/email`; `RESEND_RECUSOU`, `FALHA_DE_REDE` e `INTERROMPIDO` com texto próprio)
 
 #### AC-713 — Não iniciar sem chave
 
@@ -106,7 +112,6 @@ Como gerente, quero ver a campanha pausada, o motivo de cada falha e ser avisado
 
 ## Fora de escopo
 
-- **Descadastro (opt-out) e cabeçalho `List-Unsubscribe`:** e-mail de marketing precisa de um jeito de a pessoa sair da lista (LGPD). Fica registrado como **pendência de compliance**, a decidir antes de usar campanhas em produção.
 - Verificar o domínio (SPF e DKIM) e tratar `bounce`/`complaint` do Resend; hoje só aberto e clicado voltam pelo webhook.
 - Retentar sozinho, agendar a campanha, limite diário por empresa e variáveis no assunto.
 - Desligar o motor Python (item do cutover) e rotacionar o token que está versionado no repositório dele.
@@ -117,10 +122,11 @@ Como gerente, quero ver a campanha pausada, o motivo de cada falha e ser avisado
 |---|---|---|---|
 | ASM-261 | O disparo roda num segundo container, `crm-worker-email`, com a mesma imagem do CRM e o comando `npm run worker:email` (ponto de entrada `src/worker/email.ts`); assim uma rajada de e-mails não ocupa o worker da ingestão e ele não exige as variáveis do Sheets e da LP | aberta | Entra no `docker-compose.yml` e no cutover; vale o mesmo pré-requisito do `crm-worker` (a imagem precisa incluir `src/worker` e `tsx`) |
 | ASM-262 | O ritmo é o do motor atual: até 10 envios por empresa por ciclo, 2 s entre envios, ciclo a cada 10 s (cerca de 300 e-mails por minuto por empresa no máximo) | aberta | Constantes do sistema; configurar por empresa é evolução |
-| ASM-263 | Estados novos são texto, sem enum: envio `ENVIANDO` e `PAUSADO`, campanha `PAUSADA`; a migration 0023 acrescenta a coluna `envios_campanha.erro` (motivo curto, anulável) e um índice parcial dos envios pendentes | aberta | Evita varrer a tabela inteira a cada ciclo |
+| ASM-263 | Estados novos são texto, sem enum: envio `ENVIANDO` e `PAUSADO`, campanha `PAUSADA`; a migration 0024 acrescenta a coluna `envios_campanha.erro` (motivo curto, anulável); `DESCADASTRADO` também é um estado de envio e um índice parcial dos envios pendentes | aberta | Evita varrer a tabela inteira a cada ciclo |
 | ASM-264 | Não há retentativa automática: o envio que falha fica `ERRO` e o gerente decide em "Reenviar falhas" (que já existe e volta `ERRO` para `PENDENTE`) | aberta | Igual ao WhatsApp em lote (ASM-251) |
 | ASM-265 | Pausar, retomar e iniciar são de gerente, master e super admin (a regra das ações de campanha de hoje) | aberta | — |
 | ASM-266 | O motor Python segue servindo o sistema legado até o cutover e é desligado nele; os dois nunca leem o mesmo banco | aberta | O motor lê o Supabase; o novo lê o `crm_prod` |
+| ASM-272 | O descadastro (link, página, lista e rodapé) é a feature `fase5-email-descadastro`, que vem **antes** do disparo; aqui só se usa: o worker confere a lista na hora do envio e leva o rodapé e os cabeçalhos | aberta | Ordem de entrega: config, descadastro, disparo |
 | ASM-267 | O envio usa a API HTTP do Resend (`POST https://api.resend.com/emails`) com `fetch`, como o e-mail transacional; o transporte é injetável nos testes (sem Resend real) | aberta | — |
 
 ## Perguntas em aberto
