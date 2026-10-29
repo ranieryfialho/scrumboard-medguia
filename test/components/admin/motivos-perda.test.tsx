@@ -12,7 +12,7 @@ function resposta(status: number, corpo: unknown) {
 }
 
 const M = (n: number, nome: string, o: Partial<{ sistemico: boolean; ativo: boolean; mes: number; total: number; edita: boolean }> = {}) => ({
-  id: `m-${n}`, nome, sistemico: o.sistemico ?? false, ativo: o.ativo ?? true, usadoNoMes: o.mes ?? 0, usadoTotal: o.total ?? 0, podeEditar: o.edita ?? false,
+  id: `m-${n}`, nome, sistemico: o.sistemico ?? false, escopo: o.sistemico ? 'sistemico' : 'empresa', ativo: o.ativo ?? true, usadoNoMes: o.mes ?? 0, usadoTotal: o.total ?? 0, podeEditar: o.edita ?? false,
 });
 
 describe('T-215: MotivosPerda', () => {
@@ -42,7 +42,7 @@ describe('T-215: MotivosPerda', () => {
       if (url.startsWith('/api/configuracoes/motivos-perda?')) {
         if (listaStatus !== 200) return resposta(listaStatus, {});
         const p = new URL(url, 'http://x').searchParams;
-        let itens = todos.map((m) => ({ ...m, podeEditar: eu.isSuperAdmin && !m.sistemico }));
+        let itens = todos.map((m) => ({ ...m, podeEditar: m.podeEditar || (eu.isSuperAdmin && !m.sistemico) }));
         if (p.get('tipo')) itens = itens.filter((m) => (p.get('tipo') === 'sistemico') === m.sistemico);
         if (p.get('status')) itens = itens.filter((m) => (p.get('status') === 'ativo') === m.ativo);
         if (p.get('busca')) itens = itens.filter((m) => m.nome.toLowerCase().includes(p.get('busca')!.toLowerCase()));
@@ -97,7 +97,7 @@ describe('T-215: MotivosPerda', () => {
     expect(within(linhas[0]).getByText('Histórico: 89 cards')).toBeTruthy();
     expect(within(linhas[0]).getByText('Ativo')).toBeTruthy();
     expect(within(linhas[0]).queryByRole('button', { name: /Desativar|Ativar/ })).toBeFalsy(); // sistêmico: sem ações
-    expect(within(linhas[2]).getByText('Personalizado')).toBeTruthy();
+    expect(within(linhas[2]).getByText('Da empresa')).toBeTruthy();
     expect(within(linhas[3]).getByText('Inativo')).toBeTruthy();
     expect(tabela.textContent).not.toMatch(/Top 1|Categoria|Governança Hospitalar/);
 
@@ -111,13 +111,34 @@ describe('T-215: MotivosPerda', () => {
     expect(await screen.findByText('Nenhum motivo encontrado')).toBeTruthy();
   });
 
-  test('só o super admin vê criar e (des)ativar, que chamam a API e relêem; o gerente só consulta @spec:AC-596', async () => {
+  test('cada linha diz se o motivo é Sistêmico, Da rede ou Da empresa, e só os da empresa têm Desativar @spec:AC-663', async () => {
+    todos = [
+      { ...M(1, 'Cadência esgotada', { sistemico: true }), escopo: 'sistemico' },
+      { ...M(2, 'Preço / orçamento', { edita: false }), escopo: 'rede' },
+      { ...M(3, 'Sem orçamento este ano', { edita: true }), escopo: 'empresa' },
+    ] as unknown as ReturnType<typeof M>[];
+    render(<MotivosPerda />);
+    const tabela = await screen.findByRole('region', { name: 'Motivos' });
+    const linhas = within(tabela).getAllByRole('row').slice(1);
+    expect(within(linhas[0]).getByText('Sistêmico')).toBeTruthy();
+    expect(within(linhas[1]).getByText('Da rede')).toBeTruthy();
+    expect(within(linhas[2]).getByText('Da empresa')).toBeTruthy();
+    expect(within(linhas[1]).queryByRole('button', { name: /Desativar|Ativar/ })).toBeNull();
+    expect(within(linhas[2]).getByRole('button', { name: 'Desativar: Sem orçamento este ano' })).toBeTruthy();
+  });
+
+  test('gerente, master e super admin veem criar e (des)ativar, que chamam a API e relêem; o atendente não vê @spec:AC-596', async () => {
     const u = usuario();
+    eu = { isSuperAdmin: false, papel: 'ATENDENTE' };
     render(<MotivosPerda />);
     await screen.findByRole('region', { name: 'Motivos' });
     await waitFor(() => expect(fetchFalso.mock.calls.some((c) => c[0] === '/api/me')).toBe(true));
     expect(screen.queryByRole('button', { name: '+ Novo Motivo de Perda' })).toBeFalsy();
-    expect(screen.queryByRole('button', { name: /^Desativar:/ })).toBeFalsy();
+    cleanup();
+
+    eu = { isSuperAdmin: false, papel: 'MASTER' };
+    render(<MotivosPerda />);
+    expect(await screen.findByRole('button', { name: '+ Novo Motivo de Perda' })).toBeTruthy(); // fase5: a empresa cria os seus
     cleanup();
 
     eu = { isSuperAdmin: true, papel: 'GERENTE' };

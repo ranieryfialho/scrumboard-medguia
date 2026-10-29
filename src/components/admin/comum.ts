@@ -68,6 +68,7 @@ export const MENSAGENS_DE_ERRO: Record<string, string> = {
   JA_E_COLABORADOR: 'Esta pessoa já faz parte da equipe.',
   MOTIVO_JA_EXISTE: 'Já existe um motivo com esse nome.',
   MOTIVO_SISTEMICO: 'Motivo sistêmico não pode ser alterado.',
+  MOTIVO_DA_REDE: 'Este motivo é da rede: só o super admin pode alterá-lo.',
   SLUG_EM_USO: 'Esse identificador já está em uso.',
   CNPJ_EM_USO: 'Já existe uma empresa com este CNPJ.',
   SEM_ASSENTOS: 'A empresa atingiu o limite de assentos do plano.',

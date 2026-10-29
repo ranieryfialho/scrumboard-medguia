@@ -69,8 +69,13 @@ export const motivosPerda = pgTable(
     nome: text('nome').notNull(),
     ativo: boolean('ativo').notNull().default(true),
     eSistemico: boolean('e_sistemico').notNull().default(false),
+    // fase5-motivos-por-empresa (migration 0019): vazio = global; preenchido = motivo da empresa.
+    empresaId: uuid('empresa_id').references(() => empresas.id, { onDelete: 'cascade' }),
   },
-  (t) => [uniqueIndex('motivos_perda_nome_unico').on(t.nome)]
+  (t) => [
+    uniqueIndex('motivos_perda_nome_global_unico').on(sql`lower(${t.nome})`).where(sql`${t.empresaId} IS NULL`),
+    uniqueIndex('motivos_perda_empresa_nome_unico').on(t.empresaId, sql`lower(${t.nome})`).where(sql`${t.empresaId} IS NOT NULL`),
+  ]
 );
 
 export const leads = pgTable('leads', {

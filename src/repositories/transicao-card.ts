@@ -15,6 +15,7 @@ import { validarTransicao } from '../domain/pipeline/validar-transicao';
 import type { DadosTransicao, PipelineTransicao } from '../domain/pipeline/tipos';
 import type { ContextoTenant } from '../lib/auth/tenant';
 import { anexoValidoParaOportunidade } from './anexos';
+import { motivoDaEmpresaOuGlobal } from './motivos-perda';
 import {
   buscarOportunidadePorId,
   ErroConflitoDeVersao,
@@ -45,6 +46,11 @@ export async function transicionarCard(
   // AC-087: card de outro tenant (ou inexistente) "não existe" — antes de validar qualquer coisa.
   const oportunidade = await buscarOportunidadePorId(db, contexto, cardId);
   if (!oportunidade) return { ok: false, codigo: 'OPORTUNIDADE_NAO_ENCONTRADA' };
+
+  // AC-665: motivo de outra empresa nunca chega à transição (global ou da própria empresa passa).
+  if (entrada.motivoPerdaId && !(await motivoDaEmpresaOuGlobal(db, contexto.empresaId, entrada.motivoPerdaId))) {
+    return { ok: false, codigo: 'MOTIVO_INVALIDO' };
+  }
 
   const [etapaDestino] = await db
     .select()
