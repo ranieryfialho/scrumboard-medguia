@@ -4,6 +4,7 @@ import Link from 'next/link';
 
 import { nomeDaEtapa } from '@/components/pipeline/detalhe/jornada';
 import { SeloEtapa } from '@/components/pipeline/pecas/selo-etapa';
+import { PromoverLead } from './promover-lead';
 import { nomeDaConversa, type ConversaView } from './comum';
 
 const MOEDA = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
@@ -14,7 +15,10 @@ export function ContextoCard({ conversa }: { conversa: ConversaView }) {
     <section aria-label="Contexto do Pipeline" className="bg-surface-card rounded-2xl p-space-md shadow-sm flex flex-col gap-space-sm">
       <span className="font-label-sm text-table-header uppercase text-text-muted tracking-wider">Contexto do Pipeline</span>
       {!card ? (
-        <p className="font-body-md text-body-md text-text-secondary">Sem card no pipeline</p>
+        <>
+          <p className="font-body-md text-body-md text-text-secondary">Sem card no pipeline</p>
+          {!conversa.leadId && <PromoverLead numero={conversa.numero} />}
+        </>
       ) : (
         <>
           <div className="flex items-center justify-between gap-2 flex-wrap">

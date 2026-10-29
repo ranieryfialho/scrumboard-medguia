@@ -228,16 +228,56 @@ describe('T-186: AgendaTela', () => {
     expect(await screen.findByRole('heading', { name: 'Reagendar Reunião' })).toBeTruthy();
   });
 
+  test('Cancelar pede confirmação, chama a API e recarrega; sem confirmar não faz nada; a recusa aparece @spec:AC-643', async () => {
+    const u = usuario();
+    const base = fetchFalso.getMockImplementation()!;
+    let resposta: Promise<{ ok: boolean; status: number; json: () => Promise<unknown> }> = Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve({ ok: true }) });
+    fetchFalso.mockImplementation((url: string, init?: { method?: string }) => (url.endsWith('/cancelar') ? resposta : base(url, init)));
+    const confirmar = vi.spyOn(window, 'confirm');
+    render(<AgendaTela />);
+    const botao = await screen.findByRole('button', { name: 'Cancelar: Lead A' });
+
+    confirmar.mockReturnValueOnce(false);
+    await u.click(botao);
+    expect(fetchFalso.mock.calls.some((c) => String(c[0]).endsWith('/cancelar'))).toBe(false);
+
+    confirmar.mockReturnValue(true);
+    await u.click(botao);
+    expect(confirmar).toHaveBeenLastCalledWith(expect.stringContaining('Qualificado p/ reunião'));
+    await waitFor(() => expect(fetchFalso.mock.calls.some((c) => c[0] === '/api/reunioes/a/cancelar' && c[1]?.method === 'POST')).toBe(true));
+
+    resposta = Promise.resolve({ ok: false, status: 422, json: () => Promise.resolve({ codigo: 'REUNIAO_NAO_PODE_CANCELAR' }) });
+    await u.click(await screen.findByRole('button', { name: 'Cancelar: Lead A' }));
+    expect(await screen.findByText(/Só dá para cancelar uma reunião que ainda não aconteceu/)).toBeTruthy();
+    confirmar.mockRestore();
+  });
+
+  test('"Ligar para Clínica" é um link tel: quando o lead tem telefone e some quando não tem @spec:AC-646', async () => {
+    const base = fetchFalso.getMockImplementation()!;
+    render(<AgendaTela />);
+    await screen.findByLabelText('Reunião com Lead C');
+    expect(screen.queryByText('Ligar para Clínica')).toBeNull();
+    cleanup();
+
+    fetchFalso.mockImplementation((url: string, init?: { method?: string }) => {
+      if (url.startsWith('/api/reunioes?')) {
+        const c = r('c', 'Lead C', '2026-06-11T11:00:00Z', 'aguardando_resultado');
+        return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve({ reunioes: [{ ...c, lead: { ...c.lead, telefoneE164: '5511999990000' } }] }) });
+      }
+      return base(url, init);
+    });
+    render(<AgendaTela />);
+    expect((await screen.findByRole('link', { name: 'Ligar para Clínica' })).getAttribute('href')).toBe('tel:+5511999990000');
+  });
+
   test('o que não tem backend aparece "em breve" e o que não existe no sistema não aparece @spec:AC-488', async () => {
     render(<AgendaTela />);
     await screen.findByLabelText('Reunião com Lead D');
     for (const rotulo of [
       'Google Meet / Outlook',
       'Entrar no Meet Agora',
-      'Cancelar',
       'Transferir para Cadência de Resgate',
       'Disparar WhatsApp de Reagendamento',
-      'Ligar para Clínica',
       'Confirmar Manualmente',
       'Enviar Template Médico de Resgate',
     ]) {

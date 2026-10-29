@@ -3,14 +3,14 @@
 // T-174 (fase4-card-abas, US-114): tela da conversa de WhatsApp do lead dentro
 // do card — fonte visual `docs/ui/stitch_medcrm_interface_design/11._pipeline_id_conversa_whatsapp_do_lead/`.
 // Vive no grupo `(app)` e dentro do `MoldeDoCard` (T-171): cabeçalho, abas e os
-// estados de carregando, erro e "não encontrado" do card. "Ligar Agora" não tem
-// backend e fica "em breve" (Q-049).
+// estados de carregando, erro e "não encontrado" do card. "Ligar Agora" abre o discador
+// com o telefone do lead (fase5-acoes-rapidas, Q-049).
 import { use } from 'react';
 
 import { MoldeDoCard } from '@/components/pipeline/card/molde-do-card';
 import { ConversaLead } from '@/components/pipeline/conversa/conversa-lead';
 import { PainelLateral } from '@/components/pipeline/conversa/painel-lateral';
-import { ItemEmBreve } from '@/components/pipeline/pecas/selo-em-breve';
+import { linkDeLigacao } from '@/lib/telefone';
 
 export default function PipelineConversaPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -24,7 +24,12 @@ export default function PipelineConversaPage({ params }: { params: Promise<{ id:
               <h2 className="font-headline-md text-headline-md text-text-primary">WhatsApp &amp; Conversas</h2>
               <p className="font-body-sm text-body-sm text-text-secondary">A conversa de {card.leadNome} pelo WhatsApp da empresa.</p>
             </div>
-            <ItemEmBreve rotulo="Ligar Agora" icone="call" className="h-10 px-4 rounded-xl bg-surface-card shadow-sm" />
+            {linkDeLigacao(card.telefoneE164) && (
+              <a href={linkDeLigacao(card.telefoneE164)!} className="h-10 px-4 rounded-xl bg-surface-card shadow-sm inline-flex items-center gap-2 font-label-md text-label-md text-text-primary">
+                <span aria-hidden="true" className="material-symbols-outlined text-[18px]">call</span>
+                Ligar Agora
+              </a>
+            )}
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
