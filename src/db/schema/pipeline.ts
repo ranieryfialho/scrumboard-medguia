@@ -1,5 +1,7 @@
+import { sql } from 'drizzle-orm';
 import {
   boolean,
+  date,
   integer,
   jsonb,
   numeric,
@@ -261,4 +263,21 @@ export const empresaMetas = pgTable(
     atualizadoEm: timestamp('atualizado_em', { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [primaryKey({ columns: [t.empresaId, t.chave] })]
+);
+
+/** T-224 (fase5-investimento-midia, ASM-217): investimento em mídia por empresa, mês e canal (migration 0016). */
+export const investimentoMidia = pgTable(
+  'investimento_midia',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    empresaId: uuid('empresa_id')
+      .notNull()
+      .references(() => empresas.id, { onDelete: 'cascade' }),
+    mes: date('mes').notNull(),
+    canal: text('canal').notNull(),
+    valor: numeric('valor', { precision: 10, scale: 2 }).notNull(),
+    atualizadoPor: uuid('atualizado_por').references(() => usuarios.id, { onDelete: 'set null' }),
+    atualizadoEm: timestamp('atualizado_em', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex('investimento_midia_empresa_mes_canal_unico').on(t.empresaId, t.mes, sql`lower(${t.canal})`)]
 );

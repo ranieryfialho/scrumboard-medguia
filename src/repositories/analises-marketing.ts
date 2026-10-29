@@ -6,7 +6,9 @@ import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
 import { dataLocalEmSaoPaulo } from '../domain/cadencia/turno';
 import type { ContextoTenant } from '../lib/auth/tenant';
+import { chaveDoCanal, investimentoDoPeriodo, razao } from '../lib/investimento/calculo';
 import { comTenant } from './contexto';
+import { lerInvestimentoNoPeriodo } from './investimento';
 import { limitesDoPeriodo } from './kpis';
 
 const ETAPA_AGENDADA = 8;
@@ -25,10 +27,17 @@ export interface LinhaDeOrigem {
   /** Fração 0–1 de contratos ÷ leads, ou `null` sem leads. */
   conversaoFinal: number | null;
   valorGanho: number;
+  /** fase5-investimento-midia: `null` quando o canal não tem investimento no período (ou a origem é "Sem origem"). */
+  investimento?: number | null;
+  cpl?: number | null;
+  cac?: number | null;
+  roas?: number | null;
 }
 
 export interface RespostaMarketing {
   resumo: { leads: number; conectados: number; reunioesRealizadas: number; contratos: number; conversaoFinal: number | null };
+  /** AC-634/AC-637: `null` sem investimento cadastrado no período — a tela não mostra o bloco de custo. */
+  custo: { investimento: number; cpl: number | null; cac: number | null; roas: number | null } | null;
   agrupar: Agrupamento;
   serie: { inicio: string; leads: number; reunioes: number }[];
   porOrigem: LinhaDeOrigem[];
@@ -73,6 +82,14 @@ export function periodoLocal(agora: Date, de?: string, ate?: string): { de: stri
   return { de: de ?? local(inicio), ate: ate ?? local(new Date(fimExclusivo.getTime() - 3600_000)) };
 }
 
+/** AC-634/AC-638: CPL, CAC e ROAS de uma linha; sem investimento no período a linha não leva os campos (AC-637); divisão por zero é `null`. */
+function custoDaLinha(habilitado: boolean, investimento: number | undefined, leads: number, contratos: number, valorGanho: number, marcar: () => unknown) {
+  if (!habilitado) return {};
+  if (investimento === undefined || investimento <= 0) return { investimento: null, cpl: null, cac: null, roas: null };
+  marcar();
+  return { investimento, cpl: razao(investimento, leads), cac: razao(investimento, contratos), roas: razao(valorGanho, investimento) };
+}
+
 export async function obterMarketing(
   db: NodePgDatabase,
   contexto: ContextoTenant,
@@ -83,13 +100,13 @@ export async function obterMarketing(
   const agrupar = filtro.agrupar ?? agrupamentoPadrao(periodo.de, periodo.ate);
   const unidade = agrupar === 'mes' ? 'month' : agrupar === 'semana' ? 'week' : 'day';
   const origemDe = sql`coalesce(nullif(btrim(l.origem), ''), ${SEM_ORIGEM})`;
-  const filtroOrigem: SQL = filtro.origem ? sql`AND ${origemDe} = ${filtro.origem}` : sql``;
+  const filtroOrigem: SQL = filtro.origem ? sql`AND lower(${origemDe}) = lower(${filtro.origem})` : sql``;
   const chegou = (etapa: number) =>
     sql`EXISTS (SELECT 1 FROM oportunidades o JOIN oportunidade_eventos e ON e.oportunidade_id = o.id WHERE o.lead_id = l.id AND e.tipo = 'transicao_etapa' AND e.etapa_destino_id = ${etapa})`;
 
   return comTenant(db, contexto, async (tx) => {
     const porOrigemBruto = await tx.execute<{ origem: string; leads: number; conectados: number; realizadas: number; contratos: number; valor: string }>(sql`
-      SELECT ${origemDe} AS origem,
+      SELECT min(${origemDe}) AS origem,
         count(*)::int AS leads,
         count(*) FILTER (WHERE EXISTS (SELECT 1 FROM oportunidades o JOIN oportunidade_eventos e ON e.oportunidade_id = o.id
             WHERE o.lead_id = l.id AND ((e.tipo = 'atividade_concluida' AND e.payload ->> 'resultado' = 'conectou') OR e.tipo = 'conexao_whatsapp')))::int AS conectados,
@@ -100,7 +117,7 @@ export async function obterMarketing(
       FROM leads l
       WHERE l.criado_em >= ${inicio.toISOString()}::timestamptz AND l.criado_em < ${fimExclusivo.toISOString()}::timestamptz
         ${filtroOrigem}
-      GROUP BY 1
+      GROUP BY lower(${origemDe})
     `);
 
     const leadsPorIntervalo = await tx.execute<{ inicio: string; total: number }>(sql`
@@ -123,8 +140,12 @@ export async function obterMarketing(
     `);
 
     const origensExistentes = await tx.execute<{ origem: string }>(sql`
-      SELECT DISTINCT ${origemDe} AS origem FROM leads l ORDER BY 1 LIMIT 100
+      SELECT min(${origemDe}) AS origem FROM leads l GROUP BY lower(${origemDe}) ORDER BY 1 LIMIT 100
     `);
+
+    const investimentos = investimentoDoPeriodo(await lerInvestimentoNoPeriodo(tx, periodo.de, periodo.ate), periodo.de, periodo.ate);
+    if (filtro.origem) for (const chave of [...investimentos.keys()]) if (chave !== chaveDoCanal(filtro.origem)) investimentos.delete(chave);
+    const usados = new Set<string>();
 
     const porOrigem: LinhaDeOrigem[] = porOrigemBruto.rows
       .map((r) => ({
@@ -135,8 +156,16 @@ export async function obterMarketing(
         contratos: r.contratos,
         conversaoFinal: r.leads > 0 ? r.contratos / r.leads : null,
         valorGanho: Number(r.valor),
+        ...custoDaLinha(investimentos.size > 0, r.origem === SEM_ORIGEM ? undefined : investimentos.get(chaveDoCanal(r.origem))?.valor, r.leads, r.contratos, Number(r.valor), () => usados.add(chaveDoCanal(r.origem))),
       }))
       .sort((a, b) => b.leads - a.leads || a.origem.localeCompare(b.origem));
+
+    // AC-636: canal com investimento e nenhum lead no período também aparece, com 0 leads.
+    for (const [chave, inv] of investimentos) {
+      if (usados.has(chave)) continue;
+      porOrigem.push({ origem: inv.canal, leads: 0, conectados: 0, reunioesRealizadas: 0, contratos: 0, conversaoFinal: null, valorGanho: 0, ...custoDaLinha(true, inv.valor, 0, 0, 0, () => undefined) });
+    }
+    const investimentoTotal = Math.round([...investimentos.values()].reduce((s, i) => s + i.valor, 0) * 100) / 100;
 
     const soma = (campo: 'leads' | 'conectados' | 'reunioesRealizadas' | 'contratos') => porOrigem.reduce((acc, l) => acc + l[campo], 0);
     const leads = soma('leads');
@@ -145,6 +174,15 @@ export async function obterMarketing(
 
     return {
       resumo: { leads, conectados: soma('conectados'), reunioesRealizadas: soma('reunioesRealizadas'), contratos: soma('contratos'), conversaoFinal: leads > 0 ? soma('contratos') / leads : null },
+      custo:
+        investimentoTotal > 0
+          ? {
+              investimento: investimentoTotal,
+              cpl: razao(investimentoTotal, leads),
+              cac: razao(investimentoTotal, soma('contratos')),
+              roas: razao(porOrigem.reduce((s, l) => s + l.valorGanho, 0), investimentoTotal),
+            }
+          : null,
       agrupar,
       serie: intervalos(periodo.de, periodo.ate, agrupar).map((inicioDoIntervalo) => ({
         inicio: inicioDoIntervalo,

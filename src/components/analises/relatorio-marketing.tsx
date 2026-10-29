@@ -2,8 +2,9 @@
 
 // T-206 (fase4-analises, US-134): relatório "Marketing e Origem dos Leads" — fonte visual
 // `docs/ui/stitch_medcrm_interface_design/24._relatorios_marketing_e_tr_fego/`. Os dados vêm de
-// `GET /api/relatorios/marketing` (leads criados no período, por origem). O sistema não
-// tem investimento, custo nem mídia: CAC, ROAS, CPL e afins não aparecem (Q-057).
+// `GET /api/relatorios/marketing` (leads criados no período, por origem). Investimento, CPL, CAC e
+// ROAS (fase5-investimento-midia) só aparecem quando a gestão cadastrou investimento no período.
+import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 
 import { CartaoIndicador } from '@/components/pipeline/pecas/cartao-indicador';
@@ -17,14 +18,18 @@ type Agrupamento = 'dia' | 'semana' | 'mes';
 
 interface Dados {
   resumo: { leads: number; conectados: number; reunioesRealizadas: number; contratos: number; conversaoFinal: number | null };
+  custo?: { investimento: number; cpl: number | null; cac: number | null; roas: number | null } | null;
   agrupar: Agrupamento;
   serie: { inicio: string; leads: number; reunioes: number }[];
-  porOrigem: { origem: string; leads: number; conectados: number; reunioesRealizadas: number; contratos: number; conversaoFinal: number | null; valorGanho: number }[];
+  porOrigem: { origem: string; leads: number; conectados: number; reunioesRealizadas: number; contratos: number; conversaoFinal: number | null; valorGanho: number; investimento?: number | null; cpl?: number | null; cac?: number | null; roas?: number | null }[];
   origens: string[];
 }
 
 const PRESETS: Preset[] = ['hoje', '7dias', '30dias', 'mes', 'trimestre'];
 const ROTULO_DO_AGRUPAMENTO: Record<Agrupamento, string> = { dia: 'Diário', semana: 'Semanal', mes: 'Mensal' };
+
+const traco = (valor: number | null | undefined, formatar: (n: number) => string) => (valor === null || valor === undefined ? '—' : formatar(valor));
+const vezes = (n: number) => `${n.toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}x`;
 
 function rotuloDoIntervalo(inicio: string, agrupar: Agrupamento): string {
   if (agrupar === 'mes') return `${inicio.slice(5, 7)}/${inicio.slice(0, 4)}`;
@@ -73,6 +78,10 @@ export function RelatorioMarketing() {
           <button type="button" onClick={() => void carregar()} className="h-10 px-4 rounded-xl bg-surface-card shadow-sm font-label-md text-label-md font-semibold text-text-primary">
             Atualizar
           </button>
+          <Link href="/configuracoes/investimento" className="h-10 px-4 rounded-xl bg-surface-card shadow-sm inline-flex items-center gap-2 font-label-md text-label-md text-text-primary">
+            <span aria-hidden="true" className="material-symbols-outlined text-[18px]">paid</span>
+            Cadastrar investimento
+          </Link>
           <ItemEmBreve rotulo="Exportar Relatório Completo (CSV/PDF)" icone="download" className="h-10 px-4 rounded-xl bg-surface-card shadow-sm" />
         </div>
       </div>
@@ -100,6 +109,15 @@ export function RelatorioMarketing() {
             <CartaoIndicador titulo="Reuniões realizadas" valor={inteiro(dados.resumo.reunioesRealizadas)} legenda="demonstrações concluídas" icone="event_available" cor="warning" />
             <CartaoIndicador titulo="Contratos fechados" valor={inteiro(dados.resumo.contratos)} legenda={`${porcentagem(dados.resumo.conversaoFinal)} dos leads`} icone="handshake" cor="success" />
           </div>
+
+          {dados.custo && (
+            <div aria-label="Custo de aquisição" role="group" className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-space-md">
+              <CartaoIndicador titulo="Investimento" valor={moeda(dados.custo.investimento)} legenda="em mídia no período" icone="paid" />
+              <CartaoIndicador titulo="Custo por lead" valor={traco(dados.custo.cpl, moeda)} legenda="investimento ÷ leads" icone="sell" cor="info" />
+              <CartaoIndicador titulo="CAC" valor={traco(dados.custo.cac, moeda)} legenda="investimento ÷ contratos" icone="price_check" cor="warning" />
+              <CartaoIndicador titulo="ROAS" valor={traco(dados.custo.roas, vezes)} legenda="valor ganho ÷ investimento" icone="trending_up" cor="success" />
+            </div>
+          )}
 
           <section aria-label="Aquisição de Leads e Conversão por Período" className="bg-surface-card rounded-2xl p-space-md shadow-sm flex flex-col gap-space-sm">
             <div className="flex items-center justify-between gap-2 flex-wrap">
@@ -138,6 +156,14 @@ export function RelatorioMarketing() {
                       <th className="px-space-md py-3">Contratos</th>
                       <th className="px-space-md py-3">Conversão final</th>
                       <th className="px-space-md py-3">Valor ganho</th>
+                      {dados.custo && (
+                        <>
+                          <th className="px-space-md py-3">Investimento</th>
+                          <th className="px-space-md py-3">CPL</th>
+                          <th className="px-space-md py-3">CAC</th>
+                          <th className="px-space-md py-3">ROAS</th>
+                        </>
+                      )}
                     </tr>
                   </thead>
                   <tbody>
@@ -150,6 +176,14 @@ export function RelatorioMarketing() {
                         <td className="px-space-md py-3">{inteiro(l.contratos)}</td>
                         <td className="px-space-md py-3">{porcentagem(l.conversaoFinal)}</td>
                         <td className="px-space-md py-3">{moeda(l.valorGanho)}</td>
+                        {dados.custo && (
+                          <>
+                            <td className="px-space-md py-3">{traco(l.investimento, moeda)}</td>
+                            <td className="px-space-md py-3">{traco(l.cpl, moeda)}</td>
+                            <td className="px-space-md py-3">{traco(l.cac, moeda)}</td>
+                            <td className="px-space-md py-3">{traco(l.roas, vezes)}</td>
+                          </>
+                        )}
                       </tr>
                     ))}
                   </tbody>
@@ -163,6 +197,14 @@ export function RelatorioMarketing() {
                         <td className="px-space-md py-3">{inteiro(totais.contratos)}</td>
                         <td className="px-space-md py-3">{porcentagem(totais.leads > 0 ? totais.contratos / totais.leads : null)}</td>
                         <td className="px-space-md py-3">{moeda(totais.valor)}</td>
+                        {dados.custo && (
+                          <>
+                            <td className="px-space-md py-3">{moeda(dados.custo.investimento)}</td>
+                            <td className="px-space-md py-3">{traco(dados.custo.cpl, moeda)}</td>
+                            <td className="px-space-md py-3">{traco(dados.custo.cac, moeda)}</td>
+                            <td className="px-space-md py-3">{traco(dados.custo.roas, vezes)}</td>
+                          </>
+                        )}
                       </tr>
                     </tfoot>
                   )}

@@ -57,6 +57,9 @@ const REGRAS_PAPEL: RegraPapel[] = [
   { prefixo: '/configuracoes/motivos-perda', papelMinimo: 'GERENTE' },
   // fase5-metas: a tela de metas é de gestão; a leitura (`GET /api/metas`) é de qualquer sessão.
   { prefixo: '/configuracoes/metas', papelMinimo: 'GERENTE' },
+  // fase5-investimento-midia: dado financeiro, tela e API só de gestão (ASM-220).
+  { prefixo: '/configuracoes/investimento', papelMinimo: 'GERENTE' },
+  { prefixo: '/api/investimento', papelMinimo: 'GERENTE' },
   // Análises: GERENTE+ (mesmo mínimo já aplicado em /api/relatorios/kpis,
   // ASM-074/AC-229).
   { prefixo: '/indicadores', papelMinimo: 'GERENTE' },

@@ -88,6 +88,7 @@ export const GRUPOS_MENU: GrupoMenu[] = [
         icone: 'cancel',
       },
       { id: 'metas', rotulo: 'Metas', href: '/configuracoes/metas', icone: 'flag' },
+      { id: 'investimento-midia', rotulo: 'Investimento em Mídia', href: '/configuracoes/investimento', icone: 'paid' },
       { id: 'empresas', rotulo: 'Empresas', href: '/admin/empresas', icone: 'apartment' },
     ],
   },
