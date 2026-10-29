@@ -21,6 +21,7 @@ export interface CardDoMolde {
   leadId: string;
   etapaId: number;
   leadNome: string;
+  telefoneE164?: string | null;
   responsavelNome: string | null;
   version: number;
 }

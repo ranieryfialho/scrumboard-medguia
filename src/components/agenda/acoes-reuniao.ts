@@ -8,6 +8,7 @@ const MENSAGENS: Record<string, string> = {
   OPORTUNIDADE_NAO_ENCONTRADA: 'Card não encontrado.',
   REUNIAO_NAO_ENCONTRADA: 'Reunião não encontrada.',
   AINDA_NAO_ACONTECEU: 'A reunião ainda não aconteceu, então não dá para registrar no-show.',
+  REUNIAO_NAO_PODE_CANCELAR: 'Só dá para cancelar uma reunião que ainda não aconteceu e não foi remarcada.',
   REUNIAO_JA_TEM_RESULTADO: 'Esta reunião já tem resultado registrado.',
   REUNIAO_REMARCADA: 'Esta reunião já foi remarcada.',
   EVIDENCIA_OBRIGATORIA: 'Falta enviar a evidência (anexo) da reunião.',
@@ -38,3 +39,4 @@ export const registrarNoShow = (id: string) => enviar(`/api/reunioes/${id}/no-sh
 export const concluirReuniao = (id: string, resumo: string, anexoId?: string) =>
   enviar(`/api/reunioes/${id}/concluir`, { resumo: resumo.trim() || undefined, anexoId });
 export const reagendarReuniao = (id: string, agendadaPara: string) => enviar(`/api/reunioes/${id}/reagendar`, { agendadaPara });
+export const cancelarReuniao = (id: string) => enviar(`/api/reunioes/${id}/cancelar`, {});

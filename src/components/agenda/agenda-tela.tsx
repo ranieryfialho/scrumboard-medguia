@@ -15,7 +15,7 @@ import { ItemEmBreve } from '@/components/pipeline/pecas/selo-em-breve';
 import { EsqueletoCarregando, EstadoErro } from '@/components/pipeline/pecas/estados';
 import { useStreamOportunidades, type EventoStreamCliente } from '@/hooks/use-stream-oportunidades';
 import { STATUS_DE_REUNIAO, ROTULO_DO_STATUS, type StatusReuniao } from '@/lib/reunioes/status';
-import { registrarNoShow, type ResultadoAcaoAgenda } from './acoes-reuniao';
+import { cancelarReuniao, registrarNoShow, type ResultadoAcaoAgenda } from './acoes-reuniao';
 import { CartaoReuniao, type AcoesDaReuniao } from './cartao-reuniao';
 import { diaDe, navegar, periodoDaVisao, rotuloDoPeriodo } from './datas';
 import { LateralAgenda } from './lateral-agenda';
@@ -106,6 +106,13 @@ export function AgendaTela() {
       setOcupado(true);
       setAviso(null);
       await aposAcao(await registrarNoShow(r.id));
+      setOcupado(false);
+    },
+    onCancelar: async (r) => {
+      if (!window.confirm(`Cancelar a reunião com ${r.lead.nome}? O card volta para Qualificado p/ reunião.`)) return;
+      setOcupado(true);
+      setAviso(null);
+      await aposAcao(await cancelarReuniao(r.id));
       setOcupado(false);
     },
     onConcluir: (r) => setModal({ tipo: 'concluir', reuniao: r }),

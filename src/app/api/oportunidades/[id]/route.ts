@@ -45,7 +45,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   const db = getDb();
   const [lead, responsavelNome, motivoPerdaNome] = await comTenant(db, contexto, async (tx) => {
     const [lead] = await tx
-      .select({ nome: leads.nome, email: leads.email, origem: leads.origem })
+      .select({ nome: leads.nome, email: leads.email, origem: leads.origem, telefoneE164: leads.telefoneE164 })
       .from(leads)
       .where(and(eq(leads.id, oportunidade.leadId), eq(leads.empresaId, contexto.empresaId)))
       .limit(1);
@@ -72,6 +72,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     // esses campos, então são só acrescentados, sem quebrar o contrato.
     origem: lead?.origem ?? null,
     email: lead?.email ?? null,
+    // T-231 (fase5-acoes-rapidas, AC-645): telefone principal, para o link "Ligar Agora".
+    telefoneE164: lead?.telefoneE164 ?? null,
     criadoEm: oportunidade.criadoEm.toISOString(),
     responsavelId: oportunidade.responsavelId,
     responsavelNome,
