@@ -27,6 +27,7 @@ import { BotaoIniciarCadencia } from '@/components/pipeline/botao-iniciar-cadenc
 import { EsqueletoCarregando, EstadoErro } from '@/components/pipeline/pecas/estados';
 import { CabecalhoCard, type EtapaOpcao } from '@/components/pipeline/detalhe/cabecalho-card';
 import { Jornada, nomeDaEtapa } from '@/components/pipeline/detalhe/jornada';
+import { ConsentimentoWhatsapp } from '@/components/pipeline/detalhe/consentimento-whatsapp';
 import { Informacoes, type TelefoneInformacao } from '@/components/pipeline/detalhe/informacoes';
 import { LinhaDoTempo } from '@/components/pipeline/detalhe/linha-do-tempo';
 import { RegistroRapido } from '@/components/pipeline/detalhe/registro-rapido';
@@ -284,6 +285,7 @@ function PipelineDetalheConteudo({ id }: { id: string }) {
               telefones={telefones}
               email={dados.email}
             />
+            <ConsentimentoWhatsapp leadId={dados.leadId} />
           </div>
 
           <div className="lg:col-span-8 flex flex-col gap-space-lg">

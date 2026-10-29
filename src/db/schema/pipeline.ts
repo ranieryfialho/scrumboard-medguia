@@ -89,6 +89,9 @@ export const leads = pgTable('leads', {
   origem: text('origem'),
   idExterno: text('id_externo'),
   dados: jsonb('dados'),
+  // fase5-whatsapp-lote-base (migration 0020, ASM-240): vazio = sem consentimento para WhatsApp.
+  consentimentoWhatsappEm: timestamp('consentimento_whatsapp_em', { withTimezone: true }),
+  consentimentoWhatsappPor: uuid('consentimento_whatsapp_por').references(() => usuarios.id, { onDelete: 'set null' }),
   criadoEm: timestamp('criado_em', { withTimezone: true }).notNull().defaultNow(),
   atualizadoEm: timestamp('atualizado_em', { withTimezone: true }).notNull().defaultNow(),
 });
