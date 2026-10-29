@@ -9,6 +9,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { AvisoTempoReal } from '@/components/pipeline/pecas/aviso-tempo-real';
 import { CartaoIndicador } from '@/components/pipeline/pecas/cartao-indicador';
+import { descreverMeta } from '@/lib/metas/catalogo';
+import { useMetas } from '@/lib/metas/usar-metas';
 import { ItemEmBreve } from '@/components/pipeline/pecas/selo-em-breve';
 import { EsqueletoCarregando, EstadoErro } from '@/components/pipeline/pecas/estados';
 import { useStreamOportunidades, type EventoStreamCliente } from '@/hooks/use-stream-oportunidades';
@@ -27,6 +29,7 @@ const ROTULO_DA_VISAO: Record<VisaoAgenda, string> = { mes: 'Mês', semana: 'Sem
 type Modal = { tipo: 'agendar' } | { tipo: 'reagendar'; reuniao: { id: string; leadNome: string } } | { tipo: 'concluir'; reuniao: ReuniaoView };
 
 export function AgendaTela() {
+  const metas = useMetas();
   const [visao, setVisao] = useState<VisaoAgenda>('semana');
   const [hoje] = useState(() => diaDe(new Date()));
   const [referencia, setReferencia] = useState(hoje);
@@ -159,6 +162,7 @@ export function AgendaTela() {
             legenda={`${resumo.presenca.realizadas} realizadas na semana`}
             icone="how_to_reg"
             cor="success"
+            meta={descreverMeta(resumo.presenca.taxa, metas.taxa_presenca)}
           />
           <CartaoIndicador
             titulo="Ocorrências de no-show"

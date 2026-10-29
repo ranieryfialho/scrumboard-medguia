@@ -4,9 +4,12 @@
 // `docs/ui/stitch_medcrm_interface_design/25._relatorios_comerciais_comercial_e_vendas/`. Os
 // dados vêm de `GET /api/relatorios/comercial` (eventos do histórico no período). Meta de
 // MRR, especialidade e descontos não existem no sistema e não aparecem (Q-058).
+import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { CartaoIndicador } from '@/components/pipeline/pecas/cartao-indicador';
+import { descreverMeta } from '@/lib/metas/catalogo';
+import { useMetas } from '@/lib/metas/usar-metas';
 import { ItemEmBreve } from '@/components/pipeline/pecas/selo-em-breve';
 import { diaEMes, inteiro, moeda, periodoDoPreset, porcentagem, type Preset, type Responsavel } from './comum';
 import { EsqueletoCarregando, EstadoErro, EstadoVazio } from './estados';
@@ -56,6 +59,7 @@ function ordenar(linhas: Linha[], ordem: Ordem): Linha[] {
 }
 
 export function RelatorioComercial() {
+  const metas = useMetas();
   const [preset, setPreset] = useState<Preset>('mes');
   const [responsavelId, setResponsavelId] = useState('');
   const [responsaveis, setResponsaveis] = useState<Responsavel[]>([]);
@@ -124,7 +128,10 @@ export function RelatorioComercial() {
         </div>
         <div className="flex items-center gap-space-sm flex-wrap">
           <ItemEmBreve rotulo="Exportar Dados (CSV/XLSX)" icone="download" className="h-10 px-4 rounded-xl bg-surface-card shadow-sm" />
-          <ItemEmBreve rotulo="Configurar Metas de Vendas" icone="tune" className="h-10 px-4 rounded-xl bg-surface-card shadow-sm" />
+          <Link href="/configuracoes/metas" className="h-10 px-4 rounded-xl bg-surface-card shadow-sm inline-flex items-center gap-2 font-label-md text-label-md text-text-primary">
+            <span aria-hidden="true" className="material-symbols-outlined text-[18px]">tune</span>
+            Configurar Metas de Vendas
+          </Link>
         </div>
       </div>
 
@@ -161,6 +168,7 @@ export function RelatorioComercial() {
               legenda={`${inteiro(dados.resumo.winRate.ganhos)} ganhos · ${inteiro(dados.resumo.winRate.perdas)} perdas`}
               icone="emoji_events"
               cor="primary"
+              meta={descreverMeta(dados.resumo.winRate.valor === null ? null : dados.resumo.winRate.valor * 100, metas.taxa_conversao)}
             />
           </div>
 

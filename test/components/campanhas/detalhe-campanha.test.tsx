@@ -61,6 +61,19 @@ describe('T-199: DetalheCampanha', () => {
     globalThis.fetch = fetchOriginal;
   });
 
+  test('os três cartões de taxa mostram a meta e "Meta atingida" quando alcançam @spec:AC-624', async () => {
+    const base = fetchFalso.getMockImplementation()!;
+    // enviados 4 (clicado, aberto, 2 enviados), 1 erro: entrega 80%, abertura 50%, cliques 25%
+    fetchFalso.mockImplementation((url: string, init?: { method?: string }) =>
+      url === '/api/metas' ? resposta(200, { metas: { taxa_entrega_email: 80, taxa_abertura_email: 60, taxa_cliques_email: 20 }, detalhes: [] }) : base(url, init)
+    );
+    render(<DetalheCampanha id="camp-1" />);
+    expect(await screen.findByText('Meta 80%')).toBeTruthy();
+    expect(screen.getByText('Meta 60%')).toBeTruthy();
+    expect(screen.getByText('Meta 20%')).toBeTruthy();
+    expect(screen.getAllByText('Meta atingida')).toHaveLength(2);
+  });
+
   test('mostra nome, assunto, status, criada em e criada por, e o voltar @spec:AC-547', async () => {
     render(<DetalheCampanha id="camp-1" />);
     expect(await screen.findByRole('heading', { name: 'Apresentação MedCRM' })).toBeTruthy();

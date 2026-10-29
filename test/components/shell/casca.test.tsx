@@ -139,6 +139,7 @@ describe('AC-348: o menu traz os grupos e itens do protótipo', () => {
       'comercial',
       'equipe',
       'motivos-de-perda',
+      'metas',
       'empresas',
     ];
     const idsRenderizados = Array.from(container.querySelectorAll('a[data-path]')).map((a) =>

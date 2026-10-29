@@ -174,13 +174,28 @@ describe('T-207: RelatorioComercial', () => {
     expect(await screen.findByText('Nenhuma perda no período')).toBeTruthy();
   });
 
-  test('exportar, metas e especialidade ficam "em breve" e a distribuição por especialidade não aparece @spec:AC-574', async () => {
+  test('exportar e especialidade ficam "em breve" e a distribuição por especialidade não aparece @spec:AC-574', async () => {
     render(<RelatorioComercial />);
     await screen.findByRole('region', { name: 'Ranking da Equipe Comercial' });
-    for (const rotulo of ['Exportar Dados (CSV/XLSX)', 'Configurar Metas de Vendas', 'Filtrar por especialidade']) {
+    for (const rotulo of ['Exportar Dados (CSV/XLSX)', 'Filtrar por especialidade']) {
       expect(screen.getByRole('button', { name: `${rotulo} (em breve)` }).getAttribute('aria-disabled')).toBe('true');
     }
     expect(screen.queryByText(/Distribuição por Especialidade|Meta atingida|107%/i)).toBeFalsy();
+  });
+
+  test('"Configurar Metas de Vendas" leva à tela de metas @spec:AC-626', async () => {
+    render(<RelatorioComercial />);
+    await screen.findByRole('region', { name: 'Ranking da Equipe Comercial' });
+    expect(screen.getByRole('link', { name: /Configurar Metas de Vendas/ }).getAttribute('href')).toBe('/configuracoes/metas');
+  });
+
+  test('o win rate mostra a meta de conversão e "Meta atingida" quando alcança (igualdade conta) @spec:AC-623', async () => {
+    const base = fetchFalso.getMockImplementation()!;
+    corpo = { ...DADOS, resumo: { ...RESUMO, winRate: { valor: 0.25, ganhos: 1, perdas: 3 } } };
+    fetchFalso.mockImplementation((url: string) => (url === '/api/metas' ? resposta(200, { metas: { taxa_conversao: 25 }, detalhes: [] }) : base(url)));
+    render(<RelatorioComercial />);
+    expect(await screen.findByText('Meta 25%')).toBeTruthy();
+    expect(screen.getByText('Meta atingida')).toBeTruthy();
   });
 
   test('carregando mostra esqueleto e a falha mostra erro com "Tentar de novo" @spec:AC-576', async () => {

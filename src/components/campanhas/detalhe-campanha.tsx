@@ -8,6 +8,8 @@
 // enquanto a campanha está "Enviando" (AC-552).
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { descreverMeta } from '@/lib/metas/catalogo';
+import { useMetas } from '@/lib/metas/usar-metas';
 import { useRouter } from 'next/navigation';
 
 import { CartaoIndicador } from '@/components/pipeline/pecas/cartao-indicador';
@@ -59,6 +61,7 @@ function doFiltro(status: string, filtro: FiltroDestinatarios): boolean {
 }
 
 export function DetalheCampanha({ id }: { id: string }) {
+  const metas = useMetas();
   const router = useRouter();
   const [dados, setDados] = useState<DetalheView | null>(null);
   const [estado, setEstado] = useState<'carregando' | 'ok' | 'erro' | 'nao-encontrada' | 'restrito'>('carregando');
@@ -219,9 +222,9 @@ export function DetalheCampanha({ id }: { id: string }) {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-space-md">
         <CartaoIndicador titulo="Volume total de disparo" valor={String(total)} legenda={`${enviados} enviados · ${naFila} na fila · ${contagens.erro} falhas`} icone="outgoing_mail" />
-        <CartaoIndicador titulo="Taxa de entrega" valor={formatarPorcentagem(porcentagemDe(enviados, enviados + contagens.erro))} legenda="enviados sem falha" icone="verified" cor="success" />
-        <CartaoIndicador titulo="Taxa de abertura única" valor={formatarPorcentagem(porcentagemDe(contagens.aberto + contagens.clicado, enviados))} legenda={`${contagens.aberto + contagens.clicado} abriram`} icone="drafts" cor="info" />
-        <CartaoIndicador titulo="Taxa de cliques" valor={formatarPorcentagem(porcentagemDe(contagens.clicado, enviados))} legenda={`${contagens.clicado} cliques únicos`} icone="ads_click" cor="warning" />
+        <CartaoIndicador titulo="Taxa de entrega" valor={formatarPorcentagem(porcentagemDe(enviados, enviados + contagens.erro))} legenda="enviados sem falha" icone="verified" cor="success" meta={descreverMeta(porcentagemDe(enviados, enviados + contagens.erro), metas.taxa_entrega_email)} />
+        <CartaoIndicador titulo="Taxa de abertura única" valor={formatarPorcentagem(porcentagemDe(contagens.aberto + contagens.clicado, enviados))} legenda={`${contagens.aberto + contagens.clicado} abriram`} icone="drafts" cor="info" meta={descreverMeta(porcentagemDe(contagens.aberto + contagens.clicado, enviados), metas.taxa_abertura_email)} />
+        <CartaoIndicador titulo="Taxa de cliques" valor={formatarPorcentagem(porcentagemDe(contagens.clicado, enviados))} legenda={`${contagens.clicado} cliques únicos`} icone="ads_click" cor="warning" meta={descreverMeta(porcentagemDe(contagens.clicado, enviados), metas.taxa_cliques_email)} />
       </div>
 
       {contagens.erro > 0 && (

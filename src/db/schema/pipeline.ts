@@ -4,6 +4,7 @@ import {
   jsonb,
   numeric,
   pgEnum,
+  primaryKey,
   pgTable,
   text,
   timestamp,
@@ -246,3 +247,18 @@ export const auditoriaExportacoes = pgTable('auditoria_exportacoes', {
   linhas: integer('linhas').notNull(),
   criadoEm: timestamp('criado_em', { withTimezone: true }).notNull().defaultNow(),
 });
+
+/** T-219 (fase5-metas, ASM-211): meta de um indicador por empresa (migration 0015). */
+export const empresaMetas = pgTable(
+  'empresa_metas',
+  {
+    empresaId: uuid('empresa_id')
+      .notNull()
+      .references(() => empresas.id, { onDelete: 'cascade' }),
+    chave: text('chave').notNull(),
+    valor: numeric('valor', { precision: 4, scale: 1 }).notNull(),
+    atualizadoPor: uuid('atualizado_por').references(() => usuarios.id, { onDelete: 'set null' }),
+    atualizadoEm: timestamp('atualizado_em', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.empresaId, t.chave] })]
+);

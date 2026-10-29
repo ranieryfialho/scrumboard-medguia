@@ -5,6 +5,7 @@
 // Os 7 indicadores vêm de `GET /api/relatorios/kpis`; o funil por etapa e o desempenho
 // por responsável vêm de `GET /api/relatorios/funil` (mesma coorte). Metas, comparação
 // com o mês anterior e alertas não existem no sistema e não aparecem (Q-058).
+import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 
 import { ItemEmBreve } from '@/components/pipeline/pecas/selo-em-breve';
@@ -188,7 +189,10 @@ export function IndicadoresFunil() {
               <h2 className="font-headline-sm text-headline-sm text-text-primary">Desempenho por Closer e SDR</h2>
               <span className="flex items-center gap-2">
                 <ItemEmBreve rotulo="Exportar CSV" icone="download" className="h-9 px-3 rounded-lg bg-surface-subtle" />
-                <ItemEmBreve rotulo="Configurar Metas" icone="tune" className="h-9 px-3 rounded-lg bg-surface-subtle" />
+                <Link href="/configuracoes/metas" className="h-9 px-3 rounded-lg bg-surface-subtle inline-flex items-center gap-2 font-label-md text-label-md text-text-primary">
+                  <span aria-hidden="true" className="material-symbols-outlined text-[18px]">tune</span>
+                  Configurar Metas
+                </Link>
               </span>
             </div>
             {funil.porResponsavel.length === 0 ? (

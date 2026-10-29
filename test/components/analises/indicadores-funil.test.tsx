@@ -132,13 +132,19 @@ describe('T-205: IndicadoresFunil', () => {
     expect(await screen.findByText('Nenhum card neste período')).toBeTruthy();
   });
 
-  test('Relatório Executivo, Exportar CSV e Configurar Metas aparecem "em breve" e a meta e os alertas não existem @spec:AC-561', async () => {
+  test('Relatório Executivo e Exportar CSV aparecem "em breve" e a meta e os alertas não existem @spec:AC-561', async () => {
     render(<IndicadoresFunil />);
     await screen.findByRole('region', { name: 'Desempenho por Responsável' });
-    for (const rotulo of ['Relatório Executivo', 'Exportar CSV', 'Configurar Metas']) {
+    for (const rotulo of ['Relatório Executivo', 'Exportar CSV']) {
       expect(screen.getByRole('button', { name: `${rotulo} (em breve)` }).getAttribute('aria-disabled')).toBe('true');
     }
     expect(screen.queryByText(/Meta Comercial|Índice de Eficiência|Disparar Minutas|Risco de Esfriamento/i)).toBeFalsy();
+  });
+
+  test('"Configurar Metas" deixou de ser "em breve" e leva à tela de metas @spec:AC-626', async () => {
+    render(<IndicadoresFunil />);
+    await screen.findByRole('region', { name: 'Desempenho por Responsável' });
+    expect(screen.getByRole('link', { name: /Configurar Metas/ }).getAttribute('href')).toBe('/configuracoes/metas');
   });
 
   test('carregando mostra esqueleto e a falha mostra erro com "Tentar de novo", sem apagar os números @spec:AC-576', async () => {

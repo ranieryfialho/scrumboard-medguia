@@ -87,6 +87,7 @@ export const GRUPOS_MENU: GrupoMenu[] = [
         href: '/configuracoes/motivos-perda',
         icone: 'cancel',
       },
+      { id: 'metas', rotulo: 'Metas', href: '/configuracoes/metas', icone: 'flag' },
       { id: 'empresas', rotulo: 'Empresas', href: '/admin/empresas', icone: 'apartment' },
     ],
   },

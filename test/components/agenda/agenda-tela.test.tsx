@@ -165,6 +165,24 @@ describe('T-186: AgendaTela', () => {
     await waitFor(() => expect(ultimaUrl()).toMatch(/de=2026-06-11&ate=2026-06-11/));
   });
 
+  test('a taxa de presença mostra a meta e "Meta atingida" quando alcança @spec:AC-622', async () => {
+    const base = fetchFalso.getMockImplementation()!;
+    fetchFalso.mockImplementation((url: string, init?: { method?: string }) =>
+      url === '/api/metas' ? resposta(200, { metas: { taxa_presenca: 1 }, detalhes: [] }) : base(url, init)
+    );
+    render(<AgendaTela />);
+    expect(await screen.findByText('Meta 1%')).toBeTruthy();
+    expect(screen.getByText('Meta atingida')).toBeTruthy();
+    cleanup();
+
+    fetchFalso.mockImplementation((url: string, init?: { method?: string }) =>
+      url === '/api/metas' ? resposta(200, { metas: { taxa_presenca: 100 }, detalhes: [] }) : base(url, init)
+    );
+    render(<AgendaTela />);
+    expect(await screen.findByText('Meta 100%')).toBeTruthy();
+    expect(screen.queryByText('Meta atingida')).toBeNull();
+  });
+
   test('os filtros por closer e por status restringem a lista e Limpar volta ao completo @spec:AC-485', async () => {
     const u = usuario();
     render(<AgendaTela />);

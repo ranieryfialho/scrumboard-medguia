@@ -5,6 +5,8 @@
 // maiúsculas, valor grande, legenda e um selo de ícone. Só exibe o que vem
 // por prop; não sabe de onde vêm os números (AC-389/AC-403 ficam na tela
 // que o usa).
+import type { SeloMeta } from '@/lib/metas/catalogo';
+
 interface CartaoIndicadorProps {
   titulo: string;
   valor: string;
@@ -12,6 +14,8 @@ interface CartaoIndicadorProps {
   icone: string;
   /** Cor do selo de ícone — combinações do design system (fundo claro / texto escuro). */
   cor?: 'primary' | 'success' | 'warning' | 'danger' | 'info';
+  /** fase5-metas (AC-621 a AC-625): meta da empresa para este indicador; sem meta ou sem valor não vem. */
+  meta?: SeloMeta | null;
 }
 
 const CORES: Record<NonNullable<CartaoIndicadorProps['cor']>, string> = {
@@ -22,7 +26,7 @@ const CORES: Record<NonNullable<CartaoIndicadorProps['cor']>, string> = {
   info: 'bg-info-surface text-info-text',
 };
 
-export function CartaoIndicador({ titulo, valor, legenda, icone, cor = 'primary' }: CartaoIndicadorProps) {
+export function CartaoIndicador({ titulo, valor, legenda, icone, cor = 'primary', meta }: CartaoIndicadorProps) {
   return (
     <div className="bg-surface-card rounded-2xl p-space-md shadow-sm flex items-center justify-between">
       <div className="flex flex-col">
@@ -31,6 +35,12 @@ export function CartaoIndicador({ titulo, valor, legenda, icone, cor = 'primary'
           <span className="font-metric-stat text-metric-stat text-text-primary">{valor}</span>
         </div>
         {legenda && <span className="font-body-sm text-body-sm text-text-muted mt-1">{legenda}</span>}
+        {meta && (
+          <span className="flex items-center gap-2 mt-1 font-body-sm text-body-sm text-text-muted">
+            {meta.texto}
+            {meta.atingida && <span className="px-2 py-0.5 rounded-full bg-success-surface text-success-text font-label-sm text-label-sm">Meta atingida</span>}
+          </span>
+        )}
       </div>
       <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${CORES[cor]}`}>
         <span aria-hidden="true" className="material-symbols-outlined text-[24px]">
