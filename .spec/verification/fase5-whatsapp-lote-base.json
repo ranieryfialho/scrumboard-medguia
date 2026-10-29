@@ -1,0 +1,62 @@
+{
+  "feature": "fase5-whatsapp-lote-base",
+  "timestamp": "2026-10-29T15:53:30.099Z",
+  "gitRev": "e7bb0e2",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json test/lib/whatsapp-lote-regras.test.ts test/auth/rotas-templates.test.ts test/api/lead-consentimento.test.ts test/api/whatsapp-templates.test.ts test/api/whatsapp-lote-previa.test.ts test/components/pipeline/consentimento-whatsapp.test.tsx test/components/whatsapp/templates.test.tsx",
+  "reporter": "vitest-json",
+  "exitCode": 0,
+  "testsParsed": 17,
+  "results": {
+    "AC-667": {
+      "status": "pass",
+      "testName": "T-249: consentimento do lead registrar grava data e autor, e revogar apaga os dois @spec:AC-667 registrar grava data e autor, e revogar apaga os dois @spec:AC-667",
+      "method": "vitest-json"
+    },
+    "AC-668": {
+      "status": "pass",
+      "testName": "T-249: consentimento do lead lead de outra empresa e id inválido são 404, sem sessão 401, e nada muda @spec:AC-668 lead de outra empresa e id inválido são 404, sem sessão 401, e nada muda @spec:AC-668",
+      "method": "vitest-json"
+    },
+    "AC-669": {
+      "status": "pass",
+      "testName": "T-249: consentimento no card sem consentimento oferece registrar; com consentimento mostra quem e quando e oferece revogar @spec:AC-669 sem consentimento oferece registrar; com consentimento mostra quem e quando e oferece revogar @spec:AC-669",
+      "method": "vitest-json"
+    },
+    "AC-670": {
+      "status": "pass",
+      "testName": "T-249: templates de mensagem o gerente cria em rascunho; nome repetido, variável desconhecida, tamanho ruim e atendente são recusados @spec:AC-670 o gerente cria em rascunho; nome repetido, variável desconhecida, tamanho ruim e atendente são recusados @spec:AC-670",
+      "method": "vitest-json"
+    },
+    "AC-671": {
+      "status": "pass",
+      "testName": "T-249: templates de mensagem aprovar grava quem e quando; editar aprovado volta a rascunho; arquivado não edita nem aprova; outra empresa é 404 @spec:AC-671 aprovar grava quem e quando; editar aprovado volta a rascunho; arquivado não edita nem aprova; outra empresa é 404 @spec:AC-671",
+      "method": "vitest-json"
+    },
+    "AC-672": {
+      "status": "pass",
+      "testName": "T-249: templates de mensagem o gerente vê todos da empresa; o atendente só os aprovados; ninguém vê os da outra @spec:AC-672 o gerente vê todos da empresa; o atendente só os aprovados; ninguém vê os da outra @spec:AC-672",
+      "method": "vitest-json"
+    },
+    "AC-673": {
+      "status": "pass",
+      "testName": "T-249: menu e rota de templates a página existe e todos os papéis veem \"Templates\" em Comunicação @spec:AC-673 a página existe e todos os papéis veem \"Templates\" em Comunicação @spec:AC-673",
+      "method": "vitest-json"
+    },
+    "AC-674": {
+      "status": "pass",
+      "testName": "T-249: regras e prévia do lote as regras são 50 por disparo e 15 a 45 segundos; sem sessão dá 401 @spec:AC-674 as regras são 50 por disparo e 15 a 45 segundos; sem sessão dá 401 @spec:AC-674",
+      "method": "vitest-json"
+    },
+    "AC-675": {
+      "status": "pass",
+      "testName": "T-249: regras e prévia do lote a prévia separa elegíveis de excluídos, com mensagem preenchida e motivo de cada exclusão @spec:AC-675 a prévia separa elegíveis de excluídos, com mensagem preenchida e motivo de cada exclusão @spec:AC-675",
+      "method": "vitest-json"
+    },
+    "AC-676": {
+      "status": "pass",
+      "testName": "T-249: regras e prévia do lote só template aprovado da empresa: rascunho e arquivado 422, de outra empresa e inexistente 404, sem sessão 401 @spec:AC-676 só template aprovado da empresa: rascunho e arquivado 422, de outra empresa e inexistente 404, sem sessão 401 @spec:AC-676",
+      "method": "vitest-json"
+    }
+  },
+  "principles": {}
+}

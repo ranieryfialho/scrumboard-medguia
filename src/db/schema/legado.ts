@@ -1,4 +1,5 @@
-import { integer, pgEnum, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
+import { integer, pgEnum, pgTable, text, timestamp, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
 
 import { empresas, usuarios } from './identidade';
 import { leads } from './pipeline';
@@ -51,3 +52,23 @@ export const enviosCampanha = pgTable('envios_campanha', {
   tentativas: integer('tentativas').notNull().default(0),
   enviadoEm: timestamp('enviado_em', { withTimezone: true }),
 });
+
+/** T-245 (fase5-whatsapp-lote-base, ASM-241): template de mensagem da empresa; só o aprovado vale em lote (migration 0020). */
+export const whatsappTemplates = pgTable(
+  'whatsapp_templates',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    empresaId: uuid('empresa_id')
+      .notNull()
+      .references(() => empresas.id, { onDelete: 'cascade' }),
+    nome: text('nome').notNull(),
+    corpo: text('corpo').notNull(),
+    status: text('status').notNull().default('rascunho'),
+    criadoPor: uuid('criado_por').references(() => usuarios.id, { onDelete: 'set null' }),
+    aprovadoPor: uuid('aprovado_por').references(() => usuarios.id, { onDelete: 'set null' }),
+    aprovadoEm: timestamp('aprovado_em', { withTimezone: true }),
+    criadoEm: timestamp('criado_em', { withTimezone: true }).notNull().defaultNow(),
+    atualizadoEm: timestamp('atualizado_em', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex('whatsapp_templates_empresa_nome_unico').on(t.empresaId, sql`lower(${t.nome})`)]
+);

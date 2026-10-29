@@ -133,6 +133,7 @@ describe('AC-348: o menu traz os grupos e itens do protótipo', () => {
       'whatsapp-inbox',
       'whatsapp-conexao',
       'whatsapp-configuracao',
+      'whatsapp-templates',
       'campanhas',
       'indicadores',
       'relatorios',
@@ -169,7 +170,7 @@ describe('AC-349: o menu esconde o que o papel não pode ver', () => {
     expect(screen.getByText('Comunicação')).toBeTruthy();
     expect(screen.queryByText('Análises')).toBeNull();
     expect(screen.queryByText('Administração')).toBeNull();
-    expect(container.querySelectorAll('a[data-path]')).toHaveLength(10);
+    expect(container.querySelectorAll('a[data-path]')).toHaveLength(11);
   });
 
   test('GERENTE vê também Análises e, em Administração, só Equipe e Motivos de Perda @spec:AC-349', () => {
