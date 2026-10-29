@@ -25,8 +25,8 @@
 
 | Item | Como conferir |
 |---|---|
-| Todas as PRs da fase 5 mergeadas (#47 a #54) e o `Release` da `main` verde | `gh pr list --state merged`, `gh run list --workflow release.yml` |
-| Última migration em `drizzle/` é a `0021_whatsapp_lotes.sql` | `ls drizzle` |
+| Todas as PRs da fase 5 mergeadas (#47 a #54 e a meta de receita) e o `Release` da `main` verde | `gh pr list --state merged`, `gh run list --workflow release.yml` |
+| Última migration em `drizzle/` é a `0022_meta_receita.sql` (se entrar outra depois, acrescente aqui) | `ls drizzle` |
 | Acesso SSH root à VPS; código em `/root/crm-staging` (nunca em `~/scrumboard-medguia`, que é o legado) | — |
 | Janela combinada com a operação (o legado sai do ar durante a troca) | — |
 | Plano de volta lido (seção 9) | — |
@@ -41,7 +41,7 @@ pg_dumpall -U postgres | gzip > /root/backups/pg-master-pre-cutover_$(date +%F_%
 
 1. Se `crm_prod`, `crm_app` e `crm_migrator` ainda não existem, crie-os como no
    [`provisionar-staging.md`](provisionar-staging.md) (`infra/postgres/init/01-databases-and-roles.sql`).
-2. Aplique **todos** os `.sql` de `drizzle/`, **em ordem**, com `psql` como `crm_migrator`,
+2. Aplique **todos** os `.sql` de `drizzle/` (de `0000` até a `0022`), **em ordem**, com `psql` como `crm_migrator`,
    direto no `crm_prod`. **Não use `npm run db:migrate`:** o `_journal.json` só conhece
    4 das migrations (as demais são escritas à mão).
 
@@ -65,6 +65,7 @@ O que cada migration das fases 4 e 5 faz (todas **só acrescentam**; nenhuma apa
 | `0019_motivos_perda_por_empresa` | dono do motivo de perda (os atuais ficam globais); troca o índice único de nome por dois parciais |
 | `0020_whatsapp_lote_base` | consentimento do lead e templates de WhatsApp |
 | `0021_whatsapp_lotes` | lotes e fila de envio do WhatsApp em lote |
+| `0022_meta_receita` | a meta de receita mensal (em reais) na tabela de metas: a coluna do valor vira `numeric(12,2)` e o limite passa a ser por tipo de meta; as porcentagens já gravadas mantêm o valor |
 
 **Conferência do banco** (como `crm_migrator`; os números vêm do estado de 29/10, ajuste se
 alguma migration nova entrar):
@@ -74,6 +75,7 @@ SELECT count(*) FROM pipeline_etapas;                                  -- 15
 SELECT count(*) FROM pipeline_transicoes WHERE etapa_origem_id = 8 AND etapa_destino_id = 6;  -- 1
 SELECT count(*) FROM motivos_perda WHERE empresa_id IS NULL;           -- 8 (os do seed)
 SELECT to_regclass('whatsapp_lotes'), to_regclass('whatsapp_templates'), to_regclass('empresa_metas'), to_regclass('investimento_midia');  -- nenhum NULL
+SELECT numeric_precision || ',' || numeric_scale FROM information_schema.columns WHERE table_name = 'empresa_metas' AND column_name = 'valor';  -- 12,2 (migration 0022)
 ```
 
 Confirme também que `crm_app` consegue DML e **não** consegue DDL (como no staging).
@@ -164,7 +166,7 @@ do Docker** ou pelo proxy:
 ## 10. Pendências fora deste cutover
 
 - **Integração com o Meta Ads** para o investimento em mídia: versão 2 (hoje o cadastro é manual).
-- **Q-055:** o motor externo de e-mail consegue pausar um disparo e aceitar variáveis de texto? Em aberto.
-- **Meta de receita** (Novo MRR): Q-061, depende do período do relatório.
+- **Pausar campanha e variáveis no e-mail** (Q-055, respondida: o motor consegue os dois): feature `fase5-campanhas-pausa-variaveis`, ainda a especificar.
+- **Meta de receita** (Novo MRR): entregue (migration 0022): meta mensal, selo só em período de mês inteiro e sem filtro de responsável.
 - Limite e intervalo do lote são valores do sistema (50 leads, 15 a 45 s); configurar por empresa é evolução.
 - Reenviar os que falharam num lote, agendar lote e mais de um lote por vez: fora do escopo atual.
