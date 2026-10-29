@@ -70,6 +70,9 @@ const REGRAS_PAPEL: RegraPapel[] = [
   { prefixo: '/api/equipe', papelMinimo: 'GERENTE' },
   { prefixo: '/api/configuracoes/motivos-perda', papelMinimo: 'GERENTE' },
   { prefixo: '/api/admin/empresas', somenteSuperAdmin: true },
+  // fase5-whatsapp-lote-disparo (ASM-247): disparo em massa é decisão de gestão — tela e API.
+  { prefixo: '/whatsapp/lote', papelMinimo: 'GERENTE' },
+  { prefixo: '/api/whatsapp/lote', papelMinimo: 'GERENTE' },
 ];
 
 /** A regra de prefixo mais específico vence — `/relatorios-comerciais` não cai na regra de `/relatorios`. */

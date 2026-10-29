@@ -3,21 +3,22 @@
 // T-178 (fase4-pipeline-lote, AC-445): a barra azul de ações em lote da lista —
 // "N selecionados" e as ações do protótipo (`7._pipeline_lista_vis_o_em_lista/`).
 // "Mover Etapa em Lote", "Reatribuir Comercial" e "Arquivar" funcionam;
-// "Disparar WhatsApp" continua "em breve" (Q-050). "Reatribuir" fica desabilitado
+// "Disparar WhatsApp" (fase5-whatsapp-lote-disparo) abre o diálogo do lote, só para quem pode (gerente+). "Reatribuir" fica desabilitado
 // para quem não é MASTER/GERENTE (a API também recusa, AC-451).
-import { ItemEmBreve } from '@/components/pipeline/pecas/selo-em-breve';
 import type { AcaoEmLote } from './tipos';
 
 interface BarraLoteProps {
   quantidade: number;
   podeReatribuir: boolean;
   onAbrir: (acao: AcaoEmLote) => void;
+  /** AC-685: o botão só aparece quando há o que fazer e quem pode (gerente+). */
+  onDispararWhatsapp?: () => void;
 }
 
 const BOTAO =
   'px-3 py-1.5 rounded-lg bg-surface-card text-text-primary hover:bg-primary hover:text-on-primary font-label-md text-label-md font-semibold flex items-center gap-1.5 transition-colors shadow-sm';
 
-export function BarraLote({ quantidade, podeReatribuir, onAbrir }: BarraLoteProps) {
+export function BarraLote({ quantidade, podeReatribuir, onAbrir, onDispararWhatsapp }: BarraLoteProps) {
   if (quantidade === 0) return null;
 
   return (
@@ -47,7 +48,14 @@ export function BarraLote({ quantidade, podeReatribuir, onAbrir }: BarraLoteProp
           </span>
           Reatribuir Comercial
         </button>
-        <ItemEmBreve rotulo="Disparar WhatsApp" icone="send" />
+        {podeReatribuir && onDispararWhatsapp && (
+          <button type="button" onClick={onDispararWhatsapp} className={BOTAO}>
+            <span aria-hidden="true" className="material-symbols-outlined text-[16px]">
+              send
+            </span>
+            Disparar WhatsApp
+          </button>
+        )}
         <button type="button" onClick={() => onAbrir('arquivar')} className={`${BOTAO} hover:bg-danger-text`}>
           <span aria-hidden="true" className="material-symbols-outlined text-[16px]">
             archive

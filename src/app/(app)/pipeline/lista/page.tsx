@@ -22,6 +22,7 @@ import { ModalNovoLead, type DadosNovoLead, type ResultadoSalvarNovoLead } from 
 import { criarCardNovoLead, criarLeadEIniciarCadencia } from '@/components/pipeline/novo-lead-api';
 import { ETAPAS_PIPELINE } from '@/components/pipeline/detalhe/jornada';
 import { BarraLote } from '@/components/pipeline/lote/barra-lote';
+import { DialogoWhatsappLote } from '@/components/pipeline/lote/dialogo-whatsapp-lote';
 import { DialogoLote, type OpcaoDoDialogo } from '@/components/pipeline/lote/dialogo-lote';
 import { BotaoExportar } from '@/components/pipeline/lote/botao-exportar';
 import { ResultadoLote } from '@/components/pipeline/lote/resultado-lote';
@@ -103,6 +104,7 @@ function PipelineListaConteudo() {
   // T-178 (AC-445 a AC-454): ações em lote sobre os cards selecionados.
   const [podeReatribuir, setPodeReatribuir] = useState(false);
   const [acaoAberta, setAcaoAberta] = useState<AcaoEmLote | null>(null);
+  const [disparoAberto, setDisparoAberto] = useState(false); // fase5-whatsapp-lote-disparo (AC-685)
   const [opcoesDoDialogo, setOpcoesDoDialogo] = useState<OpcaoDoDialogo[]>([]);
   const [carregandoOpcoes, setCarregandoOpcoes] = useState(false);
   const [aplicandoLote, setAplicandoLote] = useState(false);
@@ -405,7 +407,7 @@ function PipelineListaConteudo() {
             selecionados={selecionados}
             onAlternarSelecao={alternarSelecao}
             onAlternarTodos={alternarTodos}
-            barraDeAcoes={<BarraLote quantidade={selecionados.size} podeReatribuir={podeReatribuir} onAbrir={abrirAcao} />}
+            barraDeAcoes={<BarraLote quantidade={selecionados.size} podeReatribuir={podeReatribuir} onAbrir={abrirAcao} onDispararWhatsapp={() => setDisparoAberto(true)} />}
           />
           <div className="px-space-md py-2 flex items-center gap-1.5">
             <label htmlFor="pipeline-lista-exibir" className="font-body-sm text-body-sm text-text-muted">
@@ -433,6 +435,8 @@ function PipelineListaConteudo() {
           />
         </>
       )}
+
+      {disparoAberto && <DialogoWhatsappLote oportunidadeIds={[...selecionados]} onFechar={() => setDisparoAberto(false)} />}
 
       {acaoAberta && (
         <DialogoLote
