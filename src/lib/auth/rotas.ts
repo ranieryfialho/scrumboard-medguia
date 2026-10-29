@@ -59,6 +59,9 @@ const REGRAS_PAPEL: RegraPapel[] = [
   { prefixo: '/configuracoes/metas', papelMinimo: 'GERENTE' },
   // fase5-investimento-midia: dado financeiro, tela e API só de gestão (ASM-220).
   { prefixo: '/configuracoes/investimento', papelMinimo: 'GERENTE' },
+  // fase5-email-config (ASM-258): a chave do Resend da empresa é de gestão — tela e API.
+  { prefixo: '/configuracoes/email', papelMinimo: 'GERENTE' },
+  { prefixo: '/api/configuracoes/email', papelMinimo: 'GERENTE' },
   { prefixo: '/api/investimento', papelMinimo: 'GERENTE' },
   // Análises: GERENTE+ (mesmo mínimo já aplicado em /api/relatorios/kpis,
   // ASM-074/AC-229).

@@ -6,7 +6,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { AJUDA_DAS_VARIAVEIS, VARIAVEIS_DO_TEMPLATE, renderizarTemplate } from '@/lib/whatsapp/template';
+import { VariaveisDisponiveis } from '@/components/comum/variaveis-disponiveis';
+import { renderizarTemplate } from '@/lib/whatsapp/template';
 import { EsqueletoCarregando, EstadoErro, EstadoVazio } from '@/components/pipeline/pecas/estados';
 
 interface Template {
@@ -122,26 +123,10 @@ export function Templates() {
         )}
       </div>
 
-      <section aria-label="Variáveis disponíveis" className="bg-surface-card rounded-2xl p-space-md shadow-sm flex flex-col gap-space-sm">
-        <h2 className="font-headline-sm text-headline-sm text-text-primary">Variáveis disponíveis</h2>
-        <p className="font-body-sm text-body-sm text-text-muted">Escreva o shortcode na mensagem e ele é trocado pelo dado do lead na hora do envio. Outras variáveis não funcionam e o template é recusado.</p>
-        <ul className="flex flex-col gap-2">
-          {VARIAVEIS_DO_TEMPLATE.map((v) => (
-            <li key={v} className="rounded-xl bg-surface-subtle p-3 flex items-center justify-between gap-3 flex-wrap">
-              <div className="flex flex-col gap-0.5 min-w-0">
-                <code className="font-mono text-body-md text-primary">{`{{${v}}}`}</code>
-                <span className="font-body-sm text-body-sm text-text-secondary">{AJUDA_DAS_VARIAVEIS[v]}</span>
-                <span className="font-body-sm text-body-sm text-text-muted">Exemplo: para &quot;{EXEMPLO}&quot; vira &quot;{renderizarTemplate(`{{${v}}}`, EXEMPLO)}&quot;</span>
-              </div>
-              {formulario && (
-                <button type="button" onClick={() => inserir(v)} aria-label={`Inserir {{${v}}}`} className="h-9 px-3 rounded-lg bg-primary text-on-primary font-label-md text-label-md font-semibold">
-                  Inserir
-                </button>
-              )}
-            </li>
-          ))}
-        </ul>
-      </section>
+      <VariaveisDisponiveis
+        observacao="Escreva o shortcode na mensagem e ele é trocado pelo dado do lead na hora do envio. Outras variáveis não funcionam e o template é recusado."
+        onInserir={formulario ? inserir : undefined}
+      />
 
       {aviso && (
         <p role={aviso.ok ? 'status' : 'alert'} className={`font-body-md text-body-md rounded-lg px-3 py-2 ${aviso.ok ? 'text-success-text bg-success-surface' : 'text-danger-text bg-danger-surface'}`}>
