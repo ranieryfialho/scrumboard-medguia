@@ -290,7 +290,7 @@ para que só quem tem sessão chegue às telas e APIs do CRM.
 #### AC-380 — O que precisa ser público continua público
 
 - **Dado** um visitante sem sessão
-- **Quando** ele chama `/login`, `/esqueci-senha`, `/redefinir-senha/x`, `/convite/x`, `/sem-acesso`, `/api/auth/*`, `/api/health`, `/api/whatsapp/webhook`, `/api/webhooks/resend`, `/api/cron/*`, `/_next/*` ou imagens
+- **Quando** ele chama `/login`, `/esqueci-senha`, `/redefinir-senha/x`, `/convite/x`, `/sem-acesso`, `/api/auth/*`, `/api/health`, `/api/whatsapp/webhook`, `/api/webhooks/resend`, `/api/cron/*`, `/api/acesso/*` (as APIs das telas de convite, esqueci-senha e redefinição), `/_next/*` ou imagens
 - **Então** nenhuma delas é redirecionada nem bloqueada pelo middleware (as rotas de webhook e cron seguem protegidas pelos próprios segredos, AC-203, AC-304)
 
 #### AC-381 — Papel sem permissão vai para a tela de sem acesso
