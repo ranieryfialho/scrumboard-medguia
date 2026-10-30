@@ -43,3 +43,8 @@
 - Refs: US-081, AC-289, AC-290, AC-292
 - Arquivos: src/etl/sheets/executar.ts, scripts/etl-sheets.ts, test/etl/sheets-executar.test.ts
 - Notas: depende de T-114 a T-119; reaproveita o contexto de execução de T-108.
+
+## T-275 — Id estável para lead sem id da Meta [pendente]
+- Refs: US-075, AC-723
+- Arquivos: src/etl/sheets/executar.ts, test/etl/sheets-sem-meta-id.test.ts
+- Notas: o id sintético entra antes da deduplicação, para a fila, as decisões e o controle de "já migrado" enxergarem cada lead.

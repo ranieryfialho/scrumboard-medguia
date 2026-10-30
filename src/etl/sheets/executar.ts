@@ -25,6 +25,7 @@
 // nada (AC-314). A fila de revisão desta execução (já líquida das decisões
 // aplicadas) sai em `csvFilaRevisao` (AC-307), no mesmo formato que a
 // operação devolve em `--decisoes`.
+import { createHash } from 'node:crypto';
 import { eq } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
@@ -40,7 +41,7 @@ import {
   type ResultadoValidacao,
 } from '../decisoes';
 import { motivosPerda, pipelineEtapas } from '../../db/schema';
-import { lerAba, type ChaveAbaConhecida } from './leitor';
+import { lerAba, type ChaveAbaConhecida, type LeadBruto } from './leitor';
 import { deduplicarLeads, type ConflitoDedupe, type LeadComOrigem, type OrigemLead } from './dedupe';
 import { mapearStatusParaEtapa } from './status';
 import { importarLeadsSheets, type ItemRevisaoLead, type LeadParaImportar } from './leads';
@@ -102,6 +103,18 @@ export class ErroRelatorioInconsistente extends Error {
     );
     this.name = 'ErroRelatorioInconsistente';
   }
+}
+
+/**
+ * AC-723: lead sem id da Meta (ex.: adicionado à mão no painel do legado) recebe um id calculado dos próprios dados. Sem
+ * isso todos compartilham a chave vazia: a fila de revisão e as decisões não os enxergam e o controle de "já migrado"
+ * só deixa o primeiro entrar. O mesmo lead dá sempre o mesmo id; linhas idênticas viram um lead só (a deduplicação os junta).
+ */
+export function metaIdSintetico(origem: OrigemLead, lead: LeadBruto): string {
+  const base = [origem.planilha, origem.aba, lead.nome, lead.telefone, lead.email, lead.camposExtras['created_time'] ?? '']
+    .map((valor) => valor.trim().toLowerCase())
+    .join('|');
+  return `s:${createHash('sha256').update(base).digest('hex').slice(0, 20)}`;
 }
 
 function origemDaChave(chave: ChaveAbaConhecida): OrigemLead {
@@ -187,7 +200,7 @@ async function rodarEtapas(
   const entradas: LeadComOrigem[] = [];
   for (const { origem, resultado } of leituras) {
     for (const lead of resultado.leads) {
-      entradas.push({ origem, lead });
+      entradas.push({ origem, lead: lead.metaId.trim() ? lead : { ...lead, metaId: metaIdSintetico(origem, lead) } });
     }
   }
 
