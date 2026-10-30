@@ -11,7 +11,7 @@
 // empresa têm aquele `telefone_e164`. Exatamente um -> vincula. Zero ou mais
 // de um -> a mensagem continua sem vínculo e entra numa das duas contagens do
 // relatório (AC-288) — nunca escolhe um lead "no chute" num empate.
-import { and, eq, isNull } from 'drizzle-orm';
+import { and, eq, isNotNull, isNull } from 'drizzle-orm';
 
 import type { TransacaoEtl } from '../comum';
 import { leads, whatsappMensagens } from '../../db/schema';
@@ -70,8 +70,20 @@ export interface ResultadoVinculoMensagens {
 }
 
 /**
+ * AC-725: chave para comparar telefones. As mensagens do WhatsApp vêm sem o `+` e, em geral, sem o nono dígito (12
+ * dígitos), enquanto os leads das planilhas vêm com `+` e com o nono dígito: a igualdade exata nunca casava. Para número
+ * brasileiro a chave é país + DDD + os 8 últimos dígitos (os 8 últimos de um celular começam em 6–9 e os de um fixo em 2–5,
+ * então nunca se confundem); os demais comparam só os dígitos.
+ */
+export function chaveDeTelefone(telefone: string): string {
+  const digitos = telefone.replace(/\D/g, '');
+  if (digitos.startsWith('55') && digitos.length >= 12) return `55${digitos.slice(2, 4)}${digitos.slice(-8)}`;
+  return digitos;
+}
+
+/**
  * Liga mensagens de WhatsApp sem lead aos leads desta empresa pelo telefone
- * (AC-287). Telefone ambíguo (mais de um lead) ou sem nenhum lead
+ * (AC-287, AC-725). Telefone ambíguo (mais de um lead) ou sem nenhum lead
  * correspondente fica como está — nunca adivinha (AC-288). Idempotente: uma
  * mensagem já vinculada (`lead_id` preenchido) não entra na busca, então
  * rodar de novo não desfaz nem refaz nada.
@@ -85,22 +97,23 @@ export async function vincularMensagensPorTelefone(
     .from(whatsappMensagens)
     .where(and(eq(whatsappMensagens.empresaId, empresaId), isNull(whatsappMensagens.leadId)));
 
+  const leadsDaEmpresa = await tx
+    .select({ id: leads.id, telefone: leads.telefoneE164 })
+    .from(leads)
+    .where(and(eq(leads.empresaId, empresaId), isNotNull(leads.telefoneE164)));
+  const leadsPorChave = new Map<string, string[]>();
+  for (const lead of leadsDaEmpresa) {
+    const chave = chaveDeTelefone(lead.telefone as string);
+    if (chave) leadsPorChave.set(chave, [...(leadsPorChave.get(chave) ?? []), lead.id]);
+  }
+
   let vinculadas = 0;
   let semLeadParaTelefone = 0;
   let telefoneAmbiguo = 0;
 
-  const leadsPorNumero = new Map<string, string[]>();
-
   for (const mensagem of mensagensSemLead) {
-    let idsDeLeads = leadsPorNumero.get(mensagem.numero);
-    if (!idsDeLeads) {
-      const encontrados = await tx
-        .select({ id: leads.id })
-        .from(leads)
-        .where(and(eq(leads.empresaId, empresaId), eq(leads.telefoneE164, mensagem.numero)));
-      idsDeLeads = encontrados.map((lead) => lead.id);
-      leadsPorNumero.set(mensagem.numero, idsDeLeads);
-    }
+    const chave = chaveDeTelefone(mensagem.numero);
+    const idsDeLeads = chave ? (leadsPorChave.get(chave) ?? []) : [];
 
     if (idsDeLeads.length === 0) {
       semLeadParaTelefone++;

@@ -53,3 +53,8 @@
 - Refs: US-077, AC-724
 - Arquivos: src/etl/sheets/executar.ts, src/etl/sheets/dedupe.ts, scripts/etl-sheets.ts, test/etl/sheets-arquivados.test.ts
 - Notas: o desempate sem data passa a favorecer qualquer outro status sobre "Arquivado"; o relatório ganha `arquivadosPulados`.
+
+## T-277 — Vínculo de mensagens por telefone ignora `+` e nono dígito [pendente]
+- Refs: US-080, AC-725
+- Arquivos: src/etl/sheets/agenda-mensagens.ts, test/etl/sheets-vinculo-formatos.test.ts
+- Notas: a comparação deixa de ser por igualdade exata; ambíguo continua sem vínculo.

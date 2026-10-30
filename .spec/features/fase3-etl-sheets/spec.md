@@ -152,6 +152,13 @@ Como atendente, quero ver a conversa antiga dentro do card do lead.
 - **Então** elas continuam sem vínculo
 - **E** o relatório lista a quantidade de cada caso
 
+#### AC-725 — O telefone liga com ou sem `+` e com ou sem o nono dígito
+
+- **Dado** mensagens de WhatsApp com o número sem `+` e sem o nono dígito (`5521…` com 8 dígitos) e leads com `+55` e o nono dígito, no mesmo DDD
+- **Quando** o ETL roda
+- **Então** a mensagem é ligada ao lead, e o mesmo número com DDD diferente **não** liga
+- **E** se dois leads cabem no mesmo número (por exemplo, um com o nono dígito e outro sem), continua ambíguo e sem vínculo
+
 ### US-081 — Rodar com segurança, quantas vezes for preciso
 
 Como responsável pelo cutover, quero ensaiar e repetir o ETL sem risco.
@@ -203,6 +210,7 @@ Como responsável pelo cutover, quero ensaiar e repetir o ETL sem risco.
 | ASM-090 | A chave única do lead é o id da Meta (`l:…`); o id posicional do legado não serve | confirmada | Código legado usa índice de linha |
 | ASM-273 | Lead sem id da Meta ganha um id calculado de aba, nome, telefone, e-mail e data de entrada; linhas idênticas viram um lead só | aberta | Achado na simulação de 30/10: 66 linhas da `sheet1/Página1` sem id compartilhavam a chave vazia |
 | ASM-274 | Arquivado sem telefone, ou com o telefone de um lead que não está arquivado, não migra: a pessoa já está representada ou não há como contatá-la | confirmada | Decidido em 30/10 depois de medir: de 26 arquivados, 13 sem telefone e 2 repetidos |
+| ASM-275 | Telefones brasileiros são comparados por país + DDD + 8 últimos dígitos; os demais, pelos dígitos | aberta | Achado em 30/10: 143 dos 166 números de conversa têm 12 dígitos, sem `+` e sem o nono dígito |
 | ASM-091 | Duplicados: vence a `data_alteracao` mais recente; sem data, o status mais avançado | confirmada | Decidido em 19/10 |
 | ASM-092 | A aba `Agenda` não migra; sai em CSV | confirmada | Decidido em 19/10 |
 | ASM-093 | Mapa de status segue o RFC-001 §6.8 e o `STATUS_MAP` do legado ("Fechado" = Contrato (Ganho)) | confirmada | Confirmado pelo usuário em 19/10 |
