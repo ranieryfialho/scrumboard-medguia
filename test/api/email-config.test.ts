@@ -47,11 +47,11 @@ describe('T-263: API de configuração de e-mail', () => {
   });
 
   test('a API nunca devolve a chave: só se há chave e os 4 últimos caracteres; valida chave e remetente @spec:AC-695', async () => {
-    expect(await (await ler()).json()).toEqual({ chaveConfigurada: false, chaveFinal: null, remetente: null });
+    expect(await (await ler()).json()).toEqual({ chaveConfigurada: false, chaveFinal: null, remetente: null, descadastrados: 0 });
     const r = await gravar({ chave: CHAVE_A, remetente: 'Clínica A <contato@clinica-a.com.br>' });
     expect(r.status).toBe(200);
     const corpo = await r.json();
-    expect(corpo).toEqual({ chaveConfigurada: true, chaveFinal: '1111', remetente: 'Clínica A <contato@clinica-a.com.br>' });
+    expect(corpo).toEqual({ chaveConfigurada: true, chaveFinal: '1111', remetente: 'Clínica A <contato@clinica-a.com.br>', descadastrados: 0 });
     expect(JSON.stringify(corpo)).not.toContain('AAAAAAAA');
     expect(JSON.stringify(await (await ler()).json())).not.toContain(CHAVE_A);
 
@@ -74,7 +74,7 @@ describe('T-263: API de configuração de e-mail', () => {
     expect((await ler(atendente)).status).toBe(403);
     expect((await ler(null)).status).toBe(401);
     // omitir a chave mantém a atual; só o remetente muda
-    expect(await (await gravar({ remetente: 'contato@clinica-a.com.br' })).json()).toEqual({ chaveConfigurada: true, chaveFinal: '1111', remetente: 'contato@clinica-a.com.br' });
+    expect(await (await gravar({ remetente: 'contato@clinica-a.com.br' })).json()).toEqual({ chaveConfigurada: true, chaveFinal: '1111', remetente: 'contato@clinica-a.com.br', descadastrados: 0 });
   });
 
   test('a chave fica cifrada no banco e só o worker a decifra; sem o segredo, salvar dá 503 e nada é gravado @spec:AC-696', async () => {
@@ -97,7 +97,7 @@ describe('T-263: API de configuração de e-mail', () => {
 
   test('cada empresa tem a sua; trocar ou remover a da A não mexe na da B @spec:AC-697', async () => {
     await gravar({ chave: CHAVE_B, remetente: 'b@clinica-b.com' }, gerenteB);
-    expect(await (await ler(gerenteB)).json()).toEqual({ chaveConfigurada: true, chaveFinal: '2222', remetente: 'b@clinica-b.com' });
+    expect(await (await ler(gerenteB)).json()).toEqual({ chaveConfigurada: true, chaveFinal: '2222', remetente: 'b@clinica-b.com', descadastrados: 0 });
     expect((await lerConfiguracaoDeEmail(amb.db, amb.tenants.empresaB))?.apiKey).toBe(CHAVE_B);
     expect((await lerConfiguracaoDeEmail(amb.db, amb.tenants.empresaA))?.apiKey).toBe(CHAVE_A);
 
