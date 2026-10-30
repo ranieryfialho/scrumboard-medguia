@@ -193,7 +193,7 @@ describe('T-199: DetalheCampanha', () => {
     await screen.findByRole('heading', { name: 'Apresentação MedCRM' });
     expect(screen.queryByRole('button', { name: 'Excluir' })).toBeFalsy();
     expect(screen.queryByRole('link', { name: 'Editar' })).toBeFalsy();
-    for (const rotulo of ['Pausar Disparo', 'CSV', 'Mapa de Calor de Cliques e Links', 'Eventos em Linha do Tempo (Log)']) {
+    for (const rotulo of ['CSV', 'Mapa de Calor de Cliques e Links', 'Eventos em Linha do Tempo (Log)']) {
       expect(screen.getByRole('button', { name: `${rotulo} (em breve)` }).getAttribute('aria-disabled')).toBe('true');
     }
     expect(screen.queryByText(/Desempenho dos Links|Impacto Direto no Funil/)).toBeFalsy();

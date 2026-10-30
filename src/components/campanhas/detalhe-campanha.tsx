@@ -19,7 +19,9 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import {
   COR_DA_CAMPANHA,
+  ATALHO_DA_CHAVE,
   COR_DO_DESTINATARIO,
+  MOTIVO_DA_FALHA,
   ROTULO_DA_CAMPANHA,
   ROTULO_DO_DESTINATARIO,
   formatarData,
@@ -37,7 +39,7 @@ const INTERVALO_MS = 15_000;
 
 interface DetalheView {
   campanha: { id: string; nome: string; assunto: string; corpoHtml: string; status: string; criadoEm: string; criadoPorNome: string | null };
-  destinatarios: { id: string; nome: string; email: string; status: string; tentativas: number; enviadoEm: string | null }[];
+  destinatarios: { id: string; nome: string; email: string; status: string; tentativas: number; enviadoEm: string | null; erro?: string | null }[];
   contagemPorStatus: Record<string, number>;
 }
 
@@ -71,7 +73,7 @@ export function DetalheCampanha({ id }: { id: string }) {
   const [pagina, setPagina] = useState(1);
   const [confirmando, setConfirmando] = useState<'iniciar' | 'excluir' | null>(null);
   const [trabalhando, setTrabalhando] = useState(false);
-  const [aviso, setAviso] = useState<{ ok: boolean; texto: string } | null>(null);
+  const [aviso, setAviso] = useState<{ ok: boolean; texto: string; atalhoDaChave?: boolean } | null>(null);
 
   const carregar = useCallback(async () => {
     try {
@@ -99,7 +101,7 @@ export function DetalheCampanha({ id }: { id: string }) {
 
   const contagens: ContagensView = useMemo(() => {
     const c = dados?.contagemPorStatus ?? {};
-    return { rascunho: c.RASCUNHO ?? 0, pendente: c.PENDENTE ?? 0, enviado: c.ENVIADO ?? 0, aberto: c.ABERTO ?? 0, clicado: c.CLICADO ?? 0, erro: c.ERRO ?? 0 };
+    return { rascunho: c.RASCUNHO ?? 0, pendente: c.PENDENTE ?? 0, enviado: c.ENVIADO ?? 0, aberto: c.ABERTO ?? 0, clicado: c.CLICADO ?? 0, erro: c.ERRO ?? 0, enviando: c.ENVIANDO ?? 0, pausado: c.PAUSADO ?? 0, descadastrado: c.DESCADASTRADO ?? 0 };
   }, [dados]);
 
   const visiveis = useMemo(() => {
@@ -124,7 +126,7 @@ export function DetalheCampanha({ id }: { id: string }) {
         return;
       }
       const corpo = (await r.json().catch(() => null)) as { codigo?: string } | null;
-      setAviso({ ok: false, texto: mensagemDeErro(corpo?.codigo) });
+      setAviso({ ok: false, texto: mensagemDeErro(corpo?.codigo), atalhoDaChave: corpo?.codigo === 'CHAVE_RESEND_NAO_CONFIGURADA' });
     } catch {
       setAviso({ ok: false, texto: mensagemDeErro(undefined) });
     } finally {
@@ -150,7 +152,8 @@ export function DetalheCampanha({ id }: { id: string }) {
   const { campanha } = dados;
   const total = dados.destinatarios.length;
   const enviados = contagens.enviado + contagens.aberto + contagens.clicado;
-  const naFila = contagens.pendente + contagens.rascunho;
+  const naFila = contagens.pendente + contagens.rascunho + contagens.enviando;
+  const pausada = campanha.status === 'PAUSADA';
   const concluido = porcentagemDe(enviados + contagens.erro, total) ?? 0;
   const podeIniciar = campanha.status === 'RASCUNHO' && total > 0;
 
@@ -183,14 +186,23 @@ export function DetalheCampanha({ id }: { id: string }) {
           >
             Iniciar Disparo
           </button>
-          {contagens.erro > 0 && (
+          {contagens.erro > 0 && !pausada && (
             <button type="button" disabled={trabalhando} onClick={() => void chamar('/reenviar-falhas', 'POST', 'As falhas voltaram para a fila.')} className="h-10 px-4 rounded-xl bg-warning-surface text-warning-text font-label-md text-label-md font-semibold disabled:opacity-50">
               Reenviar Falhas ({contagens.erro})
             </button>
           )}
-          <ItemEmBreve rotulo="Pausar Disparo" icone="pause" className="h-10 px-4 rounded-xl bg-surface-subtle" />
+          {enviando && (
+            <button type="button" disabled={trabalhando} onClick={() => void chamar('/pausar', 'POST', 'Campanha pausada: quem ainda não recebeu fica aguardando.')} className="h-10 px-4 rounded-xl bg-surface-subtle font-label-md text-label-md font-semibold text-text-primary disabled:opacity-50">
+              Pausar
+            </button>
+          )}
+          {pausada && (
+            <button type="button" disabled={trabalhando} onClick={() => void chamar('/retomar', 'POST', 'Campanha retomada: os pausados voltaram para a fila.')} className="h-10 px-4 rounded-xl bg-primary text-on-primary font-label-md text-label-md font-semibold shadow-md disabled:opacity-50">
+              Retomar
+            </button>
+          )}
           <ItemEmBreve rotulo="CSV" icone="download" className="h-10 px-4 rounded-xl bg-surface-subtle" />
-          {campanha.status !== 'PROCESSANDO' && (
+          {campanha.status !== 'PROCESSANDO' && !pausada && (
             <button type="button" onClick={() => setConfirmando('excluir')} className="h-10 px-4 rounded-xl bg-danger-surface text-danger-text font-label-md text-label-md font-semibold">
               Excluir
             </button>
@@ -201,6 +213,12 @@ export function DetalheCampanha({ id }: { id: string }) {
       {aviso && (
         <p role={aviso.ok ? 'status' : 'alert'} className={`font-body-md text-body-md rounded-lg px-3 py-2 ${aviso.ok ? 'text-success-text bg-success-surface' : 'text-danger-text bg-danger-surface'}`}>
           {aviso.texto}
+          {aviso.atalhoDaChave && (
+            <>
+              {' '}
+              <Link href={ATALHO_DA_CHAVE} className="font-semibold underline">Configurar a chave</Link>
+            </>
+          )}
         </p>
       )}
 
@@ -217,6 +235,8 @@ export function DetalheCampanha({ id }: { id: string }) {
           <span>{enviados} enviados</span>
           <span>{naFila} na fila</span>
           <span>{contagens.erro} falhas</span>
+          <span>{contagens.pausado} pausados</span>
+          <span>{contagens.descadastrado} descadastrados</span>
         </div>
       </section>
 
@@ -314,6 +334,17 @@ export function DetalheCampanha({ id }: { id: string }) {
                           </td>
                           <td className="px-space-md py-3">
                             <span className={`px-2.5 py-1 rounded-full font-label-sm text-label-sm ${COR_DO_DESTINATARIO[d.status] ?? COR_DO_DESTINATARIO.RASCUNHO}`}>{ROTULO_DO_DESTINATARIO[d.status] ?? d.status}</span>
+                            {d.status === 'ERRO' && d.erro && (
+                              <p className="mt-1 font-body-sm text-body-sm text-danger-text">
+                                {MOTIVO_DA_FALHA[d.erro] ?? d.erro}
+                                {d.erro === 'SEM_CHAVE_RESEND' && (
+                                  <>
+                                    {' '}
+                                    <Link href={ATALHO_DA_CHAVE} className="font-semibold underline">Configurar</Link>
+                                  </>
+                                )}
+                              </p>
+                            )}
                           </td>
                           <td className="px-space-md py-3 font-body-md text-body-md">{d.tentativas}</td>
                           <td className="px-space-md py-3 font-body-sm text-body-sm text-text-muted">{d.enviadoEm ? formatarData(d.enviadoEm) : '—'}</td>

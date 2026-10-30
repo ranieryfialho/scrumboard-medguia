@@ -1,0 +1,82 @@
+{
+  "feature": "fase5-email-disparo",
+  "timestamp": "2026-10-30T13:26:16.081Z",
+  "gitRev": "59a643b",
+  "command": "npx vitest run --reporter=json --outputFile=.spec/verification/raw.json",
+  "reporter": "vitest-json",
+  "exitCode": 0,
+  "testsParsed": 1804,
+  "results": {
+    "AC-701": {
+      "status": "pass",
+      "testName": "T-269: worker de e-mail das campanhas pega até 10 envios, manda com a chave e o remetente da empresa, o nome, o rodapé e as tags, e grava ENVIADO @spec:AC-701 pega até 10 envios, manda com a chave e o remetente da empresa, o nome, o rodapé e as tags, e grava ENVIADO @spec:AC-701",
+      "method": "vitest-json"
+    },
+    "AC-702": {
+      "status": "pass",
+      "testName": "T-269: worker de e-mail das campanhas espera 2 segundos entre um envio e outro e não espera depois do último; o ciclo roda a cada 10 s @spec:AC-702 espera 2 segundos entre um envio e outro e não espera depois do último; o ciclo roda a cada 10 s @spec:AC-702",
+      "method": "vitest-json"
+    },
+    "AC-703": {
+      "status": "pass",
+      "testName": "T-269: worker de e-mail das campanhas a recusa do Resend e a falha de rede viram ERRO com o motivo e os demais seguem @spec:AC-703 a recusa do Resend e a falha de rede viram ERRO com o motivo e os demais seguem @spec:AC-703",
+      "method": "vitest-json"
+    },
+    "AC-704": {
+      "status": "pass",
+      "testName": "T-269: worker de e-mail das campanhas empresa sem chave: os pendentes viram ERRO SEM_CHAVE_RESEND sem mexer nas tentativas, e as outras empresas seguem @spec:AC-704 empresa sem chave: os pendentes viram ERRO SEM_CHAVE_RESEND sem mexer nas tentativas, e as outras empresas seguem @spec:AC-704",
+      "method": "vitest-json"
+    },
+    "AC-705": {
+      "status": "pass",
+      "testName": "T-269: worker de e-mail das campanhas pendente de campanha em rascunho, pausada ou finalizada não é enviado @spec:AC-705 pendente de campanha em rascunho, pausada ou finalizada não é enviado @spec:AC-705",
+      "method": "vitest-json"
+    },
+    "AC-706": {
+      "status": "pass",
+      "testName": "T-269: worker de e-mail das campanhas a campanha em andamento sem PENDENTE nem ENVIANDO vira FINALIZADA sozinha @spec:AC-706 a campanha em andamento sem PENDENTE nem ENVIANDO vira FINALIZADA sozinha @spec:AC-706",
+      "method": "vitest-json"
+    },
+    "AC-707": {
+      "status": "pass",
+      "testName": "T-269: worker de e-mail das campanhas ENVIANDO há mais de 10 minutos vira ERRO INTERROMPIDO e não é reenviado sozinho @spec:AC-707 ENVIANDO há mais de 10 minutos vira ERRO INTERROMPIDO e não é reenviado sozinho @spec:AC-707",
+      "method": "vitest-json"
+    },
+    "AC-708": {
+      "status": "pass",
+      "testName": "T-269: worker de e-mail (ponto de entrada) só exige DATABASE_URL e SEGREDO_CONFIGURACOES, e o erro traz os nomes, nunca os valores @spec:AC-708 só exige DATABASE_URL e SEGREDO_CONFIGURACOES, e o erro traz os nomes, nunca os valores @spec:AC-708",
+      "method": "vitest-json"
+    },
+    "AC-709": {
+      "status": "pass",
+      "testName": "T-269: pausar, retomar e iniciar com chave pausar: a campanha vira PAUSADA e os PENDENTE viram PAUSADO na mesma transação, e a resposta traz quantos @spec:AC-709 pausar: a campanha vira PAUSADA e os PENDENTE viram PAUSADO na mesma transação, e a resposta traz quantos @spec:AC-709",
+      "method": "vitest-json"
+    },
+    "AC-710": {
+      "status": "pass",
+      "testName": "T-269: pausar, retomar e iniciar com chave retomar: volta a PROCESSANDO e os PAUSADO voltam a PENDENTE; recusa o que não está pausado, outra empresa e atendente @spec:AC-710 retomar: volta a PROCESSANDO e os PAUSADO voltam a PENDENTE; recusa o que não está pausado, outra empresa e atendente @spec:AC-710",
+      "method": "vitest-json"
+    },
+    "AC-711": {
+      "status": "pass",
+      "testName": "T-269: pausar, retomar e iniciar com chave a campanha pausada não finaliza, não é excluída e não aceita \"Reenviar falhas\" @spec:AC-711 a campanha pausada não finaliza, não é excluída e não aceita \"Reenviar falhas\" @spec:AC-711",
+      "method": "vitest-json"
+    },
+    "AC-722": {
+      "status": "pass",
+      "testName": "T-269: worker de e-mail das campanhas quem a empresa descadastrou não recebe, vira DESCADASTRADO e não volta com \"Reenviar falhas\" @spec:AC-722 quem a empresa descadastrou não recebe, vira DESCADASTRADO e não volta com \"Reenviar falhas\" @spec:AC-722",
+      "method": "vitest-json"
+    },
+    "AC-712": {
+      "status": "pass",
+      "testName": "T-269: telas de campanha com pausa e motivo da falha em andamento mostra \"Pausar\" e pausar chama a rota; pausada mostra \"Retomar\" e o selo \"Pausada\" @spec:AC-712 em andamento mostra \"Pausar\" e pausar chama a rota; pausada mostra \"Retomar\" e o selo \"Pausada\" @spec:AC-712",
+      "method": "vitest-json"
+    },
+    "AC-713": {
+      "status": "pass",
+      "testName": "T-269: pausar, retomar e iniciar com chave iniciar sem a chave do Resend da empresa: 409 CHAVE_RESEND_NAO_CONFIGURADA e nada muda; com a chave, inicia @spec:AC-713 iniciar sem a chave do Resend da empresa: 409 CHAVE_RESEND_NAO_CONFIGURADA e nada muda; com a chave, inicia @spec:AC-713",
+      "method": "vitest-json"
+    }
+  },
+  "principles": {}
+}

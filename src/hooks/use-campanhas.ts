@@ -90,6 +90,8 @@ const MENSAGENS_ERRO: Record<string, string> = {
   CAMPANHA_EM_ENVIO: "Não é possível excluir uma campanha em andamento.",
   SEM_DESTINATARIOS: "A campanha não tem destinatários para enviar.",
   SEM_FALHAS: "Não há falhas para reenviar.",
+  CAMPANHA_PAUSADA: "A campanha está pausada. Retome-a antes.",
+  CHAVE_RESEND_NAO_CONFIGURADA: "A empresa ainda não tem a chave do Resend. Configure em Configurações > E-mail.",
 };
 
 function mensagemDoErro(corpo: RespostaErro): string {

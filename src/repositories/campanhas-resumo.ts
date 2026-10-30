@@ -27,9 +27,15 @@ export interface ContagensDaCampanha {
   aberto: number;
   clicado: number;
   erro: number;
+  /** fase5-email-disparo (AC-712): o worker está enviando agora. */
+  enviando: number;
+  /** AC-709: pendentes parados pela pausa da campanha. */
+  pausado: number;
+  /** AC-722: quem a empresa descadastrou; não é falha. */
+  descadastrado: number;
 }
 
-const VAZIA: ContagensDaCampanha = { rascunho: 0, pendente: 0, enviado: 0, aberto: 0, clicado: 0, erro: 0 };
+const VAZIA: ContagensDaCampanha = { rascunho: 0, pendente: 0, enviado: 0, aberto: 0, clicado: 0, erro: 0, enviando: 0, pausado: 0, descadastrado: 0 };
 
 const CHAVE_DO_STATUS: Record<string, keyof ContagensDaCampanha> = {
   RASCUNHO: 'rascunho',
@@ -38,6 +44,9 @@ const CHAVE_DO_STATUS: Record<string, keyof ContagensDaCampanha> = {
   ABERTO: 'aberto',
   CLICADO: 'clicado',
   ERRO: 'erro',
+  ENVIANDO: 'enviando',
+  PAUSADO: 'pausado',
+  DESCADASTRADO: 'descadastrado',
 };
 
 export interface ResumoDasCampanhas {

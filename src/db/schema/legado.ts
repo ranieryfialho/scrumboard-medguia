@@ -51,6 +51,8 @@ export const enviosCampanha = pgTable('envios_campanha', {
   status: text('status').notNull().default('RASCUNHO'),
   tentativas: integer('tentativas').notNull().default(0),
   enviadoEm: timestamp('enviado_em', { withTimezone: true }),
+  /** T-264 (migration 0024): o motivo curto de um envio que não saiu. */
+  erro: text('erro'),
 });
 
 /** T-245 (fase5-whatsapp-lote-base, ASM-241): template de mensagem da empresa; só o aprovado vale em lote (migration 0020). */

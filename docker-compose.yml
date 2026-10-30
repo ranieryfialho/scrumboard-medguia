@@ -67,6 +67,24 @@ services:
     networks:
       - wp-network
 
+  # T-266 (fase5-email-disparo, ASM-261): o disparo das campanhas de e-mail num segundo container, com a mesma imagem do
+  # CRM e o comando `npm run worker:email` (src/worker/email.ts). Só precisa de DATABASE_URL e SEGREDO_CONFIGURACOES; uma
+  # rajada de e-mails não ocupa o `crm-worker` da ingestão. Vale o mesmo pré-requisito do `crm-worker` acima: a imagem
+  # precisa incluir `src/worker` e `tsx`. Sem `ports:` nem healthcheck próprio (o ciclo é um laço simples de 10 s).
+  crm-worker-email:
+    image: ghcr.io/ranieryfialho/scrumboard-medguia:${IMAGE_TAG:-latest}
+    container_name: crm-worker-email
+    command: ["npm", "run", "worker:email"]
+    env_file:
+      - .env
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 300m
+    networks:
+      - wp-network
+
   # Postgres compartilhado com outros projetos na VPS (RFC-001 §1.3). Sem
   # `ports:` — acesso só pela rede Docker interna `wp-network` ou por túnel
   # SSH para administração (AC-009). Databases/roles do CRM são provisionados
