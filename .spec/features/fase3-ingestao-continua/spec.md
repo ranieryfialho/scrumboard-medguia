@@ -92,7 +92,7 @@ Como responsável técnico, quero que o worker suba em container próprio e pare
 
 - **Dado** os arquivos de composição do projeto
 - **Quando** o `docker compose` é validado
-- **Então** há um serviço `crm-worker` que usa a mesma imagem da aplicação com outro comando de entrada e o healthcheck do AC-323
+- **Então** há um serviço `crm-worker` que usa a imagem de worker da aplicação (`scrumboard-medguia-worker`, que traz o código do worker e o `tsx`; a imagem do site não os traz) com outro comando de entrada e o healthcheck do AC-323
 
 ## Fora de escopo
 

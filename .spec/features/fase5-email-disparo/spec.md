@@ -8,7 +8,7 @@
 A parte 1 (`fase5-email-config`) entregou a chave do Resend por empresa (cifrada), o remetente e as
 variáveis do corpo. Esta parte traz o **disparo para dentro do CRM**, no lugar do motor Python
 (`worker-medguia-hub`), que lê o Supabase e não enxerga o `crm_prod`. Um worker novo (`crm-worker-email`,
-mesma imagem do CRM) pega os envios `PENDENTE` das campanhas em andamento, manda pelo Resend com a chave
+imagem de worker do CRM) pega os envios `PENDENTE` das campanhas em andamento, manda pelo Resend com a chave
 de cada empresa e grava o resultado; e a campanha ganha **pausar e retomar** (Q-055), feitos no próprio CRM
 (o motor só envia o que está `PENDENTE`).
 
@@ -120,7 +120,7 @@ Como gerente, quero ver a campanha pausada, o motivo de cada falha e ser avisado
 
 | ID | Suposição | Status | Resolução |
 |---|---|---|---|
-| ASM-261 | O disparo roda num segundo container, `crm-worker-email`, com a mesma imagem do CRM e o comando `npm run worker:email` (ponto de entrada `src/worker/email.ts`); assim uma rajada de e-mails não ocupa o worker da ingestão e ele não exige as variáveis do Sheets e da LP | aberta | Entra no `docker-compose.yml` e no cutover; vale o mesmo pré-requisito do `crm-worker` (a imagem precisa incluir `src/worker` e `tsx`) |
+| ASM-261 | O disparo roda num segundo container, `crm-worker-email`, com a imagem de worker do CRM e o comando `npm run worker:email` (ponto de entrada `src/worker/email.ts`); assim uma rajada de e-mails não ocupa o worker da ingestão e ele não exige as variáveis do Sheets e da LP | aberta | Entra no `docker-compose.yml` e no cutover; vale o mesmo pré-requisito do `crm-worker` (a imagem precisa incluir `src/worker` e `tsx`) |
 | ASM-262 | O ritmo é o do motor atual: até 10 envios por empresa por ciclo, 2 s entre envios, ciclo a cada 10 s (cerca de 300 e-mails por minuto por empresa no máximo) | aberta | Constantes do sistema; configurar por empresa é evolução |
 | ASM-263 | Estados novos são texto, sem enum: envio `ENVIANDO` e `PAUSADO`, campanha `PAUSADA`; a migration 0024 acrescenta a coluna `envios_campanha.erro` (motivo curto, anulável); `DESCADASTRADO` também é um estado de envio e um índice parcial dos envios pendentes | aberta | Evita varrer a tabela inteira a cada ciclo |
 | ASM-264 | Não há retentativa automática: o envio que falha fica `ERRO` e o gerente decide em "Reenviar falhas" (que já existe e volta `ERRO` para `PENDENTE`) | aberta | Igual ao WhatsApp em lote (ASM-251) |
