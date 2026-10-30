@@ -248,6 +248,8 @@ export function ListaCampanhas() {
                               <>
                                 {enviados.toLocaleString('pt-BR')} / {c.totalDestinatarios.toLocaleString('pt-BR')}
                                 {c.contagens.pendente > 0 && <p className="font-body-sm text-[11px] text-text-muted">na fila: {c.contagens.pendente}</p>}
+                                {c.contagens.pausado > 0 && <p className="font-body-sm text-[11px] text-warning-text">pausados: {c.contagens.pausado}</p>}
+                                {c.contagens.descadastrado > 0 && <p className="font-body-sm text-[11px] text-text-muted">descadastrados: {c.contagens.descadastrado}</p>}
                                 {c.contagens.erro > 0 && <p className="font-body-sm text-[11px] text-danger-text">{c.contagens.erro} {c.contagens.erro === 1 ? 'falha' : 'falhas'}</p>}
                               </>
                             )}
@@ -260,7 +262,7 @@ export function ListaCampanhas() {
                               <Link href={`/campanhas/${c.id}`} aria-label={`Abrir ${c.nome}`} className="w-8 h-8 rounded-lg text-text-secondary hover:bg-surface-subtle flex items-center justify-center">
                                 <span aria-hidden="true" className="material-symbols-outlined text-[20px]">open_in_new</span>
                               </Link>
-                              {c.status !== 'PROCESSANDO' && (
+                              {c.status !== 'PROCESSANDO' && c.status !== 'PAUSADA' && (
                                 <button
                                   type="button"
                                   aria-label={`Excluir ${c.nome}`}

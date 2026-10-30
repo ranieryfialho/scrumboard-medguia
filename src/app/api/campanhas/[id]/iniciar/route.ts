@@ -16,6 +16,7 @@ import {
   ErroSemDestinatarios,
   iniciarCampanha,
 } from '../../../../../repositories/campanhas';
+import { lerConfiguracaoDeEmailPublica } from '../../../../../repositories/email-config';
 
 export const dynamic = 'force-dynamic';
 
@@ -58,6 +59,11 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
   const { id } = await params;
   if (!UUID.test(id)) return campanhaNaoEncontrada();
+
+  // AC-713: sem a chave do Resend da empresa o disparo não sairia; só confere que existe (sem decifrar) e nada muda.
+  if (!(await lerConfiguracaoDeEmailPublica(getDb(), contexto)).chaveConfigurada) {
+    return NextResponse.json({ codigo: 'CHAVE_RESEND_NAO_CONFIGURADA' }, { status: 409 });
+  }
 
   try {
     const resultado = await iniciarCampanha(getDb(), contexto, id);

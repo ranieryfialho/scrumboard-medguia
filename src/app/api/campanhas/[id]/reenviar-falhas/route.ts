@@ -10,6 +10,7 @@ import { getAuth } from '../../../../../lib/auth/instancia';
 import { ErroSessaoInvalida, resolverContextoTenant, type ContextoTenant } from '../../../../../lib/auth/tenant';
 import {
   ErroCampanhaNaoEncontrada,
+  ErroCampanhaPausada,
   ErroSemFalhas,
   reenviarFalhas,
 } from '../../../../../repositories/campanhas';
@@ -65,6 +66,9 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     });
   } catch (erro) {
     if (erro instanceof ErroCampanhaNaoEncontrada) return campanhaNaoEncontrada();
+    if (erro instanceof ErroCampanhaPausada) {
+      return NextResponse.json({ codigo: 'CAMPANHA_PAUSADA' }, { status: 422 });
+    }
     if (erro instanceof ErroSemFalhas) {
       return NextResponse.json({ codigo: 'SEM_FALHAS' }, { status: 422 });
     }

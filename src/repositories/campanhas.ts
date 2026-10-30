@@ -72,6 +72,30 @@ export class ErroCampanhaEmEnvio extends Error {
   }
 }
 
+/** AC-709: só a campanha em andamento (PROCESSANDO) pode ser pausada — nada foi alterado. */
+export class ErroCampanhaNaoProcessando extends Error {
+  constructor() {
+    super('A campanha não está em andamento.');
+    this.name = 'ErroCampanhaNaoProcessando';
+  }
+}
+
+/** AC-710: só a campanha PAUSADA pode ser retomada — nada foi alterado. */
+export class ErroCampanhaNaoPausada extends Error {
+  constructor() {
+    super('A campanha não está pausada.');
+    this.name = 'ErroCampanhaNaoPausada';
+  }
+}
+
+/** AC-711: campanha PAUSADA não pode ser excluída nem receber "Reenviar falhas" (isso a despausaria sem querer). */
+export class ErroCampanhaPausada extends Error {
+  constructor() {
+    super('A campanha está pausada. Retome-a antes.');
+    this.name = 'ErroCampanhaPausada';
+  }
+}
+
 const REGEX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export interface ContatoBruto {
@@ -312,7 +336,7 @@ export async function buscarDetalheCampanha(
           and(
             eq(enviosCampanha.campanhaId, campanhaId),
             eq(enviosCampanha.empresaId, contexto.empresaId),
-            inArray(enviosCampanha.status, ['PENDENTE', 'RASCUNHO'])
+            inArray(enviosCampanha.status, ['PENDENTE', 'RASCUNHO', 'ENVIANDO'])
           )
         )
         .limit(1);
@@ -429,11 +453,12 @@ export async function reenviarFalhas(
 ): Promise<ResultadoReenviarFalhas> {
   return comTenant(db, contexto, async (tx) => {
     const [campanha] = await tx
-      .select({ id: campanhas.id })
+      .select({ id: campanhas.id, status: campanhas.status })
       .from(campanhas)
       .where(and(eq(campanhas.id, campanhaId), eq(campanhas.empresaId, contexto.empresaId)))
       .limit(1);
     if (!campanha) throw new ErroCampanhaNaoEncontrada();
+    if (campanha.status === 'PAUSADA') throw new ErroCampanhaPausada();
 
     const reenviados = await tx
       .update(enviosCampanha)
@@ -479,7 +504,76 @@ export async function excluirCampanha(
       .limit(1);
     if (!campanha) throw new ErroCampanhaNaoEncontrada();
     if (campanha.status === 'PROCESSANDO') throw new ErroCampanhaEmEnvio();
+    if (campanha.status === 'PAUSADA') throw new ErroCampanhaPausada();
 
     await tx.delete(campanhas).where(and(eq(campanhas.id, campanhaId), eq(campanhas.empresaId, contexto.empresaId)));
+  });
+}
+
+export interface ResultadoPausarCampanha {
+  campanha: Campanha;
+  totalPausados: number;
+}
+
+/**
+ * Pausar (AC-709): UPDATE condicional atômico PROCESSANDO → PAUSADA e, na mesma transação, os destinatários PENDENTE
+ * viram PAUSADO (os que já estão ENVIANDO terminam). Sem linha afetada, distingue campanha inexistente
+ * (`ErroCampanhaNaoEncontrada`) de campanha que não está em andamento (`ErroCampanhaNaoProcessando`).
+ */
+export async function pausarCampanha(db: NodePgDatabase, contexto: ContextoTenant, campanhaId: string): Promise<ResultadoPausarCampanha> {
+  return comTenant(db, contexto, async (tx) => {
+    const [pausada] = await tx
+      .update(campanhas)
+      .set({ status: 'PAUSADA' })
+      .where(and(eq(campanhas.id, campanhaId), eq(campanhas.empresaId, contexto.empresaId), eq(campanhas.status, 'PROCESSANDO')))
+      .returning();
+    if (!pausada) {
+      const [existente] = await tx
+        .select({ id: campanhas.id })
+        .from(campanhas)
+        .where(and(eq(campanhas.id, campanhaId), eq(campanhas.empresaId, contexto.empresaId)))
+        .limit(1);
+      if (!existente) throw new ErroCampanhaNaoEncontrada();
+      throw new ErroCampanhaNaoProcessando();
+    }
+
+    const pausados = await tx
+      .update(enviosCampanha)
+      .set({ status: 'PAUSADO' })
+      .where(and(eq(enviosCampanha.campanhaId, campanhaId), eq(enviosCampanha.empresaId, contexto.empresaId), eq(enviosCampanha.status, 'PENDENTE')))
+      .returning({ id: enviosCampanha.id });
+    return { campanha: pausada, totalPausados: pausados.length };
+  });
+}
+
+export interface ResultadoRetomarCampanha {
+  campanha: Campanha;
+  totalRetomados: number;
+}
+
+/** Retomar (AC-710): PAUSADA → PROCESSANDO e os PAUSADO voltam a PENDENTE, na mesma transação. */
+export async function retomarCampanha(db: NodePgDatabase, contexto: ContextoTenant, campanhaId: string): Promise<ResultadoRetomarCampanha> {
+  return comTenant(db, contexto, async (tx) => {
+    const [retomada] = await tx
+      .update(campanhas)
+      .set({ status: 'PROCESSANDO' })
+      .where(and(eq(campanhas.id, campanhaId), eq(campanhas.empresaId, contexto.empresaId), eq(campanhas.status, 'PAUSADA')))
+      .returning();
+    if (!retomada) {
+      const [existente] = await tx
+        .select({ id: campanhas.id })
+        .from(campanhas)
+        .where(and(eq(campanhas.id, campanhaId), eq(campanhas.empresaId, contexto.empresaId)))
+        .limit(1);
+      if (!existente) throw new ErroCampanhaNaoEncontrada();
+      throw new ErroCampanhaNaoPausada();
+    }
+
+    const retomados = await tx
+      .update(enviosCampanha)
+      .set({ status: 'PENDENTE' })
+      .where(and(eq(enviosCampanha.campanhaId, campanhaId), eq(enviosCampanha.empresaId, contexto.empresaId), eq(enviosCampanha.status, 'PAUSADO')))
+      .returning({ id: enviosCampanha.id });
+    return { campanha: retomada, totalRetomados: retomados.length };
   });
 }

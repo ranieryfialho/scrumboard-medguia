@@ -17,6 +17,7 @@ import {
   excluirCampanha,
   ErroCampanhaEmEnvio,
   ErroCampanhaNaoEncontrada,
+  ErroCampanhaPausada,
   type Campanha,
   type EnvioCampanha,
 } from '../../../../repositories/campanhas';
@@ -78,6 +79,7 @@ function destinatarioParaJson(destinatario: EnvioCampanha) {
     status: destinatario.status,
     tentativas: destinatario.tentativas,
     enviadoEm: destinatario.enviadoEm,
+    erro: destinatario.erro,
   };
 }
 
@@ -189,6 +191,10 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     if (erro instanceof ErroCampanhaNaoEncontrada) return campanhaNaoEncontrada();
     if (erro instanceof ErroCampanhaEmEnvio) {
       return NextResponse.json({ codigo: 'CAMPANHA_EM_ENVIO' }, { status: 409 });
+    }
+    // AC-711: a pausada também não é excluída (422, como o "Reenviar falhas" recusado).
+    if (erro instanceof ErroCampanhaPausada) {
+      return NextResponse.json({ codigo: 'CAMPANHA_PAUSADA' }, { status: 422 });
     }
     throw erro;
   }

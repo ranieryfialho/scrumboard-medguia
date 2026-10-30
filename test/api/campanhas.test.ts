@@ -185,7 +185,9 @@ describe('T-105: rotas /api/campanhas', () => {
       'crm_migrator',
       `INSERT INTO "empresas" ("id", "nome", "slug") VALUES
          ('${EMPRESA_A}', 'Empresa Teste Rota Campanhas A', 'empresa-teste-rota-campanhas-a'),
-         ('${EMPRESA_B}', 'Empresa Teste Rota Campanhas B', 'empresa-teste-rota-campanhas-b');`
+         ('${EMPRESA_B}', 'Empresa Teste Rota Campanhas B', 'empresa-teste-rota-campanhas-b');
+       -- AC-713 (fase5-email-disparo): o Play só vale com a chave do Resend da empresa; a rota só confere que ela existe, sem decifrar
+       INSERT INTO "empresa_configuracoes" ("empresa_id", "chave", "valor") VALUES ('${EMPRESA_A}', 'resend_api_key', '"v1:chave-de-teste"'::jsonb);`
     );
     if (setup.status !== 0) {
       throw new Error(`Falha ao preparar fixtures para os testes das rotas de campanhas: ${setup.stderr}`);
