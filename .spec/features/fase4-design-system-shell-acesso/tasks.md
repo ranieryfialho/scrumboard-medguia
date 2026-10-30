@@ -104,3 +104,8 @@
 - Arquivos: test/components/auth/sem-artefatos.test.tsx
 - Esforço: baixo
 - Notas: renderiza as cinco telas e varre o texto atrás de "Estado:", `US-0xx`, "HIPAA", "ISO 27001", "SSL 256-bit". Roda por último.
+
+## T-278 — As APIs de acesso são públicas para quem não tem sessão [pendente]
+- Refs: AC-380
+- Arquivos: src/lib/auth/rotas.ts, test/auth/middleware.test.ts
+- Notas: achado no staging em 30/10: `/api/acesso/*` não estava na lista pública e o middleware devolvia 401, então convite, esqueci-senha e redefinição de senha nunca funcionavam para quem estava deslogado.

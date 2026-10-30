@@ -27,6 +27,8 @@ const PREFIXOS_PUBLICOS = [
   '/convite',
   '/sem-acesso',
   '/api/auth',
+  // As telas públicas de convite, esqueci-senha e redefinição chamam estas APIs sem sessão (AC-380).
+  '/api/acesso',
   '/api/health',
   '/api/whatsapp/webhook',
   '/api/webhooks/resend',
