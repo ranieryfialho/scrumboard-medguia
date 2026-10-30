@@ -118,3 +118,17 @@ export const whatsappLoteItens = pgTable(
   },
   (t) => [index('whatsapp_lote_itens_lote_status_ordem').on(t.loteId, t.status, t.ordem)]
 );
+
+/** T-270 (fase5-email-descadastro, ASM-269): e-mails que a empresa não pode mais contatar por campanha (migration 0023). */
+export const emailDescadastros = pgTable(
+  'email_descadastros',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    empresaId: uuid('empresa_id')
+      .notNull()
+      .references(() => empresas.id, { onDelete: 'cascade' }),
+    email: text('email').notNull(),
+    criadoEm: timestamp('criado_em', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex('email_descadastros_empresa_email_unico').on(t.empresaId, t.email)]
+);

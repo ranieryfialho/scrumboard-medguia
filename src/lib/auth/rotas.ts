@@ -31,6 +31,9 @@ const PREFIXOS_PUBLICOS = [
   '/api/whatsapp/webhook',
   '/api/webhooks/resend',
   '/api/cron',
+  // fase5-email-descadastro (AC-721): quem recebe a campanha não tem login — página e rota públicas, assinadas pelo token.
+  '/descadastro',
+  '/api/descadastro',
 ];
 
 function combinaPrefixo(pathname: string, prefixo: string): boolean {

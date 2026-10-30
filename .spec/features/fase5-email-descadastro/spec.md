@@ -35,7 +35,7 @@ Como destinatário de uma campanha, quero deixar de receber os e-mails da empres
 
 - **Dado** o `POST /api/descadastro/[token]` que o Gmail e outros chamam pelo cabeçalho `List-Unsubscribe-Post`
 - **Quando** o cliente envia `List-Unsubscribe=One-Click`
-- **Então** o e-mail é descadastrado na hora, sem tela (200); `GET` na mesma rota não altera nada; token inválido dá 400 e nada é gravado
+- **Então** o e-mail é descadastrado na hora, sem tela (200); `GET` na mesma rota só informa a empresa e o e-mail mascarado e **não altera nada** (token inválido: 404); no `POST` token inválido dá 400 e nada é gravado
 
 #### AC-717 — Lista por empresa
 
@@ -46,8 +46,8 @@ Como destinatário de uma campanha, quero deixar de receber os e-mails da empres
 #### AC-718 — Nova campanha deixa os descadastrados de fora
 
 - **Dado** destinatários que a empresa já descadastrou, vindos das etapas do pipeline ou de uma lista colada
-- **Quando** o gerente vê a prévia e cria a campanha
-- **Então** a prévia diz quantos descadastrados ficam de fora e a campanha é criada sem eles (nenhum vira envio); a contagem da prévia e o total criado batem
+- **Quando** o gerente vê a prévia (etapas) e cria a campanha
+- **Então** a prévia das etapas diz quantos descadastrados ficam de fora e o total já os desconta; a campanha é criada sem eles (nenhum vira envio) e a mensagem de "campanha criada" diz quantos ficaram de fora (vale também para a lista colada); a contagem da prévia e o total criado batem
 
 #### AC-719 — A gestão vê a contagem, não recadastra
 

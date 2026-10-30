@@ -26,7 +26,7 @@
 | Item | Como conferir |
 |---|---|
 | Todas as PRs da fase 5 mergeadas (#47 a #54 e a meta de receita) e o `Release` da `main` verde | `gh pr list --state merged`, `gh run list --workflow release.yml` |
-| Última migration em `drizzle/` é a `0022_meta_receita.sql` (se entrar outra depois, acrescente aqui) | `ls drizzle` |
+| Última migration em `drizzle/` é a `0023_email_descadastros.sql` (se entrar outra depois, acrescente aqui) | `ls drizzle` |
 | Acesso SSH root à VPS; código em `/root/crm-staging` (nunca em `~/scrumboard-medguia`, que é o legado) | — |
 | Janela combinada com a operação (o legado sai do ar durante a troca) | — |
 | Plano de volta lido (seção 9) | — |
@@ -41,7 +41,7 @@ pg_dumpall -U postgres | gzip > /root/backups/pg-master-pre-cutover_$(date +%F_%
 
 1. Se `crm_prod`, `crm_app` e `crm_migrator` ainda não existem, crie-os como no
    [`provisionar-staging.md`](provisionar-staging.md) (`infra/postgres/init/01-databases-and-roles.sql`).
-2. Aplique **todos** os `.sql` de `drizzle/` (de `0000` até a `0022`), **em ordem**, com `psql` como `crm_migrator`,
+2. Aplique **todos** os `.sql` de `drizzle/` (de `0000` até a `0023`), **em ordem**, com `psql` como `crm_migrator`,
    direto no `crm_prod`. **Não use `npm run db:migrate`:** o `_journal.json` só conhece
    4 das migrations (as demais são escritas à mão).
 
@@ -66,6 +66,7 @@ O que cada migration das fases 4 e 5 faz (todas **só acrescentam**; nenhuma apa
 | `0020_whatsapp_lote_base` | consentimento do lead e templates de WhatsApp |
 | `0021_whatsapp_lotes` | lotes e fila de envio do WhatsApp em lote |
 | `0022_meta_receita` | a meta de receita mensal (em reais) na tabela de metas: a coluna do valor vira `numeric(12,2)` e o limite passa a ser por tipo de meta; as porcentagens já gravadas mantêm o valor |
+| `0023_email_descadastros` | a lista de quem pediu para sair dos e-mails de cada empresa (descadastro, LGPD), com isolamento por empresa |
 
 **Conferência do banco** (como `crm_migrator`; os números vêm do estado de 29/10, ajuste se
 alguma migration nova entrar):
@@ -93,7 +94,7 @@ O `.env` é lido pelo app **e** pelo worker (`env_file: .env` no `docker-compose
 | `CRON_SEGREDO` | protege `/api/cron/cadencia` e `/api/cron/whatsapp-lote` | sim |
 | `EVOLUTION_API_URL`, `EVOLUTION_API_KEY` | envio e conexão do WhatsApp (inbox, ações rápidas e lote) | sim, para WhatsApp |
 | `RESEND_API_KEY`, `RESEND_REMETENTE` | e-mail de convite, de redefinição de senha e campanhas (sem a chave o convite é criado e a tela mostra o link para copiar; o remetente padrão é `no-reply@medguia.cloud`) | recomendada |
-| `SEGREDO_CONFIGURACOES` | cifra a chave do Resend de cada empresa no banco (mínimo de 32 caracteres; gere um aleatório e guarde em lugar seguro). **Trocar depois invalida as chaves salvas**: cada empresa precisa cadastrá-la de novo em `/configuracoes/email`. Sem ela só salvar a chave fica indisponível (503) | sim, para campanhas |
+| `SEGREDO_CONFIGURACOES` | cifra a chave do Resend de cada empresa no banco (mínimo de 32 caracteres; gere um aleatório e guarde em lugar seguro). **Trocar depois invalida as chaves salvas** (cada empresa precisa cadastrá-la de novo em `/configuracoes/email`) **e os links de descadastro já enviados**. Sem ela só salvar a chave fica indisponível (503) | sim, para campanhas |
 | `RESEND_WEBHOOK_SECRET` | aceitar os eventos de entrega, abertura e clique das campanhas | sim, para campanhas |
 | `GOOGLE_*`, `SUPABASE_*`, `SUPABASE_LP_*` | ETL e espelho do Sheets durante a migração dos dados | só enquanto houver ETL |
 

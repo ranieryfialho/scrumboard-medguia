@@ -132,7 +132,7 @@ describe('T-196: API de campanhas para as telas', () => {
   test('a prévia conta os destinatários por etapa, o total único e o valor em pipeline, só da empresa @spec:AC-540', async () => {
     const r = await previa('?etapaIds=7,9,10');
     expect(r.status).toBe(200);
-    expect(await r.json()).toEqual({ porEtapa: [{ etapaId: 7, total: 1 }, { etapaId: 9, total: 1 }, { etapaId: 10, total: 1 }], total: 2, valorEmPipeline: 1700 });
+    expect(await r.json()).toEqual({ porEtapa: [{ etapaId: 7, total: 1 }, { etapaId: 9, total: 1 }, { etapaId: 10, total: 1 }], total: 2, valorEmPipeline: 1700, descadastrados: 0 });
     expect((await (await previa('?etapaIds=7', amb.cookieB)).json()).total).toBe(1);
     expect((await previa('')).status).toBe(400);
     expect((await previa('?etapaIds=abc')).status).toBe(400);

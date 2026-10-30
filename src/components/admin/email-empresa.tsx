@@ -11,6 +11,8 @@ interface Configuracao {
   chaveConfigurada: boolean;
   chaveFinal: string | null;
   remetente: string | null;
+  /** fase5-email-descadastro (AC-719): só a contagem. */
+  descadastrados?: number;
 }
 
 export function EmailEmpresa() {
@@ -119,6 +121,10 @@ export function EmailEmpresa() {
               </span>
             )}
           </div>
+
+          <p className="font-body-sm text-body-sm text-text-muted">
+            {config.descadastrados ?? 0} {(config.descadastrados ?? 0) === 1 ? 'e-mail descadastrado' : 'e-mails descadastrados'}
+          </p>
 
           <div className="flex items-center gap-2 flex-wrap">
             <Button type="button" disabled={trabalhando} onClick={salvar}>

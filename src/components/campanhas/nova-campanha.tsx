@@ -21,6 +21,7 @@ interface PreviaView {
   porEtapa: { etapaId: number; total: number }[];
   total: number;
   valorEmPipeline: number;
+  descadastrados?: number;
 }
 
 const MOEDA = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
@@ -58,7 +59,7 @@ export function NovaCampanha() {
   const [salvando, setSalvando] = useState(false);
   const [faltas, setFaltas] = useState<string[]>([]);
   const [erro, setErro] = useState<string | null>(null);
-  const [criada, setCriada] = useState<{ destino: string; total: number; invalidos: number; repetidos: number } | null>(null);
+  const [criada, setCriada] = useState<{ destino: string; total: number; invalidos: number; repetidos: number; descadastrados: number } | null>(null);
 
   // Edição de rascunho (AC-539/AC-544).
   const [carregandoRascunho, setCarregandoRascunho] = useState(Boolean(rascunhoId));
@@ -183,10 +184,10 @@ export function NovaCampanha() {
         setErro(corpo?.mensagem ?? mensagemDeErro(corpo?.codigo));
         return;
       }
-      const criadaOk = (await r.json()) as { id: string; totalDestinatarios: number; descartadosInvalidos: number; descartadosRepetidos: number };
+      const criadaOk = (await r.json()) as { id: string; totalDestinatarios: number; descartadosInvalidos: number; descartadosRepetidos: number; descartadosDescadastrados?: number };
       const caminho = destino === 'lista' ? '/campanhas' : `/campanhas/${criadaOk.id}`;
-      if (criadaOk.descartadosInvalidos + criadaOk.descartadosRepetidos > 0) {
-        setCriada({ destino: caminho, total: criadaOk.totalDestinatarios, invalidos: criadaOk.descartadosInvalidos, repetidos: criadaOk.descartadosRepetidos });
+      if (criadaOk.descartadosInvalidos + criadaOk.descartadosRepetidos + (criadaOk.descartadosDescadastrados ?? 0) > 0) {
+        setCriada({ destino: caminho, total: criadaOk.totalDestinatarios, invalidos: criadaOk.descartadosInvalidos, repetidos: criadaOk.descartadosRepetidos, descadastrados: criadaOk.descartadosDescadastrados ?? 0 });
       } else {
         router.push(caminho);
       }
@@ -242,6 +243,7 @@ export function NovaCampanha() {
         <p role="status" className="font-body-md text-body-md text-success-text bg-success-surface rounded-lg px-3 py-2 flex items-center justify-between gap-3 flex-wrap">
           <span>
             Campanha criada com {criada.total} destinatários. {criada.invalidos} e-mails inválidos e {criada.repetidos} repetidos foram descartados.
+            {criada.descadastrados > 0 && ` ${criada.descadastrados} ${criada.descadastrados === 1 ? 'descadastrado ficou' : 'descadastrados ficaram'} de fora.`}
           </span>
           <button type="button" onClick={() => router.push(criada.destino)} className="h-9 px-3 rounded-lg bg-surface-card font-label-md text-label-md font-semibold text-text-primary">
             Continuar
@@ -306,6 +308,11 @@ export function NovaCampanha() {
                       <span aria-label="Destinatários qualificados">{totalDestinatarios}</span> Destinatários qualificados
                     </p>
                     <p className="font-body-sm text-body-sm text-text-secondary">E-mails válidos, sem repetir.</p>
+                    {!rascunhoId && modo !== 'lista' && (previa?.descadastrados ?? 0) > 0 && (
+                      <p className="font-body-sm text-body-sm text-warning-text">
+                        {previa!.descadastrados} {previa!.descadastrados === 1 ? 'descadastrado fica' : 'descadastrados ficam'} de fora.
+                      </p>
+                    )}
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-2">
