@@ -39,6 +39,12 @@ export interface OpcoesMapaStatus {
   dataFechamento?: string;
   /** Planilhas não têm essa coluna hoje (Q-031) — aceita mesmo assim para não fixar a regra em "sempre revisão" por acidente. */
   dataProximaAcao?: string;
+  /**
+   * AC-726: no ciclo contínuo do worker ninguém olha a fila de revisão, então "Em contato" e os status que exigem data
+   * (Recontato e Aguardando Ativação, que as planilhas nunca trazem) entram em "Entrada de leads", antes do primeiro
+   * contato. A carga manual não liga isto: lá a operação decide cada caso pela planilha de decisões.
+   */
+  statusSemRevisao?: boolean;
 }
 
 export interface DecisaoEtapaStatus {
@@ -101,10 +107,15 @@ export function mapearStatusParaEtapa(
     return { tipo: 'etapa', etapaId: ETAPA_PERDIDO, motivoPerdaNome: MOTIVO_LEGADO_ARQUIVADO };
   }
 
+  if (opcoes.statusSemRevisao && (chave === 'em contato' || chave === 'contacted')) {
+    return { tipo: 'etapa', etapaId: ETAPA_ENTRADA_DE_LEADS };
+  }
+
   if (chave === 'recontato') {
     if (opcoes.dataProximaAcao) {
       return { tipo: 'etapa', etapaId: ETAPA_FOLLOW_DE_LONGO_PRAZO };
     }
+    if (opcoes.statusSemRevisao) return { tipo: 'etapa', etapaId: ETAPA_ENTRADA_DE_LEADS };
     return { tipo: 'revisao', motivo: 'Recontato sem data de próxima ação' };
   }
 
@@ -112,6 +123,7 @@ export function mapearStatusParaEtapa(
     if (opcoes.dataProximaAcao) {
       return { tipo: 'etapa', etapaId: ETAPA_TESTE_TRIAL };
     }
+    if (opcoes.statusSemRevisao) return { tipo: 'etapa', etapaId: ETAPA_ENTRADA_DE_LEADS };
     return { tipo: 'revisao', motivo: 'Aguardando Ativação sem data de próxima ação' };
   }
 

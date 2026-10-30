@@ -175,6 +175,18 @@ function categoriaDaOcorrencia(
   return decisaoStatus.tipo === 'revisao' ? 'emRevisao' : 'criadas';
 }
 
+/**
+ * AC-727: a origem sob a qual os leads do Sheets são registrados em `migracao_registros` (chave de "já migrado").
+ * A carga manual (`scripts/etl-sheets.ts`) e o worker TÊM de usar a mesma, senão o worker não reconhece nenhum lead
+ * já carregado e importa tudo de novo.
+ */
+export const ORIGEM_ETL_SHEETS = 'sheets-legado-crm';
+
+/** Opções que só o worker liga (AC-726). */
+export interface OpcoesEtlSheets {
+  statusSemRevisao?: boolean;
+}
+
 async function rodarEtapas(
   tx: TransacaoEtl,
   contexto: ContextoExecucao,
@@ -182,7 +194,8 @@ async function rodarEtapas(
   abas: AbaParaLer[],
   agendaLinhas: string[][],
   linhasDecisao: LinhaDecisaoBruta[],
-  agora: Date
+  agora: Date,
+  opcoes: OpcoesEtlSheets = {}
 ): Promise<RelatorioEtlSheets> {
   const leituras = abas.map((aba) => ({
     origem: origemDaChave(aba.chave),
@@ -227,6 +240,7 @@ async function rodarEtapas(
     const decisao = mapearStatusParaEtapa(deduplicado.lead.situacaoBruta, {
       dataFechamento: deduplicado.lead.camposExtras['data_fechamento'],
       dataProximaAcao: deduplicado.lead.camposExtras['data_proxima_acao'],
+      statusSemRevisao: opcoes.statusSemRevisao,
     });
     return { lead: deduplicado.lead, origem: deduplicado.origem, decisao };
   });
@@ -344,9 +358,10 @@ export async function executarMigracaoSheets(
   abas: AbaParaLer[],
   agendaLinhas: string[][],
   linhasDecisao: LinhaDecisaoBruta[] = [],
-  agora: Date = new Date()
+  agora: Date = new Date(),
+  opcoes: OpcoesEtlSheets = {}
 ): Promise<RelatorioEtlSheets> {
   return executarEtl(db, contexto, (tx, ctx) =>
-    rodarEtapas(tx, ctx, empresaId, abas, agendaLinhas, linhasDecisao, agora)
+    rodarEtapas(tx, ctx, empresaId, abas, agendaLinhas, linhasDecisao, agora, opcoes)
   );
 }

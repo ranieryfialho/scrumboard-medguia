@@ -32,6 +32,19 @@ Como operação, quero que cadastros novos do Sheets e da landing page apareçam
 - **Quando** o tempo passa por mais de um intervalo
 - **Então** o ciclo do Sheets e o da landing page rodam a cada intervalo, cada um com seu próprio registro de execução
 
+#### AC-726 — Status sem regra entram em "Entrada de leads" no ciclo contínuo
+
+- **Dado** uma planilha com leads "Em contato", "Recontato" ou "Aguardando Ativação" sem data de próxima ação, e o worker rodando
+- **Quando** o ciclo de importação do Sheets roda
+- **Então** esses leads viram card na etapa "Entrada de leads", em vez de esperar numa fila de revisão que ninguém olha
+- **E** a carga manual (`scripts/etl-sheets.ts`) continua mandando esses casos para a fila de revisão, para a operação decidir
+
+#### AC-727 — O worker continua a carga manual sem reimportar nada
+
+- **Dado** leads já carregados pela carga manual do Sheets ou da LP
+- **Quando** o worker roda o ciclo de importação
+- **Então** nenhum deles é importado de novo, porque o worker registra e consulta os leads sob a mesma origem da carga manual (`sheets-legado-crm` e `supabase-lp`), e não sob o nome do job
+
 ### US-091 — Saber se a importação está saudável
 
 Como responsável técnico, quero ver no banco e na saúde do container se a última importação deu certo, para descobrir uma falha silenciosa antes da operação.
@@ -111,6 +124,7 @@ Como responsável técnico, quero que o worker suba em container próprio e pare
 | ASM-110 | A trava de não-sobreposição usa `pg_try_advisory_lock` por origem (a conexão é do worker, não do pool compartilhado) | confirmada | Confirmado pelo usuário em 22/10 |
 | ASM-111 | `importacoes` ganha uma linha por ciclo com as contagens; `cron_execucoes` guarda o resultado de saúde (jobs `import-sheets` e `import-lp`) | confirmada | Confirmado pelo usuário em 22/10 |
 | ASM-112 | O agendador é `node-cron` (D-S6) e roda no mesmo repositório, com ponto de entrada `src/worker/index.ts` executado por `tsx` na imagem existente | confirmada | Confirmado pelo usuário em 22/10 |
+| ASM-276 | No ciclo contínuo, "Em contato", "Recontato" e "Aguardando Ativação" voltam ao começo da cadência ("Entrada de leads"), antes do primeiro contato | confirmada | Decidido pelo dono do produto em 30/10 |
 
 ## Perguntas em aberto
 

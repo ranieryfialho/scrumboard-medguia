@@ -213,3 +213,6 @@ export async function executarMigracaoLp(
     rodarEtapas(tx, ctx, empresaId, cadastros, totalOrigem, decisoes, linhasDecisaoCsv, agora)
   );
 }
+
+/** AC-727: a origem do `migracao_registros` para os cadastros da LP, a mesma na carga manual e no worker. */
+export const ORIGEM_ETL_LP = 'supabase-lp';
