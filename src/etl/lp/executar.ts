@@ -34,7 +34,7 @@
 import { eq } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
-import { executarEtl, type ContextoExecucao, type TransacaoEtl } from '../comum';
+import { definirEmpresaDoEtl, executarEtl, type ContextoExecucao, type TransacaoEtl } from '../comum';
 import {
   gerarCsvFilaRevisao,
   linhasDecisaoForaDaFila,
@@ -209,9 +209,10 @@ export async function executarMigracaoLp(
   linhasDecisaoCsv: LinhaDecisaoBruta[] = [],
   agora: Date = new Date()
 ): Promise<RelatorioEtlLp> {
-  return executarEtl(db, contexto, (tx, ctx) =>
-    rodarEtapas(tx, ctx, empresaId, cadastros, totalOrigem, decisoes, linhasDecisaoCsv, agora)
-  );
+  return executarEtl(db, contexto, async (tx, ctx) => {
+    await definirEmpresaDoEtl(tx, empresaId);
+    return rodarEtapas(tx, ctx, empresaId, cadastros, totalOrigem, decisoes, linhasDecisaoCsv, agora);
+  });
 }
 
 /** AC-727: a origem do `migracao_registros` para os cadastros da LP, a mesma na carga manual e no worker. */

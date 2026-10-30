@@ -45,6 +45,13 @@ Como operação, quero que cadastros novos do Sheets e da landing page apareçam
 - **Quando** o worker roda o ciclo de importação
 - **Então** nenhum deles é importado de novo, porque o worker registra e consulta os leads sob a mesma origem da carga manual (`sheets-legado-crm` e `supabase-lp`), e não sob o nome do job
 
+#### AC-730 — O worker importa com o papel limitado crm_app
+
+- **Dado** o worker conectado ao banco como `crm_app` (sem `BYPASSRLS` e sem DDL, AC-007), e uma empresa com leads novos na planilha
+- **Quando** o ciclo de importação do Sheets (ou da LP) roda
+- **Então** os leads e cards da empresa são gravados e as mensagens sem lead são ligadas, sem recusa do isolamento por empresa (o ETL informa a empresa ao banco, como as telas)
+- **E** o worker não precisa do papel dono das tabelas (`crm_migrator`, AC-008) em tempo de execução
+
 ### US-091 — Saber se a importação está saudável
 
 Como responsável técnico, quero ver no banco e na saúde do container se a última importação deu certo, para descobrir uma falha silenciosa antes da operação.

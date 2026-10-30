@@ -8,13 +8,23 @@
 // etapa derruba a transação inteira (AC-270, nada fica pela metade) — e,
 // em simulação, a transação é sempre desfeita no final, mesmo sem erro
 // (AC-268), via `RollbackSimulacao` (erro interno que nunca escapa daqui).
-import { and, eq } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
 import { migracaoRegistros } from '../db/schema';
 
 /** Transação recebida pelo callback de `executarEtl`. */
 export type TransacaoEtl = Parameters<Parameters<NodePgDatabase['transaction']>[0]>[0];
+
+/**
+ * AC-730: informa ao banco de qual empresa é a transação do ETL (o mesmo `app.empresa_id` das telas). Sem isso o isolamento por
+ * empresa recusa qualquer consulta às tabelas de dados e o ETL só funcionava com o papel dono das tabelas (`crm_migrator`, que o
+ * isolamento não barra), papel que o worker não deve usar em tempo de execução (AC-008). Com a empresa informada o worker roda com
+ * o papel limitado `crm_app`. Vale para os ETLs de UMA empresa (Sheets e LP); o do Supabase lê várias e segue rodando como dono.
+ */
+export async function definirEmpresaDoEtl(tx: TransacaoEtl, empresaId: string): Promise<void> {
+  await tx.execute(sql`select set_config('app.empresa_id', ${empresaId}, true)`);
+}
 
 /** Contexto fixo de uma execução do ETL — a mesma instância percorre todas as etapas. */
 export interface ContextoExecucao {

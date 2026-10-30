@@ -29,7 +29,7 @@ import { createHash } from 'node:crypto';
 import { eq } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
-import { buscarIdDestino, executarEtl, type ContextoExecucao, type TransacaoEtl } from '../comum';
+import { buscarIdDestino, definirEmpresaDoEtl, executarEtl, type ContextoExecucao, type TransacaoEtl } from '../comum';
 import {
   gerarCsvFilaRevisao,
   linhasDecisaoForaDaFila,
@@ -361,7 +361,8 @@ export async function executarMigracaoSheets(
   agora: Date = new Date(),
   opcoes: OpcoesEtlSheets = {}
 ): Promise<RelatorioEtlSheets> {
-  return executarEtl(db, contexto, (tx, ctx) =>
-    rodarEtapas(tx, ctx, empresaId, abas, agendaLinhas, linhasDecisao, agora, opcoes)
-  );
+  return executarEtl(db, contexto, async (tx, ctx) => {
+    await definirEmpresaDoEtl(tx, empresaId);
+    return rodarEtapas(tx, ctx, empresaId, abas, agendaLinhas, linhasDecisao, agora, opcoes);
+  });
 }
