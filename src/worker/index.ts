@@ -39,9 +39,9 @@ import {
   criarClienteSheetsSomenteLeitura,
   type ChaveAbaConhecida,
 } from '../etl/sheets/leitor';
-import { executarMigracaoSheets, type AbaParaLer } from '../etl/sheets/executar';
+import { executarMigracaoSheets, ORIGEM_ETL_SHEETS, type AbaParaLer } from '../etl/sheets/executar';
 import { lerTodosCadastros } from '../etl/lp/origem';
-import { executarMigracaoLp } from '../etl/lp/executar';
+import { executarMigracaoLp, ORIGEM_ETL_LP } from '../etl/lp/executar';
 import { consultarCardsDoEspelho } from '../espelho/consulta';
 import { montarLinhasDoEspelho } from '../espelho/linhas';
 import { gravarEspelho, type ClienteSheetsEspelho } from '../espelho/gravar';
@@ -214,8 +214,12 @@ function construirCiclosOrigem(
         }
         const agendaLinhas = await buscarLinhasAba(sheets, idDaPlanilha(env, 'GOOGLE_SHEET_ID_1'), AGENDA_RANGE);
         const empresaId = await buscarEmpresaId(db);
-        const contexto: ContextoExecucao = { origem: ORIGEM_SHEETS, simulacao: false };
-        const relatorio = await executarMigracaoSheets(db, contexto, empresaId, abas, agendaLinhas);
+        // AC-727: a origem do ETL é a da carga manual (não o nome do job), senão os leads já carregados seriam reimportados.
+        const contexto: ContextoExecucao = { origem: ORIGEM_ETL_SHEETS, simulacao: false };
+        // AC-726: no ciclo contínuo ninguém olha a fila de revisão; os status sem regra entram em "Entrada de leads".
+        const relatorio = await executarMigracaoSheets(db, contexto, empresaId, abas, agendaLinhas, [], new Date(), {
+          statusSemRevisao: true,
+        });
         return somarRelatorioSheets(relatorio.linhas);
       },
     },
@@ -227,7 +231,7 @@ function construirCiclosOrigem(
           chaveServico: config.supabaseLpServiceKey,
         });
         const empresaId = await buscarEmpresaId(db);
-        const contexto: ContextoExecucao = { origem: ORIGEM_LP, simulacao: false };
+        const contexto: ContextoExecucao = { origem: ORIGEM_ETL_LP, simulacao: false };
         const relatorio = await executarMigracaoLp(db, contexto, empresaId, cadastros, total);
         return {
           linhasLidas: relatorio.lidas,

@@ -28,9 +28,9 @@ import { empresas } from '../src/db/schema';
 import type { ContextoExecucao } from '../src/etl/comum';
 import { lerCsvDecisoes, type LinhaDecisaoBruta } from '../src/etl/decisoes';
 import { lerTodosCadastros } from '../src/etl/lp/origem';
-import { executarMigracaoLp, type RelatorioEtlLp } from '../src/etl/lp/executar';
+import { executarMigracaoLp, ORIGEM_ETL_LP, type RelatorioEtlLp } from '../src/etl/lp/executar';
 
-const ORIGEM_ETL = 'supabase-lp';
+const ORIGEM_ETL = ORIGEM_ETL_LP;
 const EMPRESA_SLUG = 'medguia';
 
 interface Argumentos {

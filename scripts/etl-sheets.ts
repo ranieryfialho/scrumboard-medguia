@@ -38,11 +38,12 @@ import {
 } from '../src/etl/sheets/leitor';
 import {
   executarMigracaoSheets,
+  ORIGEM_ETL_SHEETS,
   type AbaParaLer,
   type RelatorioEtlSheets,
 } from '../src/etl/sheets/executar';
 
-const ORIGEM_ETL = 'sheets-legado-crm';
+const ORIGEM_ETL = ORIGEM_ETL_SHEETS;
 const EMPRESA_SLUG = 'medguia';
 const AGENDA_RANGE = 'Agenda!A:D';
 
