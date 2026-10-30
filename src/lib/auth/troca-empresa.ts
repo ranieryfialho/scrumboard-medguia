@@ -3,15 +3,14 @@
 // registrando essa troca em auditoria (AC-045); um usuário comum nunca pode
 // alternar a empresa resolvida da sua sessão (AC-046).
 //
-// Ainda não existe, no schema entregue por `fase1-schema-drizzle`, uma
-// coluna ou tabela para "empresa ativa da sessão" — e alterar o schema é
-// fora do escopo desta tarefa (arquivos permitidos: só este módulo e seu
-// teste). A troca fica registrada em memória do processo, por token de
-// sessão, na mesma linha do default de auditoria via `console.info` em
-// T-028 (src/lib/auth/convites.ts): não deixa a obrigação de "as próximas
-// resoluções retornam a empresa Y" sem efeito nenhum enquanto uma tabela
-// dedicada não existir. Uma futura tarefa que integre isso a
-// `resolverContextoTenant` (T-031) precisa consultar `empresaAtivaResolvida`.
+// AC-728 (T-280): com `opcoes.db` a troca é GRAVADA na sessão (`sessoes.empresa_ativa_id`) e é o que
+// `resolverContextoTenant` (T-031) consulta, então vale para todas as APIs e sobrevive a reinício do servidor. Sem `db` (os
+// testes de T-032), a troca fica só no mapa em memória do processo, como era antes; esse mapa NÃO decide os dados de ninguém.
+
+import { eq } from 'drizzle-orm';
+import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
+
+import { sessoes } from '../../db/schema';
 
 export class ErroTrocaEmpresaNaoAutorizada extends Error {
   constructor() {
@@ -38,6 +37,8 @@ export interface EventoAuditoriaTrocaEmpresa {
 export interface TrocarEmpresaAtivaOpcoes {
   agora?: () => Date;
   registrarAuditoria?: (evento: EventoAuditoriaTrocaEmpresa) => void | Promise<void>;
+  /** AC-728: com o banco, a empresa escolhida é gravada na sessão e passa a valer para todos os dados. */
+  db?: NodePgDatabase;
 }
 
 export interface TrocarEmpresaAtivaResultado {
@@ -73,6 +74,9 @@ export async function trocarEmpresaAtiva(
 
   const empresaAnteriorId = empresaAtivaPorToken.get(token) ?? ator.empresaId;
   empresaAtivaPorToken.set(token, novaEmpresaId);
+  if (opcoes.db) {
+    await opcoes.db.update(sessoes).set({ empresaAtivaId: novaEmpresaId }).where(eq(sessoes.token, token));
+  }
 
   const agora = opcoes.agora ? opcoes.agora() : new Date();
   const registrar = opcoes.registrarAuditoria ?? registrarAuditoriaPadrao;

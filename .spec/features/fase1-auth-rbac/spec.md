@@ -163,6 +163,19 @@ o registro de que fiz isso.
 - **Então** a ação é recusada e o `empresa_id` resolvido da sessão continua
   sendo X
 
+#### AC-728 — A empresa escolhida pelo super admin vale para todos os dados
+
+- **Dado** um super admin que trocou a empresa ativa pelo seletor
+- **Quando** ele abre qualquer tela ou chama qualquer API de dados (cards, campanhas, equipe...)
+- **Então** só enxerga e só grava dados da empresa escolhida (o isolamento por empresa é aplicado com ela), e não os da primeira empresa dele
+- **E** a escolha fica gravada na sessão: sobrevive a reinício do servidor e vale também para o `/api/me`
+
+#### AC-729 — Só o super admin atua numa empresa escolhida
+
+- **Dado** um usuário que não é super admin, com a empresa ativa de uma sessão preenchida à força
+- **Quando** o contexto da sessão é resolvido
+- **Então** o valor é ignorado e vale o vínculo dele, sempre o mais antigo, e nunca "o primeiro que o banco devolver"
+
 ### US-020 — Rate limit em login, convite e reset
 
 Como sistema, preciso limitar tentativas de login, convite e reset por IP e
@@ -201,6 +214,7 @@ por e-mail, para mitigar força bruta e abuso, com as tentativas registradas.
 | ASM-010 | Os testes desta feature sobem seu próprio Postgres 15 efêmero (mesmo padrão de `fase0-fundacao-ci-staging`/`fase1-schema-drizzle`), sem tocar `crm_staging`/`crm_prod` da VPS — Better Auth fica configurado e provado, mas não substitui a autenticação da aplicação em produção até o cutover | confirmada | Confirmado: os 8 arquivos de teste desta feature usam `test/support/postgres-efemero.ts` (mesmo harness Docker de `fase1-schema-drizzle`). |
 | ASM-011 | O Better Auth consegue ser configurado para usar os nomes de tabela/coluna em português já definidos em `src/db/schema/auth.ts` (`contas`, `sessoes`, `tokens_verificacao`) e `identidade.ts` (`usuarios`) via mapeamento de campos, sem exigir tabelas adicionais no padrão em inglês da biblioteca | confirmada | Confirmado via `modelName`/`fields` em `src/lib/auth/server.ts` (T-026) — `sessoes`/`contas`/`tokens_verificacao` mapearam 1:1; `usuarios` precisou de 2 colunas novas (`email_verificado`, `imagem`), adicionadas nesta feature (migration `drizzle/0006_...`). Confirmado também que os campos internos do Better Auth (`providerId="credential"`, `accountId=<id do usuário>`) são literais fixos da lib — T-028/T-029/T-030 foram ajustadas para escrevê-los corretamente, corrigindo uma incompatibilidade que a implementação inicial (hand-rolled, sem a lib) tinha introduzido. |
 | ASM-012 | Um usuário `GERENTE` pode convidar apenas para o papel `ATENDENTE` (não pode criar outro `MASTER` ou `GERENTE`); apenas `MASTER` e super admin podem convidar para qualquer papel dentro da própria empresa | confirmada | Implementado em `podeConvidar` (T-028, `src/lib/auth/convites.ts`) e provado por `AC-037`. |
+| ASM-277 | Sem vínculo na empresa escolhida, o super admin atua nela como MASTER | aberta | Achado em 30/10: o seletor de empresa só trocava o nome no topo, e os dados seguiam os da primeira empresa |
 
 ## Perguntas em aberto
 

@@ -60,7 +60,7 @@ export async function resolverContextoTenant(
   }
 
   const sessoesEncontradas = await db
-    .select({ usuarioId: sessoes.usuarioId })
+    .select({ usuarioId: sessoes.usuarioId, empresaAtivaId: sessoes.empresaAtivaId })
     .from(sessoes)
     .where(and(eq(sessoes.token, input.token), gt(sessoes.expiraEm, agora)))
     .limit(1);
@@ -83,12 +83,27 @@ export async function resolverContextoTenant(
 
   // fase4-admin (AC-610, ASM-207): o vínculo só vale se a empresa está ativa — empresa suspensa não
   // dá acesso (o super admin não é barrado: ele administra a rede inclusive as suspensas).
+  // AC-728/AC-729: só o super admin atua na empresa que escolheu (gravada na sessão); para qualquer outro usuário a coluna
+  // é ignorada, mesmo que alguém a preencha: o vínculo dele é o que vale.
+  if (usuario.isSuperAdmin && sessao.empresaAtivaId) {
+    const [escolhida] = await db.select({ id: empresas.id }).from(empresas).where(eq(empresas.id, sessao.empresaAtivaId)).limit(1);
+    if (escolhida) {
+      const [vinculoNaEscolhida] = await db
+        .select({ papel: empresasUsuarios.papel })
+        .from(empresasUsuarios)
+        .where(and(eq(empresasUsuarios.usuarioId, sessao.usuarioId), eq(empresasUsuarios.empresaId, escolhida.id), eq(empresasUsuarios.ativo, true)))
+        .limit(1);
+      return { usuarioId: sessao.usuarioId, empresaId: escolhida.id, papel: vinculoNaEscolhida?.papel ?? 'MASTER', isSuperAdmin: true };
+    }
+  }
+
   const empresaAtiva = usuario.isSuperAdmin ? sql`true` : eq(empresas.ativo, true);
   const vinculos = await db
     .select({ empresaId: empresasUsuarios.empresaId, papel: empresasUsuarios.papel })
     .from(empresasUsuarios)
     .innerJoin(empresas, eq(empresas.id, empresasUsuarios.empresaId))
     .where(and(eq(empresasUsuarios.usuarioId, sessao.usuarioId), eq(empresasUsuarios.ativo, true), empresaAtiva))
+    .orderBy(empresasUsuarios.criadoEm, empresasUsuarios.empresaId)
     .limit(1);
 
   const vinculo = vinculos[0];

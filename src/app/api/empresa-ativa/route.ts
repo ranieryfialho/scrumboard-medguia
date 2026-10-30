@@ -63,7 +63,8 @@ export async function POST(request: NextRequest) {
     await trocarEmpresaAtiva(
       { usuarioId: contexto.usuarioId, empresaId: contexto.empresaId, isSuperAdmin: contexto.isSuperAdmin },
       token,
-      empresaNova.id
+      empresaNova.id,
+      { db }
     );
   } catch (erro) {
     if (erro instanceof ErroTrocaEmpresaNaoAutorizada) return semPermissao();
