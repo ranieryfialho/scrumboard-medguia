@@ -176,8 +176,9 @@ do Docker** ou pelo proxy:
 
 ## Anexo: worker de e-mail das campanhas (`fase5-email-disparo`)
 
-O disparo das campanhas roda no serviço **`crm-worker-email`** do `docker-compose.yml` (mesma imagem do CRM, comando
+O disparo das campanhas roda no serviço **`crm-worker-email`** do `docker-compose.yml` (imagem de worker do CRM, `scrumboard-medguia-worker`, comando
 `npm run worker:email`). Só exige `DATABASE_URL` e `SEGREDO_CONFIGURACOES` e usa a chave do Resend **de cada empresa**
-(cadastrada em `/configuracoes/email`). Sem ele, as campanhas iniciadas ficam paradas na fila. Vale o mesmo
-pré-requisito do `crm-worker`: a imagem precisa incluir `src/worker` e `tsx`. O motor Python (`worker-medguia-hub`) só
+(cadastrada em `/configuracoes/email`). Sem ele, as campanhas iniciadas ficam paradas na fila. O `crm-worker` e o
+`crm-worker-email` usam a **imagem de worker** (`scrumboard-medguia-worker:<sha>`, publicada pelo `release.yml`, estágio
+`worker` do Dockerfile); a imagem do site não traz o código do worker. O motor Python (`worker-medguia-hub`) só
 deve ser desligado depois que este estiver no ar e uma campanha de teste sair.

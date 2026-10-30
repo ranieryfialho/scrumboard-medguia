@@ -40,3 +40,13 @@ jobs:
             NEXT_PUBLIC_APP_URL=${{ secrets.NEXT_PUBLIC_APP_URL }}
             EVOLUTION_API_URL=${{ secrets.EVOLUTION_API_URL }}
             EVOLUTION_API_KEY=${{ secrets.EVOLUTION_API_KEY }}
+
+      - name: Build e publish da imagem do worker (tag = SHA do commit)
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          target: worker
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/scrumboard-medguia-worker:${{ github.sha }}
+          cache-from: type=gha,scope=worker
+          cache-to: type=gha,mode=max,scope=worker

@@ -21,19 +21,12 @@ services:
     networks:
       - wp-network
 
-  # fase3-ingestao-continua (AC-328): mesma imagem do `scrumboard-medguia`,
-  # só troca o comando de entrada para o ponto de entrada do worker
-  # (`npm run worker`, src/worker/index.ts). Sem `ports:` — o worker não
-  # serve HTTP, só roda os ciclos (T-128) e o agendador (T-130).
-  #
-  # NOTA para quem mexer no Dockerfile/deploy desta feature: a imagem hoje
-  # (estágio `runner`) só copia o build standalone do Next — não inclui
-  # `src/worker`, `node_modules/.bin/tsx` nem as devDependencies. O
-  # healthcheck abaixo (AC-323) e o comando do worker só rodam de fato
-  # depois que o Dockerfile for ajustado para incluir isso; não faz parte
-  # desta tarefa (fora do escopo de T-131 e do deploy, que é fase 3).
+  # fase3-ingestao-continua (AC-328): a imagem de worker do projeto (`scrumboard-medguia-worker`, estágio `worker` do
+  # Dockerfile: código de `src`, dependências de produção e `tsx`), com o comando de entrada do worker
+  # (`npm run worker`, src/worker/index.ts). Sem `ports:` — o worker não serve HTTP, só roda os ciclos (T-128) e o
+  # agendador (T-130). A imagem do site (`scrumboard-medguia`) não traz o código do worker.
   crm-worker:
-    image: ghcr.io/ranieryfialho/scrumboard-medguia:${IMAGE_TAG:-latest}
+    image: ghcr.io/ranieryfialho/scrumboard-medguia-worker:${IMAGE_TAG:-latest}
     container_name: crm-worker
     command: ["npm", "run", "worker"]
     env_file:
@@ -67,12 +60,12 @@ services:
     networks:
       - wp-network
 
-  # T-266 (fase5-email-disparo, ASM-261): o disparo das campanhas de e-mail num segundo container, com a mesma imagem do
-  # CRM e o comando `npm run worker:email` (src/worker/email.ts). Só precisa de DATABASE_URL e SEGREDO_CONFIGURACOES; uma
-  # rajada de e-mails não ocupa o `crm-worker` da ingestão. Vale o mesmo pré-requisito do `crm-worker` acima: a imagem
-  # precisa incluir `src/worker` e `tsx`. Sem `ports:` nem healthcheck próprio (o ciclo é um laço simples de 10 s).
+  # T-266 (fase5-email-disparo, ASM-261): o disparo das campanhas de e-mail num segundo container, com a imagem de worker
+  # do CRM e o comando `npm run worker:email` (src/worker/email.ts). Só precisa de DATABASE_URL e SEGREDO_CONFIGURACOES;
+  # uma rajada de e-mails não ocupa o `crm-worker` da ingestão. Sem `ports:` nem healthcheck próprio (o ciclo é um laço
+  # simples de 10 s).
   crm-worker-email:
-    image: ghcr.io/ranieryfialho/scrumboard-medguia:${IMAGE_TAG:-latest}
+    image: ghcr.io/ranieryfialho/scrumboard-medguia-worker:${IMAGE_TAG:-latest}
     container_name: crm-worker-email
     command: ["npm", "run", "worker:email"]
     env_file:

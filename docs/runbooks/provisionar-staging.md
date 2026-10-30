@@ -164,11 +164,9 @@ docker compose --env-file .env.staging -f docker-compose.staging.yml pull
 docker compose --env-file .env.staging -f docker-compose.staging.yml up -d crm-app-staging
 ```
 
-> **`crm-worker-staging` ainda não sobe de verdade.** A imagem só traz o build
-> standalone do Next: não inclui `src/worker`, `tsx` nem as devDependencies
-> (aviso já registrado em `docker-compose.yml`). Até o `Dockerfile` ser
-> ajustado, não suba o worker; o ensaio roda o ETL por linha de comando
-> (passo 6), que não depende dele.
+> **O `crm-worker-staging` usa a imagem de worker** (`scrumboard-medguia-worker:<sha>`, estágio `worker` do
+> Dockerfile), e não a do site, que não traz `src/worker` nem `tsx`. Use o mesmo `IMAGE_TAG` e suba com
+> `docker compose ... up -d crm-worker-staging`. O ensaio do ETL (passo 6) roda por linha de comando e não depende dele.
 
 ## Passo 5 — Acesso restrito ao staging
 

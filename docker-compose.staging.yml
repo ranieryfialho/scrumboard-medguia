@@ -19,13 +19,10 @@ services:
     networks:
       - wp-network
 
-  # fase3-ingestao-continua (AC-328): worker de staging — mesma imagem do
-  # `crm-app-staging`, outro comando de entrada (`npm run worker`), conectado
-  # só em `crm_staging` (AC-005/AC-006, mesma regra do app de staging). Ver
-  # a nota sobre o Dockerfile no `crm-worker` de docker-compose.yml: o
-  # healthcheck abaixo só roda de fato depois desse ajuste.
+  # fase3-ingestao-continua (AC-328): worker de staging — imagem de worker do projeto (estágio `worker` do Dockerfile),
+  # comando de entrada `npm run worker`, conectado só em `crm_staging` (AC-005/AC-006, mesma regra do app de staging).
   crm-worker-staging:
-    image: ghcr.io/ranieryfialho/scrumboard-medguia:${IMAGE_TAG:-latest}
+    image: ghcr.io/ranieryfialho/scrumboard-medguia-worker:${IMAGE_TAG:-latest}
     container_name: crm-worker-staging
     command: ["npm", "run", "worker"]
     env_file:

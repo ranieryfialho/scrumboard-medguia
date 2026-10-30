@@ -25,6 +25,26 @@ ENV EVOLUTION_API_KEY=$EVOLUTION_API_KEY
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 RUN npm run build
 
+# Dependências só de produção, para o worker
+FROM base AS deps-prod
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+COPY package.json package-lock.json* ./
+RUN npm ci --omit=dev
+
+# Worker (`--target worker`): mesmo código, outro processo. O estágio `runner` só leva o build standalone do Next (sem
+# `src/worker`, sem `tsx`, com `node_modules` podado); o worker precisa de tudo isso. Fica ANTES do runner para a imagem
+# padrão continuar sendo a do site, que não muda.
+FROM base AS worker
+WORKDIR /app
+ENV NODE_ENV=production
+COPY --from=deps-prod /app/node_modules ./node_modules
+COPY package.json tsconfig.json ./
+COPY src ./src
+COPY scripts ./scripts
+USER node
+CMD ["npm", "run", "worker"]
+
 # Runner
 FROM base AS runner
 WORKDIR /app
