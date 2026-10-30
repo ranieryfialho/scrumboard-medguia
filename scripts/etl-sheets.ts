@@ -152,6 +152,11 @@ function imprimirRelatorio(relatorio: RelatorioEtlSheets): void {
   }
 
   console.log(
+    `\nArquivados que não migram — sem telefone: ${relatorio.arquivadosPulados.semTelefone}, ` +
+      `repetem o telefone de um lead que não está arquivado: ${relatorio.arquivadosPulados.duplicadosDeLeadAtivo}`
+  );
+
+  console.log(
     `\nMensagens de WhatsApp sem lead: ${relatorio.vinculoMensagens.semLead}, ` +
       `vinculadas: ${relatorio.vinculoMensagens.vinculadas}, ` +
       `sem lead para o telefone: ${relatorio.vinculoMensagens.semLeadParaTelefone}, ` +

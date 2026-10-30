@@ -84,8 +84,9 @@ const ORDEM_FUNIL: Record<string, number> = {
   'not interested': 5,
   'desqualificado': 5,
   'disqualified': 5,
-  'arquivado': 5,
-  'archived': 5,
+  // AC-724: arquivado perde de qualquer outro status reconhecido num desempate sem data — o lead não some por ter uma cópia arquivada.
+  'arquivado': 0.5,
+  'archived': 0.5,
 };
 
 function rankDoStatus(situacaoBruta: string): number {

@@ -48,3 +48,8 @@
 - Refs: US-075, AC-723
 - Arquivos: src/etl/sheets/executar.ts, test/etl/sheets-sem-meta-id.test.ts
 - Notas: o id sintético entra antes da deduplicação, para a fila, as decisões e o controle de "já migrado" enxergarem cada lead.
+
+## T-276 — Arquivado sem telefone ou repetido não migra [pendente]
+- Refs: US-077, AC-724
+- Arquivos: src/etl/sheets/executar.ts, src/etl/sheets/dedupe.ts, scripts/etl-sheets.ts, test/etl/sheets-arquivados.test.ts
+- Notas: o desempate sem data passa a favorecer qualquer outro status sobre "Arquivado"; o relatório ganha `arquivadosPulados`.

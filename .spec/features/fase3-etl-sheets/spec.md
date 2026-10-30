@@ -88,6 +88,13 @@ Como liderança comercial, quero cada lead na etapa certa do funil novo, para a 
 - **Então** todos ficam em "Perdido"
 - **E** os motivos são, respectivamente, "Sem interesse", "Desqualificado (migração)" e "Legado — arquivado"
 
+#### AC-724 — Arquivado sem telefone ou repetido não migra
+
+- **Dado** leads arquivados no legado: um sem telefone, um com o mesmo telefone de um lead que não está arquivado e um com telefone próprio
+- **Quando** o ETL roda
+- **Então** os dois primeiros não são criados (contam como ignorados na aba de origem e aparecem no relatório) e o terceiro entra em Perdido com o motivo "Legado — arquivado"
+- **E** num conflito entre abas sem data, "Arquivado" perde para qualquer outro status: o lead não some por ter uma cópia arquivada
+
 #### AC-282 — Status que exige próxima ação, sem data, vai para revisão
 
 - **Dado** leads "Recontato" (vira "Follow de longo prazo") ou "Aguardando Ativação" (vira "Teste (Trial)") sem data de próxima ação
@@ -195,6 +202,7 @@ Como responsável pelo cutover, quero ensaiar e repetir o ETL sem risco.
 | ASM-089 | Telefone sem código de país é brasileiro (+55) | confirmada | Confirmado pelo usuário em 19/10 |
 | ASM-090 | A chave única do lead é o id da Meta (`l:…`); o id posicional do legado não serve | confirmada | Código legado usa índice de linha |
 | ASM-273 | Lead sem id da Meta ganha um id calculado de aba, nome, telefone, e-mail e data de entrada; linhas idênticas viram um lead só | aberta | Achado na simulação de 30/10: 66 linhas da `sheet1/Página1` sem id compartilhavam a chave vazia |
+| ASM-274 | Arquivado sem telefone, ou com o telefone de um lead que não está arquivado, não migra: a pessoa já está representada ou não há como contatá-la | confirmada | Decidido em 30/10 depois de medir: de 26 arquivados, 13 sem telefone e 2 repetidos |
 | ASM-091 | Duplicados: vence a `data_alteracao` mais recente; sem data, o status mais avançado | confirmada | Decidido em 19/10 |
 | ASM-092 | A aba `Agenda` não migra; sai em CSV | confirmada | Decidido em 19/10 |
 | ASM-093 | Mapa de status segue o RFC-001 §6.8 e o `STATUS_MAP` do legado ("Fechado" = Contrato (Ganho)) | confirmada | Confirmado pelo usuário em 19/10 |
