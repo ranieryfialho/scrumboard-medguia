@@ -26,7 +26,7 @@
 | Item | Como conferir |
 |---|---|
 | Todas as PRs da fase 5 mergeadas (#47 a #54 e a meta de receita) e o `Release` da `main` verde | `gh pr list --state merged`, `gh run list --workflow release.yml` |
-| Última migration em `drizzle/` é a `0023_email_descadastros.sql` (se entrar outra depois, acrescente aqui) | `ls drizzle` |
+| Última migration em `drizzle/` é a `0024_envios_campanha_erro.sql` (se entrar outra depois, acrescente aqui) | `ls drizzle` |
 | Acesso SSH root à VPS; código em `/root/crm-staging` (nunca em `~/scrumboard-medguia`, que é o legado) | — |
 | Janela combinada com a operação (o legado sai do ar durante a troca) | — |
 | Plano de volta lido (seção 9) | — |
@@ -41,7 +41,7 @@ pg_dumpall -U postgres | gzip > /root/backups/pg-master-pre-cutover_$(date +%F_%
 
 1. Se `crm_prod`, `crm_app` e `crm_migrator` ainda não existem, crie-os como no
    [`provisionar-staging.md`](provisionar-staging.md) (`infra/postgres/init/01-databases-and-roles.sql`).
-2. Aplique **todos** os `.sql` de `drizzle/` (de `0000` até a `0023`), **em ordem**, com `psql` como `crm_migrator`,
+2. Aplique **todos** os `.sql` de `drizzle/` (de `0000` até a `0024`), **em ordem**, com `psql` como `crm_migrator`,
    direto no `crm_prod`. **Não use `npm run db:migrate`:** o `_journal.json` só conhece
    4 das migrations (as demais são escritas à mão).
 
@@ -67,6 +67,7 @@ O que cada migration das fases 4 e 5 faz (todas **só acrescentam**; nenhuma apa
 | `0021_whatsapp_lotes` | lotes e fila de envio do WhatsApp em lote |
 | `0022_meta_receita` | a meta de receita mensal (em reais) na tabela de metas: a coluna do valor vira `numeric(12,2)` e o limite passa a ser por tipo de meta; as porcentagens já gravadas mantêm o valor |
 | `0023_email_descadastros` | a lista de quem pediu para sair dos e-mails de cada empresa (descadastro, LGPD), com isolamento por empresa |
+| `0024_envios_campanha_erro` | a coluna `erro` (motivo da falha) em `envios_campanha` e o índice dos envios pendentes, para o worker de e-mail |
 
 **Conferência do banco** (como `crm_migrator`; os números vêm do estado de 29/10, ajuste se
 alguma migration nova entrar):
@@ -172,3 +173,11 @@ do Docker** ou pelo proxy:
 - **Meta de receita** (Novo MRR): entregue (migration 0022): meta mensal, selo só em período de mês inteiro e sem filtro de responsável.
 - Limite e intervalo do lote são valores do sistema (50 leads, 15 a 45 s); configurar por empresa é evolução.
 - Reenviar os que falharam num lote, agendar lote e mais de um lote por vez: fora do escopo atual.
+
+## Anexo: worker de e-mail das campanhas (`fase5-email-disparo`)
+
+O disparo das campanhas roda no serviço **`crm-worker-email`** do `docker-compose.yml` (mesma imagem do CRM, comando
+`npm run worker:email`). Só exige `DATABASE_URL` e `SEGREDO_CONFIGURACOES` e usa a chave do Resend **de cada empresa**
+(cadastrada em `/configuracoes/email`). Sem ele, as campanhas iniciadas ficam paradas na fila. Vale o mesmo
+pré-requisito do `crm-worker`: a imagem precisa incluir `src/worker` e `tsx`. O motor Python (`worker-medguia-hub`) só
+deve ser desligado depois que este estiver no ar e uma campanha de teste sair.
