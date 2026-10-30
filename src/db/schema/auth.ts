@@ -1,6 +1,6 @@
 import { pgTable, text, timestamp, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
 
-import { usuarios } from './identidade';
+import { empresas, usuarios } from './identidade';
 
 // Tabelas do adaptador Drizzle do Better Auth (AC-016). Credenciais e sessões
 // ficam aqui; `usuarios` continua sendo a identidade de negócio sem senha.
@@ -31,6 +31,8 @@ export const sessoes = pgTable('sessoes', {
     .references(() => usuarios.id, { onDelete: 'cascade' }),
   token: text('token').notNull(),
   expiraEm: timestamp('expira_em', { withTimezone: true }).notNull(),
+  /** AC-728 (migration 0025): a empresa em que o super admin está atuando; nula = vale o vínculo normal. */
+  empresaAtivaId: uuid('empresa_ativa_id').references(() => empresas.id, { onDelete: 'set null' }),
   enderecoIp: text('endereco_ip'),
   userAgent: text('user_agent'),
   criadoEm: timestamp('criado_em', { withTimezone: true }).notNull().defaultNow(),

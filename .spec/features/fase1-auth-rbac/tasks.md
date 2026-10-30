@@ -90,3 +90,8 @@
 - Notas: depende de T-026 (aplicado sobre login/convite/reset de T-027,
   T-028 e T-030). Limite por IP e por e-mail — números exatos ficam em
   Q-005 (usar um default razoável documentado até a resposta).
+
+## T-280 — A empresa ativa do super admin é gravada na sessão e vale para todos os dados [pendente]
+- Refs: US-019, AC-728, AC-729
+- Arquivos: drizzle/0025_sessao_empresa_ativa.sql, src/db/schema/auth.ts, src/lib/auth/troca-empresa.ts, src/lib/auth/tenant.ts, src/app/api/empresa-ativa/route.ts, src/app/api/me/route.ts, test/auth/empresa-ativa-sessao.test.ts
+- Notas: até aqui a troca vivia num mapa em memória que só o /api/me consultava; todas as APIs de dados usavam o primeiro vínculo do usuário.

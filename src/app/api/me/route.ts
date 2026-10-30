@@ -10,7 +10,6 @@ import { getDb } from '../../../db/client';
 import { empresas, usuarios } from '../../../db/schema';
 import { getAuth } from '../../../lib/auth/instancia';
 import { ErroSessaoInvalida, resolverContextoTenant, type ContextoTenant } from '../../../lib/auth/tenant';
-import { empresaAtivaResolvida } from '../../../lib/auth/troca-empresa';
 
 export const dynamic = 'force-dynamic';
 
@@ -45,9 +44,10 @@ export async function GET(request: NextRequest) {
   const sessao = await resolverSessao(request);
   if (!sessao) return semSessao();
 
-  const { contexto, token } = sessao;
+  const { contexto } = sessao;
   const db = getDb();
-  const empresaAtivaId = empresaAtivaResolvida(token, contexto.empresaId);
+  // AC-728: o contexto já resolve a empresa escolhida pelo super admin (gravada na sessão).
+  const empresaAtivaId = contexto.empresaId;
 
   const [usuariosEncontrados, empresasAtivaEncontrada] = await Promise.all([
     db.select({ nome: usuarios.nome, email: usuarios.email }).from(usuarios).where(eq(usuarios.id, contexto.usuarioId)).limit(1),
