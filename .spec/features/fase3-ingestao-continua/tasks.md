@@ -31,3 +31,8 @@
 - Refs: US-090, AC-726, AC-727
 - Arquivos: src/worker/index.ts, src/etl/sheets/status.ts, src/etl/sheets/executar.ts, src/etl/lp/executar.ts, scripts/etl-sheets.ts, scripts/etl-lp.ts, test/etl/sheets-status-continuo.test.ts, test/etl/origens-etl.test.ts
 - Notas: o worker usava `import-sheets`/`import-lp` como origem do ETL e a carga manual usava `sheets-legado-crm`/`supabase-lp`: ao ligar o worker ele reimportaria tudo. Achado em 30/10 lendo o código antes de subir o worker no staging.
+
+## T-281 — O ETL informa a empresa ao banco para o worker rodar como crm_app [pendente]
+- Refs: US-090, AC-730
+- Arquivos: src/etl/comum.ts, src/etl/sheets/executar.ts, src/etl/lp/executar.ts, test/etl/sheets-como-crm-app.test.ts
+- Notas: achado no staging em 30/10: o ciclo do Sheets falhava no worker (crm_app) com "Failed query ... whatsapp_mensagens", porque o ETL nunca definia `app.empresa_id` e só funcionava como dono das tabelas.
