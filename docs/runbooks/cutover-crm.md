@@ -100,6 +100,9 @@ O `.env` é lido pelo app **e** pelo worker (`env_file: .env` no `docker-compose
 | `RESEND_WEBHOOK_SECRET` | aceitar os eventos de entrega, abertura e clique das campanhas | sim, para campanhas |
 | `GOOGLE_*`, `SUPABASE_*`, `SUPABASE_LP_*` | ETL e espelho do Sheets durante a migração dos dados | só enquanto houver ETL |
 
+**A LP (landing page) não faz parte do cutover** (está desativada em produção). `SUPABASE_LP_URL` e `SUPABASE_LP_SERVICE_KEY` são
+opcionais: sem elas o worker roda só o Sheets. Se uma das duas for configurada, a outra passa a ser obrigatória.
+
 Nunca escreva valores neste repositório.
 
 ## 5. Agendadores (cron da VPS)

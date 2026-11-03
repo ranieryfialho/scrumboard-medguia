@@ -18,11 +18,12 @@
 /** Nomes das variáveis obrigatórias — nunca os valores aparecem em erro ou log. */
 export const VARIAVEIS_OBRIGATORIAS = [
   'DATABASE_URL',
-  'SUPABASE_LP_URL',
-  'SUPABASE_LP_SERVICE_KEY',
   'GOOGLE_CLIENT_EMAIL',
   'GOOGLE_PRIVATE_KEY',
 ] as const;
+
+/** AC-731: a LP é opcional (está desativada em produção). As duas variáveis dela vêm juntas ou nenhuma. */
+export const VARIAVEIS_DA_LP = ['SUPABASE_LP_URL', 'SUPABASE_LP_SERVICE_KEY'] as const;
 
 export const INTERVALO_IMPORT_MIN_PADRAO = 5;
 export const INTERVALO_ESPELHO_MIN_PADRAO = 15;
@@ -36,8 +37,9 @@ export class ErroConfiguracaoWorker extends Error {
 
 export interface ConfiguracaoWorker {
   databaseUrl: string;
-  supabaseLpUrl: string;
-  supabaseLpServiceKey: string;
+  /** AC-731: ausentes = o worker não importa a LP. */
+  supabaseLpUrl?: string;
+  supabaseLpServiceKey?: string;
   googleClientEmail: string;
   googlePrivateKey: string;
   intervaloImportacaoMin: number;
@@ -63,18 +65,29 @@ function lerIntervaloMin(valorBruto: string | undefined, padrao: number): number
 export function carregarConfiguracaoWorker(
   env: Record<string, string | undefined> = process.env
 ): ConfiguracaoWorker {
-  const faltando = VARIAVEIS_OBRIGATORIAS.filter((nome) => !env[nome] || env[nome]?.trim() === '');
+  const presente = (nome: string): boolean => Boolean(env[nome] && env[nome]?.trim() !== '');
+  const faltando: string[] = VARIAVEIS_OBRIGATORIAS.filter((nome) => !presente(nome));
+  // AC-731: LP pela metade é erro de configuração (uma variável sem a outra); nenhuma das duas = LP desligada.
+  const lpPresentes = VARIAVEIS_DA_LP.filter(presente);
+  if (lpPresentes.length > 0 && lpPresentes.length < VARIAVEIS_DA_LP.length) {
+    faltando.push(...VARIAVEIS_DA_LP.filter((nome) => !presente(nome)));
+  }
   if (faltando.length > 0) {
     throw new ErroConfiguracaoWorker(faltando);
   }
 
   return {
     databaseUrl: env.DATABASE_URL as string,
-    supabaseLpUrl: env.SUPABASE_LP_URL as string,
-    supabaseLpServiceKey: env.SUPABASE_LP_SERVICE_KEY as string,
+    supabaseLpUrl: presente('SUPABASE_LP_URL') ? (env.SUPABASE_LP_URL as string) : undefined,
+    supabaseLpServiceKey: presente('SUPABASE_LP_SERVICE_KEY') ? (env.SUPABASE_LP_SERVICE_KEY as string) : undefined,
     googleClientEmail: env.GOOGLE_CLIENT_EMAIL as string,
     googlePrivateKey: env.GOOGLE_PRIVATE_KEY as string,
     intervaloImportacaoMin: lerIntervaloMin(env.WORKER_INTERVALO_IMPORT_MIN, INTERVALO_IMPORT_MIN_PADRAO),
     intervaloEspelhoMin: lerIntervaloMin(env.WORKER_INTERVALO_ESPELHO_MIN, INTERVALO_ESPELHO_MIN_PADRAO),
   };
+}
+
+/** AC-731: a LP só entra no ciclo de importação quando as duas variáveis dela estão configuradas. */
+export function lpHabilitada(config: Pick<ConfiguracaoWorker, 'supabaseLpUrl' | 'supabaseLpServiceKey'>): boolean {
+  return Boolean(config.supabaseLpUrl && config.supabaseLpServiceKey);
 }
