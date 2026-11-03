@@ -59,6 +59,13 @@ Como operação, quero que cadastros novos do Sheets e da landing page apareçam
 - **Então** ele sobe normalmente, roda só o ciclo do Sheets, e o healthcheck do container considera só o Sheets (a LP não entra na conta)
 - **E** se só uma das duas variáveis da LP estiver configurada, a subida é recusada, listando o nome da que falta
 
+#### AC-732 — O aviso de saúde do container funciona de verdade e mostra o motivo
+
+- **Dado** o container do worker rodando, com o Sheets em dia
+- **Quando** o Docker executa a verificação de saúde (`npx tsx src/worker/healthcheck.ts`)
+- **Então** ela sai com código 0 e o container fica `healthy`; sem sucesso recente do Sheets (ou da LP, se configurada), sai com 1
+- **E** a saída traz o resultado por origem (visível em `docker inspect`), e um erro de configuração ou de banco é impresso, não engolido
+
 ### US-091 — Saber se a importação está saudável
 
 Como responsável técnico, quero ver no banco e na saúde do container se a última importação deu certo, para descobrir uma falha silenciosa antes da operação.

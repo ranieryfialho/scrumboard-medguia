@@ -33,9 +33,8 @@ function esperarHealthcheckDeAc323(healthcheck: ServicoCompose['healthcheck']): 
   expect(healthcheck?.test, 'healthcheck.test precisa existir').toBeDefined();
 
   const comando = (healthcheck?.test ?? []).join(' ');
-  expect(comando).toContain('verificarSaudeWorker');
-  expect(comando).toContain('import-sheets');
-  expect(comando).toContain('import-lp');
+  // AC-732: o script é um arquivo de verdade (src/worker/healthcheck.ts), executado de fato pelo teste dele
+  expect(comando).toContain('src/worker/healthcheck.ts');
 }
 
 describe('T-131: serviço crm-worker na composição', () => {
