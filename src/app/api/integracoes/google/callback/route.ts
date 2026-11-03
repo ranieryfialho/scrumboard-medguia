@@ -5,7 +5,8 @@ import { timingSafeEqual } from 'node:crypto';
 
 import { getDb } from '../../../../../db/client';
 import { configDoGoogle, COOKIE_DO_STATE, trocarCodigo } from '../../../../../lib/google/calendario';
-import { baseDaUrl, exigirGerente } from '../../../../../lib/equipe/acesso';
+import { exigirGerente } from '../../../../../lib/equipe/acesso';
+import { origemDaRequisicao } from '../../../../../lib/google/origem';
 import { ErroConfiguracaoIndisponivel } from '../../../../../lib/seguranca/cifra';
 import { gravarGoogleConectado } from '../../../../../repositories/google-config';
 
@@ -21,7 +22,7 @@ export async function GET(request: NextRequest) {
   const acesso = await exigirGerente(request);
   if ('resposta' in acesso) return acesso.resposta;
 
-  const base = baseDaUrl(request);
+  const base = origemDaRequisicao(request.headers, request.nextUrl);
   const volta = (consulta: string) => {
     const r = NextResponse.redirect(`${base}/configuracoes/google?${consulta}`, 302);
     r.cookies.delete({ name: COOKIE_DO_STATE, path: '/api/integracoes/google' });

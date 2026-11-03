@@ -4,7 +4,8 @@ import { randomBytes } from 'node:crypto';
 import { NextResponse, type NextRequest } from 'next/server';
 
 import { configDoGoogle, COOKIE_DO_STATE, urlDeAutorizacao } from '../../../../../lib/google/calendario';
-import { baseDaUrl, exigirGerente } from '../../../../../lib/equipe/acesso';
+import { exigirGerente } from '../../../../../lib/equipe/acesso';
+import { origemDaRequisicao } from '../../../../../lib/google/origem';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,7 +13,7 @@ export async function GET(request: NextRequest) {
   const acesso = await exigirGerente(request);
   if ('resposta' in acesso) return acesso.resposta;
 
-  const base = baseDaUrl(request);
+  const base = origemDaRequisicao(request.headers, request.nextUrl);
   const config = configDoGoogle();
   if (!config) return NextResponse.redirect(`${base}/configuracoes/google?erro=nao_configurado`, 302);
 

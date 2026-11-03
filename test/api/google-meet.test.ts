@@ -138,6 +138,26 @@ describe('T-301: Google Meet na agenda', () => {
     expect(guardado).not.toContain('refresh-do-google');
   });
 
+  test('o endereço de retorno vem do endereço pelo qual a pessoa acessou (atrás do proxy), não da variável gravada no build @spec:AC-765', async () => {
+    process.env.NEXT_PUBLIC_APP_URL = 'https://scrumboard.medguia.cloud'; // o que a imagem leva do build: o endereço de produção
+    const proxy = { 'x-forwarded-host': 'staging-crm.medguia.cloud', 'x-forwarded-proto': 'https' };
+    try {
+      const inicio = await rotas.conectar.GET(new NextRequest('http://localhost:3000/api/integracoes/google/conectar', { headers: { Cookie: amb.cookieA, ...proxy } }));
+      expect(new URL(inicio.headers.get('location')!).searchParams.get('redirect_uri')).toBe('https://staging-crm.medguia.cloud/api/integracoes/google/callback');
+      expect(inicio.headers.get('set-cookie')).toContain('Secure');
+      const state = new URL(inicio.headers.get('location')!).searchParams.get('state')!;
+
+      const volta = await rotas.callback.GET(
+        new NextRequest(`http://localhost:3000/api/integracoes/google/callback?code=codigo-do-google&state=${state}`, { headers: { Cookie: `${amb.cookieA}; crm_google_state=${state}`, ...proxy } })
+      );
+      expect(volta.headers.get('location')).toBe('https://staging-crm.medguia.cloud/configuracoes/google?conectado=1');
+      // a troca do código usa o mesmo endereço do início da conexão: o Google confere os dois
+      expect(google.chamadas.filter((c) => c.caminho === '/token').at(-1)!.corpo.redirect_uri).toBe('https://staging-crm.medguia.cloud/api/integracoes/google/callback');
+    } finally {
+      process.env.NEXT_PUBLIC_APP_URL = 'http://localhost';
+    }
+  });
+
   test('o estado do Meet aparece para qualquer papel, o da gestão só para gerente, sem token, e cada empresa vê só o seu @spec:AC-766', async () => {
     const publico = await (await rotas.meetStatus.GET(req('/api/reunioes/meet', atendente))).json();
     expect(publico).toEqual({ conectado: true, conta: 'contato@medguia.com.br' });

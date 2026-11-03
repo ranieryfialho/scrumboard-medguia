@@ -341,6 +341,7 @@ verdade, com carregando, vazio e erro, para nunca cair numa página quebrada.
 - **Dado** um gerente, master ou super admin na tela "Google Meet" (Administração), com as credenciais do Google no servidor
 - **Quando** ele clica em "Conectar com o Google", entra com a conta da empresa (ex.: contato@medguia.com.br) e autoriza
 - **Então** o Google o devolve à tela, a conta fica guardada para a empresa — o e-mail visível, o token cifrado e nunca mostrado — e a tela mostra "Conectado" com a conta
+- **E** o endereço de retorno enviado ao Google é montado a partir do endereço pelo qual o gerente acessou o CRM (cabeçalhos do proxy), e não de uma variável gravada na imagem no build — assim o staging e a produção, que usam a mesma imagem, mandam cada um o seu endereço; a troca do código usa o mesmo endereço do início da conexão
 - **E** a volta do Google só vale com o código de segurança que foi criado no início da conexão (cookie de 10 minutos); código errado, cancelamento, recusa do Google, resposta sem o e-mail ou sem permissão offline, e servidor sem o segredo de cifra viram um aviso na tela e nada é guardado
 - **E** sem as credenciais do Google no servidor, a tela explica o que falta (passo a passo no runbook) e não oferece conectar; atendente não acessa a tela nem a API de conexão
 
