@@ -111,3 +111,8 @@
 - Refs: US-107, AC-734
 - Arquivos: src/app/(app)/pipeline/lista/page.tsx, src/components/pipeline/tabela-lista.tsx, src/components/pipeline/pecas/paginacao.tsx, test/components/pipeline/lista-rolagem.test.tsx
 - Notas: segundo ajuste de tela da série pedida pelo dono em 03/11, igual ao do funil (T-284).
+
+## T-286 — Os arquivados têm altura fixa e só a tabela rola [pendente]
+- Refs: US-108, AC-735
+- Arquivos: src/app/(app)/pipeline/arquivados/page.tsx, src/components/pipeline/tabela-arquivados.tsx, test/components/pipeline/arquivados-rolagem.test.tsx
+- Notas: terceiro ajuste de tela da série pedida pelo dono em 03/11, igual aos do funil (T-284) e da lista (T-285).

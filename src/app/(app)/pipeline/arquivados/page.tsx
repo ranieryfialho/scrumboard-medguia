@@ -283,7 +283,8 @@ function PipelineArquivadosConteudo() {
   }
 
   return (
-    <div className="p-space-md space-y-space-md">
+    // AC-735: altura da tela (menos o topo); só a tabela rola por dentro.
+    <div className="p-space-md flex flex-col gap-space-md h-[calc(100dvh-4rem)] min-h-[48rem]">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-space-md">
         <div>
           <h1 className="font-headline-lg text-headline-lg text-text-primary tracking-tight">
@@ -341,7 +342,7 @@ function PipelineArquivadosConteudo() {
         )}
       </div>
 
-      <div className="bg-surface-card rounded-2xl shadow-sm p-space-md flex flex-col gap-space-md">
+      <div className="bg-surface-card rounded-2xl shadow-sm p-space-md flex flex-col gap-space-md flex-1 min-h-0">
         <div className="flex items-center bg-surface-subtle p-1 rounded-xl self-start gap-1">
           {ABAS.map((item) => (
             <button
@@ -386,9 +387,9 @@ function PipelineArquivadosConteudo() {
           />
         )}
         {!carregando && !erro && dados && dados.total > 0 && (
-          <>
+          <div className="flex-1 min-h-0 flex flex-col gap-space-md">
             <TabelaArquivados itens={dados.itens} podeReabrir={podeReabrir} onReaberto={aoReaberto} />
-            <div className="px-space-md py-2 flex items-center gap-1.5">
+            <div className="px-space-md py-2 flex items-center gap-1.5 flex-shrink-0">
               <label htmlFor="pipeline-arquivados-exibir" className="font-body-sm text-body-sm text-text-muted">
                 Exibir:
               </label>
@@ -412,11 +413,11 @@ function PipelineArquivadosConteudo() {
               onMudarPagina={setPagina}
               rotuloItem="arquivados"
             />
-          </>
+          </div>
         )}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-space-md">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-space-md flex-shrink-0">
         <DistribuicaoMotivos motivos={indicadores?.distribuicaoMotivos ?? []} />
 
         <div className="bg-surface-card rounded-2xl p-space-md shadow-sm flex flex-col gap-space-sm">
