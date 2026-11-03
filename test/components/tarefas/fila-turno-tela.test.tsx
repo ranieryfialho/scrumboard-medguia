@@ -247,4 +247,28 @@ describe('T-182: FilaTurno', () => {
     expect(await screen.findByText(/Não foi possível carregar a fila/)).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Tentar de novo' })).toBeTruthy();
   });
+
+  test('o quadro ocupa a altura da tela e só a tabela da fila rola por dentro, com o cabeçalho fixo @spec:AC-762', async () => {
+    fila = Array.from({ length: 8 }, (_, i) => item({ nome: `Clínica ${i + 1}`, seq: i + 1 }));
+    const { container } = render(<FilaTurno />);
+    await screen.findByText('Fila Ordenada do Turno');
+
+    const raiz = container.firstElementChild as HTMLElement;
+    expect(raiz.className).toContain('h-[calc(100dvh-4rem)]');
+    expect(raiz.className).toContain('min-h-[40rem]');
+    expect(raiz.className).toContain('flex-col');
+
+    const secao = screen.getByText('Fila Ordenada do Turno').closest('section') as HTMLElement;
+    expect(secao.className).toContain('flex-1');
+    expect(secao.className).toContain('min-h-0');
+
+    const rolagem = secao.querySelector('.overflow-auto') as HTMLElement;
+    expect(rolagem.className).toContain('min-h-0');
+    expect(rolagem.className).toContain('relative');
+    expect(rolagem.contains(screen.getByText('Clínica 8'))).toBe(true);
+    expect(rolagem.contains(screen.getByRole('heading', { name: 'Fila Ordenada do Turno' }))).toBe(false);
+    const cabecalho = rolagem.querySelector('thead') as HTMLElement;
+    expect(cabecalho.className).toContain('sticky');
+    expect(cabecalho.className).toContain('top-0');
+  });
 });

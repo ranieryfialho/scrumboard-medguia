@@ -286,6 +286,50 @@ describe('AC-351: os contadores do menu mostram números reais', () => {
   });
 });
 
+describe('AC-761: os números de tarefas do menu acompanham a fila sem recarregar a página', () => {
+  const itens = (vigentes: number, atrasados: number) => [
+    ...Array.from({ length: vigentes }, () => ({ atrasado: false })),
+    ...Array.from({ length: atrasados }, () => ({ atrasado: true })),
+  ];
+  const noMenu = (container: HTMLElement, id: string) => container.querySelector(`a[data-path="${id}"]`)!.querySelector('span.rounded-full')?.textContent ?? null;
+
+  test('quando a fila muda (cadencia.fila_alterada), o menu relê e atualiza, e o selo some quando zera @spec:AC-761', async () => {
+    instalarFetchFalso({ '/api/atividades': { corpo: { itens: itens(6, 2) } }, '/api/whatsapp/unread': { corpo: { conversas: [] } } });
+    const { container } = render(<MenuLateral papel="MASTER" isSuperAdmin={true} />);
+    await waitFor(() => expect(noMenu(container, 'tarefas-do-turno')).toBe('6'));
+    expect(noMenu(container, 'tarefas-atrasadas')).toBe('2');
+
+    const fila = FakeEventSource.instancias.find((i) => i.url === '/api/stream')!;
+    expect(fila).toBeTruthy();
+
+    instalarFetchFalso({ '/api/atividades': { corpo: { itens: itens(3, 2) } }, '/api/whatsapp/unread': { corpo: { conversas: [] } } });
+    await act(async () => fila.disparar('cadencia.fila_alterada', { data: '{}' }));
+    await waitFor(() => expect(noMenu(container, 'tarefas-do-turno')).toBe('3'));
+    expect(noMenu(container, 'tarefas-atrasadas')).toBe('2');
+
+    instalarFetchFalso({ '/api/atividades': { corpo: { itens: itens(0, 0) } }, '/api/whatsapp/unread': { corpo: { conversas: [] } } });
+    await act(async () => fila.disparar('cadencia.fila_alterada', { data: '{}' }));
+    await waitFor(() => expect(noMenu(container, 'tarefas-do-turno')).toBeNull());
+    expect(noMenu(container, 'tarefas-atrasadas')).toBeNull();
+  });
+
+  test('ao reconectar o canal o menu também relê, e uma falha na leitura mantém o número que já estava @spec:AC-761', async () => {
+    instalarFetchFalso({ '/api/atividades': { corpo: { itens: itens(4, 0) } }, '/api/whatsapp/unread': { corpo: { conversas: [] } } });
+    const { container } = render(<MenuLateral papel="MASTER" isSuperAdmin={true} />);
+    await waitFor(() => expect(noMenu(container, 'tarefas-do-turno')).toBe('4'));
+    const fila = FakeEventSource.instancias.find((i) => i.url === '/api/stream')!;
+
+    instalarFetchFalso({ '/api/atividades': { corpo: { itens: itens(1, 0) } } });
+    await act(async () => fila.disparar('stream.reconectado'));
+    await waitFor(() => expect(noMenu(container, 'tarefas-do-turno')).toBe('1'));
+
+    instalarFetchFalso({ '/api/atividades': { status: 500, corpo: {} } });
+    await act(async () => fila.disparar('cadencia.fila_alterada', { data: '{}' }));
+    await new Promise((r) => setTimeout(r, 20));
+    expect(noMenu(container, 'tarefas-do-turno')).toBe('1');
+  });
+});
+
 describe('AC-352: o topo mostra quem está logado', () => {
   test('mostra nome, papel, e-mail e empresa ativa da sessão @spec:AC-352', () => {
     const usuario = usuarioBase({

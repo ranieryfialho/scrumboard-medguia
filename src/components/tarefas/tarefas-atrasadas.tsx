@@ -203,8 +203,9 @@ export function TarefasAtrasadas() {
   const total = itens?.length ?? 0;
 
   return (
-    <div className="p-space-md space-y-space-md">
-      <section className="bg-surface-card rounded-2xl p-space-md shadow-sm space-y-space-sm">
+    // AC-762: altura da tela (menos o topo); só a tabela dos toques atrasados rola por dentro.
+    <div className="p-space-md flex flex-col gap-space-md h-[calc(100dvh-4rem)] min-h-[40rem]">
+      <section className="bg-surface-card rounded-2xl p-space-md shadow-sm space-y-space-sm flex-shrink-0">
         <div className="flex items-start justify-between flex-wrap gap-space-md">
           <div>
             <div className="flex items-center gap-3 flex-wrap">
@@ -303,8 +304,8 @@ export function TarefasAtrasadas() {
             </p>
           )}
 
-          <section className="bg-surface-card rounded-2xl shadow-sm overflow-hidden">
-            <div className="p-space-md flex items-center justify-between flex-wrap gap-space-sm">
+          <section className="bg-surface-card rounded-2xl shadow-sm overflow-hidden flex flex-col flex-1 min-h-0">
+            <div className="p-space-md flex items-center justify-between flex-wrap gap-space-sm flex-shrink-0">
               <div className="flex items-center gap-3">
                 <h2 className="font-headline-sm text-headline-sm text-text-primary">Fila de Resgate Imediato</h2>
                 <span className="font-body-sm text-body-sm text-text-muted">Exibindo {visiveis.length} contatos críticos</span>
@@ -318,9 +319,9 @@ export function TarefasAtrasadas() {
             {visiveis.length === 0 ? (
               <EstadoVazio titulo="Nenhum toque atrasado" proximoPasso="Tudo em dia por aqui." icone="task_alt" />
             ) : (
-              <div className="overflow-x-auto">
+              <div className="relative overflow-auto flex-1 min-h-0">
                 <table className="w-full text-left">
-                  <thead className="bg-surface-subtle">
+                  <thead className="bg-surface-subtle sticky top-0 z-10">
                     <tr className="font-label-sm text-table-header uppercase text-text-muted tracking-wider">
                       <th className="px-space-md py-3">
                         <input type="checkbox" aria-label="Marcar todos" checked={visiveis.every((i) => selecionados.has(i.atividade.id))} onChange={alternarTodos} />
@@ -402,7 +403,7 @@ export function TarefasAtrasadas() {
               </div>
             )}
 
-            <div className="px-space-md py-3 flex items-center gap-2 flex-wrap font-body-sm text-body-sm text-text-muted">
+            <div className="px-space-md py-3 flex items-center gap-2 flex-wrap font-body-sm text-body-sm text-text-muted flex-shrink-0">
               <span>Ações para os itens selecionados:</span>
               <button
                 type="button"

@@ -65,3 +65,8 @@
 - Arquivos: test/auth/rotas-tarefas-agenda.test.ts, src/components/tarefas/estados.tsx
 - Esforço: medio
 - Notas: teste no molde de `test/auth/rotas-pipeline.test.ts`. Depende das demais.
+
+## T-298 — A fila do turno e os atrasados têm altura fixa [pendente]
+- Refs: US-119, US-120, AC-762
+- Arquivos: src/components/tarefas/fila-turno.tsx, src/components/tarefas/tarefas-atrasadas.tsx, test/components/tarefas/fila-turno-tela.test.tsx, test/components/tarefas/atrasadas-tela.test.tsx
+- Notas: décimo quarto ajuste da série do dono (03/11): pedido para a Fila do Turno, mesmo padrão do funil, da lista e da conversa (T-284/T-285/T-291); a tela de atrasados recebeu o mesmo (é a irmã, com a mesma tabela longa). A Agenda não foi mexida.

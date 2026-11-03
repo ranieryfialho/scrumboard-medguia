@@ -109,3 +109,8 @@
 - Refs: AC-380
 - Arquivos: src/lib/auth/rotas.ts, test/auth/middleware.test.ts
 - Notas: achado no staging em 30/10: `/api/acesso/*` não estava na lista pública e o middleware devolvia 401, então convite, esqueci-senha e redefinição de senha nunca funcionavam para quem estava deslogado.
+
+## T-297 — O número de tarefas do menu acompanha a fila [pendente]
+- Refs: US-098, AC-761
+- Arquivos: src/components/shell/use-contadores.ts, test/components/shell/casca.test.tsx
+- Notas: achado pelo dono em 03/11 ("a tarefa do turno continua com 6 mesmo zerando a fila"): o menu lia os contadores só ao montar (e o do WhatsApp por evento do navegador), então ficava velho enquanto a fila mudava. Agora o hook abre o canal `/api/stream` e relê os dois contadores de tarefas em `cadencia.fila_alterada` e `stream.reconectado` (o mesmo evento que a fila e o funil já usam). Custa uma conexão de tempo real a mais por aba. Verificado no navegador: zerar a fila de 6 toques levou o selo de 6 a 3 e depois fez o selo sumir.

@@ -313,6 +313,13 @@ verdade, com carregando, vazio e erro, para nunca cair numa página quebrada.
 - **Quando** os dados estão carregando, voltam vazios ou a API falha
 - **Então** a tela mostra, respectivamente, um esqueleto de carregamento, uma mensagem de vazio com o próximo passo ("Nenhuma tarefa no turno", "Nenhum toque atrasado", "Nenhuma reunião neste período") e uma mensagem de erro com "Tentar de novo"
 
+#### AC-762 — A fila do turno e os atrasados têm altura fixa
+
+- **Dado** a fila do turno ou o controle de atrasos, com muitos toques
+- **Quando** a tela abre
+- **Então** a página não cresce com a quantidade de toques: o quadro ocupa a altura da tela, o título, os indicadores, a próxima tarefa e os filtros ficam parados, e só a tabela dos toques rola por dentro, com o cabeçalho (Horário, Lead, Etapa…) fixo no topo dela
+- **E** a paginação, e em atrasados a barra de ações dos selecionados, ficam sempre à vista embaixo
+
 ## Fora de escopo
 
 - **Integrações externas:** Google Meet e Outlook (link de sala, "Entrar no Meet", sincronização de calendário) e os lembretes automáticos por WhatsApp e e-mail do "Protocolo Anti-No-Show": não existem no sistema; aparecem "em breve" ou somem.
