@@ -1,7 +1,7 @@
 // T-183 (fase4-tarefas-agenda, US-120): a tela "Controle de Atrasos e Toques
 // Vencidos" (src/components/tarefas/tarefas-atrasadas.tsx).
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { act, cleanup, render, screen, waitFor, within } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { TarefasAtrasadas } from '../../../src/components/tarefas/tarefas-atrasadas';
@@ -105,12 +105,57 @@ describe('T-183: TarefasAtrasadas', () => {
 
   test('os indicadores mostram atrasados, receita sob risco com ticket médio e o maior atraso @spec:AC-473', async () => {
     render(<TarefasAtrasadas />);
-    await screen.findByText('Receita sob risco');
+    await screen.findByText('Receita (MRR) sob risco');
     expect(screen.getByText('Toques atrasados')).toBeTruthy();
     expect(screen.getByText(/41\.500/)).toBeTruthy();
-    expect(screen.getByText(/Ticket médio em risco: .*10\.375/)).toBeTruthy();
+    expect(screen.getByText('Ticket médio em risco:').nextSibling!.textContent).toMatch(/10\.375/);
     expect(screen.getByText('+3h 45m')).toBeTruthy();
     expect(screen.queryByText(/Recuperação de SLA/i)).toBeFalsy();
+  });
+
+  test('os quatro cartões seguem o protótipo: etiqueta "Crítico", apoio embaixo de cada um e "Cards em risco" no lugar da recuperação @spec:AC-763', async () => {
+    render(<TarefasAtrasadas />);
+    await screen.findByText('Receita (MRR) sob risco');
+
+    const cartao = (rotulo: string) => screen.getByText(rotulo).closest('div.rounded-2xl') as HTMLElement;
+    const atrasados = cartao('Toques atrasados');
+    expect(within(atrasados).getAllByText('4')).toHaveLength(2); // o número grande e o rodapé "Cards afetados"
+    expect(within(atrasados).getByText('Crítico')).toBeTruthy();
+    expect(within(atrasados).getByText('Cadências bloqueadas sem interação')).toBeTruthy();
+    expect(within(atrasados).getByText('Cards afetados:').nextSibling!.textContent).toBe('4');
+
+    const receita = cartao('Receita (MRR) sob risco');
+    expect(within(receita).getByText('Valor somado de 4 cards parados')).toBeTruthy();
+    expect(within(receita).getByText('/mês')).toBeTruthy();
+
+    const maior = cartao('Maior tempo de atraso');
+    expect(within(maior).getByText('Cardio Vida')).toBeTruthy();
+    expect(within(maior).getByText('Fila ordenada por:').nextSibling!.textContent).toBe('maior atraso primeiro');
+
+    const emRisco = cartao('Cards em risco');
+    expect(within(emRisco).getByText('Cards com ao menos um toque atrasado')).toBeTruthy();
+    expect(within(emRisco).getByText('Toques atrasados por card:').nextSibling!.textContent).toBe('1,0');
+
+    // o cabeçalho conta os casos e a classificação muda o rodapé do maior atraso
+    expect(screen.getByText('4 casos em risco imediato')).toBeTruthy();
+    fireEvent.change(screen.getByLabelText('Classificação'), { target: { value: 'menor' } });
+    expect(within(cartao('Maior tempo de atraso')).getByText('Fila ordenada por:').nextSibling!.textContent).toBe('menor atraso primeiro');
+  });
+
+  test('sem atrasados os cartões mostram zero, "Em dia" e traço, e o cabeçalho não acusa casos @spec:AC-763', async () => {
+    fila = [];
+    resumo = { atrasados: 0, receitaSobRisco: 0, cardsEmRisco: 0, ticketMedio: null, maiorAtraso: null };
+    render(<TarefasAtrasadas />);
+    await screen.findByText('Receita (MRR) sob risco');
+
+    const cartao = (rotulo: string) => screen.getByText(rotulo).closest('div.rounded-2xl') as HTMLElement;
+    expect(within(cartao('Toques atrasados')).getByText('Em dia')).toBeTruthy();
+    expect(within(cartao('Toques atrasados')).queryByText('Crítico')).toBeNull();
+    expect(within(cartao('Maior tempo de atraso')).getByText('—')).toBeTruthy();
+    expect(within(cartao('Maior tempo de atraso')).getByText('Nada atrasado no momento')).toBeTruthy();
+    expect(within(cartao('Receita (MRR) sob risco')).getByText('Nenhum card com toque parado')).toBeTruthy();
+    expect(within(cartao('Cards em risco')).getByText('Toques atrasados por card:').nextSibling!.textContent).toBe('—');
+    expect(screen.queryByText(/em risco imediato/)).toBeNull();
   });
 
   test('a fila lista só os atrasados, do maior atraso para o menor, com faixa de cor @spec:AC-474', async () => {

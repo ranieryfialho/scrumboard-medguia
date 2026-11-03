@@ -144,7 +144,14 @@ quem possa atender, para não perder oportunidade por falta de resposta.
 
 - **Dado** cards com toques atrasados, com valores diferentes
 - **Quando** a tela é aberta
-- **Então** os cartões mostram "Toques atrasados" (quantidade), "Receita sob risco" (valor somado dos cards com ao menos um toque atrasado, sem repetir card, com o rótulo "/mês" e o ticket médio por card) e "Maior tempo de atraso" (em horas e minutos, com o nome do lead); sem atrasados mostram zero e traço; "Recuperação de SLA" do protótipo **não aparece** (sem dado)
+- **Então** os cartões mostram "Toques atrasados" (quantidade), "Receita (MRR) sob risco" (valor somado dos cards com ao menos um toque atrasado, sem repetir card, com o rótulo "/mês" e o ticket médio por card) e "Maior tempo de atraso" (em horas e minutos, com o nome do lead); sem atrasados mostram zero e traço; "Recuperação de SLA" do protótipo **não aparece** (sem dado)
+
+#### AC-763 — Os quatro cartões de atrasos seguem o protótipo
+
+- **Dado** a tela de tarefas atrasadas
+- **Então** o topo tem quatro cartões como no protótipo — cada um com o rótulo, um ícone colorido, o número grande, uma linha de explicação e, embaixo de um traço, um dado de apoio: "Toques atrasados" (com a etiqueta "Crítico", ou "Em dia" quando zero, e os cards afetados), "Receita (MRR) sob risco" (com o ticket médio por card), "Maior tempo de atraso" (com o nome do lead e como a fila está ordenada) e "Cards em risco" (com a média de toques atrasados por card)
+- **E** o cabeçalho ganha um ponto vermelho e a etiqueta "N casos em risco imediato" quando há atrasados, e some quando não há
+- **E** o quarto cartão do protótipo ("Recuperação de SLA hoje") não existe no sistema: no lugar dele fica "Cards em risco", que o sistema sabe calcular; o "SLA de 4 horas", a "redistribuição" e o "plantão de resgate" do protótipo também não aparecem (sem dado ou regra)
 
 #### AC-474 — A fila de resgate lista só os atrasados, do maior atraso para o menor
 

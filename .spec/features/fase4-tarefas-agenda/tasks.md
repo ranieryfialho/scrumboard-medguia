@@ -70,3 +70,8 @@
 - Refs: US-119, US-120, AC-762
 - Arquivos: src/components/tarefas/fila-turno.tsx, src/components/tarefas/tarefas-atrasadas.tsx, test/components/tarefas/fila-turno-tela.test.tsx, test/components/tarefas/atrasadas-tela.test.tsx
 - Notas: décimo quarto ajuste da série do dono (03/11): pedido para a Fila do Turno, mesmo padrão do funil, da lista e da conversa (T-284/T-285/T-291); a tela de atrasados recebeu o mesmo (é a irmã, com a mesma tabela longa). A Agenda não foi mexida.
+
+## T-299 — Os cartões de "Tarefas Atrasadas" seguem o protótipo [pendente]
+- Refs: US-120, AC-473, AC-763
+- Arquivos: src/components/tarefas/kpis-atrasados.tsx, src/components/tarefas/tarefas-atrasadas.tsx, test/components/tarefas/atrasadas-tela.test.tsx
+- Notas: décimo quinto ajuste da série do dono (03/11). Só os cartões do topo e a etiqueta do cabeçalho mudam (a altura fixa já veio no T-298). Escolhas minhas: o quarto cartão é "Cards em risco" porque a "Recuperação de SLA" do protótipo (88,4%; 27 de 31 regularizados) não tem dado no sistema; o rodapé do "Maior tempo de atraso" mostra a ordenação da fila no lugar de "Expira redistribuição em" (regra que não existe). Os blocos "Regra de governança / transbordo > 4 horas" e "Plantão de Resgate" do protótipo continuam de fora: dependem de regras e de capacidade por consultor que o sistema não tem.
