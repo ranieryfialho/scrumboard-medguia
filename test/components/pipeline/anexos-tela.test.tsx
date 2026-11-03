@@ -238,12 +238,11 @@ describe('T-172: tela de anexos e evidências', () => {
   });
 
   describe('AC-429: ações do protótipo sem backend aparecem como "em breve"', () => {
-    test('exportar dossiê, excluir, tornar evidência, marcar como evidência e vincular à etapa não disparam nada @spec:AC-429', async () => {
+    test('excluir, tornar evidência, marcar como evidência e vincular à etapa não disparam nada @spec:AC-429', async () => {
       const usuario = userEvent.setup();
       await abrirTela();
 
       for (const rotulo of [
-        'Exportar Dossiê (ZIP)',
         'Marcar como evidência de transição de etapa',
         'Vincular à etapa',
       ]) {
@@ -254,7 +253,6 @@ describe('T-172: tela de anexos e evidências', () => {
       expect(within(linhaDe('Proposta Comercial v1.2.pdf')).queryByText('Tornar Evidência')).toBeNull();
 
       const antes = fetchFalso.mock.calls.length;
-      await usuario.click(screen.getByText('Exportar Dossiê (ZIP)'));
       await usuario.click(within(linhaDe('print-aceite.png')).getByText('Excluir'));
       expect(fetchFalso.mock.calls.length).toBe(antes);
     });
@@ -264,6 +262,27 @@ describe('T-172: tela de anexos e evidências', () => {
 
       expect(screen.queryByText(/ISO-27799|ISO 27799|Governança/)).toBeNull();
       expect(screen.queryByText(/Espaço utilizado/i)).toBeNull();
+    });
+  });
+
+  describe('AC-750: exportar o dossiê do card', () => {
+    test('com anexos, "Exportar Dossiê (ZIP)" é um link de download da rota do dossiê e nada é buscado ao exibir @spec:AC-750', async () => {
+      await abrirTela();
+
+      const link = screen.getByRole('link', { name: 'Exportar Dossiê (ZIP)' });
+      expect(link.getAttribute('href')).toBe(`/api/oportunidades/${CARD_ID}/dossie`);
+      expect(fetchFalso.mock.calls.some(([url]) => String(url).includes('/dossie'))).toBe(false);
+    });
+
+    test('sem anexos, o botão aparece desabilitado e sem link @spec:AC-750', async () => {
+      anexosDoServidor = [];
+      await montar();
+      await screen.findByText('Nenhum anexo ainda');
+
+      expect(screen.queryByRole('link', { name: 'Exportar Dossiê (ZIP)' })).toBeNull();
+      const botao = screen.getByRole('button', { name: 'Exportar Dossiê (ZIP)' });
+      expect(botao.getAttribute('aria-disabled')).toBe('true');
+      expect(botao.getAttribute('href')).toBeNull();
     });
   });
 

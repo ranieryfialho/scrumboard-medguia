@@ -90,3 +90,8 @@
 - Refs: US-112, US-113, AC-749
 - Arquivos: src/app/(app)/pipeline/[id]/anexos/page.tsx, src/app/(app)/pipeline/[id]/cadencia/page.tsx, test/components/pipeline/anexos-tela.test.tsx, test/components/pipeline/cadencia-tela.test.tsx
 - Notas: nono ajuste de tela da série do dono (03/11): o pedido foi para Anexos, e Cadência recebeu o mesmo padrão da conversa (T-291) porque tem a mesma lista longa. Lição: a área que rola precisa ser `relative`, senão itens `absolute` dentro dela (o `<input type="file">` escondido do envio) escapam do corte e a página inteira volta a rolar (medido: 1759px numa janela de 900px com 12 anexos).
+
+## T-293 — Exportar o dossiê do card em ZIP [pendente]
+- Refs: US-112, AC-429, AC-750, AC-751
+- Arquivos: src/lib/zip.ts, src/domain/pipeline/dossie.ts, src/repositories/anexos-dossie.ts, src/repositories/linha-do-tempo.ts, src/components/pipeline/detalhe/linha-do-tempo.tsx, src/app/api/oportunidades/[id]/dossie/route.ts, src/app/(app)/pipeline/[id]/anexos/page.tsx, test/lib/dossie.test.ts, test/api/dossie-anexos.test.ts, test/components/pipeline/anexos-tela.test.tsx
+- Notas: décimo ajuste de tela da série do dono (03/11). Escolhas minhas, sem ele ter definido: qualquer papel que vê o card exporta (os anexos já abrem para todos pelo "Link Seguro"); o ZIP fica em memória e o limite é 100 MB; sem biblioteca de ZIP (gerador próprio, método armazenado, porque imagem e PDF não encolhem); o evento `dossie_exportado` fica na linha do tempo porque dado pessoal sai do sistema (LGPD). "Exportar Dossiê (ZIP)" deixa de ser "em breve" (sai do AC-429).

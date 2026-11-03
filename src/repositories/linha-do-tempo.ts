@@ -77,6 +77,11 @@ function textoDoEvento(
         ? `Responsável alterado: de "${dados.deNome}" para "${para}"`
         : `Responsável definido: "${para}"`;
     }
+    case 'dossie_exportado': {
+      const arquivos = typeof dados.arquivos === 'number' ? dados.arquivos : 0;
+      const problemas = (typeof dados.divergentes === 'number' ? dados.divergentes : 0) + (typeof dados.ausentes === 'number' ? dados.ausentes : 0);
+      return `Dossiê exportado (${arquivos === 1 ? '1 arquivo' : `${arquivos} arquivos`}${problemas > 0 ? `, ${problemas} com problema de integridade` : ''})`;
+    }
     case 'edicao_card': {
       // AC-737: o que mudou, com o valor de antes e o de depois (telefone, e-mail e valor entram como foram gravados).
       const rotulos: Record<string, string> = { nome: 'Nome', email: 'E-mail', origem: 'Origem', telefone: 'Telefone', valor: 'Valor estimado',

@@ -49,6 +49,7 @@ const ICONES: Record<string, string> = {
   conexao_whatsapp: 'chat',
   reatribuicao: 'swap_horiz',
   edicao_card: 'edit_note',
+  dossie_exportado: 'folder_zip',
 };
 
 function formatarData(iso: string): string {

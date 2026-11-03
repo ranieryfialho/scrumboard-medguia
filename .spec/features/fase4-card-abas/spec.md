@@ -122,7 +122,7 @@ segurança e enviar novos, para manter o dossiê da negociação em um lugar só
 #### AC-429 — Ações do protótipo sem backend aparecem como "em breve"
 
 - **Dado** a tela de anexos
-- **Quando** o usuário olha "Exportar Dossiê (ZIP)", "Mover Etapa" do cabeçalho, "Tornar Evidência", o ícone de excluir, a caixa "Marcar como evidência" e "Vincular à etapa" do envio
+- **Quando** o usuário olha "Tornar Evidência", o ícone de excluir, a caixa "Marcar como evidência" e "Vincular à etapa" do envio
 - **Então** aparecem visíveis, marcados "em breve", sem disparar nenhuma ação; o bloco de governança "ISO-27799" e o "espaço utilizado" **não aparecem** (sem dado)
 
 ### US-113 — Acompanhar a cadência de 18 toques do card (tela 10)
@@ -303,6 +303,22 @@ cadência ao lado, para agir sem trocar de tela.
 - **Então** a página não cresce: o quadro ocupa a altura da tela, o cabeçalho do card, as abas e o título da tela ficam parados, e o resto (filtros, lista e envio em Anexos; resumo, matriz e histórico em Cadência) rola por dentro
 - **E** nada posicionado dentro da área que rola (como o campo de arquivo escondido) pode empurrar a altura da página
 - **E** em janela estreita a página volta a rolar normalmente
+
+#### AC-750 — Exportar o dossiê do card
+
+- **Dado** a tela de anexos de um card com ao menos um anexo
+- **Quando** o usuário clica em "Exportar Dossiê (ZIP)"
+- **Então** o navegador baixa um ZIP chamado `dossie-<nome-do-lead>-<data>.zip` com todos os anexos do card, do mais antigo ao mais novo, numa pasta `anexos/` com o nome original (nomes repetidos ganham "(2)", "(3)"; sem nome original, o arquivo recebe um nome gerado), mais um `manifesto.csv`
+- **E** o manifesto tem uma linha por anexo com o arquivo, o nome original, o tipo, o tamanho, o SHA-256 gravado no envio, quem enviou, quando, a etapa de evidência (se houver) e a integridade
+- **E** sem anexo o botão aparece desabilitado e a rota responde 422; anexos de outra empresa nunca entram, e card de outra empresa ou inexistente é "não encontrado"
+- **E** um dossiê que passa de 100 MB é recusado (413)
+
+#### AC-751 — Integridade e registro do dossiê
+
+- **Dado** a exportação de um dossiê
+- **Então** cada anexo é conferido contra o SHA-256 gravado no envio: "ok" se confere, "divergente" se o arquivo mudou no servidor, "ausente" se sumiu — e um arquivo ausente não derruba a exportação (fica só no manifesto, sem o arquivo)
+- **E** a linha do tempo do card registra quem exportou, quando, quantos arquivos iam no dossiê e quantos tinham problema de integridade
+- **E** o manifesto é CSV em UTF-8 com BOM, e textos que começariam com `=`, `+`, `-` ou `@` ganham um apóstrofo para o Excel não rodá-los como fórmula; nomes de arquivo dentro do ZIP nunca levam pasta, caractere de controle nem ponto na frente
 
 ## Fora de escopo
 

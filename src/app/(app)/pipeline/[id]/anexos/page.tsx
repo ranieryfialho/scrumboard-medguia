@@ -12,7 +12,6 @@ import { use, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { MoldeDoCard } from '@/components/pipeline/card/molde-do-card';
 import { EsqueletoCarregando, EstadoErro, EstadoVazio } from '@/components/pipeline/pecas/estados';
-import { ItemEmBreve } from '@/components/pipeline/pecas/selo-em-breve';
 import { EnvioAnexos } from '@/components/pipeline/anexos/envio-anexos';
 import {
   FiltrosAnexos,
@@ -91,7 +90,29 @@ function ConteudoAnexos({ cardId, onMudou }: { cardId: string; onMudou: () => vo
             </span>
             Upload de Arquivo / Evidência
           </button>
-          <ItemEmBreve rotulo="Exportar Dossiê (ZIP)" icone="folder_zip" className="h-10 px-4 rounded-xl bg-surface-card shadow-sm" />
+          {anexos && anexos.length > 0 ? (
+            <a
+              href={`/api/oportunidades/${cardId}/dossie`}
+              className="h-10 px-4 rounded-xl bg-surface-card hover:bg-surface-subtle shadow-sm flex items-center gap-2 font-label-md text-label-md font-semibold text-text-primary transition-colors"
+            >
+              <span aria-hidden="true" className="material-symbols-outlined text-[19px]">
+                folder_zip
+              </span>
+              Exportar Dossiê (ZIP)
+            </a>
+          ) : (
+            <span
+              role="button"
+              aria-disabled="true"
+              title="Envie ao menos um anexo para exportar o dossiê"
+              className="h-10 px-4 rounded-xl bg-surface-card shadow-sm flex items-center gap-2 font-label-md text-label-md text-text-muted cursor-not-allowed"
+            >
+              <span aria-hidden="true" className="material-symbols-outlined text-[19px]">
+                folder_zip
+              </span>
+              Exportar Dossiê (ZIP)
+            </span>
+          )}
         </div>
       </div>
 
