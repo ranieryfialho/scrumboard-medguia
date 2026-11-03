@@ -288,6 +288,14 @@ cadência ao lado, para agir sem trocar de tela.
 - **Então** a linha do tempo do card ganha um evento com quem editou, quando, e o valor de antes e o de depois de cada campo que mudou (o termo aparece como "sim"/"não")
 - **E** salvar sem mudar nada não registra nada
 
+#### AC-748 — A conversa tem altura fixa
+
+- **Dado** a tela de conversa numa janela larga
+- **Quando** a conversa tem muitas mensagens
+- **Então** a página não cresce: o quadro ocupa a altura da tela, o cabeçalho do card, as abas, o campo de mensagem e as respostas rápidas ficam sempre à vista, e só a lista de mensagens rola por dentro
+- **E** a coluna da direita (cadência, proposta, qualificação e notas) rola sozinha quando não cabe
+- **E** em janela estreita a página volta a rolar normalmente
+
 ## Fora de escopo
 
 - **Enviar arquivo e áudio pelo WhatsApp**: feito em AC-744 a AC-747 (pedido de 03/11).

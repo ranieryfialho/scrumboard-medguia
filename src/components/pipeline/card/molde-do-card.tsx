@@ -33,10 +33,12 @@ interface MoldeDoCardProps {
   aba: Exclude<AbaDoCard, 'resumo'>;
   /** Mudar este número refaz a busca dos contadores (ex.: depois de enviar um anexo). */
   versaoDosContadores?: number;
+  /** AC-748: a tela ocupa a altura da janela (menos o topo) e o conteúdo rola por dentro; só a partir da largura `lg`. */
+  alturaFixa?: boolean;
   children: (card: CardDoMolde) => ReactNode;
 }
 
-export function MoldeDoCard({ cardId, aba, versaoDosContadores = 0, children }: MoldeDoCardProps) {
+export function MoldeDoCard({ cardId, aba, versaoDosContadores = 0, alturaFixa = false, children }: MoldeDoCardProps) {
   const [card, setCard] = useState<CardDoMolde | null>(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(false);
@@ -103,7 +105,7 @@ export function MoldeDoCard({ cardId, aba, versaoDosContadores = 0, children }: 
   }
 
   return (
-    <div className="flex flex-col w-full">
+    <div className={alturaFixa ? 'flex flex-col w-full lg:h-[calc(100dvh-4rem)] lg:min-h-[40rem]' : 'flex flex-col w-full'}>
       <CabecalhoCard
         leadNome={card.leadNome}
         etapaAtualNome={nomeDaEtapa(card.etapaId)}
@@ -129,7 +131,7 @@ export function MoldeDoCard({ cardId, aba, versaoDosContadores = 0, children }: 
         />
       )}
       <AbasDoCard cardId={card.id} ativa={aba} contagens={contagens} />
-      {children(card)}
+      {alturaFixa ? <div className="flex flex-col lg:flex-1 lg:min-h-0">{children(card)}</div> : children(card)}
     </div>
   );
 }

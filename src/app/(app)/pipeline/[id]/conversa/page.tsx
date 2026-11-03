@@ -16,9 +16,9 @@ export default function PipelineConversaPage({ params }: { params: Promise<{ id:
   const { id } = use(params);
 
   return (
-    <MoldeDoCard cardId={id} aba="whatsapp">
+    <MoldeDoCard cardId={id} aba="whatsapp" alturaFixa>
       {(card) => (
-        <div className="p-gutter flex flex-col gap-space-md w-full">
+        <div className="p-gutter flex flex-col gap-space-md w-full lg:flex-1 lg:min-h-0">
           <div className="flex flex-wrap items-center justify-between gap-space-sm">
             <div>
               <h2 className="font-headline-md text-headline-md text-text-primary">WhatsApp &amp; Conversas</h2>
@@ -32,11 +32,11 @@ export default function PipelineConversaPage({ params }: { params: Promise<{ id:
             )}
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
-            <div className="lg:col-span-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 lg:grid-rows-1 gap-space-lg items-start lg:items-stretch lg:flex-1 lg:min-h-0">
+            <div className="lg:col-span-8 lg:min-h-0 flex flex-col">
               <ConversaLead leadId={card.leadId} leadNome={card.leadNome} />
             </div>
-            <div className="lg:col-span-4">
+            <div className="lg:col-span-4 lg:min-h-0 lg:overflow-y-auto">
               <PainelLateral cardId={card.id} valor={card.valor ?? null} />
             </div>
           </div>

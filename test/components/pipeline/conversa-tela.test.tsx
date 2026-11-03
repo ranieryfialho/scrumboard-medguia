@@ -626,6 +626,26 @@ describe('T-174: tela da conversa de WhatsApp do lead', () => {
     });
   });
 
+  describe('AC-748: a conversa tem altura fixa', () => {
+    test('o quadro ocupa a altura da tela, só a lista de mensagens e a coluna da direita rolam por dentro @spec:AC-748', async () => {
+      await abrirTela();
+
+      const conversa = screen.getByRole('region', { name: 'Conversa do WhatsApp' });
+      expect(conversa.className).toContain('lg:min-h-0');
+      expect(conversa.className).toContain('lg:flex-1');
+      expect(conversa.querySelectorAll('.overflow-y-auto')).toHaveLength(1);
+      expect(conversa.querySelector('.overflow-y-auto')!.className).toContain('flex-1');
+
+      const raiz = conversa.closest('[class*="lg:h-[calc(100dvh-4rem)]"]') as HTMLElement;
+      expect(raiz).toBeTruthy();
+      expect(raiz.className).toContain('lg:min-h-[40rem]');
+
+      const coluna = screen.getByRole('complementary', { name: 'Painel do card' }).parentElement as HTMLElement;
+      expect(coluna.className).toContain('lg:overflow-y-auto');
+      expect(coluna.className).toContain('lg:min-h-0');
+    });
+  });
+
   describe('AC-422: a tela tem estado de vazio e de erro', () => {
     test('sem mensagens mostra o vazio com o próximo passo @spec:AC-422', async () => {
       mensagensDoServidor = [];

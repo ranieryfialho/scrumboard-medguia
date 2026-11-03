@@ -262,7 +262,7 @@ export function ConversaLead({ leadId, leadNome = '' }: ConversaLeadProps) {
   }
 
   return (
-    <section aria-label="Conversa do WhatsApp" className="bg-surface-card rounded-2xl shadow-sm flex flex-col min-h-[32rem]">
+    <section aria-label="Conversa do WhatsApp" className="bg-surface-card rounded-2xl shadow-sm flex flex-col min-h-[32rem] lg:min-h-0 lg:flex-1">
       <div className="p-space-md border-b border-border-subtle flex flex-col gap-space-sm">
         <div className="flex flex-wrap items-center gap-space-sm">
           <SeletorTelefone telefones={telefones} escolhido={escolhido} onEscolher={setEscolhido} />
