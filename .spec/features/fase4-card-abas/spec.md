@@ -220,11 +220,35 @@ cadência ao lado, para agir sem trocar de tela.
 - **Quando** o usuário olha a coluna da direita
 - **Então** vê "Cadência Comercial" (toque da vez, progresso e a próxima ação) e "Notas Internas" com as anotações internas do card (as da aba Resumo) e o campo "Adicionar nota interna rápida" que grava uma nova anotação no card; entre os dois ficam "Dados da Proposta" e "Qualificação Técnica" (AC-742)
 
-#### AC-444 — Anexar arquivo segue "em breve"
+#### AC-744 — Gravar e enviar áudio
 
-- **Dado** a tela de conversa
-- **Quando** o usuário olha "Anexar arquivo"
-- **Então** aparece visível, marcado "em breve", sem disparar ação (o envio de arquivo e áudio vem numa etapa própria)
+- **Dado** a tela de conversa com o WhatsApp conectado
+- **Quando** o usuário clica no microfone, grava e clica em enviar
+- **Então** o áudio vai para o telefone escolhido do lead como mensagem de voz, aparece na conversa como mensagem enviada com o player, e o microfone do navegador é liberado
+- **E** durante a gravação aparece o tempo e dá para descartar sem enviar nada; a gravação para sozinha aos 5 minutos
+- **E** se o navegador não grava áudio ou o microfone é negado, a tela avisa em vez de quebrar; sem WhatsApp conectado, gravar e anexar ficam desabilitados
+- **E** enviar áudio nunca move o card nem encerra a cadência
+
+#### AC-745 — Ouvir e abrir a mídia da conversa
+
+- **Dado** mensagens com áudio, imagem, vídeo ou documento (as que o lead mandou e as que a equipe enviou)
+- **Quando** a conversa abre
+- **Então** cada uma aparece com o player de áudio ou de vídeo, a imagem (que abre em tamanho grande) ou o documento para baixar, sem o texto marcador "[áudio]", "[imagem]" etc., e a legenda, quando houver, continua escrita
+- **E** o arquivo recebido é buscado na Evolution só na primeira vez que alguém o abre e fica guardado no servidor; as próximas aberturas não chamam a Evolution
+- **E** o arquivo só abre para quem está na empresa da mensagem; de outra empresa, inexistente ou de mensagem sem mídia é "não encontrado"; se o arquivo não existe mais, a tela mostra "Mídia indisponível" no lugar do player
+
+#### AC-746 — Anexar arquivo
+
+- **Dado** a tela de conversa com o WhatsApp conectado
+- **Quando** o usuário escolhe um arquivo em "Anexar arquivo", pode escrever uma legenda e clica em enviar
+- **Então** o arquivo vai para o telefone escolhido do lead (imagem e vídeo como tal; PDF, Office, texto, CSV e áudio-arquivo como documento), a legenda vai junto, e a conversa mostra a mídia; antes de enviar, o arquivo escolhido aparece com nome e tamanho e dá para removê-lo
+
+#### AC-747 — Só tipos e tamanhos seguros
+
+- **Dado** qualquer envio de áudio ou arquivo
+- **Então** só entram imagens (JPEG, PNG, WebP, GIF), vídeo MP4, áudio (Ogg, WebM, MP4, MP3, WAV, AAC), PDF, Word, Excel, PowerPoint, texto e CSV, até 16 MB; HTML, SVG, executáveis e qualquer outro tipo são recusados (415), arquivo acima do limite é recusado (413) e vazio ou pedido mal formado é 400, sempre sem chamar a Evolution nem gravar mensagem
+- **E** imagem, PDF e GIF precisam ter os bytes do tipo que declaram
+- **E** o arquivo é servido de volta só com tipos da lista (qualquer outro como download genérico), com `nosniff`, e documentos sempre como download
 
 #### AC-739 — Mover de etapa, ganho e perdido nas abas
 
@@ -266,7 +290,7 @@ cadência ao lado, para agir sem trocar de tela.
 
 ## Fora de escopo
 
-- **Enviar arquivo e áudio pelo WhatsApp**: ainda não existem no backend; "Anexar arquivo" aparece "em breve" (etapa seguinte do pedido de 03/11).
+- **Enviar arquivo e áudio pelo WhatsApp**: feito em AC-744 a AC-747 (pedido de 03/11).
 - **Conversa com número que não é lead** (botão "Novo Número"): é a tela 17 do inventário (`/whatsapp/nova`), de outra feature.
 - **Caixa de entrada geral** (`/whatsapp`), conexão e configuração do WhatsApp (telas 16, 18 e 19): outra feature. Aqui só se mostra o estado da conexão e o link.
 - **Pausar e reiniciar a cadência**, resultado "pediu retorno mais tarde" e editar o script do toque: sem backend.

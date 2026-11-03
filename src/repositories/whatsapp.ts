@@ -104,10 +104,25 @@ export async function buscarLeadPorNumero(
   return comTenant(db, contexto, (tx) => localizarLeadPorNumero(tx, contexto.empresaId, numero));
 }
 
+/** T-290: a mídia que a mensagem carrega; `arquivo` só existe quando o arquivo já está guardado no volume. */
+export interface MidiaDaMensagem {
+  tipo: 'audio' | 'imagem' | 'video' | 'documento' | 'figurinha';
+  mimetype: string | null;
+  nome: string | null;
+  arquivo?: string | null;
+}
+
+function colunasDaMidia(midia: MidiaDaMensagem | undefined) {
+  return midia
+    ? { midiaTipo: midia.tipo, midiaMimetype: midia.mimetype, midiaNome: midia.nome, midiaArquivo: midia.arquivo ?? null }
+    : {};
+}
+
 export interface DadosMensagemRecebida {
   numero: string;
   texto: string;
   evolutionMessageId: string | null;
+  midia?: MidiaDaMensagem;
 }
 
 export interface ResultadoMensagemRecebida {
@@ -146,6 +161,7 @@ export async function registrarMensagemRecebida(
         mensagem: dados.texto,
         direcao: 'recebida',
         evolutionMessageId: dados.evolutionMessageId,
+        ...colunasDaMidia(dados.midia),
       })
       .onConflictDoNothing({
         target: [whatsappMensagens.empresaId, whatsappMensagens.evolutionMessageId],
@@ -169,6 +185,7 @@ export interface DadosMensagemEnviada {
   numero: string;
   texto: string;
   evolutionMessageId: string | null;
+  midia?: MidiaDaMensagem;
 }
 
 export interface ResultadoMensagemEnviada {
@@ -201,6 +218,7 @@ export async function registrarMensagemEnviada(
         mensagem: dados.texto,
         direcao: 'enviada',
         evolutionMessageId: dados.evolutionMessageId,
+        ...colunasDaMidia(dados.midia),
       })
       .returning({ id: whatsappMensagens.id });
 
@@ -216,6 +234,8 @@ export interface MensagemConversa {
   created_at: Date;
   numero: string;
   status: string;
+  /** T-290: só vem quando a mensagem tem mídia (o arquivo se abre por `GET /api/whatsapp/midia/:id`). */
+  midia?: { tipo: MidiaDaMensagem['tipo']; mimetype: string | null; nome: string | null };
 }
 
 function mapearParaHistoricoLegado(linha: {
@@ -225,6 +245,9 @@ function mapearParaHistoricoLegado(linha: {
   criadoEm: Date;
   numero: string;
   status: string;
+  midiaTipo: string | null;
+  midiaMimetype: string | null;
+  midiaNome: string | null;
 }): MensagemConversa {
   return {
     id: linha.id,
@@ -233,6 +256,9 @@ function mapearParaHistoricoLegado(linha: {
     created_at: linha.criadoEm,
     numero: linha.numero,
     status: linha.status,
+    ...(linha.midiaTipo
+      ? { midia: { tipo: linha.midiaTipo as MidiaDaMensagem['tipo'], mimetype: linha.midiaMimetype, nome: linha.midiaNome } }
+      : {}),
   };
 }
 
@@ -243,6 +269,9 @@ const CAMPOS_HISTORICO = {
   criadoEm: whatsappMensagens.criadoEm,
   numero: whatsappMensagens.numero,
   status: whatsappMensagens.status,
+  midiaTipo: whatsappMensagens.midiaTipo,
+  midiaMimetype: whatsappMensagens.midiaMimetype,
+  midiaNome: whatsappMensagens.midiaNome,
 };
 
 const LIMITE_HISTORICO = 200;
@@ -430,5 +459,55 @@ export async function marcarConversaComoLida(
       .returning({ id: whatsappMensagens.id });
 
     return atualizadas.length;
+  });
+}
+
+/** T-290 (AC-745): o que a rota da mídia precisa para abrir o arquivo de uma mensagem. */
+export interface MidiaParaAbrir {
+  id: string;
+  tipo: MidiaDaMensagem['tipo'];
+  mimetype: string | null;
+  nome: string | null;
+  arquivo: string | null;
+  evolutionMessageId: string | null;
+}
+
+/** A mídia de uma mensagem da empresa do `contexto`; `null` se a mensagem não existe, é de outra empresa ou não tem mídia. */
+export async function buscarMidiaDaMensagem(
+  db: NodePgDatabase,
+  contexto: Pick<ContextoTenant, 'empresaId'>,
+  mensagemId: string
+): Promise<MidiaParaAbrir | null> {
+  return comTenant(db, contexto, async (tx) => {
+    const [linha] = await tx
+      .select({
+        id: whatsappMensagens.id,
+        tipo: whatsappMensagens.midiaTipo,
+        mimetype: whatsappMensagens.midiaMimetype,
+        nome: whatsappMensagens.midiaNome,
+        arquivo: whatsappMensagens.midiaArquivo,
+        evolutionMessageId: whatsappMensagens.evolutionMessageId,
+      })
+      .from(whatsappMensagens)
+      .where(and(eq(whatsappMensagens.id, mensagemId), eq(whatsappMensagens.empresaId, contexto.empresaId)))
+      .limit(1);
+    if (!linha || !linha.tipo) return null;
+    return { ...linha, tipo: linha.tipo as MidiaDaMensagem['tipo'] };
+  });
+}
+
+/** T-290: guarda o caminho do arquivo (e o mimetype real) depois de buscá-lo na Evolution. */
+export async function guardarArquivoDaMidia(
+  db: NodePgDatabase,
+  contexto: Pick<ContextoTenant, 'empresaId'>,
+  mensagemId: string,
+  arquivo: string,
+  mimetype: string
+): Promise<void> {
+  await comTenant(db, contexto, async (tx) => {
+    await tx
+      .update(whatsappMensagens)
+      .set({ midiaArquivo: arquivo, midiaMimetype: mimetype })
+      .where(and(eq(whatsappMensagens.id, mensagemId), eq(whatsappMensagens.empresaId, contexto.empresaId)));
   });
 }

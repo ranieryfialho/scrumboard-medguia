@@ -3,6 +3,13 @@
 // puras, usadas pela tela e provadas por ela.
 import { normalizarNumero, variantesNumero } from '@/domain/whatsapp/numero';
 
+/** T-290: a mídia da mensagem, quando ela tem uma (o arquivo abre por `/api/whatsapp/midia/:id`). */
+export interface MidiaDaMensagemView {
+  tipo: 'audio' | 'imagem' | 'video' | 'documento' | 'figurinha';
+  mimetype: string | null;
+  nome: string | null;
+}
+
 export interface MensagemDaConversa {
   id: string;
   mensagem: string;
@@ -10,6 +17,7 @@ export interface MensagemDaConversa {
   created_at: string;
   numero: string;
   status: string;
+  midia?: MidiaDaMensagemView;
 }
 
 export interface TelefoneDoLead {

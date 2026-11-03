@@ -6,7 +6,7 @@
 // abas) tem prova própria em molde-do-card.test.tsx.
 import { Suspense } from 'react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { act, cleanup, render, screen, waitFor, within } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import PipelineConversaPage from '../../../src/app/(app)/pipeline/[id]/conversa/page';
@@ -74,6 +74,7 @@ let notas: Array<{ id: string; texto: string; autorNome: string | null; ocorrido
 let respostaDasMensagens: () => Promise<Response>;
 let respostaDoEnvio: () => Promise<Response>;
 let respostaDoNovoNumero: () => Promise<Response>;
+let respostaDoEnvioDeMidia: () => Promise<Response>;
 let templatesDoServidor: Array<{ id: string; nome: string; corpo: string; status: string }>;
 const rolar = vi.fn();
 
@@ -97,6 +98,7 @@ beforeEach(() => {
   notas = [{ id: 'n1', texto: 'Pediu reforço de segurança.', autorNome: 'Dra. Juliana', ocorridoEm: diaAs(0, 12) }];
   respostaDasMensagens = () => resposta(200, { mensagens: mensagensDoServidor });
   respostaDoEnvio = () => resposta(200, { id: 'novo' });
+  respostaDoEnvioDeMidia = () => resposta(200, { success: true });
   respostaDoNovoNumero = () => resposta(201, { id: 'tel-3', numero: '5511933332222', rotulo: 'Financeiro' });
   templatesDoServidor = [
     { id: 't1', nome: 'Link de Reunião', corpo: 'Olá {{primeiro_nome}}, segue o link da reunião.', status: 'aprovado' },
@@ -130,6 +132,7 @@ beforeEach(() => {
     if (url === '/api/whatsapp/status') return resposta(200, statusDoWhatsapp);
     if (url === '/api/whatsapp/lidas' && metodo === 'POST') return resposta(200, { atualizadas: 1 });
     if (url === '/api/whatsapp/send' && metodo === 'POST') return respostaDoEnvio();
+    if (url === '/api/whatsapp/send-midia' && metodo === 'POST') return respostaDoEnvioDeMidia();
     if (url === '/api/whatsapp/templates') return resposta(200, { templates: templatesDoServidor, podeGerir: false });
     if (url === `/api/leads/${LEAD_ID}/telefones` && metodo === 'POST') return respostaDoNovoNumero();
     return resposta(404, { codigo: 'NAO_ENCONTRADO' });
@@ -364,19 +367,6 @@ describe('T-174: tela da conversa de WhatsApp do lead', () => {
     });
   });
 
-  describe('AC-444: o que ainda não tem backend segue "em breve"', () => {
-    test('anexar arquivo fica "em breve" e não dispara nada @spec:AC-444', async () => {
-      const usuario = userEvent.setup();
-      await abrirTela();
-
-      expect(screen.getByText('Anexar arquivo').closest('*[class*="rounded"], *[class*="py-1"]')!.textContent!.toLowerCase()).toContain('em breve');
-
-      const antes = fetchFalso.mock.calls.length;
-      await usuario.click(screen.getByText('Anexar arquivo'));
-      expect(fetchFalso.mock.calls.length).toBe(antes);
-    });
-  });
-
   describe('AC-740: novo número, busca e menu da conversa', () => {
     test('"Novo Número" cadastra o telefone extra e a conversa passa a listá-lo; um erro do servidor mostra o motivo e mantém o que foi digitado @spec:AC-740', async () => {
       const usuario = userEvent.setup();
@@ -463,6 +453,176 @@ describe('T-174: tela da conversa de WhatsApp do lead', () => {
       await abrirTela();
 
       expect(await screen.findAllByText('Nenhum template aprovado ainda.')).not.toHaveLength(0);
+    });
+  });
+
+  describe('AC-744 a AC-747: áudio e arquivos na conversa', () => {
+    const formularioEnviado = (indice = 0) => (chamadas('POST', '/api/whatsapp/send-midia')[indice][1] as RequestInit).body as FormData;
+    const originais = { gravador: (globalThis as { MediaRecorder?: unknown }).MediaRecorder, midias: Object.getOwnPropertyDescriptor(navigator, 'mediaDevices') };
+    let pararFaixa: ReturnType<typeof vi.fn>;
+    let negarMicrofone: boolean;
+
+    class GravadorFalso {
+      static isTypeSupported = () => true;
+      state: 'inactive' | 'recording' = 'inactive';
+      ondataavailable: ((e: { data: Blob }) => void) | null = null;
+      onstop: (() => void) | null = null;
+      constructor(
+        public fluxo: unknown,
+        public opcoes: { mimeType: string }
+      ) {}
+      start() {
+        this.state = 'recording';
+      }
+      stop() {
+        this.state = 'inactive';
+        this.ondataavailable?.({ data: new Blob(['voz-gravada'], { type: this.opcoes.mimeType }) });
+        this.onstop?.();
+      }
+    }
+
+    beforeEach(() => {
+      negarMicrofone = false;
+      pararFaixa = vi.fn();
+      (globalThis as { MediaRecorder?: unknown }).MediaRecorder = GravadorFalso;
+      Object.defineProperty(navigator, 'mediaDevices', {
+        configurable: true,
+        value: { getUserMedia: vi.fn(() => (negarMicrofone ? Promise.reject(new Error('negado')) : Promise.resolve({ getTracks: () => [{ stop: pararFaixa }] }))) },
+      });
+    });
+    afterEach(() => {
+      (globalThis as { MediaRecorder?: unknown }).MediaRecorder = originais.gravador;
+      if (originais.midias) Object.defineProperty(navigator, 'mediaDevices', originais.midias);
+      else delete (navigator as { mediaDevices?: unknown }).mediaDevices;
+    });
+
+    test('gravar mostra o tempo e "Enviar áudio" manda o arquivo gravado como áudio do lead e solta o microfone @spec:AC-744', async () => {
+      const usuario = userEvent.setup();
+      await abrirTela();
+
+      await usuario.click(screen.getByRole('button', { name: 'Gravar áudio' }));
+      expect(await screen.findByRole('timer')).toBeTruthy();
+      await usuario.click(screen.getByRole('button', { name: 'Enviar áudio' }));
+
+      await waitFor(() => expect(chamadas('POST', '/api/whatsapp/send-midia')).toHaveLength(1));
+      const form = formularioEnviado();
+      expect(form.get('modo')).toBe('audio');
+      expect(form.get('leadId')).toBe(LEAD_ID);
+      const arquivo = form.get('arquivo') as File;
+      expect(arquivo.type).toBe('audio/webm');
+      expect(arquivo.name).toBe('audio.webm');
+      expect(pararFaixa).toHaveBeenCalled();
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Gravar áudio' })).toBeTruthy());
+    });
+
+    test('descartar não envia nada; microfone negado avisa; com texto escrito o microfone some @spec:AC-744', async () => {
+      const usuario = userEvent.setup();
+      await abrirTela();
+
+      await usuario.click(screen.getByRole('button', { name: 'Gravar áudio' }));
+      await usuario.click(await screen.findByRole('button', { name: 'Descartar gravação' }));
+      expect(chamadas('POST', '/api/whatsapp/send-midia')).toHaveLength(0);
+      expect(pararFaixa).toHaveBeenCalled();
+
+      negarMicrofone = true;
+      await usuario.click(screen.getByRole('button', { name: 'Gravar áudio' }));
+      expect((await screen.findByRole('alert')).textContent).toContain('microfone');
+
+      await usuario.type(screen.getByLabelText('Mensagem para o lead'), 'oi');
+      expect(screen.queryByRole('button', { name: 'Gravar áudio' })).toBeNull();
+    });
+
+    test('sem WhatsApp conectado, gravar e anexar ficam desabilitados @spec:AC-744', async () => {
+      statusDoWhatsapp = { state: 'close', instance: 'Instância Matriz' };
+      await abrirTela();
+
+      await waitFor(() => expect((screen.getByRole('button', { name: 'Gravar áudio' }) as HTMLButtonElement).disabled).toBe(true));
+      expect((screen.getByRole('button', { name: 'Anexar arquivo' }) as HTMLButtonElement).disabled).toBe(true);
+    });
+
+    test('áudio, imagem, vídeo e documento aparecem como mídia, sem o texto marcador, e a legenda continua @spec:AC-745', async () => {
+      const base = { direcao: 'recebida' as const, numero: PRINCIPAL, status: 'entregue', created_at: diaAs(0, 9) };
+      mensagensDoServidor = [
+        { ...base, id: 'a1', mensagem: '[áudio]', midia: { tipo: 'audio', mimetype: 'audio/ogg', nome: null } },
+        { ...base, id: 'i1', mensagem: 'Fachada da clínica', midia: { tipo: 'imagem', mimetype: 'image/png', nome: null } },
+        { ...base, id: 'v1', mensagem: '[vídeo]', midia: { tipo: 'video', mimetype: 'video/mp4', nome: null } },
+        { ...base, id: 'd1', mensagem: 'proposta.pdf', midia: { tipo: 'documento', mimetype: 'application/pdf', nome: 'proposta.pdf' } },
+      ] as unknown as typeof mensagensDoServidor;
+      await montar();
+
+      const conversa = await screen.findByRole('region', { name: 'Conversa do WhatsApp' });
+      await waitFor(() => expect(conversa.querySelector('audio')).toBeTruthy());
+      expect(conversa.querySelector('audio')!.getAttribute('src')).toBe('/api/whatsapp/midia/a1');
+      expect(conversa.querySelector('img')!.getAttribute('src')).toBe('/api/whatsapp/midia/i1');
+      expect(conversa.querySelector('video')!.getAttribute('src')).toBe('/api/whatsapp/midia/v1');
+      const documento = within(conversa).getByRole('link', { name: /proposta\.pdf/ });
+      expect(documento.getAttribute('href')).toBe('/api/whatsapp/midia/d1');
+      expect(documento.getAttribute('download')).toBe('proposta.pdf');
+
+      expect(within(conversa).getByText('Fachada da clínica')).toBeTruthy();
+      expect(within(conversa).queryByText('[áudio]')).toBeNull();
+      expect(within(conversa).queryByText('[vídeo]')).toBeNull();
+      expect(within(conversa).getAllByText('proposta.pdf')).toHaveLength(1);
+    });
+
+    test('se a mídia não abre, mostra "Mídia indisponível" no lugar do player @spec:AC-745', async () => {
+      mensagensDoServidor = [
+        { id: 'a2', mensagem: '[áudio]', direcao: 'recebida', numero: PRINCIPAL, status: 'entregue', created_at: diaAs(0, 9), midia: { tipo: 'audio', mimetype: 'audio/ogg', nome: null } },
+      ] as unknown as typeof mensagensDoServidor;
+      await montar();
+
+      const audio = await waitFor(() => {
+        const el = document.querySelector('audio');
+        expect(el).toBeTruthy();
+        return el!;
+      });
+      fireEvent.error(audio);
+      expect(await screen.findByText('Mídia indisponível')).toBeTruthy();
+      expect(document.querySelector('audio')).toBeNull();
+    });
+
+    test('anexar mostra o arquivo escolhido, o texto vira legenda e "Enviar" manda arquivo e legenda; remover desfaz @spec:AC-746', async () => {
+      const usuario = userEvent.setup();
+      await abrirTela();
+
+      const entrada = screen.getByLabelText('Arquivo para anexar');
+      fireEvent.change(entrada, { target: { files: [new File(['%PDF-1.4'], 'proposta.pdf', { type: 'application/pdf' })] } });
+      const chip = await screen.findByTestId('anexo-escolhido');
+      expect(within(chip).getByText('proposta.pdf')).toBeTruthy();
+
+      await usuario.click(within(chip).getByRole('button', { name: 'Remover anexo' }));
+      expect(screen.queryByTestId('anexo-escolhido')).toBeNull();
+
+      fireEvent.change(entrada, { target: { files: [new File(['%PDF-1.4'], 'proposta.pdf', { type: 'application/pdf' })] } });
+      await usuario.type(await screen.findByPlaceholderText('Legenda (opcional)…'), 'Segue a proposta');
+      await usuario.click(screen.getByRole('button', { name: 'Enviar mensagem' }));
+
+      await waitFor(() => expect(chamadas('POST', '/api/whatsapp/send-midia')).toHaveLength(1));
+      const form = formularioEnviado();
+      expect(form.get('modo')).toBe('arquivo');
+      expect(form.get('legenda')).toBe('Segue a proposta');
+      expect((form.get('arquivo') as File).name).toBe('proposta.pdf');
+      expect(chamadas('POST', '/api/whatsapp/send')).toHaveLength(0);
+      await waitFor(() => expect(screen.queryByTestId('anexo-escolhido')).toBeNull());
+      expect((screen.getByLabelText('Mensagem para o lead') as HTMLTextAreaElement).value).toBe('');
+    });
+
+    test('arquivo acima de 16 MB nem é escolhido; o motivo do servidor aparece e o anexo fica para tentar de novo @spec:AC-747', async () => {
+      const usuario = userEvent.setup();
+      await abrirTela();
+      const entrada = screen.getByLabelText('Arquivo para anexar');
+
+      const grande = new File(['x'], 'filme.mp4', { type: 'video/mp4' });
+      Object.defineProperty(grande, 'size', { value: 16 * 1024 * 1024 + 1 });
+      fireEvent.change(entrada, { target: { files: [grande] } });
+      expect((await screen.findByRole('alert')).textContent).toContain('16 MB');
+      expect(screen.queryByTestId('anexo-escolhido')).toBeNull();
+
+      respostaDoEnvioDeMidia = () => resposta(415, { codigo: 'TIPO_NAO_PERMITIDO' });
+      fireEvent.change(entrada, { target: { files: [new File(['MZ'], 'programa.exe', { type: 'application/x-msdownload' })] } });
+      await usuario.click(await screen.findByRole('button', { name: 'Enviar mensagem' }));
+      expect((await screen.findByRole('alert')).textContent).toContain('não pode ser enviado');
+      expect(screen.getByTestId('anexo-escolhido')).toBeTruthy();
     });
   });
 
