@@ -2,7 +2,7 @@
 // — os 18 toques da cadência do card (aba "Cadência", tela 10), contra um
 // Postgres 15 efêmero real com dois tenants (test/support/api-anexos.ts).
 import { NextRequest } from 'next/server';
-import { afterAll, beforeAll, describe, expect, test } from 'vitest';
+import { afterAll, beforeAll, describe, expect, test, vi } from 'vitest';
 
 import { prepararAmbienteAnexos, type AmbienteAnexos } from '../support/api-anexos';
 
@@ -31,7 +31,18 @@ describe('T-170: listagem da cadência do card (servidor)', () => {
     return rotaLista.GET(request, { params: Promise.resolve({ id: cardId }) });
   }
 
+  // AC-756: a rota passa o relógio real e o primeiro bloco acompanha o turno; estes testes esperam a manhã, então fixam um dia útil de manhã.
   async function iniciar(cookie: string, cardId: string, version: number) {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-06-10T09:00:00-03:00'));
+    try {
+      await iniciarAgora(cookie, cardId, version);
+    } finally {
+      vi.useRealTimers();
+    }
+  }
+
+  async function iniciarAgora(cookie: string, cardId: string, version: number) {
     const request = new NextRequest(`http://localhost/api/oportunidades/${cardId}/cadencia/iniciar`, {
       method: 'POST',
       headers: { Cookie: cookie, 'content-type': 'application/json' },

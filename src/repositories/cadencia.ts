@@ -109,11 +109,16 @@ export interface DadosIniciarCadencia {
   version: number;
   atorId: string;
   atorTipo: AtorTipo;
+  /**
+   * Relógio injetado (ASM-062). Com ele, o primeiro bloco nasce no turno em que a cadência foi iniciada (AC-756: à tarde, o bloco da
+   * tarde). Sem ele, o comportamento anterior: sempre o bloco de manhã, liberado agora.
+   */
+  agora?: Date;
 }
 
 export interface ResultadoIniciarCadencia {
   oportunidade: Oportunidade;
-  /** AC-190: sempre os 3 toques do bloco (dia 1, manhã) — sequências 1-3. */
+  /** AC-190/AC-756: os 3 toques do primeiro bloco — o de manhã (sequências 1-3) ou, iniciada à tarde, o da tarde (4-6). */
   toques: AtividadeCadencia[];
 }
 
@@ -136,7 +141,8 @@ export async function iniciarCadencia(
           ${dados.version}::integer,
           ${dados.atorId}::uuid,
           ${dados.atorTipo}::ator_tipo,
-          null::jsonb
+          null::jsonb,
+          ${dados.agora ? dados.agora.toISOString() : null}::timestamptz
         )
       `);
     } catch (erro) {

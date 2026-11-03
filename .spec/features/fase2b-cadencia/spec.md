@@ -39,7 +39,7 @@ Como SDR, quero iniciar a cadência de um card e ver apenas os 3 toques do turno
 
 - **Dado** um card em "Entrada de leads" do tenant do usuário
 - **Quando** ele chama `POST /api/oportunidades/:id/cadencia/iniciar` com a `version` atual
-- **Então** o card vai para "1º dia de contato" (dia 1, turno manhã) e passam a existir exatamente 3 toques pendentes (sequências 1–3); os toques 4–18 não existem; a resposta traz o card e os toques
+- **Então** o card vai para "1º dia de contato" (dia 1) e passam a existir exatamente 3 toques pendentes, os do primeiro bloco (de manhã, as sequências 1–3 — ver AC-756 para o início à tarde); os demais toques só nascem depois; a resposta traz o card e os toques
 
 #### AC-191 — Iniciar respeita versão, tenant e sessão
 
@@ -52,6 +52,21 @@ Como SDR, quero iniciar a cadência de um card e ver apenas os 3 toques do turno
 - **Dado** um usuário com cards em cadência com toques pendentes da manhã e da tarde
 - **Quando** ele chama `GET /api/atividades` durante a manhã
 - **Então** vê só os toques pendentes do turno vigente dos cards dos quais é responsável, no tenant dele; os da tarde só aparecem a partir das 13h e com a manhã concluída (Q1); fora de turno, dia não útil ou feriado a lista vem vazia
+
+#### AC-756 — Iniciada à tarde, o primeiro bloco é o da tarde
+
+- **Dado** um card em "Entrada de leads" e um dia útil, com a cadência iniciada pela tela (que informa o horário de São Paulo)
+- **Quando** o horário é de 12h00 a 17h59
+- **Então** os 3 primeiros toques são os do bloco da tarde do dia 1 (sequências 4–6: ligação, ligação, WhatsApp), o card aponta para "dia 1, tarde", e os toques 1–3 não existem (a cadência fica com 15 toques)
+- **E** de 13h00 a 17h59 os toques valem desde já e aparecem na fila do turno; de 12h00 a 12h59 passam a valer às 13h
+- **E** concluir esse bloco sem resposta não gera nada (como o bloco da tarde de sempre), a virada de dia gera a manhã do dia 2, e o dia 3 da tarde esgota a cadência como antes
+- **E** de 8h00 a 11h59 o primeiro bloco continua o da manhã (sequências 1–3), valendo desde já; sem o horário informado, o comportamento é o de sempre (manhã, valendo desde já)
+
+#### AC-757 — Iniciada fora do expediente, o primeiro bloco vale no próximo turno
+
+- **Dado** uma cadência iniciada antes das 8h de um dia útil, depois das 18h, ou num fim de semana ou feriado nacional
+- **Então** o primeiro bloco é o da manhã (sequências 1–3) e passa a valer às 8h do primeiro dia útil seguinte (no mesmo dia, se ainda não deu 8h) — assim ele aparece como o turno em andamento, e não como atrasado, quando o expediente começa
+- **E** a regra é a mesma no banco e no domínio puro: os dois dão o mesmo turno e a mesma hora em qualquer instante
 
 ### US-054 — Concluir um toque e liberar o próximo bloco
 

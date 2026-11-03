@@ -68,6 +68,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       version: corpo.version,
       atorId: contexto.usuarioId,
       atorTipo: 'usuario',
+      agora: new Date(), // AC-756: o primeiro bloco acompanha o turno em que a cadência é iniciada
     });
     return NextResponse.json(resultado);
   } catch (erro) {
