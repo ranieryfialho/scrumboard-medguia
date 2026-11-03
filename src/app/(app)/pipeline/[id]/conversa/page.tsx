@@ -34,7 +34,7 @@ export default function PipelineConversaPage({ params }: { params: Promise<{ id:
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
             <div className="lg:col-span-8">
-              <ConversaLead leadId={card.leadId} />
+              <ConversaLead leadId={card.leadId} leadNome={card.leadNome} />
             </div>
             <div className="lg:col-span-4">
               <PainelLateral cardId={card.id} />

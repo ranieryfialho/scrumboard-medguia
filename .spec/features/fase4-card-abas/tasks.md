@@ -65,3 +65,8 @@
 - Arquivos: test/components/pipeline/abas-sem-404.test.ts
 - Esforço: baixo
 - Notas: lição da PR #37 (o teste só conferia o `href`, e as rotas não existiam). Este teste lê a lista de abas do `MoldeDoCard` e confere que, para cada `href` gerado, existe o `page.tsx` correspondente em `src/app/(app)/pipeline/[id]/`. Roda por último.
+
+## T-288 — A conversa do card: botões que funcionam (mover etapa, novo número, busca, menu, respostas rápidas, templates) [pendente]
+- Refs: US-111, US-114, AC-444, AC-739, AC-740, AC-741
+- Arquivos: src/components/pipeline/card/use-transicao-do-card.ts, src/components/pipeline/card/molde-do-card.tsx, src/components/pipeline/conversa/conversa-lead.tsx, src/components/pipeline/conversa/modal-novo-numero.tsx, src/components/pipeline/conversa/menu-opcoes.tsx, src/components/pipeline/conversa/respostas-e-templates.tsx, src/app/(app)/pipeline/[id]/conversa/page.tsx, test/components/pipeline/conversa-tela.test.tsx, test/components/pipeline/molde-do-card.test.tsx
+- Notas: quinto ajuste de tela da série do dono (03/11), etapa 1 de 3 da conversa (botões; depois proposta e qualificação; depois áudio e anexos). Respostas rápidas = os primeiros templates aprovados (sem tabela nova). "Anexar arquivo" continua "em breve" até o envio de mídia. "Concluir Toque da Cadência" do protótipo continua na aba Cadência. O `AC-444` do T-174 passa a cobrir só "Anexar arquivo"; os outros itens que ele cobria viraram AC-739 a AC-741.

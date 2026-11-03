@@ -12,9 +12,10 @@ import Link from 'next/link';
 import { CabecalhoCard } from '@/components/pipeline/detalhe/cabecalho-card';
 import { nomeDaEtapa } from '@/components/pipeline/detalhe/jornada';
 import { EsqueletoCarregando, EstadoErro } from '@/components/pipeline/pecas/estados';
-import { ItemEmBreve } from '@/components/pipeline/pecas/selo-em-breve';
+import { ModalDadoFaltante } from '@/components/pipeline/modal-dado-faltante';
 import { AbasDoCard, type AbaDoCard } from './abas-do-card';
 import { useContadoresDoCard } from './use-contadores-do-card';
+import { useTransicaoDoCard } from './use-transicao-do-card';
 
 export interface CardDoMolde {
   id: string;
@@ -40,6 +41,11 @@ export function MoldeDoCard({ cardId, aba, versaoDosContadores = 0, children }: 
   const [erro, setErro] = useState(false);
   const [naoEncontrado, setNaoEncontrado] = useState(false);
   const contagens = useContadoresDoCard(card ? cardId : null, versaoDosContadores);
+  // T-288 (AC-739): mover de etapa, ganho e perdido também nas abas; ao mover, o cabeçalho passa a mostrar a etapa nova.
+  const transicao = useTransicaoDoCard(
+    card,
+    useCallback((etapaId: number, version: number) => setCard((atual) => (atual ? { ...atual, etapaId, version } : atual)), [])
+  );
 
   const carregar = useCallback(async () => {
     setErro(false);
@@ -101,19 +107,26 @@ export function MoldeDoCard({ cardId, aba, versaoDosContadores = 0, children }: 
         leadNome={card.leadNome}
         etapaAtualNome={nomeDaEtapa(card.etapaId)}
         responsavelNome={card.responsavelNome}
-        etapasDestino={[]}
-        podeMarcarGanho={false}
-        podeMarcarPerdido={false}
-        enviando={false}
-        onEscolherDestino={() => undefined}
-        acoesExtras={
-          <ItemEmBreve
-            rotulo="Mover Etapa"
-            icone="swap_horiz"
-            className="h-10 px-3.5 rounded-lg bg-surface-subtle"
-          />
-        }
+        etapasDestino={transicao.etapasDestino}
+        podeMarcarGanho={transicao.podeMarcarGanho}
+        podeMarcarPerdido={transicao.podeMarcarPerdido}
+        enviando={transicao.enviando}
+        onEscolherDestino={(etapaDestinoId) => void transicao.enviarTransicao(etapaDestinoId)}
       />
+      {transicao.mensagem && (
+        <div role="alert" className="mx-gutter mt-space-sm text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+          {transicao.mensagem}
+        </div>
+      )}
+      {transicao.dadoFaltante && (
+        <ModalDadoFaltante
+          codigo={transicao.dadoFaltante.codigo}
+          aberto
+          oportunidadeId={card.id}
+          onCancelar={transicao.cancelarDadoFaltante}
+          onConfirmar={(dado) => void transicao.enviarTransicao(transicao.dadoFaltante!.etapaDestinoId, dado)}
+        />
+      )}
       <AbasDoCard cardId={card.id} ativa={aba} contagens={contagens} />
       {children(card)}
     </div>

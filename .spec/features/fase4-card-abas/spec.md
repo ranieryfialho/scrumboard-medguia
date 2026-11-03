@@ -220,15 +220,37 @@ cadência ao lado, para agir sem trocar de tela.
 - **Quando** o usuário olha a coluna da direita
 - **Então** vê "Cadência Comercial" (toque da vez, progresso e a próxima ação) e "Notas Internas" com as anotações internas do card (as da aba Resumo) e o campo "Adicionar nota interna rápida" que grava uma nova anotação no card; os blocos "Dados da Proposta" e "Qualificação Técnica" do protótipo **não aparecem** (sem dado)
 
-#### AC-444 — Ações da conversa sem backend
+#### AC-444 — Anexar arquivo segue "em breve"
 
 - **Dado** a tela de conversa
-- **Quando** o usuário olha "Ligar Agora", "Novo Número", a busca na conversa, o menu de três pontos, anexar arquivo, templates e "Respostas Rápidas"
-- **Então** aparecem visíveis, marcados "em breve", sem disparar ação
+- **Quando** o usuário olha "Anexar arquivo"
+- **Então** aparece visível, marcado "em breve", sem disparar ação (o envio de arquivo e áudio vem numa etapa própria)
+
+#### AC-739 — Mover de etapa, ganho e perdido nas abas
+
+- **Dado** o cabeçalho do card nas abas Cadência, WhatsApp e Anexos
+- **Quando** o usuário escolhe uma etapa em "Mover de Etapa", ou clica em "Marcar como Ganho" ou "Perdido"
+- **Então** o card se move pela mesma rota e com as mesmas regras do Resumo: só aparecem os destinos que o papel alcança, e quando falta um dado (valor na Proposta, motivo na perda) abre o mesmo modal
+- **E** depois de mover, o cabeçalho já mostra a etapa nova
+
+#### AC-740 — Novo número, busca e menu na conversa
+
+- **Dado** a tela de conversa
+- **Quando** o usuário clica em "Novo Número"
+- **Então** abre um formulário (telefone e rótulo) que cadastra um telefone extra do lead e o coloca no seletor; se o servidor recusar (número inválido ou repetido), mostra o motivo e mantém o que foi digitado
+- **E** a busca na conversa filtra as mensagens já carregadas, sem diferenciar acento nem maiúsculas, mostra quantas achou e avisa quando não acha nenhuma
+- **E** o menu de três pontos tem "Atualizar conversa", "Marcar como lidas" e "Abrir no WhatsApp Web" (o número escolhido)
+
+#### AC-741 — Respostas rápidas e templates
+
+- **Dado** a tela de conversa e os templates aprovados da empresa
+- **Quando** o usuário clica numa resposta rápida ou escolhe um template na lista
+- **Então** o texto, com {{nome}} e {{primeiro_nome}} trocados pelos do lead, vai para o campo da mensagem (depois do que já estiver escrito) e nada é enviado até o usuário enviar
+- **E** só templates aprovados aparecem; sem nenhum, a tela avisa "Nenhum template aprovado ainda."
 
 ## Fora de escopo
 
-- **Enviar arquivo e áudio pelo WhatsApp**, templates e respostas rápidas: não existem no backend; aparecem "em breve".
+- **Enviar arquivo e áudio pelo WhatsApp**: ainda não existem no backend; "Anexar arquivo" aparece "em breve" (etapa seguinte do pedido de 03/11).
 - **Conversa com número que não é lead** (botão "Novo Número"): é a tela 17 do inventário (`/whatsapp/nova`), de outra feature.
 - **Caixa de entrada geral** (`/whatsapp`), conexão e configuração do WhatsApp (telas 16, 18 e 19): outra feature. Aqui só se mostra o estado da conexão e o link.
 - **Pausar e reiniciar a cadência**, resultado "pediu retorno mais tarde" e editar o script do toque: sem backend.

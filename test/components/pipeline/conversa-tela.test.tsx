@@ -6,7 +6,7 @@
 // abas) tem prova própria em molde-do-card.test.tsx.
 import { Suspense } from 'react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { act, cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import PipelineConversaPage from '../../../src/app/(app)/pipeline/[id]/conversa/page';
@@ -73,6 +73,8 @@ let statusDoWhatsapp: { state: string; instance: string | null };
 let notas: Array<{ id: string; texto: string; autorNome: string | null; ocorridoEm: string }>;
 let respostaDasMensagens: () => Promise<Response>;
 let respostaDoEnvio: () => Promise<Response>;
+let respostaDoNovoNumero: () => Promise<Response>;
+let templatesDoServidor: Array<{ id: string; nome: string; corpo: string; status: string }>;
 const rolar = vi.fn();
 
 function chamadas(metodo: 'GET' | 'POST', caminho: string) {
@@ -95,6 +97,12 @@ beforeEach(() => {
   notas = [{ id: 'n1', texto: 'Pediu reforço de segurança.', autorNome: 'Dra. Juliana', ocorridoEm: diaAs(0, 12) }];
   respostaDasMensagens = () => resposta(200, { mensagens: mensagensDoServidor });
   respostaDoEnvio = () => resposta(200, { id: 'novo' });
+  respostaDoNovoNumero = () => resposta(201, { id: 'tel-3', numero: '5511933332222', rotulo: 'Financeiro' });
+  templatesDoServidor = [
+    { id: 't1', nome: 'Link de Reunião', corpo: 'Olá {{primeiro_nome}}, segue o link da reunião.', status: 'aprovado' },
+    { id: 't2', nome: 'Minuta do Contrato', corpo: 'Olá {{nome}}, segue a minuta.', status: 'aprovado' },
+    { id: 't3', nome: 'Ainda em rascunho', corpo: 'não deve aparecer', status: 'rascunho' },
+  ];
   EventSourceFalso.instancias = [];
   (globalThis as { EventSource?: unknown }).EventSource = EventSourceFalso;
   Element.prototype.scrollIntoView = rolar;
@@ -115,10 +123,12 @@ beforeEach(() => {
     if (url === `/api/oportunidades/${CARD_ID}/linha-do-tempo?tipo=anotacao`) return resposta(200, { itens: notas });
     if (url === `/api/oportunidades/${CARD_ID}/anotacoes` && metodo === 'POST') return resposta(201, {});
     if (url === `/api/whatsapp/messages?leadId=${LEAD_ID}`) return respostaDasMensagens();
-    if (url === `/api/leads/${LEAD_ID}/telefones`) return resposta(200, { telefones });
+    if (url === `/api/leads/${LEAD_ID}/telefones` && metodo === 'GET') return resposta(200, { telefones });
     if (url === '/api/whatsapp/status') return resposta(200, statusDoWhatsapp);
     if (url === '/api/whatsapp/lidas' && metodo === 'POST') return resposta(200, { atualizadas: 1 });
     if (url === '/api/whatsapp/send' && metodo === 'POST') return respostaDoEnvio();
+    if (url === '/api/whatsapp/templates') return resposta(200, { templates: templatesDoServidor, podeGerir: false });
+    if (url === `/api/leads/${LEAD_ID}/telefones` && metodo === 'POST') return respostaDoNovoNumero();
     return resposta(404, { codigo: 'NAO_ENCONTRADO' });
   });
   globalThis.fetch = fetchFalso as unknown as typeof fetch;
@@ -350,18 +360,105 @@ describe('T-174: tela da conversa de WhatsApp do lead', () => {
     });
   });
 
-  describe('AC-444: ações da conversa sem backend', () => {
-    test('novo número, busca, menu, anexar, templates e respostas rápidas ficam "em breve" e não disparam nada @spec:AC-444', async () => {
+  describe('AC-444: o que ainda não tem backend segue "em breve"', () => {
+    test('anexar arquivo fica "em breve" e não dispara nada @spec:AC-444', async () => {
       const usuario = userEvent.setup();
       await abrirTela();
 
-      for (const rotulo of ['Novo Número', 'Buscar na conversa', 'Mais opções', 'Anexar arquivo', 'Templates', 'Respostas rápidas']) {
-        expect(screen.getByText(rotulo).closest('*[class*="rounded"], *[class*="py-1"]')!.textContent!.toLowerCase()).toContain('em breve');
-      }
+      expect(screen.getByText('Anexar arquivo').closest('*[class*="rounded"], *[class*="py-1"]')!.textContent!.toLowerCase()).toContain('em breve');
 
       const antes = fetchFalso.mock.calls.length;
-      await usuario.click(screen.getByText('Templates'));
+      await usuario.click(screen.getByText('Anexar arquivo'));
       expect(fetchFalso.mock.calls.length).toBe(antes);
+    });
+  });
+
+  describe('AC-740: novo número, busca e menu da conversa', () => {
+    test('"Novo Número" cadastra o telefone extra e a conversa passa a listá-lo; um erro do servidor mostra o motivo e mantém o que foi digitado @spec:AC-740', async () => {
+      const usuario = userEvent.setup();
+      await abrirTela();
+
+      await usuario.click(screen.getByRole('button', { name: 'Novo Número' }));
+      await usuario.type(screen.getByLabelText('Telefone *'), '11 93333-2222');
+      await usuario.type(screen.getByLabelText('Rótulo'), 'Financeiro');
+
+      respostaDoNovoNumero = () => resposta(409, { codigo: 'TELEFONE_DUPLICADO' });
+      await usuario.click(screen.getByRole('button', { name: 'Adicionar' }));
+      expect((await screen.findByRole('alert')).textContent).toContain('já está cadastrado');
+      expect((screen.getByLabelText('Telefone *') as HTMLInputElement).value).toBe('11 93333-2222');
+
+      respostaDoNovoNumero = () => resposta(201, { id: 'tel-3', numero: '5511933332222', rotulo: 'Financeiro' });
+      telefones = [...telefones, { id: 'tel-3', numero: '5511933332222', rotulo: 'Financeiro', principal: false }];
+      await usuario.click(screen.getByRole('button', { name: 'Adicionar' }));
+
+      await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Novo número' })).toBeNull());
+      expect(corpoDoPost(`/api/leads/${LEAD_ID}/telefones`, 1)).toEqual({ numero: '11 93333-2222', rotulo: 'Financeiro' });
+      expect(await screen.findByRole('option', { name: /Financeiro/ })).toBeTruthy();
+    });
+
+    test('a busca filtra as mensagens sem diferenciar acento nem maiúsculas, conta e avisa quando não acha @spec:AC-740', async () => {
+      const usuario = userEvent.setup();
+      await abrirTela();
+
+      await usuario.click(screen.getByRole('button', { name: 'Buscar na conversa' }));
+      await usuario.type(screen.getByLabelText('Buscar nas mensagens'), 'PROPOSTA');
+      expect(screen.getByText('Bom dia! Pode me mandar a proposta?')).toBeTruthy();
+      expect(screen.queryByText('Bom dia, doutor.')).toBeNull();
+      expect(screen.getByRole('status').textContent).toBe('1 mensagem');
+
+      await usuario.clear(screen.getByLabelText('Buscar nas mensagens'));
+      await usuario.type(screen.getByLabelText('Buscar nas mensagens'), 'zzzz');
+      expect(await screen.findByText('Nenhuma mensagem encontrada')).toBeTruthy();
+
+      await usuario.click(screen.getByRole('button', { name: 'Buscar na conversa' }));
+      expect(screen.getByText('Bom dia, doutor.')).toBeTruthy();
+    });
+
+    test('o menu atualiza a conversa, marca como lidas e abre o número no WhatsApp Web @spec:AC-740', async () => {
+      const usuario = userEvent.setup();
+      await abrirTela();
+
+      await usuario.click(screen.getByRole('button', { name: 'Mais opções' }));
+      const web = screen.getByRole('menuitem', { name: /Abrir no WhatsApp Web/ });
+      expect(web.getAttribute('href')).toBe(`https://wa.me/${PRINCIPAL}`);
+
+      const mensagensAntes = chamadas('GET', `/api/whatsapp/messages?leadId=${LEAD_ID}`).length;
+      await usuario.click(screen.getByRole('menuitem', { name: /Atualizar conversa/ }));
+      await waitFor(() => expect(chamadas('GET', `/api/whatsapp/messages?leadId=${LEAD_ID}`).length).toBe(mensagensAntes + 1));
+      expect(screen.queryByRole('menu')).toBeNull();
+
+      const lidasAntes = chamadas('POST', '/api/whatsapp/lidas').length;
+      await usuario.click(screen.getByRole('button', { name: 'Mais opções' }));
+      await usuario.click(screen.getByRole('menuitem', { name: /Marcar como lidas/ }));
+      await waitFor(() => expect(chamadas('POST', '/api/whatsapp/lidas').length).toBe(lidasAntes + 1));
+    });
+  });
+
+  describe('AC-741: respostas rápidas e templates', () => {
+    test('só os aprovados aparecem, e escolher um põe o texto com o nome do lead no campo, sem enviar @spec:AC-741', async () => {
+      const usuario = userEvent.setup();
+      await abrirTela();
+
+      expect(await screen.findByRole('button', { name: /Link de Reunião/ })).toBeTruthy();
+      expect(screen.queryByText('Ainda em rascunho')).toBeNull();
+
+      await usuario.click(screen.getByRole('button', { name: /Link de Reunião/ }));
+      const campo = screen.getByLabelText('Mensagem para o lead') as HTMLTextAreaElement;
+      expect(campo.value).toBe('Olá Clínica, segue o link da reunião.');
+
+      await usuario.click(screen.getByRole('button', { name: 'Templates' }));
+      const lista = screen.getByRole('dialog', { name: 'Templates' });
+      expect(within(lista).getByText('Olá Clínica Santa Luzia, segue a minuta.')).toBeTruthy();
+      await usuario.click(within(lista).getByRole('button', { name: /Minuta do Contrato/ }));
+      expect(campo.value).toBe('Olá Clínica, segue o link da reunião.\nOlá Clínica Santa Luzia, segue a minuta.');
+      expect(chamadas('POST', '/api/whatsapp/send')).toHaveLength(0);
+    });
+
+    test('sem template aprovado, avisa em vez de mostrar atalhos vazios @spec:AC-741', async () => {
+      templatesDoServidor = [];
+      await abrirTela();
+
+      expect(await screen.findAllByText('Nenhum template aprovado ainda.')).not.toHaveLength(0);
     });
   });
 

@@ -7,7 +7,8 @@
 // `POST /api/whatsapp/lidas`, `GET /api/whatsapp/status` e
 // `GET /api/leads/[id]/telefones`. Mensagem nova do lead chega pelo evento
 // `mensagem.recebida` do `/api/stream`. Itens sem backend (ligar, novo número,
-// busca, menu, anexar, templates, respostas rápidas) ficam "em breve" (AC-444).
+// busca, menu, anexar, templates, respostas rápidas) ficavam "em breve" (AC-444); em T-288 (AC-740/AC-741) viraram
+// reais, menos "Anexar arquivo", que espera o envio de mídia.
 import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 
 import { EVENTO_CONTADORES_MUDARAM } from '@/components/shell/use-contadores';
@@ -23,6 +24,14 @@ import {
   type TelefoneDoLead,
 } from './formatos';
 import { SeletorTelefone } from './seletor-telefone';
+import { ModalNovoNumero } from './modal-novo-numero';
+import { MenuOpcoes } from './menu-opcoes';
+import { RespostasETemplates } from './respostas-e-templates';
+
+/** Para a busca: minúsculas e sem acento, assim "clinica" acha "Clínica". */
+function semAcento(texto: string): string {
+  return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+}
 
 /** AC-439: o motivo de cada recusa do envio, sem perder o texto digitado. */
 const MENSAGENS_DE_ERRO: Record<string, string> = {
@@ -56,9 +65,11 @@ function useMensagemRecebida(leadId: string, aoChegar: () => void) {
 
 interface ConversaLeadProps {
   leadId: string;
+  /** Nome do lead, para preencher {{nome}} e {{primeiro_nome}} dos templates. */
+  leadNome?: string;
 }
 
-export function ConversaLead({ leadId }: ConversaLeadProps) {
+export function ConversaLead({ leadId, leadNome = '' }: ConversaLeadProps) {
   const [mensagens, setMensagens] = useState<MensagemDaConversa[] | null>(null);
   const [telefones, setTelefones] = useState<TelefoneDoLead[]>([]);
   const [escolhido, setEscolhido] = useState(0);
@@ -69,6 +80,9 @@ export function ConversaLead({ leadId }: ConversaLeadProps) {
   const [enviando, setEnviando] = useState(false);
   const [erroDeEnvio, setErroDeEnvio] = useState<string | null>(null);
   const fimRef = useRef<HTMLDivElement | null>(null);
+  const [buscaAberta, setBuscaAberta] = useState(false);
+  const [busca, setBusca] = useState('');
+  const [novoNumeroAberto, setNovoNumeroAberto] = useState(false);
 
   /** AC-440: as recebidas viram lidas e o menu lateral relê o contador. */
   const marcarComoLidas = useCallback(async () => {
@@ -102,14 +116,22 @@ export function ConversaLead({ leadId }: ConversaLeadProps) {
     void carregarMensagens().then(() => marcarComoLidas());
   }, [carregarMensagens, marcarComoLidas]);
 
+  const carregarTelefones = useCallback(async () => {
+    try {
+      const resposta = await fetch(`/api/leads/${leadId}/telefones`);
+      const corpo = resposta.ok ? ((await resposta.json()) as { telefones?: TelefoneDoLead[] }) : null;
+      setTelefones(corpo?.telefones ?? []);
+    } catch {
+      // Sem conectividade: mantém a lista como estava.
+    }
+  }, [leadId]);
+
+  useEffect(() => {
+    void carregarTelefones();
+  }, [carregarTelefones]);
+
   useEffect(() => {
     let cancelado = false;
-    fetch(`/api/leads/${leadId}/telefones`)
-      .then((resposta) => (resposta.ok ? resposta.json() : null))
-      .then((corpo: { telefones?: TelefoneDoLead[] } | null) => {
-        if (!cancelado) setTelefones(corpo?.telefones ?? []);
-      })
-      .catch(() => undefined);
     fetch('/api/whatsapp/status')
       .then((resposta) => (resposta.ok ? resposta.json() : null))
       .then((corpo: StatusDoWhatsapp | null) => {
@@ -137,7 +159,13 @@ export function ConversaLead({ leadId }: ConversaLeadProps) {
     return mensagens.filter((mensagem) => mensagemDoTelefone(mensagem, telefone));
   }, [mensagens, telefones, telefone]);
 
-  const grupos = useMemo(() => agruparPorDia(visiveis), [visiveis]);
+  // AC-740: a busca filtra as mensagens já carregadas, sem acento e sem diferenciar maiúsculas.
+  const encontradas = useMemo(() => {
+    const termo = semAcento(busca.trim());
+    return termo ? visiveis.filter((mensagem) => semAcento(mensagem.mensagem).includes(termo)) : visiveis;
+  }, [visiveis, busca]);
+
+  const grupos = useMemo(() => agruparPorDia(encontradas), [encontradas]);
 
   // AC-437: a conversa abre rolada até a mensagem mais recente.
   useEffect(() => {
@@ -183,10 +211,54 @@ export function ConversaLead({ leadId }: ConversaLeadProps) {
       <div className="p-space-md border-b border-border-subtle flex flex-col gap-space-sm">
         <div className="flex flex-wrap items-center gap-space-sm">
           <SeletorTelefone telefones={telefones} escolhido={escolhido} onEscolher={setEscolhido} />
-          <ItemEmBreve rotulo="Novo Número" icone="add_call" className="h-10 px-3 rounded-xl bg-surface-subtle" />
-          <ItemEmBreve rotulo="Buscar na conversa" icone="search" className="h-10 px-3 rounded-xl bg-surface-subtle" />
-          <ItemEmBreve rotulo="Mais opções" icone="more_vert" className="h-10 px-3 rounded-xl bg-surface-subtle" />
+          <button
+            type="button"
+            onClick={() => setNovoNumeroAberto(true)}
+            className="h-10 px-3 rounded-xl bg-surface-subtle hover:bg-surface-container font-label-md text-label-md text-text-primary flex items-center gap-2"
+          >
+            <span aria-hidden="true" className="material-symbols-outlined text-[18px]">
+              add_call
+            </span>
+            Novo Número
+          </button>
+          <button
+            type="button"
+            aria-label="Buscar na conversa"
+            aria-pressed={buscaAberta}
+            onClick={() => {
+              setBuscaAberta((aberta) => !aberta);
+              setBusca('');
+            }}
+            className="h-10 w-10 rounded-xl bg-surface-subtle hover:bg-surface-container flex items-center justify-center"
+          >
+            <span aria-hidden="true" className="material-symbols-outlined">
+              search
+            </span>
+          </button>
+          <MenuOpcoes
+            numero={telefone?.numero ?? null}
+            onAtualizar={() => void carregarMensagens()}
+            onMarcarLidas={() => void marcarComoLidas()}
+          />
         </div>
+        {buscaAberta && (
+          <div className="flex items-center gap-2">
+            <input
+              type="search"
+              autoFocus
+              value={busca}
+              onChange={(evento) => setBusca(evento.target.value)}
+              placeholder="Buscar nas mensagens…"
+              aria-label="Buscar nas mensagens"
+              className="flex-1 h-10 px-3 bg-surface-subtle rounded-xl font-body-md text-body-md text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/20"
+            />
+            {busca.trim() !== '' && (
+              <span role="status" className="font-body-sm text-body-sm text-text-secondary whitespace-nowrap">
+                {encontradas.length === 1 ? '1 mensagem' : `${encontradas.length} mensagens`}
+              </span>
+            )}
+          </div>
+        )}
         <FaixaConexao status={status} />
       </div>
 
@@ -195,6 +267,9 @@ export function ConversaLead({ leadId }: ConversaLeadProps) {
         {!carregando && erro && <EstadoErro onTentarDeNovo={carregarMensagens} />}
         {!carregando && !erro && visiveis.length === 0 && (
           <EstadoVazio titulo="Nenhuma mensagem ainda" proximoPasso="escreva a primeira abaixo" icone="chat" />
+        )}
+        {!carregando && !erro && visiveis.length > 0 && encontradas.length === 0 && (
+          <EstadoVazio titulo="Nenhuma mensagem encontrada" proximoPasso="tente outra palavra" icone="search_off" />
         )}
         {!carregando &&
           !erro &&
@@ -227,9 +302,8 @@ export function ConversaLead({ leadId }: ConversaLeadProps) {
 
       <div className="p-space-md border-t border-border-subtle flex flex-col gap-space-sm">
         <div className="flex flex-wrap items-center gap-2">
-          <ItemEmBreve rotulo="Respostas rápidas" icone="bolt" className="h-9 px-2 rounded-lg bg-surface-subtle" />
+          <RespostasETemplates leadNome={leadNome} onEscolher={(preenchido) => setTexto((atual) => (atual.trim() ? `${atual}\n${preenchido}` : preenchido))} />
           <ItemEmBreve rotulo="Anexar arquivo" icone="attach_file" className="h-9 px-2 rounded-lg bg-surface-subtle" />
-          <ItemEmBreve rotulo="Templates" icone="chat_paste_go" className="h-9 px-2 rounded-lg bg-surface-subtle" />
         </div>
         <div className="flex items-end gap-2">
           <textarea
@@ -266,6 +340,16 @@ export function ConversaLead({ leadId }: ConversaLeadProps) {
           Pressione <strong>Enter</strong> para enviar
         </p>
       </div>
+      {novoNumeroAberto && (
+        <ModalNovoNumero
+          leadId={leadId}
+          onFechar={() => setNovoNumeroAberto(false)}
+          onSalvo={() => {
+            setNovoNumeroAberto(false);
+            void carregarTelefones();
+          }}
+        />
+      )}
     </section>
   );
 }
