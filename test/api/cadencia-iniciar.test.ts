@@ -2,7 +2,7 @@
 // `POST /api/oportunidades/:id/cadencia/iniciar`, contra um Postgres 15
 // efêmero real com dois tenants seedados (test/support/seed-tenants.ts).
 // Mesmos moldes de test/api/oportunidades-transicao.test.ts.
-import { afterAll, beforeAll, describe, expect, test } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
 import { drizzle, type NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 import { NextRequest } from 'next/server';
@@ -97,8 +97,19 @@ describe('T-091: rota POST /api/oportunidades/:id/cadencia/iniciar', () => {
     return JSON.parse(resultado.stdout.trim()) as Array<{ sequencia: number; resultado: string }>;
   }
 
+  // AC-756: a rota passa o relógio real, e o primeiro bloco acompanha o turno — então cada teste fixa o dia e a hora (só `Date`; os
+  // temporizadores seguem reais para o banco responder).
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+  function agoraFixo(iso: string) {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date(iso));
+  }
+
   describe('AC-190: iniciar gera só o primeiro bloco', () => {
     test('card vai para "1º dia de contato" com exatamente 3 toques pendentes (1-3); resposta traz card e toques @spec:AC-190', async () => {
+      agoraFixo('2026-06-10T09:00:00-03:00');
       const resposta = await routeModule.POST(postIniciar(tenants.oportunidadeA, cookieA, { version: 1 }), {
         params: Promise.resolve({ id: tenants.oportunidadeA }),
       });
@@ -150,6 +161,29 @@ describe('T-091: rota POST /api/oportunidades/:id/cadencia/iniciar', () => {
       expect(resposta.status).toBe(401);
       expect(corpo.codigo).toBe('NAO_AUTENTICADO');
       expect(atividadesDoCard(tenants.oportunidadeB)).toHaveLength(0);
+    });
+  });
+
+  describe('AC-756: o primeiro bloco acompanha o turno em que a cadência é iniciada', () => {
+    test('iniciada à tarde, os 3 toques são os da tarde (4-6) e o card aponta para o bloco da tarde @spec:AC-756', async () => {
+      agoraFixo('2026-06-10T14:00:00-03:00');
+      pg.psqlComo('crm_migrator', `UPDATE oportunidades SET etapa_id = 1, cadencia_dia = NULL, cadencia_turno = NULL WHERE id = '${tenants.oportunidadeB}'`);
+      const version = Number(pg.psqlComo('crm_migrator', `SELECT version FROM oportunidades WHERE id = '${tenants.oportunidadeB}'`).stdout.trim());
+
+      const resposta = await routeModule.POST(postIniciar(tenants.oportunidadeB, cookieB, { version }), {
+        params: Promise.resolve({ id: tenants.oportunidadeB }),
+      });
+      const corpo = await resposta.json();
+
+      expect(resposta.status).toBe(200);
+      expect(corpo.oportunidade.cadenciaDia).toBe(1);
+      expect(corpo.oportunidade.cadenciaTurno).toBe('tarde');
+      expect(corpo.toques.map((t: { sequencia: number; turno: string }) => [t.sequencia, t.turno])).toEqual([
+        [4, 'tarde'],
+        [5, 'tarde'],
+        [6, 'tarde'],
+      ]);
+      expect(atividadesDoCard(tenants.oportunidadeB).map((a) => a.sequencia)).toEqual([4, 5, 6]);
     });
   });
 });

@@ -12,9 +12,10 @@ import Link from 'next/link';
 import { CabecalhoCard } from '@/components/pipeline/detalhe/cabecalho-card';
 import { nomeDaEtapa } from '@/components/pipeline/detalhe/jornada';
 import { EsqueletoCarregando, EstadoErro } from '@/components/pipeline/pecas/estados';
-import { ItemEmBreve } from '@/components/pipeline/pecas/selo-em-breve';
+import { ModalDadoFaltante } from '@/components/pipeline/modal-dado-faltante';
 import { AbasDoCard, type AbaDoCard } from './abas-do-card';
 import { useContadoresDoCard } from './use-contadores-do-card';
+import { useTransicaoDoCard } from './use-transicao-do-card';
 
 export interface CardDoMolde {
   id: string;
@@ -23,6 +24,7 @@ export interface CardDoMolde {
   leadNome: string;
   telefoneE164?: string | null;
   responsavelNome: string | null;
+  valor?: string | null;
   version: number;
 }
 
@@ -31,15 +33,22 @@ interface MoldeDoCardProps {
   aba: Exclude<AbaDoCard, 'resumo'>;
   /** Mudar este número refaz a busca dos contadores (ex.: depois de enviar um anexo). */
   versaoDosContadores?: number;
+  /** AC-748: a tela ocupa a altura da janela (menos o topo) e o conteúdo rola por dentro; só a partir da largura `lg`. */
+  alturaFixa?: boolean;
   children: (card: CardDoMolde) => ReactNode;
 }
 
-export function MoldeDoCard({ cardId, aba, versaoDosContadores = 0, children }: MoldeDoCardProps) {
+export function MoldeDoCard({ cardId, aba, versaoDosContadores = 0, alturaFixa = false, children }: MoldeDoCardProps) {
   const [card, setCard] = useState<CardDoMolde | null>(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(false);
   const [naoEncontrado, setNaoEncontrado] = useState(false);
   const contagens = useContadoresDoCard(card ? cardId : null, versaoDosContadores);
+  // T-288 (AC-739): mover de etapa, ganho e perdido também nas abas; ao mover, o cabeçalho passa a mostrar a etapa nova.
+  const transicao = useTransicaoDoCard(
+    card,
+    useCallback((etapaId: number, version: number) => setCard((atual) => (atual ? { ...atual, etapaId, version } : atual)), [])
+  );
 
   const carregar = useCallback(async () => {
     setErro(false);
@@ -96,26 +105,33 @@ export function MoldeDoCard({ cardId, aba, versaoDosContadores = 0, children }: 
   }
 
   return (
-    <div className="flex flex-col w-full">
+    <div className={alturaFixa ? 'flex flex-col w-full lg:h-[calc(100dvh-4rem)] lg:min-h-[40rem]' : 'flex flex-col w-full'}>
       <CabecalhoCard
         leadNome={card.leadNome}
         etapaAtualNome={nomeDaEtapa(card.etapaId)}
         responsavelNome={card.responsavelNome}
-        etapasDestino={[]}
-        podeMarcarGanho={false}
-        podeMarcarPerdido={false}
-        enviando={false}
-        onEscolherDestino={() => undefined}
-        acoesExtras={
-          <ItemEmBreve
-            rotulo="Mover Etapa"
-            icone="swap_horiz"
-            className="h-10 px-3.5 rounded-lg bg-surface-subtle"
-          />
-        }
+        etapasDestino={transicao.etapasDestino}
+        podeMarcarGanho={transicao.podeMarcarGanho}
+        podeMarcarPerdido={transicao.podeMarcarPerdido}
+        enviando={transicao.enviando}
+        onEscolherDestino={(etapaDestinoId) => void transicao.enviarTransicao(etapaDestinoId)}
       />
+      {transicao.mensagem && (
+        <div role="alert" className="mx-gutter mt-space-sm text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+          {transicao.mensagem}
+        </div>
+      )}
+      {transicao.dadoFaltante && (
+        <ModalDadoFaltante
+          codigo={transicao.dadoFaltante.codigo}
+          aberto
+          oportunidadeId={card.id}
+          onCancelar={transicao.cancelarDadoFaltante}
+          onConfirmar={(dado) => void transicao.enviarTransicao(transicao.dadoFaltante!.etapaDestinoId, dado)}
+        />
+      )}
       <AbasDoCard cardId={card.id} ativa={aba} contagens={contagens} />
-      {children(card)}
+      {alturaFixa ? <div className="flex flex-col lg:flex-1 lg:min-h-0">{children(card)}</div> : children(card)}
     </div>
   );
 }

@@ -95,7 +95,7 @@ describe('T-171: molde do card', () => {
       expect(screen.getByRole('heading', { name: 'Clínica Santa Luzia' })).toBeTruthy();
       expect(screen.getByText('Proposta')).toBeTruthy();
       expect(screen.getByText('Responsável: Karol Mendes')).toBeTruthy();
-      expect(screen.getByText('Mover Etapa').closest('*[class*="rounded"]')!.textContent!.toLowerCase()).toContain('em breve');
+      expect(screen.queryByText(/em breve/i)).toBeNull();
     });
 
     test('as abas mostram os toques feitos de 18 e o total de anexos @spec:AC-420', async () => {
@@ -152,6 +152,48 @@ describe('T-171: molde do card', () => {
       await usuario.click(tentar);
 
       expect(await screen.findByText('Conteúdo da aba de Clínica Santa Luzia')).toBeTruthy();
+    });
+  });
+
+  describe('AC-739: mover de etapa, ganho e perdido também nas abas', () => {
+    test('lista os destinos que o papel alcança, move pela rota de transição e o cabeçalho mostra a etapa nova @spec:AC-739', async () => {
+      const usuario = userEvent.setup();
+      const base = fetchFalso.getMockImplementation()!;
+      fetchFalso.mockImplementation((url: string, init?: RequestInit) => {
+        if (url === '/api/oportunidades?etapaId=11') return resposta(200, { grafo: { 11: [12, 14, 15] } });
+        if (url === `/api/oportunidades/${CARD_ID}/transicao` && init?.method === 'POST') return resposta(200, { etapaId: 12, version: 4 });
+        return base(url);
+      });
+      renderizar('whatsapp');
+      await screen.findByText('Conteúdo da aba de Clínica Santa Luzia');
+
+      expect(await screen.findByRole('button', { name: 'Marcar como Ganho' })).toBeTruthy();
+      expect(screen.getByRole('button', { name: 'Perdido' })).toBeTruthy();
+      const select = screen.getByLabelText('Mover de Etapa');
+      expect(within(select).getAllByRole('option').map((o) => o.textContent)).toEqual(['Mover de Etapa', 'Teste (Trial)']);
+
+      await usuario.selectOptions(select, '12');
+
+      await waitFor(() => {
+        const chamada = fetchFalso.mock.calls.find(([u]) => u === `/api/oportunidades/${CARD_ID}/transicao`)!;
+        expect(JSON.parse((chamada[1] as RequestInit).body as string)).toEqual({ version: 3, etapaDestinoId: 12 });
+      });
+      const titulo = screen.getByRole('heading', { name: 'Clínica Santa Luzia' });
+      await waitFor(() => expect(within(titulo.parentElement as HTMLElement).getByText('Teste (Trial)')).toBeTruthy());
+    });
+
+    test('quando falta dado (valor na Proposta, motivo na perda), abre o modal em vez de mover direto @spec:AC-739', async () => {
+      const usuario = userEvent.setup();
+      const base = fetchFalso.getMockImplementation()!;
+      fetchFalso.mockImplementation((url: string, init?: RequestInit) => {
+        if (url === '/api/oportunidades?etapaId=11') return resposta(200, { grafo: { 11: [14] } });
+        if (url === `/api/oportunidades/${CARD_ID}/transicao` && init?.method === 'POST') return resposta(400, { codigo: 'MOTIVO_PERDA_OBRIGATORIO' });
+        return base(url);
+      });
+      renderizar('anexos');
+      await usuario.click(await screen.findByRole('button', { name: 'Perdido' }));
+
+      expect(await screen.findByText('Selecione o motivo da perda')).toBeTruthy();
     });
   });
 });

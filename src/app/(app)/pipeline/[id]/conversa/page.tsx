@@ -4,7 +4,7 @@
 // do card — fonte visual `docs/ui/stitch_medcrm_interface_design/11._pipeline_id_conversa_whatsapp_do_lead/`.
 // Vive no grupo `(app)` e dentro do `MoldeDoCard` (T-171): cabeçalho, abas e os
 // estados de carregando, erro e "não encontrado" do card. "Ligar Agora" abre o discador
-// com o telefone do lead (fase5-acoes-rapidas, Q-049).
+// com o telefone do lead (fase5-acoes-rapidas, Q-049). A coluna da direita traz cadência, proposta, qualificação e notas.
 import { use } from 'react';
 
 import { MoldeDoCard } from '@/components/pipeline/card/molde-do-card';
@@ -16,9 +16,9 @@ export default function PipelineConversaPage({ params }: { params: Promise<{ id:
   const { id } = use(params);
 
   return (
-    <MoldeDoCard cardId={id} aba="whatsapp">
+    <MoldeDoCard cardId={id} aba="whatsapp" alturaFixa>
       {(card) => (
-        <div className="p-gutter flex flex-col gap-space-md w-full">
+        <div className="p-gutter flex flex-col gap-space-md w-full lg:flex-1 lg:min-h-0">
           <div className="flex flex-wrap items-center justify-between gap-space-sm">
             <div>
               <h2 className="font-headline-md text-headline-md text-text-primary">WhatsApp &amp; Conversas</h2>
@@ -32,12 +32,12 @@ export default function PipelineConversaPage({ params }: { params: Promise<{ id:
             )}
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
-            <div className="lg:col-span-8">
-              <ConversaLead leadId={card.leadId} />
+          <div className="grid grid-cols-1 lg:grid-cols-12 lg:grid-rows-1 gap-space-lg items-start lg:items-stretch lg:flex-1 lg:min-h-0">
+            <div className="lg:col-span-8 lg:min-h-0 flex flex-col">
+              <ConversaLead leadId={card.leadId} leadNome={card.leadNome} />
             </div>
-            <div className="lg:col-span-4">
-              <PainelLateral cardId={card.id} />
+            <div className="lg:col-span-4 lg:min-h-0 lg:overflow-y-auto">
+              <PainelLateral cardId={card.id} valor={card.valor ?? null} />
             </div>
           </div>
         </div>

@@ -26,7 +26,9 @@ import { DialogoWhatsappLote } from '@/components/pipeline/lote/dialogo-whatsapp
 import { DialogoLote, type OpcaoDoDialogo } from '@/components/pipeline/lote/dialogo-lote';
 import { BotaoExportar } from '@/components/pipeline/lote/botao-exportar';
 import { ResultadoLote } from '@/components/pipeline/lote/resultado-lote';
-import { MENSAGEM_DO_PEDIDO, type AcaoEmLote, type ResultadoDoLoteView } from '@/components/pipeline/lote/tipos';
+import { DialogoIniciarCadencia } from '@/components/pipeline/lote/dialogo-iniciar-cadencia';
+import { iniciarCadenciaEmMassa } from '@/components/pipeline/lote/iniciar-cadencia-api';
+import { MENSAGEM_DO_PEDIDO, type AcaoDeResultado, type AcaoEmLote, type ResultadoDoLoteView } from '@/components/pipeline/lote/tipos';
 import {
   FiltrosLista,
   type DirecaoOrdenacao,
@@ -105,12 +107,13 @@ function PipelineListaConteudo() {
   const [podeReatribuir, setPodeReatribuir] = useState(false);
   const [acaoAberta, setAcaoAberta] = useState<AcaoEmLote | null>(null);
   const [disparoAberto, setDisparoAberto] = useState(false); // fase5-whatsapp-lote-disparo (AC-685)
+  const [iniciarCadenciaAberto, setIniciarCadenciaAberto] = useState(false); // T-296 (AC-759)
   const [opcoesDoDialogo, setOpcoesDoDialogo] = useState<OpcaoDoDialogo[]>([]);
   const [carregandoOpcoes, setCarregandoOpcoes] = useState(false);
   const [aplicandoLote, setAplicandoLote] = useState(false);
   const [erroDoLote, setErroDoLote] = useState<string | null>(null);
   const [resultadoDoLote, setResultadoDoLote] = useState<{
-    acao: AcaoEmLote;
+    acao: AcaoDeResultado;
     lote: ResultadoDoLoteView;
     nomes: Record<string, string>;
   } | null>(null);
@@ -197,6 +200,27 @@ function PipelineListaConteudo() {
       setOpcoesDoDialogo([]);
     } finally {
       setCarregandoOpcoes(false);
+    }
+  }
+
+  /** AC-759/AC-760: inicia a cadência dos selecionados, mostra o resultado e deixa marcados os que falharam. */
+  async function iniciarCadenciaDosSelecionados() {
+    const ids = [...selecionados];
+    const nomes: Record<string, string> = {};
+    for (const item of dados?.itens ?? []) nomes[item.id] = item.lead.nome;
+    setAplicandoLote(true);
+    setErroDoLote(null);
+    try {
+      const lote = await iniciarCadenciaEmMassa(ids);
+      setIniciarCadenciaAberto(false);
+      setResultadoDoLote({ acao: 'cadencia', lote, nomes });
+      await carregar();
+      void carregarIndicadores();
+      setSelecionados(new Set(lote.resultados.filter((resultado) => !resultado.ok).map((resultado) => resultado.id)));
+    } catch (erro) {
+      setErroDoLote(MENSAGEM_DO_PEDIDO[erro instanceof Error ? erro.message : ''] ?? 'Não foi possível iniciar a cadência. Tente de novo.');
+    } finally {
+      setAplicandoLote(false);
     }
   }
 
@@ -334,7 +358,8 @@ function PipelineListaConteudo() {
   }
 
   return (
-    <div className="p-space-md space-y-space-md">
+    // AC-734: altura da tela (menos o topo); só a tabela rola por dentro.
+    <div className="p-space-md flex flex-col gap-space-md h-[calc(100dvh-4rem)] min-h-[40rem]">
       <div className="flex items-start justify-between flex-wrap gap-space-md">
         <div>
           <h1 className="font-headline-lg text-headline-lg text-text-primary tracking-tight">Pipeline em Lista</h1>
@@ -401,15 +426,15 @@ function PipelineListaConteudo() {
         <EstadoVazio titulo="Nenhum lead ainda" proximoPasso="crie o primeiro no Funil Pipeline" />
       )}
       {!carregando && !erro && dados && dados.total > 0 && (
-        <>
+        <div className="flex-1 min-h-0 flex flex-col gap-space-md">
           <TabelaLista
             itens={dados.itens}
             selecionados={selecionados}
             onAlternarSelecao={alternarSelecao}
             onAlternarTodos={alternarTodos}
-            barraDeAcoes={<BarraLote quantidade={selecionados.size} podeReatribuir={podeReatribuir} onAbrir={abrirAcao} onDispararWhatsapp={() => setDisparoAberto(true)} />}
+            barraDeAcoes={<BarraLote quantidade={selecionados.size} podeReatribuir={podeReatribuir} onAbrir={abrirAcao} onDispararWhatsapp={() => setDisparoAberto(true)} onIniciarCadencia={() => { setErroDoLote(null); setIniciarCadenciaAberto(true); }} />}
           />
-          <div className="px-space-md py-2 flex items-center gap-1.5">
+          <div className="px-space-md py-2 flex items-center gap-1.5 flex-shrink-0">
             <label htmlFor="pipeline-lista-exibir" className="font-body-sm text-body-sm text-text-muted">
               Exibir:
             </label>
@@ -433,7 +458,17 @@ function PipelineListaConteudo() {
             onMudarPagina={setPagina}
             rotuloItem="leads"
           />
-        </>
+        </div>
+      )}
+
+      {iniciarCadenciaAberto && (
+        <DialogoIniciarCadencia
+          quantidade={selecionados.size}
+          enviando={aplicandoLote}
+          erro={erroDoLote}
+          onConfirmar={() => void iniciarCadenciaDosSelecionados()}
+          onFechar={() => setIniciarCadenciaAberto(false)}
+        />
       )}
 
       {disparoAberto && <DialogoWhatsappLote oportunidadeIds={[...selecionados]} onFechar={() => setDisparoAberto(false)} />}

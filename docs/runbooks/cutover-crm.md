@@ -26,8 +26,10 @@
 | Item | Como conferir |
 |---|---|
 | Todas as PRs da fase 5 mergeadas (#47 a #54 e a meta de receita) e o `Release` da `main` verde | `gh pr list --state merged`, `gh run list --workflow release.yml` |
-| Última migration em `drizzle/` é a `0025_sessao_empresa_ativa.sql` (se entrar outra depois, acrescente aqui) | `ls drizzle` |
+| Última migration em `drizzle/` é a `0029_reuniao_meet.sql` (se entrar outra depois, acrescente aqui) | `ls drizzle` |
+| No nginx-proxy-manager do host do CRM (staging e produção), `client_max_body_size 20m;` em *Advanced* — o padrão do nginx é 1 MB e barraria o envio de áudio e arquivos do WhatsApp (até 16 MB) com erro 413 | enviar um PDF de 2 MB pela conversa de um card |
 | Acesso SSH root à VPS; código em `/root/crm-staging` (nunca em `~/scrumboard-medguia`, que é o legado) | — |
+| Depois da carga de dados, iniciar a cadência dos leads que devem ter tarefas: no funil, **Iniciar Cadência em Massa** (todos de "Entrada de leads" à vista, em pedaços de 100) ou, na lista, marcar e **Iniciar Cadência**. Sem isso "Tarefas do Turno" fica vazia (a migração põe todos em "Entrada de leads", sem toques) | abrir "Tarefas do Turno" |
 | Janela combinada com a operação (o legado sai do ar durante a troca) | — |
 | Plano de volta lido (seção 9) | — |
 
@@ -41,7 +43,7 @@ pg_dumpall -U postgres | gzip > /root/backups/pg-master-pre-cutover_$(date +%F_%
 
 1. Se `crm_prod`, `crm_app` e `crm_migrator` ainda não existem, crie-os como no
    [`provisionar-staging.md`](provisionar-staging.md) (`infra/postgres/init/01-databases-and-roles.sql`).
-2. Aplique **todos** os `.sql` de `drizzle/` (de `0000` até a `0025`), **em ordem**, com `psql` como `crm_migrator`,
+2. Aplique **todos** os `.sql` de `drizzle/` (de `0000` até a `0029`), **em ordem**, com `psql` como `crm_migrator`,
    direto no `crm_prod`. **Não use `npm run db:migrate`:** o `_journal.json` só conhece
    4 das migrations (as demais são escritas à mão).
 
@@ -68,6 +70,10 @@ O que cada migration das fases 4 e 5 faz (todas **só acrescentam**; nenhuma apa
 | `0022_meta_receita` | a meta de receita mensal (em reais) na tabela de metas: a coluna do valor vira `numeric(12,2)` e o limite passa a ser por tipo de meta; as porcentagens já gravadas mantêm o valor |
 | `0023_email_descadastros` | a lista de quem pediu para sair dos e-mails de cada empresa (descadastro, LGPD), com isolamento por empresa |
 | `0025_sessao_empresa_ativa` | a empresa em que o super admin está atuando, gravada na sessão (o seletor de empresa passa a valer para todos os dados) |
+| `0026_oportunidade_comercial` | dados da proposta e qualificação técnica de cada card (tabela nova, com isolamento por empresa) |
+| `0027_whatsapp_midia` | colunas de mídia (áudio, imagem, vídeo, documento) nas mensagens do WhatsApp |
+| `0028_cadencia_inicio_no_turno` | a cadência iniciada à tarde começa pelo bloco da tarde (troca a função `iniciar_cadencia`) |
+| `0029_reuniao_meet` | o link da sala do Google Meet em cada reunião (`reunioes.meet_url`) |
 | `0024_envios_campanha_erro` | a coluna `erro` (motivo da falha) em `envios_campanha` e o índice dos envios pendentes, para o worker de e-mail |
 
 **Conferência do banco** (como `crm_migrator`; os números vêm do estado de 29/10, ajuste se
@@ -98,7 +104,26 @@ O `.env` é lido pelo app **e** pelo worker (`env_file: .env` no `docker-compose
 | `RESEND_API_KEY`, `RESEND_REMETENTE` | e-mail de convite, de redefinição de senha e campanhas (sem a chave o convite é criado e a tela mostra o link para copiar; o remetente padrão é `no-reply@medguia.cloud`) | recomendada |
 | `SEGREDO_CONFIGURACOES` | cifra a chave do Resend de cada empresa no banco (mínimo de 32 caracteres; gere um aleatório e guarde em lugar seguro). **Trocar depois invalida as chaves salvas** (cada empresa precisa cadastrá-la de novo em `/configuracoes/email`) **e os links de descadastro já enviados**. Sem ela só salvar a chave fica indisponível (503) | sim, para campanhas |
 | `RESEND_WEBHOOK_SECRET` | aceitar os eventos de entrega, abertura e clique das campanhas | sim, para campanhas |
-| `GOOGLE_*`, `SUPABASE_*`, `SUPABASE_LP_*` | ETL e espelho do Sheets durante a migração dos dados | só enquanto houver ETL |
+| `GOOGLE_OAUTH_CLIENT_ID`, `GOOGLE_OAUTH_CLIENT_SECRET` | conectar a conta Google da empresa e criar a sala do Meet de cada reunião (passo a passo na seção "Google Meet" abaixo). Sem elas a agenda funciona, sem link do Meet, e a tela `/configuracoes/google` explica o que falta | sim, para o Meet |
+| `GOOGLE_*` (conta de serviço), `SUPABASE_*`, `SUPABASE_LP_*` | ETL e espelho do Sheets durante a migração dos dados | só enquanto houver ETL |
+
+### Google Meet (uma vez por ambiente: staging e produção)
+
+A sala do Meet de cada reunião é criada no Google Calendar da conta que a empresa conecta (a MedGuia usa `contato@medguia.com.br`); o lead e o closer
+recebem o convite por e-mail. Quem faz a parte do Google precisa ser administrador do Google Workspace `medguia.com.br`.
+
+1. Em <https://console.cloud.google.com>, logado como administrador do Workspace, crie um projeto (ex.: "MedCRM").
+2. **APIs e serviços › Biblioteca**: ative a **Google Calendar API**.
+3. **Tela de consentimento OAuth**: tipo de usuário **Interno** (só contas do Workspace; dispensa a verificação do Google e o token não expira em 7 dias).
+   Escopos: `openid`, `email` e `https://www.googleapis.com/auth/calendar.events`.
+4. **Credenciais › Criar credenciais › ID do cliente OAuth › Aplicativo da Web**. Em *URIs de redirecionamento autorizados* ponha, um por ambiente,
+   `https://<endereço do CRM>/api/integracoes/google/callback` (staging: `https://staging-crm.medguia.cloud/api/integracoes/google/callback`).
+5. Ponha o ID e o segredo do cliente em `GOOGLE_OAUTH_CLIENT_ID` e `GOOGLE_OAUTH_CLIENT_SECRET` no `.env` do ambiente e recrie o container do app
+   (`docker compose up -d`). `SEGREDO_CONFIGURACOES` também precisa estar definida: o token da conta fica cifrado com ela.
+6. No CRM, com um usuário gerente ou master: **Administração › Google Meet › Conectar com o Google**, e entre com `contato@medguia.com.br`.
+7. Teste: agende uma reunião e confira o link do Meet no cartão da agenda e o convite no e-mail do lead.
+
+Para trocar de conta ou revogar, use **Desconectar** na mesma tela. Reuniões já criadas continuam no Calendar.
 
 **A LP (landing page) não faz parte do cutover** (está desativada em produção). `SUPABASE_LP_URL` e `SUPABASE_LP_SERVICE_KEY` são
 opcionais: sem elas o worker roda só o Sheets. Se uma das duas for configurada, a outra passa a ser obrigatória.

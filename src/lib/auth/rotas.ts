@@ -67,6 +67,9 @@ const REGRAS_PAPEL: RegraPapel[] = [
   // fase5-email-config (ASM-258): a chave do Resend da empresa é de gestão — tela e API.
   { prefixo: '/configuracoes/email', papelMinimo: 'GERENTE' },
   { prefixo: '/api/configuracoes/email', papelMinimo: 'GERENTE' },
+  // T-301: conectar a conta Google do Meet é de gestão — tela e API (o estado do Meet na agenda, `GET /api/reunioes/meet`, é de qualquer sessão).
+  { prefixo: '/configuracoes/google', papelMinimo: 'GERENTE' },
+  { prefixo: '/api/integracoes/google', papelMinimo: 'GERENTE' },
   { prefixo: '/api/investimento', papelMinimo: 'GERENTE' },
   // Análises: GERENTE+ (mesmo mínimo já aplicado em /api/relatorios/kpis,
   // ASM-074/AC-229).

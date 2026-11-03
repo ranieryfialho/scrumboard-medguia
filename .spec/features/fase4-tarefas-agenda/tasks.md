@@ -65,3 +65,23 @@
 - Arquivos: test/auth/rotas-tarefas-agenda.test.ts, src/components/tarefas/estados.tsx
 - Esforço: medio
 - Notas: teste no molde de `test/auth/rotas-pipeline.test.ts`. Depende das demais.
+
+## T-298 — A fila do turno e os atrasados têm altura fixa [pendente]
+- Refs: US-119, US-120, AC-762
+- Arquivos: src/components/tarefas/fila-turno.tsx, src/components/tarefas/tarefas-atrasadas.tsx, test/components/tarefas/fila-turno-tela.test.tsx, test/components/tarefas/atrasadas-tela.test.tsx
+- Notas: décimo quarto ajuste da série do dono (03/11): pedido para a Fila do Turno, mesmo padrão do funil, da lista e da conversa (T-284/T-285/T-291); a tela de atrasados recebeu o mesmo (é a irmã, com a mesma tabela longa). A Agenda não foi mexida.
+
+## T-299 — Os cartões de "Tarefas Atrasadas" seguem o protótipo [pendente]
+- Refs: US-120, AC-473, AC-763
+- Arquivos: src/components/tarefas/kpis-atrasados.tsx, src/components/tarefas/tarefas-atrasadas.tsx, test/components/tarefas/atrasadas-tela.test.tsx
+- Notas: décimo quinto ajuste da série do dono (03/11). Só os cartões do topo e a etiqueta do cabeçalho mudam (a altura fixa já veio no T-298). Escolhas minhas: o quarto cartão é "Cards em risco" porque a "Recuperação de SLA" do protótipo (88,4%; 27 de 31 regularizados) não tem dado no sistema; o rodapé do "Maior tempo de atraso" mostra a ordenação da fila no lugar de "Expira redistribuição em" (regra que não existe). Os blocos "Regra de governança / transbordo > 4 horas" e "Plantão de Resgate" do protótipo continuam de fora: dependem de regras e de capacidade por consultor que o sistema não tem.
+
+## T-300 — A agenda fica mais perto do protótipo [pendente]
+- Refs: US-121, AC-764
+- Arquivos: src/components/agenda/kpis-agenda.tsx, src/components/agenda/agenda-tela.tsx, src/components/agenda/cartao-reuniao.tsx, src/components/agenda/lateral-agenda.tsx, src/components/agenda/visoes.tsx, test/components/agenda/agenda-tela.test.tsx
+- Notas: décimo sexto ajuste da série do dono (03/11). Só aparência, com os dados que a agenda já tem; nada de backend novo. O botão "Google Meet / Outlook" e "Entrar no Meet Agora" continuam "em breve": a integração com o Meet é uma funcionalidade à parte (Google Calendar, ver a conversa de 03/11). A altura fixa não foi aplicada: a agenda é uma página de leitura longa e o dono não pediu.
+
+## T-301 — Google Meet na agenda: conectar a conta da empresa e criar a sala de cada reunião [pendente]
+- Refs: US-121, US-122, AC-488, AC-765, AC-766, AC-767, AC-768, AC-769, AC-770
+- Arquivos: drizzle/0029_reuniao_meet.sql, src/db/schema/pipeline.ts, src/lib/google/calendario.ts, src/repositories/google-config.ts, src/repositories/reunioes-meet.ts, src/repositories/reunioes-acoes.ts, src/repositories/reunioes.ts, src/app/api/integracoes/google/route.ts, src/app/api/integracoes/google/conectar/route.ts, src/app/api/integracoes/google/callback/route.ts, src/app/api/reunioes/meet/route.ts, src/app/api/reunioes/[id]/meet/route.ts, src/lib/auth/rotas.ts, src/components/shell/menu-config.ts, src/components/admin/google-meet-empresa.tsx, src/app/(app)/configuracoes/google/page.tsx, src/components/agenda/cartao-reuniao.tsx, src/components/agenda/agenda-tela.tsx, src/components/agenda/acoes-reuniao.ts, src/components/agenda/tipos.ts, test/support/google-falso.ts, test/api/google-meet.test.ts, test/components/admin/google-meet-empresa.test.tsx, test/components/agenda/agenda-tela.test.tsx, test/auth/rotas-google.test.ts, test/components/shell/casca.test.tsx, docs/runbooks/cutover-crm.md
+- Notas: décimo sétimo ajuste do dono (03/11). Decisões dele: Google Workspace com domínio próprio; o closer usa a conta **contato@medguia.com.br** (uma conta só, da empresa); convidar o lead por e-mail; só Meet (sem Outlook/Teams). Desenho meu: OAuth de uma conta por empresa (não conta de serviço com delegação de domínio, que exigiria configurar o painel de administrador do Workspace); app do Google Cloud do tipo "Interno" (sem verificação do Google e sem o token expirar em 7 dias); escopos `openid email calendar.events` (mínimo); o token fica cifrado com `SEGREDO_CONFIGURACOES`, como a chave do Resend. Falha do Google nunca derruba agendar, reagendar ou cancelar. **Migration 0029 e as variáveis `GOOGLE_OAUTH_CLIENT_ID` e `GOOGLE_OAUTH_CLIENT_SECRET` precisam estar no staging e em produção; o passo a passo do Google Cloud está no runbook, seção "Google Meet".** **Não testado com o Google de verdade** (testes e verificação local usam um Google falso): o primeiro teste real é no staging, com a conta contato@medguia.com.br. Fora desta tarefa: detectar presença/no-show pela API do Meet (exige Workspace e outra permissão), e acompanhar aceite/recusa do convite (mudaria "Agendada" para "Confirmada").

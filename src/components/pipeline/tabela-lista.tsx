@@ -51,11 +51,11 @@ export function TabelaLista({ itens, selecionados, onAlternarSelecao, onAlternar
   const todosSelecionados = itens.length > 0 && itens.every((item) => selecionados.has(item.id));
 
   return (
-    <div className="rounded-xl bg-surface-card shadow-sm overflow-hidden flex flex-col">
+    <div className="rounded-xl bg-surface-card shadow-sm overflow-hidden flex flex-col flex-1 min-h-0">
       {barraDeAcoes}
-      <div className="overflow-x-auto">
+      <div className="overflow-auto flex-1 min-h-0">
         <table className="w-full text-left border-collapse">
-          <thead>
+          <thead className="sticky top-0 z-10">
             <tr className="bg-surface-subtle text-text-secondary font-table-header text-table-header uppercase tracking-wider h-11">
               <th className="w-12 px-4 py-2 text-center">
                 <input

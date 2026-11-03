@@ -125,6 +125,13 @@ para ir de uma área à outra sem perder o contexto.
 - **Quando** ele escolhe "Sair" no menu do usuário (topo)
 - **Então** a sessão é revogada (linha apagada em `sessoes`), o cookie é limpo e ele cai em `/login`; voltar com o botão do navegador não mostra dados da empresa
 
+#### AC-761 — Os números de tarefas do menu acompanham a fila
+
+- **Dado** o menu lateral com os selos de "Tarefas do Turno" e "Tarefas Atrasadas"
+- **Quando** a fila de tarefas muda — alguém conclui, inicia ou vira o dia de uma cadência, nesta aba, em outra ou por outra pessoa (o servidor avisa pelo canal de tempo real) — ou o canal reconecta
+- **Então** o menu relê só os dois números e os atualiza sem recarregar a página; quando chega a zero, o selo some
+- **E** se a releitura falhar, o número que já estava continua; sem canal de tempo real, o menu segue lendo só ao abrir
+
 ### US-099 — Entrar no sistema
 
 Como usuário, quero entrar com e-mail e senha numa tela com a cara do produto,

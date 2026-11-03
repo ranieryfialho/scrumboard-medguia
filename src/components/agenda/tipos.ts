@@ -17,6 +17,8 @@ export interface ReuniaoView {
   etapaId: number;
   version: number;
   closer: { id: string; nome: string } | null;
+  /** T-301: o link da sala do Meet, quando existe. */
+  meetUrl: string | null;
 }
 
 export interface ResumoAgendaView {

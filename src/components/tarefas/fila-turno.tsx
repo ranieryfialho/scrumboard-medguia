@@ -124,7 +124,8 @@ export function FilaTurno() {
   const visiveis = filtrados.slice((paginaAtual - 1) * POR_PAGINA, paginaAtual * POR_PAGINA);
 
   return (
-    <div className="p-space-md space-y-space-md">
+    // AC-762: altura da tela (menos o topo); só a tabela da fila rola por dentro.
+    <div className="p-space-md flex flex-col gap-space-md h-[calc(100dvh-4rem)] min-h-[40rem]">
       <div className="flex items-start justify-between flex-wrap gap-space-md">
         <div>
           <h1 className="font-headline-lg text-headline-lg text-text-primary tracking-tight">Fila do Turno Operacional</h1>
@@ -175,8 +176,8 @@ export function FilaTurno() {
           )}
           <DestaqueTarefa item={fila[0] ?? null} enviando={enviando} onConcluir={concluir} />
 
-          <section className="bg-surface-card rounded-2xl shadow-sm overflow-hidden">
-            <div className="p-space-md flex items-center justify-between flex-wrap gap-space-sm">
+          <section className="bg-surface-card rounded-2xl shadow-sm overflow-hidden flex flex-col flex-1 min-h-0">
+            <div className="p-space-md flex items-center justify-between flex-wrap gap-space-sm flex-shrink-0">
               <div className="flex items-center gap-3">
                 <h2 className="font-headline-sm text-headline-sm text-text-primary">Fila Ordenada do Turno</h2>
                 <span className="px-2.5 py-1 rounded-full bg-primary text-on-primary font-label-sm text-label-sm">
@@ -204,9 +205,9 @@ export function FilaTurno() {
                 <p className="px-space-md pb-space-md font-body-md text-body-md text-text-secondary">Nenhum toque pendente neste turno.</p>
               )
             ) : (
-              <div className="overflow-x-auto">
+              <div className="relative overflow-auto flex-1 min-h-0">
                 <table className="w-full text-left">
-                  <thead className="bg-surface-subtle">
+                  <thead className="bg-surface-subtle sticky top-0 z-10">
                     <tr className="font-label-sm text-table-header uppercase text-text-muted tracking-wider">
                       <th className="px-space-md py-3">Horário</th>
                       <th className="px-space-md py-3">Lead</th>

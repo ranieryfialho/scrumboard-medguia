@@ -77,6 +77,42 @@ function textoDoEvento(
         ? `Responsável alterado: de "${dados.deNome}" para "${para}"`
         : `Responsável definido: "${para}"`;
     }
+    case 'evidencia_marcada': {
+      const nome = typeof dados.nome === 'string' && dados.nome ? `"${dados.nome}"` : 'Anexo';
+      return `${nome} marcado como evidência da etapa "${etapaDestinoNome}"`;
+    }
+    case 'evidencia_removida': {
+      const nome = typeof dados.nome === 'string' && dados.nome ? `"${dados.nome}"` : 'Anexo';
+      return `Evidência removida de ${nome}`;
+    }
+    case 'anexo_excluido': {
+      const nome = typeof dados.nome === 'string' && dados.nome ? `"${dados.nome}"` : 'sem nome';
+      return `Anexo ${nome} excluído (SHA-256 ${typeof dados.hash === 'string' ? dados.hash.slice(0, 12) : '—'}…)`;
+    }
+    case 'dossie_exportado': {
+      const arquivos = typeof dados.arquivos === 'number' ? dados.arquivos : 0;
+      const problemas = (typeof dados.divergentes === 'number' ? dados.divergentes : 0) + (typeof dados.ausentes === 'number' ? dados.ausentes : 0);
+      return `Dossiê exportado (${arquivos === 1 ? '1 arquivo' : `${arquivos} arquivos`}${problemas > 0 ? `, ${problemas} com problema de integridade` : ''})`;
+    }
+    case 'edicao_card': {
+      // AC-737: o que mudou, com o valor de antes e o de depois (telefone, e-mail e valor entram como foram gravados).
+      const rotulos: Record<string, string> = { nome: 'Nome', email: 'E-mail', origem: 'Origem', telefone: 'Telefone', valor: 'Valor estimado',
+        previsao_fechamento: 'Previsão de fechamento',
+        condicao_especial: 'Condição especial',
+        plano: 'Plano',
+        porte_clinica: 'Porte da clínica',
+        prontuario_legado: 'Prontuário legado',
+        faturamento_tiss: 'Faturamento TISS',
+        termo_lgpd: 'Termo LGPD validado',
+      };
+      const lista = Array.isArray(dados.alteracoes) ? (dados.alteracoes as Array<Record<string, unknown>>) : [];
+      const partes = lista.map((a) => {
+        const de = typeof a.de === 'string' && a.de ? `"${a.de}"` : 'vazio';
+        const para = typeof a.para === 'string' && a.para ? `"${a.para}"` : 'vazio';
+        return `${rotulos[String(a.campo)] ?? String(a.campo)}: de ${de} para ${para}`;
+      });
+      return partes.length > 0 ? `Dados do card editados — ${partes.join('; ')}` : 'Dados do card editados';
+    }
     default:
       return tipo;
   }

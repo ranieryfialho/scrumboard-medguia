@@ -47,6 +47,7 @@ function r(id: string, nome: string, quando: string, status: string, extra: Reco
     etapaId: 8,
     version: 1,
     closer: { id: 'u2', nome: 'Bia' },
+    meetUrl: null,
     ...extra,
   };
 }
@@ -324,5 +325,158 @@ describe('T-186: AgendaTela', () => {
     render(<AgendaTela />);
     expect(await screen.findByText(/Não foi possível carregar a agenda/)).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Tentar de novo' })).toBeTruthy();
+  });
+
+  test('o topo segue o protótipo: trilha, cartões com selo e barra de progresso, contagem na aba Lista e o período com ícone @spec:AC-764', async () => {
+    render(<AgendaTela />);
+    await screen.findByText('Reuniões agendadas hoje');
+
+    const trilha = screen.getByRole('navigation', { name: 'Trilha' });
+    expect(within(trilha).getByText('Operação comercial')).toBeTruthy();
+    expect(within(trilha).getByText('/agenda')).toBeTruthy();
+
+    const cartao = (titulo: string) => screen.getByText(titulo).closest('div.rounded-2xl') as HTMLElement;
+    const barra = (c: HTMLElement) => c.querySelector('[role="presentation"] > div') as HTMLElement | null;
+    const hoje = cartao('Reuniões agendadas hoje');
+    expect(within(hoje).getByText('Hoje')).toBeTruthy();
+    expect(barra(hoje)!.style.width).toBe('60%'); // 5 reuniões, 2 por vir → 3 já passaram
+    expect(barra(cartao('Taxa de presença'))!.style.width).toBe('33%');
+    const noShow = cartao('Ocorrências de no-show');
+    expect(within(noShow).getByText('clínicas')).toBeTruthy();
+    expect(within(noShow).getByText('Atenção')).toBeTruthy();
+    expect(barra(noShow)!.style.width).toBe('67%');
+    expect(barra(cartao('Pipeline em demonstração'))).toBeNull(); // sem percentual natural, sem barra inventada
+
+    // a aba Lista mostra quantas reuniões a semana tem, sem mudar o nome da aba
+    const lista = screen.getByRole('tab', { name: 'Lista' });
+    expect(lista.querySelector('[aria-hidden="true"]')!.textContent).toBe('7'); // as 7 reuniões da semana
+    expect(screen.getByText('8 a 14 de junho de 2026').closest('span.border-l')!.querySelector('.material-symbols-outlined')!.textContent).toBe('calendar_month');
+  });
+
+  test('o cartão da fila tem faixa colorida pelo status, bloco de horário (com o fim quando a reunião terminou) e ícone no selo @spec:AC-764', async () => {
+    const base = fetchFalso.getMockImplementation()!;
+    fetchFalso.mockImplementation((url: string, init?: { method?: string }) => {
+      if (url.startsWith('/api/reunioes?') && url.includes('de=2026-06-11&ate=2026-06-11')) {
+        return resposta(200, { reunioes: [r('d', 'Lead D', '2026-06-11T09:00:00Z', 'realizada', { encerradaEm: '2026-06-11T09:45:00Z' }), r('g', 'Lead G', '2026-06-11T08:00:00Z', 'no_show'), r('a', 'Lead A', '2026-06-11T15:00:00Z', 'agendada')] });
+      }
+      return base(url, init);
+    });
+    render(<AgendaTela />);
+    const fila = await screen.findByRole('region', { name: 'Fila de Reuniões e Sessões Clínicas (Hoje)' });
+    const d = await within(fila).findByLabelText('Reunião com Lead D');
+
+    expect(d.className).toContain('border-success-text');
+    expect(within(d).getByText('06:00')).toBeTruthy();
+    expect(within(d).getByText('06:45')).toBeTruthy(); // o fim só aparece quando a reunião terminou de fato
+    expect(within(d).getByText('Realizada').querySelector('[data-icone-do-status]')!.textContent).toBe('check_circle');
+
+    const g = within(fila).getByLabelText('Reunião com Lead G');
+    expect(g.className).toContain('border-danger-text');
+    expect(within(g).queryByText('06:45')).toBeNull();
+    expect(within(fila).getByLabelText('Reunião com Lead A').className).toContain('border-primary');
+
+    // nas células apertadas da semana o selo é só texto
+    const semana = document.querySelector('[data-visao="semana"]') as HTMLElement;
+    expect(semana.querySelector('[data-icone-do-status]')).toBeNull();
+  });
+
+  test('a performance por closer pinta a barra pela taxa: verde, azul ou âmbar @spec:AC-764', async () => {
+    const base = fetchFalso.getMockImplementation()!;
+    fetchFalso.mockImplementation((url: string, init?: { method?: string }) =>
+      url === '/api/reunioes/resumo'
+        ? resposta(200, {
+            ...RESUMO,
+            desempenhoPorCloser: [
+              { closerId: 'a', nome: 'Alta', realizadas: 12, comResultado: 13, taxa: 92 },
+              { closerId: 'b', nome: 'Média', realizadas: 7, comResultado: 8, taxa: 85 },
+              { closerId: 'c', nome: 'Baixa', realizadas: 6, comResultado: 8, taxa: 75 },
+            ],
+          })
+        : base(url, init)
+    );
+    render(<AgendaTela />);
+    const desempenho = await screen.findByRole('region', { name: 'Performance por Closer' });
+    const cor = (nome: string) => (within(desempenho).getByText(nome).closest('div.flex-col') as HTMLElement).querySelector('.h-full')!.className;
+    expect(cor('Alta')).toContain('bg-success-text');
+    expect(cor('Média')).toContain('bg-primary');
+    expect(cor('Baixa')).toContain('bg-warning-text');
+  });
+
+  describe('AC-767/AC-770: o Google Meet na agenda', () => {
+    function comMeet(estado: { conectado: boolean; conta: string | null } | null, reunioesDeHoje: ReturnType<typeof r>[]) {
+      const base = fetchFalso.getMockImplementation()!;
+      fetchFalso.mockImplementation((url: string, init?: { method?: string }) => {
+        if (url === '/api/reunioes/meet') return estado ? resposta(200, estado) : resposta(404, {});
+        if (url.startsWith('/api/reunioes?') && url.includes('de=2026-06-11&ate=2026-06-11')) return resposta(200, { reunioes: reunioesDeHoje });
+        return base(url, init);
+      });
+    }
+
+    test('com o Google conectado o topo mostra "Google Meet" com a conta, e a reunião em andamento tem o botão que abre a sala @spec:AC-767', async () => {
+      comMeet({ conectado: true, conta: 'contato@medguia.com.br' }, [r('b', 'Lead B', '2026-06-11T13:30:00Z', 'em_andamento', { meetUrl: 'https://meet.google.com/abc-defg-hij' })]);
+      render(<AgendaTela />);
+      const fila = await screen.findByRole('region', { name: 'Fila de Reuniões e Sessões Clínicas (Hoje)' });
+      const cartao = await within(fila).findByLabelText('Reunião com Lead B');
+
+      const entrar = within(cartao).getByRole('link', { name: /Entrar no Meet Agora/ });
+      expect(entrar.getAttribute('href')).toBe('https://meet.google.com/abc-defg-hij');
+      expect(entrar.getAttribute('target')).toBe('_blank');
+      expect(entrar.getAttribute('rel')).toContain('noopener');
+      expect(within(cartao).getByText('meet.google.com/abc-defg-hij')).toBeTruthy();
+      expect(within(cartao).queryByText(/em breve/i)).toBeNull();
+
+      const pilula = screen.getByTitle('Conta conectada: contato@medguia.com.br');
+      expect(pilula.textContent).toContain('Google Meet');
+      expect(screen.queryByRole('button', { name: 'Google Meet / Outlook (em breve)' })).toBeNull();
+    });
+
+    test('reunião agendada com sala tem "Link da Sala", que copia o endereço, e sem sala oferece "Gerar link do Meet" @spec:AC-767', async () => {
+      comMeet({ conectado: true, conta: 'contato@medguia.com.br' }, [
+        r('a', 'Lead A', '2026-06-11T15:00:00Z', 'agendada', { meetUrl: 'https://meet.google.com/aaa-bbbb-ccc' }),
+        r('c', 'Lead C', '2026-06-11T16:00:00Z', 'agendada'),
+      ]);
+      const u = usuario(); // o `userEvent.setup()` instala a própria área de transferência: só depois dele dá para espiá-la
+      const escrever = vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined);
+      render(<AgendaTela />);
+      const fila = await screen.findByRole('region', { name: 'Fila de Reuniões e Sessões Clínicas (Hoje)' });
+      const comSala = await within(fila).findByLabelText('Reunião com Lead A');
+
+      await u.click(within(comSala).getByRole('button', { name: 'Link da Sala' }));
+      expect(escrever).toHaveBeenCalledWith('https://meet.google.com/aaa-bbbb-ccc');
+      expect(await within(comSala).findByText('Copiado')).toBeTruthy();
+      expect(within(comSala).queryByRole('button', { name: /Gerar link do Meet/ })).toBeNull();
+
+      const semSala = within(fila).getByLabelText('Reunião com Lead C');
+      expect(within(semSala).queryByRole('button', { name: 'Link da Sala' })).toBeNull();
+      await u.click(within(semSala).getByRole('button', { name: 'Gerar link do Meet: Lead C' }));
+      await waitFor(() => expect(fetchFalso.mock.calls.some((c) => c[0] === '/api/reunioes/c/meet' && c[1]?.method === 'POST')).toBe(true));
+    });
+
+    test('se gerar o link falhar, a agenda mostra o motivo @spec:AC-770', async () => {
+      comMeet({ conectado: true, conta: null }, [r('c', 'Lead C', '2026-06-11T16:00:00Z', 'agendada')]);
+      const comMeetOk = fetchFalso.getMockImplementation()!;
+      fetchFalso.mockImplementation((url: string, init?: { method?: string }) =>
+        url === '/api/reunioes/c/meet' ? resposta(502, { codigo: 'FALHA_NO_GOOGLE' }) : comMeetOk(url, init)
+      );
+      const u = usuario();
+      render(<AgendaTela />);
+      await u.click(await screen.findByRole('button', { name: 'Gerar link do Meet: Lead C' }));
+      expect(await screen.findByText(/O Google não respondeu/)).toBeTruthy();
+    });
+
+    test('sem o Google conectado o topo leva à configuração e o botão da sala continua "em breve"; sem saber o estado, também @spec:AC-766', async () => {
+      comMeet({ conectado: false, conta: null }, [r('b', 'Lead B', '2026-06-11T13:30:00Z', 'em_andamento')]);
+      render(<AgendaTela />);
+      expect((await screen.findByRole('link', { name: /Conectar Google Meet/ })).getAttribute('href')).toBe('/configuracoes/google');
+      const fila = await screen.findByRole('region', { name: 'Fila de Reuniões e Sessões Clínicas (Hoje)' });
+      const cartao = await within(fila).findByLabelText('Reunião com Lead B');
+      expect(within(cartao).getByRole('button', { name: 'Entrar no Meet Agora (em breve)' }).getAttribute('aria-disabled')).toBe('true');
+      expect(within(cartao).queryByRole('button', { name: /Gerar link do Meet/ })).toBeNull();
+      cleanup();
+
+      comMeet(null, [r('b', 'Lead B', '2026-06-11T13:30:00Z', 'em_andamento')]);
+      render(<AgendaTela />);
+      expect(await screen.findByRole('button', { name: 'Google Meet / Outlook (em breve)' })).toBeTruthy();
+    });
   });
 });

@@ -47,11 +47,11 @@ export function ColunaEtapa({
     <div
       ref={setNodeRef}
       data-etapa-id={etapaId}
-      className={`w-80 flex-shrink-0 flex flex-col rounded-2xl p-3 shadow-sm transition-colors ${
+      className={`w-80 flex-shrink-0 min-h-0 flex flex-col rounded-2xl p-3 shadow-sm transition-colors ${
         isOver ? "bg-primary-fixed/60 ring-2 ring-primary/40" : "bg-surface-subtle/80"
       } ${restrita ? "opacity-40" : ""}`}
     >
-      <div className="flex items-center justify-between pb-2.5 mb-2 px-1">
+      <div className="flex-shrink-0 flex items-center justify-between pb-2.5 mb-2 px-1">
         <div className="flex flex-col">
           <h3 className="font-headline-sm text-headline-sm text-text-primary">{nome}</h3>
           <span className="font-label-sm text-label-sm text-text-secondary">
@@ -63,7 +63,7 @@ export function ColunaEtapa({
         </span>
       </div>
 
-      <div className="space-y-3 min-h-[80px]">
+      <div className="space-y-3 min-h-[80px] flex-1 overflow-y-auto pr-1">
         {cards.map((card) => (
           <div key={card.id} className="relative">
             <CardOportunidade oportunidade={card} atrasado={oportunidadesAtrasadas.has(card.id)} />

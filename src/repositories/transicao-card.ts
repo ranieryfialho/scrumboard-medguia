@@ -15,6 +15,7 @@ import { validarTransicao } from '../domain/pipeline/validar-transicao';
 import type { DadosTransicao, PipelineTransicao } from '../domain/pipeline/tipos';
 import type { ContextoTenant } from '../lib/auth/tenant';
 import { anexoValidoParaOportunidade } from './anexos';
+import { cardTemToquesDeCadencia, ErroConflitoDeVersao as ErroConflitoDeVersaoDaCadencia, iniciarCadencia } from './cadencia';
 import { motivoDaEmpresaOuGlobal } from './motivos-perda';
 import {
   buscarOportunidadePorId,
@@ -22,6 +23,9 @@ import {
   moverOportunidade,
   type Oportunidade,
 } from './oportunidades';
+
+/** Etapa "1º dia de contato": quem entra nela entra na cadência (AC-758). */
+const ETAPA_1_DIA_DE_CONTATO = 2;
 
 export interface EntradaTransicao {
   /** `version` que o chamador acredita ser a atual do card (lock otimista). */
@@ -93,6 +97,23 @@ export async function transicionarCard(
   });
 
   if (!resultado.ok) return { ok: false, codigo: resultado.erro };
+
+  // AC-758: entrar em "1º dia de contato" por qualquer caminho (arrastar, lote, voltar do Follow) inicia a cadência, para a coluna e a
+  // fila de tarefas nunca divergirem. Quem já teve toques (cadência anterior) só muda de etapa, como sempre.
+  if (entrada.etapaDestinoId === ETAPA_1_DIA_DE_CONTATO && !(await cardTemToquesDeCadencia(db, contexto, cardId))) {
+    try {
+      const iniciada = await iniciarCadencia(db, contexto, cardId, {
+        version: entrada.version,
+        atorId: contexto.usuarioId,
+        atorTipo: 'usuario',
+        agora: new Date(),
+      });
+      return { ok: true, card: iniciada.oportunidade };
+    } catch (erro) {
+      if (erro instanceof ErroConflitoDeVersaoDaCadencia) return { ok: false, codigo: 'CONFLITO_DE_VERSAO' };
+      throw erro;
+    }
+  }
 
   try {
     const movida = await moverOportunidade(db, contexto, cardId, {

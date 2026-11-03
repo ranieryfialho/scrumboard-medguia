@@ -2,12 +2,15 @@
 // card (aba "Anexos & Evidências", tela 12). Mesmo padrão `comTenant`
 // (T-040) das demais listagens: a oportunidade de outro tenant é tratada
 // pela rota (404, fail-closed) antes de chamar este repositório.
-import { and, desc, eq, sql } from 'drizzle-orm';
+import { and, asc, desc, eq, inArray, sql } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
 import { anexos, oportunidadeEventos, pipelineEtapas, usuarios } from '../db/schema';
 import type { ContextoTenant } from '../lib/auth/tenant';
 import { comTenant } from './contexto';
+
+export const TIPO_EVIDENCIA_MARCADA = 'evidencia_marcada';
+export const TIPO_EVIDENCIA_REMOVIDA = 'evidencia_removida';
 
 /** ASM-143: anexo ligado a uma mudança de etapa (o `anexoId` gravado no `payload` do evento `transicao_etapa`). */
 export interface EvidenciaDoAnexo {
@@ -23,6 +26,8 @@ export interface AnexoDoCard {
   tamanho: number;
   hash: string;
   enviadoPorNome: string | null;
+  /** T-294: quem enviou, para a tela saber se o usuário pode excluir. */
+  enviadoPorId: string | null;
   criadoEm: Date;
   evidencia: EvidenciaDoAnexo | null;
 }
@@ -47,6 +52,7 @@ export async function listarAnexosDoCard(
         hash: anexos.hash,
         criadoEm: anexos.criadoEm,
         enviadoPorNome: usuarios.nome,
+        enviadoPorId: anexos.enviadoPor,
       })
       .from(anexos)
       .leftJoin(usuarios, eq(usuarios.id, anexos.enviadoPor))
@@ -55,19 +61,30 @@ export async function listarAnexosDoCard(
 
     if (linhas.length === 0) return [];
 
+    // Do mais antigo ao mais novo: vale o último que aconteceu com cada anexo. Evidência vem de uma transição de etapa com o
+    // anexo, ou de "Tornar Evidência" (T-294, grava a etapa do card naquele momento); "Remover evidência" a desfaz.
     const eventos = await tx
       .select({
+        tipo: oportunidadeEventos.tipo,
         anexoId: sql<string | null>`${oportunidadeEventos.payload}->>'anexoId'`,
         etapaId: pipelineEtapas.id,
         etapaNome: pipelineEtapas.nome,
       })
       .from(oportunidadeEventos)
-      .innerJoin(pipelineEtapas, eq(pipelineEtapas.id, oportunidadeEventos.etapaDestinoId))
-      .where(and(eq(oportunidadeEventos.oportunidadeId, oportunidadeId), eq(oportunidadeEventos.tipo, 'transicao_etapa')));
+      .leftJoin(pipelineEtapas, eq(pipelineEtapas.id, oportunidadeEventos.etapaDestinoId))
+      .where(
+        and(
+          eq(oportunidadeEventos.oportunidadeId, oportunidadeId),
+          inArray(oportunidadeEventos.tipo, ['transicao_etapa', TIPO_EVIDENCIA_MARCADA, TIPO_EVIDENCIA_REMOVIDA])
+        )
+      )
+      .orderBy(asc(oportunidadeEventos.ocorridoEm));
 
     const evidenciaPorAnexo = new Map<string, EvidenciaDoAnexo>();
     for (const evento of eventos) {
-      if (evento.anexoId) {
+      if (!evento.anexoId) continue;
+      if (evento.tipo === TIPO_EVIDENCIA_REMOVIDA) evidenciaPorAnexo.delete(evento.anexoId);
+      else if (evento.etapaId !== null && evento.etapaNome !== null) {
         evidenciaPorAnexo.set(evento.anexoId, { etapaId: evento.etapaId, etapaNome: evento.etapaNome });
       }
     }

@@ -3,6 +3,8 @@
 // as mensagens em português de cada motivo de falha de um card.
 
 export type AcaoEmLote = 'mover' | 'reatribuir' | 'arquivar';
+/** O que o resultado de um lote pode descrever: as três ações com diálogo e "Iniciar Cadência" (T-296, só pede confirmação). */
+export type AcaoDeResultado = AcaoEmLote | 'cadencia';
 
 export interface ResultadoDoCardView {
   id: string;
@@ -17,10 +19,11 @@ export interface ResultadoDoLoteView {
 }
 
 /** Verbo no plural de cada ação, para o resumo "N movidos, M não movidos". */
-export const ROTULO_DA_ACAO: Record<AcaoEmLote, { feitos: string; naoFeitos: string; botao: string }> = {
+export const ROTULO_DA_ACAO: Record<AcaoDeResultado, { feitos: string; naoFeitos: string; botao: string }> = {
   mover: { feitos: 'movidos', naoFeitos: 'não movidos', botao: 'Mover' },
   reatribuir: { feitos: 'reatribuídos', naoFeitos: 'não reatribuídos', botao: 'Reatribuir' },
   arquivar: { feitos: 'arquivados', naoFeitos: 'não arquivados', botao: 'Arquivar' },
+  cadencia: { feitos: 'com a cadência iniciada', naoFeitos: 'sem a cadência iniciada', botao: 'Iniciar cadência' },
 };
 
 /** AC-447: o motivo, em português, de cada recusa de um card. */
@@ -34,6 +37,8 @@ export const MENSAGEM_DO_CODIGO: Record<string, string> = {
   JUSTIFICATIVA_OBRIGATORIA: 'Falta a justificativa da mudança.',
   CONFLITO_DE_VERSAO: 'Outra pessoa mexeu neste card ao mesmo tempo. Tente de novo.',
   OPORTUNIDADE_NAO_ENCONTRADA: 'Card não encontrado (pode ter sido removido).',
+  CADENCIA_SO_EM_ENTRADA: 'A cadência só começa em card que está em "Entrada de leads".',
+  CADENCIA_JA_INICIADA: 'Este card já tem toques de cadência.',
 };
 
 export function mensagemDoCodigo(codigo: string | undefined): string {

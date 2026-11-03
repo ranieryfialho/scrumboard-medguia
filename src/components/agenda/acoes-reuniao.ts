@@ -17,6 +17,9 @@ const MENSAGENS: Record<string, string> = {
   CONFLITO_DE_VERSAO: 'Outra pessoa mexeu neste card ao mesmo tempo. Tente de novo.',
   REQUISICAO_INVALIDA: 'Confira os dados informados.',
   NAO_AUTENTICADO: 'Sua sessão expirou. Entre novamente.',
+  REUNIAO_NAO_PODE_GERAR_MEET: 'Só dá para gerar o link de uma reunião agendada ou em andamento.',
+  GOOGLE_NAO_CONECTADO: 'O Google Meet ainda não está conectado. Peça a um gerente para conectar em Configurações.',
+  FALHA_NO_GOOGLE: 'O Google não respondeu. Tente de novo em instantes.',
 };
 
 export function mensagemDoCodigo(codigo: string | undefined): string {
@@ -40,3 +43,4 @@ export const concluirReuniao = (id: string, resumo: string, anexoId?: string) =>
   enviar(`/api/reunioes/${id}/concluir`, { resumo: resumo.trim() || undefined, anexoId });
 export const reagendarReuniao = (id: string, agendadaPara: string) => enviar(`/api/reunioes/${id}/reagendar`, { agendadaPara });
 export const cancelarReuniao = (id: string) => enviar(`/api/reunioes/${id}/cancelar`, {});
+export const gerarMeetDaReuniao = (id: string) => enviar(`/api/reunioes/${id}/meet`, {});

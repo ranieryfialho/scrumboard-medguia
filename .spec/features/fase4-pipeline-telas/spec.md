@@ -86,8 +86,49 @@ relance.
 #### AC-393 — Itens do funil sem backend aparecem como "em breve"
 
 - **Dado** o funil renderizado
-- **Quando** o usuário olha as ações do protótipo sem backend (busca global, "Iniciar Cadência em Massa", seletor de visões salvas)
+- **Quando** o usuário olha as ações do protótipo sem backend (busca global, seletor de visões salvas; o "Iniciar Cadência em Massa" funciona, AC-759)
 - **Então** elas aparecem visíveis, marcadas "em breve", e não disparam nenhuma ação
+
+#### AC-733 — Cada coluna do funil rola sozinha
+
+- **Dado** uma etapa com muitos cards (por exemplo, 200 em "Entrada de leads")
+- **Quando** o funil abre
+- **Então** a página não cresce com a quantidade de cards: o quadro ocupa a altura da tela, e cada coluna rola por dentro, com o título e o contador sempre visíveis no topo dela
+- **E** arrastar um card continua funcionando entre as colunas
+
+#### AC-734 — A lista tem altura fixa e só a tabela rola
+
+- **Dado** uma lista com muitos leads (por exemplo, 50 por página)
+- **Quando** a lista abre
+- **Então** a página não cresce com a quantidade de linhas: o quadro ocupa a altura da tela, o cabeçalho da tabela fica fixo no topo dela e só as linhas rolam por dentro
+- **E** o seletor "Exibir" e a paginação ficam sempre visíveis embaixo
+
+#### AC-735 — Os arquivados têm altura fixa e só a tabela rola
+
+- **Dado** uma lista de arquivados com muitos registros
+- **Quando** a tela abre
+- **Então** a página não cresce com a quantidade de linhas: o quadro ocupa a altura da tela, o cabeçalho da tabela fica fixo no topo dela e só as linhas rolam por dentro
+- **E** os indicadores, as abas, os filtros, a paginação e os três painéis de baixo ficam sempre visíveis
+
+#### AC-736 — Editar os dados do card
+
+- **Dado** o detalhe de um card
+- **Quando** qualquer usuário que acessa o card clica em "Editar" em "Informações Principais"
+- **Então** abre um formulário com nome do lead, telefone principal, e-mail, origem e valor estimado, já preenchidos; ao salvar, os dados mudam e a tela mostra os novos valores
+- **E** nome, telefone e origem não podem ficar vazios; o e-mail, se informado, precisa ser válido; o telefone é gravado só com dígitos e DDI 55; o valor não pode ser negativo e, na etapa Proposta, não pode ficar vazio
+- **E** um telefone que já é de outro lead da empresa é recusado; um card de outra empresa ou inexistente nunca é alterado
+
+#### AC-737 — A edição fica registrada na linha do tempo
+
+- **Dado** uma edição salva
+- **Então** só o que mudou de fato é gravado, e a linha do tempo ganha um evento com quem editou, quando, e o valor de antes e o de depois de cada campo
+- **E** salvar sem mudar nada (ou com o mesmo telefone em outra grafia, como "+55 11 98765-4321") não grava nem registra nada
+
+#### AC-738 — Copiar telefone e e-mail
+
+- **Dado** o detalhe do card com telefones e e-mail
+- **Quando** o usuário clica no botão de copiar ao lado de um deles
+- **Então** o texto exatamente como aparece vai para a área de transferência e o botão avisa "Copiado"; se o navegador recusar, avisa "Não foi possível copiar"
 
 ### US-107 — Ver todos os leads em lista, com filtro e paginação
 

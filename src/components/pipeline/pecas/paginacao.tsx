@@ -21,7 +21,7 @@ export function Paginacao({ pagina, porPagina, total, onMudarPagina, rotuloItem 
   const paginas = paginasVisiveis(pagina, totalPaginas);
 
   return (
-    <div className="px-space-md py-3 bg-surface-card flex flex-col sm:flex-row items-center justify-between gap-space-sm">
+    <div className="px-space-md py-3 bg-surface-card flex-shrink-0 flex flex-col sm:flex-row items-center justify-between gap-space-sm">
       <span className="font-body-sm text-body-sm text-text-secondary">
         {total === 0 ? (
           `Nenhum ${rotuloItem.replace(/s$/, '')} encontrado`

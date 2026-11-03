@@ -10,6 +10,13 @@ import { leads, motivosPerda, usuarios } from '../../../../db/schema';
 import { getAuth } from '../../../../lib/auth/instancia';
 import { ErroSessaoInvalida, resolverContextoTenant, type ContextoTenant } from '../../../../lib/auth/tenant';
 import { comTenant } from '../../../../repositories/contexto';
+import {
+  editarCard,
+  ErroCampoInvalido,
+  ErroCardNaoEncontrado,
+  ErroTelefoneDeOutroLead,
+  ErroValorObrigatorioNaProposta,
+} from '../../../../repositories/edicao-card';
 import { buscarOportunidadePorId } from '../../../../repositories/oportunidades';
 
 export const dynamic = 'force-dynamic';
@@ -83,4 +90,35 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     proximaAcaoEm: oportunidade.proximaAcaoEm,
     version: oportunidade.version,
   });
+}
+
+/** AC-736/AC-737: edita nome, e-mail, origem, telefone principal e valor do card; só grava (e registra na linha do tempo) o que mudou. */
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const contexto = await resolverContexto(request);
+  if (!contexto) return semSessao();
+
+  const { id } = await params;
+  const corpo = await request.json().catch(() => null);
+  if (!corpo || typeof corpo !== 'object' || Array.isArray(corpo)) {
+    return NextResponse.json({ codigo: 'CORPO_INVALIDO' }, { status: 400 });
+  }
+  const { nome, email, origem, telefone, valor } = corpo as Record<string, unknown>;
+
+  const oportunidade = await buscarOportunidadePorId(getDb(), contexto, id);
+  if (!oportunidade) {
+    return NextResponse.json({ codigo: 'OPORTUNIDADE_NAO_ENCONTRADA' }, { status: 404 });
+  }
+
+  try {
+    const alteracoes = await editarCard(getDb(), contexto, id, { nome, email, origem, telefone, valor });
+    return NextResponse.json({ alteracoes });
+  } catch (erro) {
+    if (erro instanceof ErroCampoInvalido) return NextResponse.json({ codigo: 'CAMPO_INVALIDO', campo: erro.campo }, { status: 400 });
+    if (erro instanceof ErroValorObrigatorioNaProposta) {
+      return NextResponse.json({ codigo: 'VALOR_OBRIGATORIO_NA_PROPOSTA', campo: 'valor' }, { status: 422 });
+    }
+    if (erro instanceof ErroTelefoneDeOutroLead) return NextResponse.json({ codigo: 'TELEFONE_DUPLICADO', campo: 'telefone' }, { status: 409 });
+    if (erro instanceof ErroCardNaoEncontrado) return NextResponse.json({ codigo: 'OPORTUNIDADE_NAO_ENCONTRADA' }, { status: 404 });
+    throw erro;
+  }
 }

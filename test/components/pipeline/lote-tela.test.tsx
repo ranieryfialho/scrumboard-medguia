@@ -102,7 +102,7 @@ describe('T-178: ações em lote na lista', () => {
       await abrirComSelecionados(['Clínica Alfa', 'Clínica Beta']);
 
       expect(screen.getByText('2 selecionados')).toBeTruthy();
-      for (const rotulo of ['Mover Etapa em Lote', 'Reatribuir Comercial', 'Arquivar']) {
+      for (const rotulo of ['Mover Etapa em Lote', 'Reatribuir Comercial', 'Iniciar Cadência', 'Arquivar']) {
         const botao = screen.getByRole('button', { name: new RegExp(rotulo) }) as HTMLButtonElement;
         expect(botao.disabled).toBe(false);
       }
@@ -123,6 +123,53 @@ describe('T-178: ações em lote na lista', () => {
       await usuario.click(screen.getByLabelText('Selecionar Clínica Alfa'));
       expect(screen.queryByText(/selecionados/)).toBeNull();
       expect(screen.queryByRole('button', { name: /Mover Etapa em Lote/ })).toBeNull();
+    });
+  });
+
+  describe('AC-759/AC-760: "Iniciar Cadência" nos selecionados', () => {
+    test('confirmar manda os ids ao servidor, mostra "N com a cadência iniciada" e deixa marcado só quem falhou @spec:AC-759', async () => {
+      respostaDoLote = () =>
+        resposta(200, {
+          resultados: [
+            { id: 'c1', ok: true },
+            { id: 'c2', ok: false, codigo: 'CADENCIA_SO_EM_ENTRADA' },
+          ],
+          aplicados: 1,
+          falhas: 1,
+        });
+      const usuario = await abrirComSelecionados(['Clínica Alfa', 'Clínica Beta']);
+      const leiturasAntes = leiturasDaLista();
+
+      await usuario.click(screen.getByRole('button', { name: 'Iniciar Cadência' }));
+      const dialogo = screen.getByRole('alertdialog');
+      expect(within(dialogo).getByText('Iniciar a cadência de 2 cards?')).toBeTruthy();
+      await usuario.click(within(dialogo).getByRole('button', { name: 'Cancelar' }));
+      expect(postsDeLote('iniciar-cadencia')).toHaveLength(0);
+
+      await usuario.click(screen.getByRole('button', { name: 'Iniciar Cadência' }));
+      await usuario.click(within(screen.getByRole('alertdialog')).getByRole('button', { name: 'Iniciar 2 cards' }));
+
+      await waitFor(() => expect(postsDeLote('iniciar-cadencia')).toHaveLength(1));
+      expect(corpoDoPost('iniciar-cadencia')).toEqual({ ids: ['c1', 'c2'] });
+      await waitFor(() => expect(leiturasDaLista()).toBeGreaterThan(leiturasAntes));
+      expect(await screen.findByText(/1 com a cadência iniciada, 1 sem a cadência iniciada/)).toBeTruthy();
+      expect(screen.getByText(/A cadência só começa em card que está em "Entrada de leads"/)).toBeTruthy();
+      await waitFor(() => expect(screen.getByText('1 selecionados')).toBeTruthy());
+      expect(screen.queryByRole('alertdialog')).toBeNull();
+    });
+
+    test('se o servidor recusar o pedido, o diálogo continua aberto com o motivo @spec:AC-759', async () => {
+      const original = fetchFalso.getMockImplementation() as (u: string, i?: RequestInit) => Promise<Response>;
+      fetchFalso.mockImplementation((url: string, init?: RequestInit) =>
+        url === '/api/oportunidades/lote/iniciar-cadencia' ? resposta(400, { codigo: 'REQUISICAO_INVALIDA' }) : original(url, init)
+      );
+      const usuario = await abrirComSelecionados(['Clínica Alfa']);
+
+      await usuario.click(screen.getByRole('button', { name: 'Iniciar Cadência' }));
+      await usuario.click(within(screen.getByRole('alertdialog')).getByRole('button', { name: 'Iniciar 1 card' }));
+
+      expect((await screen.findByRole('alert')).textContent).toContain('Seleção inválida');
+      expect(screen.getByRole('alertdialog')).toBeTruthy();
     });
   });
 

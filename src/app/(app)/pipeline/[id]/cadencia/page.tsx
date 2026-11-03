@@ -84,7 +84,7 @@ function ConteudoCadencia({ cardId, onMudou }: { cardId: string; onMudou: () => 
   }
 
   return (
-    <div className="p-gutter flex flex-col gap-space-md w-full">
+    <div className="p-gutter flex flex-col gap-space-md w-full lg:flex-1 lg:min-h-0">
       <div className="flex flex-wrap items-center justify-between gap-space-sm">
         <div>
           <h2 className="font-headline-md text-headline-md text-text-primary">Cadência de 18 Toques</h2>
@@ -96,58 +96,61 @@ function ConteudoCadencia({ cardId, onMudou }: { cardId: string; onMudou: () => 
         </div>
       </div>
 
-      {carregando && <EsqueletoCarregando />}
-      {!carregando && erro && <EstadoErro onTentarDeNovo={carregar} />}
+      {/* AC-749: o título fica parado; o resumo, o toque da vez e as listas rolam por dentro. */}
+      <div className="relative flex flex-col gap-space-md lg:flex-1 lg:min-h-0 lg:overflow-y-auto">
+        {carregando && <EsqueletoCarregando />}
+        {!carregando && erro && <EstadoErro onTentarDeNovo={carregar} />}
 
-      {!carregando && !erro && cadencia && !cadencia.iniciada && (
-        <div className="flex flex-col items-center gap-space-md">
-          <EstadoVazio
-            titulo="A cadência deste card ainda não foi iniciada"
-            proximoPasso={
-              cadencia.oportunidade.etapaId === ETAPA_ENTRADA_DE_LEADS
-                ? 'inicie a régua de 18 toques pelo botão abaixo'
-                : `a cadência só começa em card na etapa “Entrada de leads”; este card está em “${nomeDaEtapa(cadencia.oportunidade.etapaId)}”`
-            }
-            icone="checklist"
-          />
-          <BotaoIniciarCadencia
-            oportunidadeId={cadencia.oportunidade.id}
-            etapaId={cadencia.oportunidade.etapaId}
-            version={cadencia.oportunidade.version}
-            onIniciado={() => {
-              setErroDeInicio(null);
-              void carregar();
-              onMudou();
-            }}
-            onErro={(mensagem) => {
-              setErroDeInicio(mensagem);
-              void carregar();
-            }}
-          />
-          {erroDeInicio && (
-            <p role="alert" className="font-body-sm text-body-sm text-danger-text">
-              {erroDeInicio}
-            </p>
-          )}
-        </div>
-      )}
-
-      {!carregando && !erro && cadencia && cadencia.iniciada && (
-        <>
-          <ResumoCadencia cadencia={cadencia} />
-          {cadencia.toqueDaVez && (
-            <ToqueDaVez
-              cardId={cardId}
-              toque={cadencia.toqueDaVez}
-              concluindo={concluindo}
-              mensagemDeErro={erroDeConclusao}
-              onConcluir={concluir}
+        {!carregando && !erro && cadencia && !cadencia.iniciada && (
+          <div className="flex flex-col items-center gap-space-md">
+            <EstadoVazio
+              titulo="A cadência deste card ainda não foi iniciada"
+              proximoPasso={
+                cadencia.oportunidade.etapaId === ETAPA_ENTRADA_DE_LEADS
+                  ? 'inicie a régua de 18 toques pelo botão abaixo'
+                  : `a cadência só começa em card na etapa “Entrada de leads”; este card está em “${nomeDaEtapa(cadencia.oportunidade.etapaId)}”`
+              }
+              icone="checklist"
             />
-          )}
-          <MatrizToques toques={cadencia.toques} />
-          <HistoricoToques cardId={cardId} toques={cadencia.toques} />
-        </>
-      )}
+            <BotaoIniciarCadencia
+              oportunidadeId={cadencia.oportunidade.id}
+              etapaId={cadencia.oportunidade.etapaId}
+              version={cadencia.oportunidade.version}
+              onIniciado={() => {
+                setErroDeInicio(null);
+                void carregar();
+                onMudou();
+              }}
+              onErro={(mensagem) => {
+                setErroDeInicio(mensagem);
+                void carregar();
+              }}
+            />
+            {erroDeInicio && (
+              <p role="alert" className="font-body-sm text-body-sm text-danger-text">
+                {erroDeInicio}
+              </p>
+            )}
+          </div>
+        )}
+
+        {!carregando && !erro && cadencia && cadencia.iniciada && (
+          <>
+            <ResumoCadencia cadencia={cadencia} />
+            {cadencia.toqueDaVez && (
+              <ToqueDaVez
+                cardId={cardId}
+                toque={cadencia.toqueDaVez}
+                concluindo={concluindo}
+                mensagemDeErro={erroDeConclusao}
+                onConcluir={concluir}
+              />
+            )}
+            <MatrizToques toques={cadencia.toques} />
+            <HistoricoToques cardId={cardId} toques={cadencia.toques} />
+          </>
+        )}
+      </div>
     </div>
   );
 }
@@ -158,7 +161,7 @@ export default function PipelineCadenciaPage({ params }: { params: Promise<{ id:
   const [versao, setVersao] = useState(0);
 
   return (
-    <MoldeDoCard cardId={id} aba="cadencia" versaoDosContadores={versao}>
+    <MoldeDoCard cardId={id} aba="cadencia" versaoDosContadores={versao} alturaFixa>
       {(card) => <ConteudoCadencia cardId={card.id} onMudou={() => setVersao((atual) => atual + 1)} />}
     </MoldeDoCard>
   );

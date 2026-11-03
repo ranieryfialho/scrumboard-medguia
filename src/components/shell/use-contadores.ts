@@ -76,9 +76,22 @@ export function useContadores(): Contadores {
     }
     window.addEventListener(EVENTO_CONTADORES_MUDARAM, aoMudarWhatsapp);
 
+    // T-297 (AC-761): os números de tarefas acompanham a fila — quem conclui, inicia ou vira o dia (esta aba, outra aba, outra
+    // pessoa) faz o servidor emitir `cadencia.fila_alterada`, e o menu relê só os dois contadores de tarefas. Sem `EventSource`
+    // (testes, navegadores antigos) o menu segue como antes: lê ao abrir.
+    function aoMudarFila() {
+      void carregarContadoresTarefas().then((tarefas) => {
+        if (!cancelado) setContadores((atual) => ({ ...atual, ...tarefas }));
+      });
+    }
+    const fila = typeof EventSource === 'undefined' ? null : new EventSource('/api/stream');
+    fila?.addEventListener('cadencia.fila_alterada', aoMudarFila);
+    fila?.addEventListener('stream.reconectado', aoMudarFila);
+
     return () => {
       cancelado = true;
       window.removeEventListener(EVENTO_CONTADORES_MUDARAM, aoMudarWhatsapp);
+      fila?.close();
     };
   }, []);
 

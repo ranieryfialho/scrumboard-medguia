@@ -59,7 +59,7 @@ para uma etapa, para não repetir a mesma mudança card a card.
 
 - **Dado** a lista com cards
 - **Quando** o usuário marca um ou mais cards (ou o cabeçalho da tabela)
-- **Então** a barra mostra "N selecionados" e as ações "Mover Etapa em Lote", "Reatribuir Comercial" e "Arquivar" **funcionando**; "Disparar WhatsApp" aparece marcada "em breve" e não dispara nada; sem nada marcado a barra some
+- **Então** a barra mostra "N selecionados" e as ações "Mover Etapa em Lote", "Reatribuir Comercial", "Iniciar Cadência" (AC-759) e "Arquivar" **funcionando**; "Disparar WhatsApp" aparece marcada "em breve" e não dispara nada; sem nada marcado a barra some
 
 #### AC-446 — Mover em lote usa as mesmas regras da transição de um card
 
@@ -165,6 +165,23 @@ aplicados), para analisar fora do sistema.
 - **Dado** o botão "Exportar CSV" na lista e nos arquivados
 - **Quando** o usuário clica, e quando não há nenhum card que atenda aos filtros ou a API falha
 - **Então** o botão mostra "Gerando..." e fica desabilitado enquanto baixa; sem cards a API responde 422 `NADA_PARA_EXPORTAR` (nada é registrado) e a tela diz "Nenhum card para exportar com estes filtros" e não baixa nada; na falha mostra a mensagem do motivo e o botão volta ao normal
+
+### US-119 — Iniciar a cadência de vários cards de uma vez
+
+Como atendente ou gerente, quero iniciar a cadência de muitos cards de "Entrada de leads" de uma vez, para que as tarefas do turno apareçam sem eu abrir um card por vez (principalmente depois da migração, quando todos chegam sem toques).
+
+#### AC-759 — Iniciar Cadência nos selecionados e em massa no funil
+
+- **Dado** a lista com cards marcados, ou o funil com cards em "Entrada de leads"
+- **Quando** o usuário clica em "Iniciar Cadência" na barra da lista, ou em "Iniciar Cadência em Massa" no funil, e confirma na janela que diz quantos cards são
+- **Então** cada card de "Entrada de leads" sem toques vai para "1º dia de contato" e ganha o primeiro bloco do turno (como AC-756), e a tela mostra "N com a cadência iniciada, M sem a cadência iniciada", com o nome de cada card recusado e o motivo
+- **E** no funil o pedido leva todos os cards de "Entrada de leads" que o filtro deixa à vista, em pedaços de 100; cancelar não envia nada; sem cards na Entrada de leads o botão fica desabilitado
+
+#### AC-760 — Regras do lote de cadência
+
+- **Dado** o pedido `POST /api/oportunidades/lote/iniciar-cadencia` com uma lista de ids
+- **Então** card fora de "Entrada de leads" falha com `CADENCIA_SO_EM_ENTRADA`, card que já tem toques falha com `CADENCIA_JA_INICIADA`, card de outra empresa, inexistente ou id inválido falha como "não encontrado", e versão que mudou no meio falha com `CONFLITO_DE_VERSAO` — cada um sozinho, sem desfazer nem travar os outros; id repetido conta uma vez
+- **E** lista vazia, com mais de 100 ids ou que não é lista é 400 e sem sessão é 401, antes de tocar em qualquer card
 
 ## Fora de escopo
 

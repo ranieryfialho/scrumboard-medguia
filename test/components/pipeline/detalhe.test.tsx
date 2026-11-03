@@ -367,7 +367,6 @@ describe('T-163: tela de detalhe do card', () => {
       expect(screen.getByRole('link', { name: /Anexos/ }).getAttribute('href')).toBe(`/pipeline/${CARD_ID}/anexos`);
 
       const itensEmBreve = [
-        screen.getByRole('button', { name: 'Editar Informações (em breve)' }),
         screen.getByRole('button', { name: 'Registrar Ligação (em breve)' }),
         screen.getByRole('button', { name: 'Agendar Reunião (em breve)' }),
         screen.getByRole('button', { name: 'Disparar WhatsApp (em breve)' }),

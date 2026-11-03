@@ -101,3 +101,23 @@
 - Arquivos: src/lib/auth/rotas.ts, src/components/shell/menu-config.ts, test/auth/rotas-pipeline.test.ts
 - Esforço: medio
 - Notas: acrescenta `/pipeline/lista` e `/pipeline/arquivados` à tabela de permissões por rota (mesmo mínimo de `/pipeline`) e os itens "Lista" e "Arquivados" ao menu, com o item ativo certo em cada tela. Confirma que não sobrou rota nem teste duplicado da tela antiga (AC-415). Roda por último.
+
+## T-284 — O funil tem altura fixa e cada coluna rola sozinha [pendente]
+- Refs: US-106, AC-733
+- Arquivos: src/app/(app)/layout.tsx, src/components/pipeline/board-kanban.tsx, src/components/pipeline/coluna-etapa.tsx, test/components/pipeline/funil-rolagem.test.tsx
+- Notas: pedido do dono do produto em 03/11, ao ver 200 cards numa coluna só fazerem a página inteira crescer. Primeira de uma série de ajustes de tela.
+
+## T-285 — A lista tem altura fixa e só a tabela rola [pendente]
+- Refs: US-107, AC-734
+- Arquivos: src/app/(app)/pipeline/lista/page.tsx, src/components/pipeline/tabela-lista.tsx, src/components/pipeline/pecas/paginacao.tsx, test/components/pipeline/lista-rolagem.test.tsx
+- Notas: segundo ajuste de tela da série pedida pelo dono em 03/11, igual ao do funil (T-284).
+
+## T-286 — Os arquivados têm altura fixa e só a tabela rola [pendente]
+- Refs: US-108, AC-735
+- Arquivos: src/app/(app)/pipeline/arquivados/page.tsx, src/components/pipeline/tabela-arquivados.tsx, test/components/pipeline/arquivados-rolagem.test.tsx
+- Notas: terceiro ajuste de tela da série pedida pelo dono em 03/11, igual aos do funil (T-284) e da lista (T-285).
+
+## T-287 — Editar o card e copiar telefone e e-mail no detalhe [pendente]
+- Refs: US-109, AC-736, AC-737, AC-738
+- Arquivos: src/repositories/edicao-card.ts, src/app/api/oportunidades/[id]/route.ts, src/repositories/linha-do-tempo.ts, src/components/pipeline/detalhe/botao-copiar.tsx, src/components/pipeline/detalhe/modal-editar-card.tsx, src/components/pipeline/detalhe/informacoes.tsx, src/components/pipeline/detalhe/cabecalho-card.tsx, src/components/pipeline/detalhe/linha-do-tempo.tsx, src/app/(app)/pipeline/[id]/page.tsx, test/api/edicao-card.test.ts, test/components/pipeline/botao-copiar.test.tsx, test/components/pipeline/detalhe.test.tsx
+- Notas: pedido do dono em 03/11 (quarto ajuste da série). Decisões dele: editam nome, e-mail, origem, valor e telefone principal; qualquer papel que acessa o card pode editar. O botão "Editar Informações (em breve)" do cabeçalho some (a edição vive em "Informações Principais") e a prova dele em AC-411 deixa de listá-lo. Telefone novo não perde o histórico de WhatsApp do lead (a conversa é achada pelo telefone atual do lead; mensagens antigas do número velho deixam de aparecer junto).

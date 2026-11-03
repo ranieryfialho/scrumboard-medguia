@@ -3,10 +3,10 @@
 // T-178 (fase4-pipeline-lote, AC-447): o resultado de uma ação em lote —
 // "N movidos, M não movidos" e, para cada card que falhou, o nome do lead e o
 // motivo em português. Os que falharam continuam marcados na lista.
-import { ROTULO_DA_ACAO, mensagemDoCodigo, type AcaoEmLote, type ResultadoDoLoteView } from './tipos';
+import { ROTULO_DA_ACAO, mensagemDoCodigo, type AcaoDeResultado, type ResultadoDoLoteView } from './tipos';
 
 interface ResultadoLoteProps {
-  acao: AcaoEmLote;
+  acao: AcaoDeResultado;
   lote: ResultadoDoLoteView;
   /** Nome do lead de cada card (da lista, antes de ela recarregar). */
   nomes: Record<string, string>;

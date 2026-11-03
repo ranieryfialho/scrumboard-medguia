@@ -74,6 +74,58 @@ export async function sendTextMessage(
   return await res.json();
 }
 
+/**
+ * Faz o POST de um envio (áudio ou mídia) e traduz a resposta como `sendTextMessage`: erro vira `error`, e "esse número não
+ * existe no WhatsApp" vira `numberNotFound`.
+ */
+async function postarEnvio(config: EvolutionConfig, caminho: string, corpo: Record<string, unknown>, numero: string): Promise<EvolutionSendResult> {
+  const normalized = normalizeNumber(numero);
+  const res = await fetch(`${base(config)}/message/${caminho}/${config.instance}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', apikey: config.apiKey },
+    body: JSON.stringify({ number: normalized, ...corpo }),
+  });
+  if (res.ok) return await res.json();
+  const texto = await res.text();
+  try {
+    const msg = JSON.parse(texto)?.response?.message?.[0];
+    if (msg?.exists === false) return { error: `Número ${msg.number} não encontrado no WhatsApp.`, numberNotFound: true };
+  } catch {}
+  return { error: `Evolution API erro ${res.status}: ${texto}` };
+}
+
+/** T-290 (AC-744): envia um áudio gravado como mensagem de voz; `base64` vai sem o prefixo `data:`. */
+export function sendAudioMessage(config: EvolutionConfig, numero: string, base64: string): Promise<EvolutionSendResult> {
+  return postarEnvio(config, 'sendWhatsAppAudio', { audio: base64 }, numero);
+}
+
+export interface MidiaParaEnvio {
+  mediatype: 'image' | 'video' | 'document';
+  mimetype: string;
+  fileName: string;
+  caption?: string;
+  base64: string;
+}
+
+/** T-290 (AC-746): envia imagem, vídeo ou documento, com legenda opcional. */
+export function sendMediaMessage(config: EvolutionConfig, numero: string, midia: MidiaParaEnvio): Promise<EvolutionSendResult> {
+  const { base64, caption, ...resto } = midia;
+  return postarEnvio(config, 'sendMedia', { ...resto, ...(caption ? { caption } : {}), media: base64 }, numero);
+}
+
+/** T-290 (AC-745): pede à Evolution o arquivo de uma mensagem que ela já guardou. `null` se ela não o tem mais. */
+export async function fetchMediaBase64(config: EvolutionConfig, messageId: string): Promise<{ base64: string; mimetype: string | null } | null> {
+  const res = await fetch(`${base(config)}/chat/getBase64FromMediaMessage/${config.instance}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', apikey: config.apiKey },
+    body: JSON.stringify({ message: { key: { id: messageId } } }),
+  });
+  if (!res.ok) return null;
+  const corpo = (await res.json().catch(() => null)) as { base64?: unknown; mimetype?: unknown } | null;
+  if (!corpo || typeof corpo.base64 !== 'string' || corpo.base64 === '') return null;
+  return { base64: corpo.base64.replace(/^data:[^,]*,/, ''), mimetype: typeof corpo.mimetype === 'string' ? corpo.mimetype : null };
+}
+
 export async function getInstanceStatus(
   config: EvolutionConfig
 ): Promise<{ state?: string; instance?: { state?: string }; error?: string }> {

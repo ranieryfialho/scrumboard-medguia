@@ -144,7 +144,14 @@ quem possa atender, para não perder oportunidade por falta de resposta.
 
 - **Dado** cards com toques atrasados, com valores diferentes
 - **Quando** a tela é aberta
-- **Então** os cartões mostram "Toques atrasados" (quantidade), "Receita sob risco" (valor somado dos cards com ao menos um toque atrasado, sem repetir card, com o rótulo "/mês" e o ticket médio por card) e "Maior tempo de atraso" (em horas e minutos, com o nome do lead); sem atrasados mostram zero e traço; "Recuperação de SLA" do protótipo **não aparece** (sem dado)
+- **Então** os cartões mostram "Toques atrasados" (quantidade), "Receita (MRR) sob risco" (valor somado dos cards com ao menos um toque atrasado, sem repetir card, com o rótulo "/mês" e o ticket médio por card) e "Maior tempo de atraso" (em horas e minutos, com o nome do lead); sem atrasados mostram zero e traço; "Recuperação de SLA" do protótipo **não aparece** (sem dado)
+
+#### AC-763 — Os quatro cartões de atrasos seguem o protótipo
+
+- **Dado** a tela de tarefas atrasadas
+- **Então** o topo tem quatro cartões como no protótipo — cada um com o rótulo, um ícone colorido, o número grande, uma linha de explicação e, embaixo de um traço, um dado de apoio: "Toques atrasados" (com a etiqueta "Crítico", ou "Em dia" quando zero, e os cards afetados), "Receita (MRR) sob risco" (com o ticket médio por card), "Maior tempo de atraso" (com o nome do lead e como a fila está ordenada) e "Cards em risco" (com a média de toques atrasados por card)
+- **E** o cabeçalho ganha um ponto vermelho e a etiqueta "N casos em risco imediato" quando há atrasados, e some quando não há
+- **E** o quarto cartão do protótipo ("Recuperação de SLA hoje") não existe no sistema: no lugar dele fica "Cards em risco", que o sistema sabe calcular; o "SLA de 4 horas", a "redistribuição" e o "plantão de resgate" do protótipo também não aparecem (sem dado ou regra)
 
 #### AC-474 — A fila de resgate lista só os atrasados, do maior atraso para o menor
 
@@ -236,6 +243,15 @@ reagir aos no-shows.
 - **Quando** a coluna da direita é renderizada
 - **Então** "Fila de Resgate de No-Shows" lista esses leads (com quando faltaram e o closer) com a ação "Reagendar", e "Performance por Closer (Semana)" mostra, por closer, a taxa de reuniões realizadas sobre as com resultado, com "N/M"
 
+#### AC-764 — A agenda segue o desenho do protótipo
+
+- **Dado** a tela da agenda
+- **Então** o topo tem a trilha "Operação comercial › Reuniões & demonstrações › /agenda", e os quatro cartões trazem rótulo, selo no canto ("Hoje"; "Atenção" quando há no-show), número grande, uma linha de apoio e uma barra de progresso embaixo (reuniões de hoje que já passaram, taxa de presença e percentual de no-show; o cartão do pipeline não tem barra, porque não há percentual natural)
+- **E** a aba "Lista" mostra quantas reuniões o período tem, e o período mostrado ganha o ícone de calendário
+- **E** cada reunião da fila de hoje tem a faixa colorida na borda pelo status (verde realizada, azul agendada e em andamento, âmbar aguardando resultado, vermelho no-show), um bloco de horário (com o fim, só quando a reunião terminou de fato), o status com ícone, e os botões separados por um traço; no-show ganha um fundo avermelhado
+- **E** na lateral, as barras da performance por closer são verdes a partir de 90%, azuis a partir de 80% e âmbar abaixo disso, e cada no-show do resgate ganha a faixa vermelha
+- **E** nada do que o protótipo traz sem dado no sistema aparece: variação da semana anterior (+4,5%), "Protocolo Anti-No-Show" com taxas de entrega, "aproveitamento de agenda", plano e contas do cliente, SDR, canal e link da sala
+
 #### AC-488 — Itens do protótipo sem backend aparecem como "em breve" ou não aparecem
 
 - **Dado** a agenda
@@ -312,6 +328,53 @@ verdade, com carregando, vazio e erro, para nunca cair numa página quebrada.
 - **Dado** qualquer das três telas
 - **Quando** os dados estão carregando, voltam vazios ou a API falha
 - **Então** a tela mostra, respectivamente, um esqueleto de carregamento, uma mensagem de vazio com o próximo passo ("Nenhuma tarefa no turno", "Nenhum toque atrasado", "Nenhuma reunião neste período") e uma mensagem de erro com "Tentar de novo"
+
+#### AC-762 — A fila do turno e os atrasados têm altura fixa
+
+- **Dado** a fila do turno ou o controle de atrasos, com muitos toques
+- **Quando** a tela abre
+- **Então** a página não cresce com a quantidade de toques: o quadro ocupa a altura da tela, o título, os indicadores, a próxima tarefa e os filtros ficam parados, e só a tabela dos toques rola por dentro, com o cabeçalho (Horário, Lead, Etapa…) fixo no topo dela
+- **E** a paginação, e em atrasados a barra de ações dos selecionados, ficam sempre à vista embaixo
+
+#### AC-765 — Conectar a conta Google da empresa
+
+- **Dado** um gerente, master ou super admin na tela "Google Meet" (Administração), com as credenciais do Google no servidor
+- **Quando** ele clica em "Conectar com o Google", entra com a conta da empresa (ex.: contato@medguia.com.br) e autoriza
+- **Então** o Google o devolve à tela, a conta fica guardada para a empresa — o e-mail visível, o token cifrado e nunca mostrado — e a tela mostra "Conectado" com a conta
+- **E** a volta do Google só vale com o código de segurança que foi criado no início da conexão (cookie de 10 minutos); código errado, cancelamento, recusa do Google, resposta sem o e-mail ou sem permissão offline, e servidor sem o segredo de cifra viram um aviso na tela e nada é guardado
+- **E** sem as credenciais do Google no servidor, a tela explica o que falta (passo a passo no runbook) e não oferece conectar; atendente não acessa a tela nem a API de conexão
+
+#### AC-766 — Ver o estado da conexão e desconectar
+
+- **Dado** a empresa com ou sem conta Google conectada
+- **Então** a agenda mostra no topo "Google Meet" com um ponto verde quando há conta (a conta aparece ao passar o mouse), ou "Conectar Google Meet", que leva à configuração, quando não há; enquanto não se sabe o estado, o botão segue "em breve"
+- **E** qualquer papel vê o estado; só a gestão vê e usa a conexão; cada empresa vê só a sua; o token nunca sai do servidor
+- **E** "Desconectar" (com confirmação) tira a permissão no Google, apaga o token e a conta; as reuniões novas passam a nascer sem sala, e as já criadas continuam no Calendar
+
+#### AC-767 — Cada reunião agendada ganha a sala do Meet e o convite
+
+- **Dado** o Google conectado e um card em "Qualificado p/ reunião"
+- **Quando** a reunião é agendada
+- **Então** é criado no Calendar da conta conectada o evento "Demonstração MedGuia — <lead>", com a hora da reunião, duração de 1 hora, a sala do Google Meet, e o convite por e-mail ao lead (se tiver e-mail válido) e ao closer — sem repetir e-mail, sem convidar a própria conta, sem e-mail inválido — e o link da sala fica guardado na reunião
+- **E** na agenda, a reunião agendada mostra o endereço da sala e o botão "Link da Sala" (copia o endereço); a em andamento mostra "Entrar no Meet Agora", que abre a sala em outra aba
+- **E** uma reunião sem sala, com o Google conectado, oferece "Gerar link do Meet" (reunião agendada ou em andamento, só em card em que o usuário pode agir; reunião que já tem sala devolve a que tem, sem criar outra); sem o Google conectado o botão da sala segue "em breve"
+
+#### AC-768 — Reagendar mantém a mesma sala
+
+- **Dado** uma reunião com sala do Meet
+- **Quando** ela é reagendada
+- **Então** o evento do Calendar muda para o novo horário (e os convidados são avisados), a reunião nova herda o evento e o link, e nenhum evento novo é criado; se a reunião antiga nunca teve sala, a nova ganha uma
+
+#### AC-769 — Cancelar apaga o evento
+
+- **Dado** uma reunião agendada com evento no Calendar
+- **Quando** ela é cancelada
+- **Então** o evento sai do Calendar (e os convidados são avisados); se o Google não responder, a reunião é cancelada do mesmo jeito
+
+#### AC-770 — A agenda nunca depende do Google
+
+- **Dado** o Google fora do ar, sem conexão, ou com as credenciais do servidor ausentes
+- **Então** agendar, reagendar e cancelar funcionam como sempre, a reunião fica sem link, e a tela mostra o motivo quando o usuário pede "Gerar link do Meet" ("O Google não respondeu" ou "O Google Meet ainda não está conectado")
 
 ## Fora de escopo
 

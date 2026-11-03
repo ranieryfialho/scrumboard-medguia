@@ -9,6 +9,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 
+import { KpisAtrasados } from './kpis-atrasados';
 import { DialogoLote, type OpcaoDoDialogo } from '@/components/pipeline/lote/dialogo-lote';
 import { ResultadoLote } from '@/components/pipeline/lote/resultado-lote';
 import { MENSAGEM_DO_PEDIDO, type ResultadoDoLoteView } from '@/components/pipeline/lote/tipos';
@@ -203,15 +204,19 @@ export function TarefasAtrasadas() {
   const total = itens?.length ?? 0;
 
   return (
-    <div className="p-space-md space-y-space-md">
-      <section className="bg-surface-card rounded-2xl p-space-md shadow-sm space-y-space-sm">
+    // AC-762: altura da tela (menos o topo); só a tabela dos toques atrasados rola por dentro.
+    <div className="p-space-md flex flex-col gap-space-md h-[calc(100dvh-4rem)] min-h-[40rem]">
+      <section className="bg-surface-card rounded-2xl p-space-md shadow-sm space-y-space-sm flex-shrink-0">
         <div className="flex items-start justify-between flex-wrap gap-space-md">
           <div>
             <div className="flex items-center gap-3 flex-wrap">
+              {total > 0 && <span aria-hidden="true" className="w-3 h-3 rounded-full bg-danger-text shrink-0" />}
               <h1 className="font-headline-lg text-headline-lg text-text-primary tracking-tight">Controle de Atrasos e Toques Vencidos</h1>
-              <span className="px-2.5 py-1 rounded-full bg-danger-surface text-danger-text font-label-sm text-label-sm">
-                {total} {total === 1 ? 'toque atrasado' : 'toques atrasados'}
-              </span>
+              {total > 0 && (
+                <span className="px-2.5 py-1 rounded-full bg-danger-surface text-danger-text font-label-sm text-label-sm font-bold">
+                  {resumo?.cardsEmRisco ?? 0} {(resumo?.cardsEmRisco ?? 0) === 1 ? 'caso' : 'casos'} em risco imediato
+                </span>
+              )}
             </div>
             <p className="font-body-md text-body-md text-text-secondary mt-1 max-w-2xl">
               Toques liberados em turnos anteriores e ainda não executados. A prioridade é o maior tempo de atraso.
@@ -271,28 +276,7 @@ export function TarefasAtrasadas() {
       {!erro && itens === null && <EsqueletoCarregando />}
       {!erro && itens !== null && (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-space-md">
-            <div className="bg-surface-card rounded-2xl p-space-md shadow-sm">
-              <span className="font-label-sm text-table-header uppercase text-text-muted tracking-wider">Toques atrasados</span>
-              <p className="font-metric-stat text-metric-stat text-danger-text">{resumo?.atrasados ?? total}</p>
-            </div>
-            <div className="bg-surface-card rounded-2xl p-space-md shadow-sm">
-              <span className="font-label-sm text-table-header uppercase text-text-muted tracking-wider">Receita sob risco</span>
-              <p className="font-metric-stat text-metric-stat text-text-primary">
-                {moeda(resumo?.receitaSobRisco ?? 0)} <span className="font-body-sm text-body-sm text-text-muted">/mês</span>
-              </p>
-              <span className="font-body-sm text-body-sm text-text-muted">
-                Ticket médio em risco: {resumo?.ticketMedio != null ? `${moeda(resumo.ticketMedio)} / card` : '—'}
-              </span>
-            </div>
-            <div className="bg-surface-card rounded-2xl p-space-md shadow-sm">
-              <span className="font-label-sm text-table-header uppercase text-text-muted tracking-wider">Maior tempo de atraso</span>
-              <p className="font-metric-stat text-metric-stat text-danger-text">
-                {resumo?.maiorAtraso ? textoDoAtraso(resumo.maiorAtraso.minutos) : '—'}
-              </p>
-              <span className="font-body-sm text-body-sm text-text-muted">{resumo?.maiorAtraso?.leadNome ?? ''}</span>
-            </div>
-          </div>
+          <KpisAtrasados resumo={resumo} total={total} ordem={ordem} />
 
           {resultadoDoLote && (
             <ResultadoLote acao="reatribuir" lote={resultadoDoLote.lote} nomes={resultadoDoLote.nomes} onFechar={() => setResultadoDoLote(null)} />
@@ -303,8 +287,8 @@ export function TarefasAtrasadas() {
             </p>
           )}
 
-          <section className="bg-surface-card rounded-2xl shadow-sm overflow-hidden">
-            <div className="p-space-md flex items-center justify-between flex-wrap gap-space-sm">
+          <section className="bg-surface-card rounded-2xl shadow-sm overflow-hidden flex flex-col flex-1 min-h-0">
+            <div className="p-space-md flex items-center justify-between flex-wrap gap-space-sm flex-shrink-0">
               <div className="flex items-center gap-3">
                 <h2 className="font-headline-sm text-headline-sm text-text-primary">Fila de Resgate Imediato</h2>
                 <span className="font-body-sm text-body-sm text-text-muted">Exibindo {visiveis.length} contatos críticos</span>
@@ -318,9 +302,9 @@ export function TarefasAtrasadas() {
             {visiveis.length === 0 ? (
               <EstadoVazio titulo="Nenhum toque atrasado" proximoPasso="Tudo em dia por aqui." icone="task_alt" />
             ) : (
-              <div className="overflow-x-auto">
+              <div className="relative overflow-auto flex-1 min-h-0">
                 <table className="w-full text-left">
-                  <thead className="bg-surface-subtle">
+                  <thead className="bg-surface-subtle sticky top-0 z-10">
                     <tr className="font-label-sm text-table-header uppercase text-text-muted tracking-wider">
                       <th className="px-space-md py-3">
                         <input type="checkbox" aria-label="Marcar todos" checked={visiveis.every((i) => selecionados.has(i.atividade.id))} onChange={alternarTodos} />
@@ -402,7 +386,7 @@ export function TarefasAtrasadas() {
               </div>
             )}
 
-            <div className="px-space-md py-3 flex items-center gap-2 flex-wrap font-body-sm text-body-sm text-text-muted">
+            <div className="px-space-md py-3 flex items-center gap-2 flex-wrap font-body-sm text-body-sm text-text-muted flex-shrink-0">
               <span>Ações para os itens selecionados:</span>
               <button
                 type="button"

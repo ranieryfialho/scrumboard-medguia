@@ -8,6 +8,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { getDb } from '../../../../../db/client';
 import { getAuth } from '../../../../../lib/auth/instancia';
 import { ErroSessaoInvalida, resolverContextoTenant, type ContextoTenant } from '../../../../../lib/auth/tenant';
+import { podeExcluirAnexo } from '../../../../../repositories/anexos-gestao';
 import { listarAnexosDoCard } from '../../../../../repositories/anexos-lista';
 import { buscarOportunidadePorId } from '../../../../../repositories/oportunidades';
 
@@ -56,6 +57,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       enviadoPorNome: anexo.enviadoPorNome,
       criadoEm: anexo.criadoEm.toISOString(),
       evidencia: anexo.evidencia,
+      // T-294 (AC-754): gestor exclui qualquer anexo; os outros, só os que enviaram.
+      podeExcluir: podeExcluirAnexo(contexto, anexo.enviadoPorId),
     })),
   });
 }

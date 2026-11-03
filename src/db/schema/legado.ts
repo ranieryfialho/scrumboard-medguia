@@ -22,6 +22,11 @@ export const whatsappMensagens = pgTable('whatsapp_mensagens', {
   evolutionMessageId: text('evolution_message_id'),
   // Nula = não lida; só tem sentido para `direcao = 'recebida'` (ASM-044).
   lidaEm: timestamp('lida_em', { withTimezone: true }),
+  // T-290 (migration 0027): mídia da mensagem — tipo, mimetype, nome e o caminho do arquivo no volume, quando já guardado.
+  midiaTipo: text('midia_tipo'),
+  midiaMimetype: text('midia_mimetype'),
+  midiaNome: text('midia_nome'),
+  midiaArquivo: text('midia_arquivo'),
   criadoEm: timestamp('criado_em', { withTimezone: true }).notNull().defaultNow(),
 });
 

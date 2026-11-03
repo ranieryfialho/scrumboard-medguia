@@ -4,10 +4,11 @@
 // "Cadência Comercial" (toque da vez e progresso, de `GET .../cadencia`) e
 // "Notas Internas" (as anotações do card, de `GET .../linha-do-tempo?tipo=anotacao`,
 // e o campo que grava uma nova por `POST .../anotacoes`). "Dados da Proposta" e
-// "Qualificação Técnica" do protótipo não existem no sistema e não aparecem.
+// "Qualificação Técnica" (T-289, AC-742/AC-743) ficam entre os dois, com edição própria.
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 
+import { DadosDaProposta, QualificacaoTecnica } from './blocos-comerciais';
 import {
   ROTULO_CANAL,
   ROTULO_TURNO,
@@ -22,7 +23,7 @@ interface Nota {
   ocorridoEm: string;
 }
 
-export function PainelLateral({ cardId }: { cardId: string }) {
+export function PainelLateral({ cardId, valor = null }: { cardId: string; valor?: string | null }) {
   const [cadencia, setCadencia] = useState<CadenciaDoCardView | null>(null);
   const [notas, setNotas] = useState<Nota[]>([]);
   const [novaNota, setNovaNota] = useState('');
@@ -103,6 +104,9 @@ export function PainelLateral({ cardId }: { cardId: string }) {
           <p className="font-body-sm text-body-sm text-text-muted">A cadência deste card ainda não foi iniciada.</p>
         )}
       </section>
+
+      <DadosDaProposta cardId={cardId} valor={valor} />
+      <QualificacaoTecnica cardId={cardId} />
 
       <section className="bg-surface-card rounded-2xl p-space-md shadow-sm flex flex-col gap-space-sm">
         <div className="flex items-center justify-between">

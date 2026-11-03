@@ -211,6 +211,25 @@ export const oportunidadeEventos = pgTable('oportunidade_eventos', {
   ocorridoEm: timestamp('ocorrido_em', { withTimezone: true }).notNull().defaultNow(),
 });
 
+/** T-289 (fase4-card-abas, AC-742): dados comerciais do card — proposta e qualificação técnica; uma linha por oportunidade (migration 0026). */
+export const oportunidadeComercial = pgTable('oportunidade_comercial', {
+  oportunidadeId: uuid('oportunidade_id')
+    .primaryKey()
+    .references(() => oportunidades.id, { onDelete: 'cascade' }),
+  empresaId: uuid('empresa_id')
+    .notNull()
+    .references(() => empresas.id, { onDelete: 'cascade' }),
+  previsaoFechamento: date('previsao_fechamento'),
+  condicaoEspecial: text('condicao_especial'),
+  plano: text('plano'),
+  porteClinica: text('porte_clinica'),
+  prontuarioLegado: text('prontuario_legado'),
+  faturamentoTiss: text('faturamento_tiss'),
+  termoLgpdValidado: boolean('termo_lgpd_validado').notNull().default(false),
+  atualizadoEm: timestamp('atualizado_em', { withTimezone: true }).notNull().defaultNow(),
+  atualizadoPor: uuid('atualizado_por').references(() => usuarios.id, { onDelete: 'set null' }),
+});
+
 export const tarefasAgendadas = pgTable('tarefas_agendadas', {
   id: uuid('id').primaryKey().defaultRandom(),
   empresaId: uuid('empresa_id')
@@ -236,6 +255,8 @@ export const reunioes = pgTable('reunioes', {
     .references(() => empresas.id, { onDelete: 'cascade' }),
   agendadaPara: timestamp('agendada_para', { withTimezone: true }).notNull(),
   calendarEventId: text('calendar_event_id'),
+  // T-301 (migration 0029): o link da sala do Google Meet criada junto com o evento do Calendar.
+  meetUrl: text('meet_url'),
   iniciadaEm: timestamp('iniciada_em', { withTimezone: true }),
   encerradaEm: timestamp('encerrada_em', { withTimezone: true }),
   duracaoMinutos: integer('duracao_minutos'),

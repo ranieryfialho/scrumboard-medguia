@@ -122,7 +122,7 @@ segurança e enviar novos, para manter o dossiê da negociação em um lugar só
 #### AC-429 — Ações do protótipo sem backend aparecem como "em breve"
 
 - **Dado** a tela de anexos
-- **Quando** o usuário olha "Exportar Dossiê (ZIP)", "Mover Etapa" do cabeçalho, "Tornar Evidência", o ícone de excluir, a caixa "Marcar como evidência" e "Vincular à etapa" do envio
+- **Quando** o usuário olha a caixa "Marcar como evidência" e "Vincular à etapa" do envio
 - **Então** aparecem visíveis, marcados "em breve", sem disparar nenhuma ação; o bloco de governança "ISO-27799" e o "espaço utilizado" **não aparecem** (sem dado)
 
 ### US-113 — Acompanhar a cadência de 18 toques do card (tela 10)
@@ -218,17 +218,139 @@ cadência ao lado, para agir sem trocar de tela.
 
 - **Dado** a tela de conversa
 - **Quando** o usuário olha a coluna da direita
-- **Então** vê "Cadência Comercial" (toque da vez, progresso e a próxima ação) e "Notas Internas" com as anotações internas do card (as da aba Resumo) e o campo "Adicionar nota interna rápida" que grava uma nova anotação no card; os blocos "Dados da Proposta" e "Qualificação Técnica" do protótipo **não aparecem** (sem dado)
+- **Então** vê "Cadência Comercial" (toque da vez, progresso e a próxima ação) e "Notas Internas" com as anotações internas do card (as da aba Resumo) e o campo "Adicionar nota interna rápida" que grava uma nova anotação no card; entre os dois ficam "Dados da Proposta" e "Qualificação Técnica" (AC-742)
 
-#### AC-444 — Ações da conversa sem backend
+#### AC-744 — Gravar e enviar áudio
+
+- **Dado** a tela de conversa com o WhatsApp conectado
+- **Quando** o usuário clica no microfone, grava e clica em enviar
+- **Então** o áudio vai para o telefone escolhido do lead como mensagem de voz, aparece na conversa como mensagem enviada com o player, e o microfone do navegador é liberado
+- **E** durante a gravação aparece o tempo e dá para descartar sem enviar nada; a gravação para sozinha aos 5 minutos
+- **E** se o navegador não grava áudio ou o microfone é negado, a tela avisa em vez de quebrar; sem WhatsApp conectado, gravar e anexar ficam desabilitados
+- **E** enviar áudio nunca move o card nem encerra a cadência
+
+#### AC-745 — Ouvir e abrir a mídia da conversa
+
+- **Dado** mensagens com áudio, imagem, vídeo ou documento (as que o lead mandou e as que a equipe enviou)
+- **Quando** a conversa abre
+- **Então** cada uma aparece com o player de áudio ou de vídeo, a imagem (que abre em tamanho grande) ou o documento para baixar, sem o texto marcador "[áudio]", "[imagem]" etc., e a legenda, quando houver, continua escrita
+- **E** o arquivo recebido é buscado na Evolution só na primeira vez que alguém o abre e fica guardado no servidor; as próximas aberturas não chamam a Evolution
+- **E** o arquivo só abre para quem está na empresa da mensagem; de outra empresa, inexistente ou de mensagem sem mídia é "não encontrado"; se o arquivo não existe mais, a tela mostra "Mídia indisponível" no lugar do player
+
+#### AC-746 — Anexar arquivo
+
+- **Dado** a tela de conversa com o WhatsApp conectado
+- **Quando** o usuário escolhe um arquivo em "Anexar arquivo", pode escrever uma legenda e clica em enviar
+- **Então** o arquivo vai para o telefone escolhido do lead (imagem e vídeo como tal; PDF, Office, texto, CSV e áudio-arquivo como documento), a legenda vai junto, e a conversa mostra a mídia; antes de enviar, o arquivo escolhido aparece com nome e tamanho e dá para removê-lo
+
+#### AC-747 — Só tipos e tamanhos seguros
+
+- **Dado** qualquer envio de áudio ou arquivo
+- **Então** só entram imagens (JPEG, PNG, WebP, GIF), vídeo MP4, áudio (Ogg, WebM, MP4, MP3, WAV, AAC), PDF, Word, Excel, PowerPoint, texto e CSV, até 16 MB; HTML, SVG, executáveis e qualquer outro tipo são recusados (415), arquivo acima do limite é recusado (413) e vazio ou pedido mal formado é 400, sempre sem chamar a Evolution nem gravar mensagem
+- **E** imagem, PDF e GIF precisam ter os bytes do tipo que declaram
+- **E** o arquivo é servido de volta só com tipos da lista (qualquer outro como download genérico), com `nosniff`, e documentos sempre como download
+
+#### AC-739 — Mover de etapa, ganho e perdido nas abas
+
+- **Dado** o cabeçalho do card nas abas Cadência, WhatsApp e Anexos
+- **Quando** o usuário escolhe uma etapa em "Mover de Etapa", ou clica em "Marcar como Ganho" ou "Perdido"
+- **Então** o card se move pela mesma rota e com as mesmas regras do Resumo: só aparecem os destinos que o papel alcança, e quando falta um dado (valor na Proposta, motivo na perda) abre o mesmo modal
+- **E** depois de mover, o cabeçalho já mostra a etapa nova
+
+#### AC-740 — Novo número, busca e menu na conversa
 
 - **Dado** a tela de conversa
-- **Quando** o usuário olha "Ligar Agora", "Novo Número", a busca na conversa, o menu de três pontos, anexar arquivo, templates e "Respostas Rápidas"
-- **Então** aparecem visíveis, marcados "em breve", sem disparar ação
+- **Quando** o usuário clica em "Novo Número"
+- **Então** abre um formulário (telefone e rótulo) que cadastra um telefone extra do lead e o coloca no seletor; se o servidor recusar (número inválido ou repetido), mostra o motivo e mantém o que foi digitado
+- **E** a busca na conversa filtra as mensagens já carregadas, sem diferenciar acento nem maiúsculas, mostra quantas achou e avisa quando não acha nenhuma
+- **E** o menu de três pontos tem "Atualizar conversa", "Marcar como lidas" e "Abrir no WhatsApp Web" (o número escolhido)
+
+#### AC-741 — Respostas rápidas e templates
+
+- **Dado** a tela de conversa e os templates aprovados da empresa
+- **Quando** o usuário clica numa resposta rápida ou escolhe um template na lista
+- **Então** o texto, com {{nome}} e {{primeiro_nome}} trocados pelos do lead, vai para o campo da mensagem (depois do que já estiver escrito) e nada é enviado até o usuário enviar
+- **E** só templates aprovados aparecem; sem nenhum, a tela avisa "Nenhum template aprovado ainda."
+
+#### AC-742 — Dados da proposta e qualificação técnica no card
+
+- **Dado** a tela de conversa
+- **Quando** o usuário olha a coluna da direita
+- **Então** vê "Dados da Proposta" (MRR ofertado, previsão de fechamento, condição especial e plano) e "Qualificação Técnica" (porte da clínica, prontuário legado, faturamento TISS e termo LGPD validado), com "—" onde nada foi preenchido e o termo como "Não"
+- **E** o "MRR ofertado" é o valor estimado do card, o mesmo que se edita no detalhe
+- **E** cada bloco tem o próprio "Editar": qualquer papel que acessa o card salva só o que mudou, e o dado volta igual ao recarregar; data inexistente, texto acima de 200 caracteres ou tipo errado são recusados com o campo, sem gravar nada
+- **E** "Qualificação Técnica" mostra a porcentagem dos quatro itens preenchidos (o termo conta quando validado)
+- **E** os dados de um card nunca aparecem em outra empresa, e card de outra empresa ou inexistente é "não encontrado"
+
+#### AC-743 — A edição comercial fica na linha do tempo
+
+- **Dado** uma edição dos dados comerciais
+- **Então** a linha do tempo do card ganha um evento com quem editou, quando, e o valor de antes e o de depois de cada campo que mudou (o termo aparece como "sim"/"não")
+- **E** salvar sem mudar nada não registra nada
+
+#### AC-748 — A conversa tem altura fixa
+
+- **Dado** a tela de conversa numa janela larga
+- **Quando** a conversa tem muitas mensagens
+- **Então** a página não cresce: o quadro ocupa a altura da tela, o cabeçalho do card, as abas, o campo de mensagem e as respostas rápidas ficam sempre à vista, e só a lista de mensagens rola por dentro
+- **E** a coluna da direita (cadência, proposta, qualificação e notas) rola sozinha quando não cabe
+- **E** em janela estreita a página volta a rolar normalmente
+
+#### AC-749 — Anexos e Cadência têm altura fixa
+
+- **Dado** as telas de Anexos e de Cadência numa janela larga
+- **Quando** há muitos anexos ou toques
+- **Então** a página não cresce: o quadro ocupa a altura da tela, o cabeçalho do card, as abas e o título da tela ficam parados, e o resto (filtros, lista e envio em Anexos; resumo, matriz e histórico em Cadência) rola por dentro
+- **E** nada posicionado dentro da área que rola (como o campo de arquivo escondido) pode empurrar a altura da página
+- **E** em janela estreita a página volta a rolar normalmente
+
+#### AC-750 — Exportar o dossiê do card
+
+- **Dado** a tela de anexos de um card com ao menos um anexo
+- **Quando** o usuário clica em "Exportar Dossiê (ZIP)"
+- **Então** o navegador baixa um ZIP chamado `dossie-<nome-do-lead>-<data>.zip` com todos os anexos do card, do mais antigo ao mais novo, numa pasta `anexos/` com o nome original (nomes repetidos ganham "(2)", "(3)"; sem nome original, o arquivo recebe um nome gerado), mais um `manifesto.csv`
+- **E** o manifesto tem uma linha por anexo com o arquivo, o nome original, o tipo, o tamanho, o SHA-256 gravado no envio, quem enviou, quando, a etapa de evidência (se houver) e a integridade
+- **E** sem anexo o botão aparece desabilitado e a rota responde 422; anexos de outra empresa nunca entram, e card de outra empresa ou inexistente é "não encontrado"
+- **E** um dossiê que passa de 100 MB é recusado (413)
+
+#### AC-751 — Integridade e registro do dossiê
+
+- **Dado** a exportação de um dossiê
+- **Então** cada anexo é conferido contra o SHA-256 gravado no envio: "ok" se confere, "divergente" se o arquivo mudou no servidor, "ausente" se sumiu — e um arquivo ausente não derruba a exportação (fica só no manifesto, sem o arquivo)
+- **E** a linha do tempo do card registra quem exportou, quando, quantos arquivos iam no dossiê e quantos tinham problema de integridade
+- **E** o manifesto é CSV em UTF-8 com BOM, e textos que começariam com `=`, `+`, `-` ou `@` ganham um apóstrofo para o Excel não rodá-los como fórmula; nomes de arquivo dentro do ZIP nunca levam pasta, caractere de controle nem ponto na frente
+
+#### AC-752 — Tornar um anexo evidência
+
+- **Dado** um anexo que ainda não é evidência
+- **Quando** qualquer usuário que acessa o card clica em "Tornar Evidência"
+- **Então** o anexo passa a mostrar o selo "Evidência · <etapa atual do card>", e a linha do tempo registra quem marcou, quando e qual anexo
+- **E** marcar de novo um anexo que já é evidência não muda nada nem registra de novo; anexo de outra empresa ou inexistente é "não encontrado"
+
+#### AC-753 — Remover a evidência
+
+- **Dado** um anexo que é evidência (de uma mudança de etapa ou marcado à mão)
+- **Quando** o usuário clica em "Remover evidência"
+- **Então** o selo some, a linha do tempo registra quem removeu e quando, e o registro da mudança de etapa que usou o anexo continua na linha do tempo
+- **E** vale sempre o último que aconteceu com o anexo: marcar de novo depois de remover volta a valer
+
+#### AC-754 — Excluir um anexo
+
+- **Dado** um anexo que o usuário pode excluir
+- **Quando** clica em "Excluir" e confirma na janela "Excluir este anexo?" (cancelar não faz nada)
+- **Então** o registro e o arquivo saem do servidor, a lista se atualiza, o contador da aba diminui, e a linha do tempo registra quem excluiu, quando, e o nome, o tipo, o tamanho e o SHA-256 do que foi excluído
+- **E** excluir um anexo que já foi excluído é "não encontrado"
+
+#### AC-755 — Quem pode excluir e o que não se exclui
+
+- **Dado** a lista de anexos de um card
+- **Então** o botão "Excluir" só aparece para gerente, master e super admin (qualquer anexo) e para quem enviou o anexo (só os dele); quem não pode não vê o botão, e a rota responde 403
+- **E** anexo que é evidência não é excluído: o botão aparece desabilitado com a dica "Remova a evidência antes de excluir", e a rota responde 409
+- **E** anexo de outra empresa nunca é alterado (404)
 
 ## Fora de escopo
 
-- **Enviar arquivo e áudio pelo WhatsApp**, templates e respostas rápidas: não existem no backend; aparecem "em breve".
+- **Enviar arquivo e áudio pelo WhatsApp**: feito em AC-744 a AC-747 (pedido de 03/11).
 - **Conversa com número que não é lead** (botão "Novo Número"): é a tela 17 do inventário (`/whatsapp/nova`), de outra feature.
 - **Caixa de entrada geral** (`/whatsapp`), conexão e configuração do WhatsApp (telas 16, 18 e 19): outra feature. Aqui só se mostra o estado da conexão e o link.
 - **Pausar e reiniciar a cadência**, resultado "pediu retorno mais tarde" e editar o script do toque: sem backend.
