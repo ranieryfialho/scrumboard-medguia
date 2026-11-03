@@ -325,4 +325,79 @@ describe('T-186: AgendaTela', () => {
     expect(await screen.findByText(/Não foi possível carregar a agenda/)).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Tentar de novo' })).toBeTruthy();
   });
+
+  test('o topo segue o protótipo: trilha, cartões com selo e barra de progresso, contagem na aba Lista e o período com ícone @spec:AC-764', async () => {
+    render(<AgendaTela />);
+    await screen.findByText('Reuniões agendadas hoje');
+
+    const trilha = screen.getByRole('navigation', { name: 'Trilha' });
+    expect(within(trilha).getByText('Operação comercial')).toBeTruthy();
+    expect(within(trilha).getByText('/agenda')).toBeTruthy();
+
+    const cartao = (titulo: string) => screen.getByText(titulo).closest('div.rounded-2xl') as HTMLElement;
+    const barra = (c: HTMLElement) => c.querySelector('[role="presentation"] > div') as HTMLElement | null;
+    const hoje = cartao('Reuniões agendadas hoje');
+    expect(within(hoje).getByText('Hoje')).toBeTruthy();
+    expect(barra(hoje)!.style.width).toBe('60%'); // 5 reuniões, 2 por vir → 3 já passaram
+    expect(barra(cartao('Taxa de presença'))!.style.width).toBe('33%');
+    const noShow = cartao('Ocorrências de no-show');
+    expect(within(noShow).getByText('clínicas')).toBeTruthy();
+    expect(within(noShow).getByText('Atenção')).toBeTruthy();
+    expect(barra(noShow)!.style.width).toBe('67%');
+    expect(barra(cartao('Pipeline em demonstração'))).toBeNull(); // sem percentual natural, sem barra inventada
+
+    // a aba Lista mostra quantas reuniões a semana tem, sem mudar o nome da aba
+    const lista = screen.getByRole('tab', { name: 'Lista' });
+    expect(lista.querySelector('[aria-hidden="true"]')!.textContent).toBe('7'); // as 7 reuniões da semana
+    expect(screen.getByText('8 a 14 de junho de 2026').closest('span.border-l')!.querySelector('.material-symbols-outlined')!.textContent).toBe('calendar_month');
+  });
+
+  test('o cartão da fila tem faixa colorida pelo status, bloco de horário (com o fim quando a reunião terminou) e ícone no selo @spec:AC-764', async () => {
+    const base = fetchFalso.getMockImplementation()!;
+    fetchFalso.mockImplementation((url: string, init?: { method?: string }) => {
+      if (url.startsWith('/api/reunioes?') && url.includes('de=2026-06-11&ate=2026-06-11')) {
+        return resposta(200, { reunioes: [r('d', 'Lead D', '2026-06-11T09:00:00Z', 'realizada', { encerradaEm: '2026-06-11T09:45:00Z' }), r('g', 'Lead G', '2026-06-11T08:00:00Z', 'no_show'), r('a', 'Lead A', '2026-06-11T15:00:00Z', 'agendada')] });
+      }
+      return base(url, init);
+    });
+    render(<AgendaTela />);
+    const fila = await screen.findByRole('region', { name: 'Fila de Reuniões e Sessões Clínicas (Hoje)' });
+    const d = await within(fila).findByLabelText('Reunião com Lead D');
+
+    expect(d.className).toContain('border-success-text');
+    expect(within(d).getByText('06:00')).toBeTruthy();
+    expect(within(d).getByText('06:45')).toBeTruthy(); // o fim só aparece quando a reunião terminou de fato
+    expect(within(d).getByText('Realizada').querySelector('[data-icone-do-status]')!.textContent).toBe('check_circle');
+
+    const g = within(fila).getByLabelText('Reunião com Lead G');
+    expect(g.className).toContain('border-danger-text');
+    expect(within(g).queryByText('06:45')).toBeNull();
+    expect(within(fila).getByLabelText('Reunião com Lead A').className).toContain('border-primary');
+
+    // nas células apertadas da semana o selo é só texto
+    const semana = document.querySelector('[data-visao="semana"]') as HTMLElement;
+    expect(semana.querySelector('[data-icone-do-status]')).toBeNull();
+  });
+
+  test('a performance por closer pinta a barra pela taxa: verde, azul ou âmbar @spec:AC-764', async () => {
+    const base = fetchFalso.getMockImplementation()!;
+    fetchFalso.mockImplementation((url: string, init?: { method?: string }) =>
+      url === '/api/reunioes/resumo'
+        ? resposta(200, {
+            ...RESUMO,
+            desempenhoPorCloser: [
+              { closerId: 'a', nome: 'Alta', realizadas: 12, comResultado: 13, taxa: 92 },
+              { closerId: 'b', nome: 'Média', realizadas: 7, comResultado: 8, taxa: 85 },
+              { closerId: 'c', nome: 'Baixa', realizadas: 6, comResultado: 8, taxa: 75 },
+            ],
+          })
+        : base(url, init)
+    );
+    render(<AgendaTela />);
+    const desempenho = await screen.findByRole('region', { name: 'Performance por Closer' });
+    const cor = (nome: string) => (within(desempenho).getByText(nome).closest('div.flex-col') as HTMLElement).querySelector('.h-full')!.className;
+    expect(cor('Alta')).toContain('bg-success-text');
+    expect(cor('Média')).toContain('bg-primary');
+    expect(cor('Baixa')).toContain('bg-warning-text');
+  });
 });

@@ -21,9 +21,36 @@ const MOEDA = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL
 
 const CLASSE_BOTAO = 'h-9 px-3 rounded-lg font-label-md text-label-md font-semibold disabled:opacity-50';
 
-export function SeloStatus({ status }: { status: ReuniaoView['status'] }) {
+const ICONE_DO_STATUS: Record<ReuniaoView['status'], string> = {
+  agendada: 'schedule',
+  em_andamento: 'play_circle',
+  aguardando_resultado: 'hourglass_top',
+  realizada: 'check_circle',
+  no_show: 'cancel',
+  remarcada: 'update',
+};
+
+/** A faixa colorida na borda esquerda do cartão (só visual): verde realizada, azul agendada/andamento, âmbar aguardando, vermelho no-show. */
+const BORDA_DO_STATUS: Record<ReuniaoView['status'], string> = {
+  agendada: 'border-primary',
+  em_andamento: 'border-primary',
+  aguardando_resultado: 'border-warning-text',
+  realizada: 'border-success-text',
+  no_show: 'border-danger-text',
+  remarcada: 'border-text-muted',
+};
+
+/** `comIcone` é falso nas células apertadas da semana e do mês, onde só o texto cabe. */
+export function SeloStatus({ status, comIcone = true }: { status: ReuniaoView['status']; comIcone?: boolean }) {
   return (
-    <span className={`px-2.5 py-1 rounded-full font-label-sm text-label-sm ${COR_DO_STATUS[status]}`}>{ROTULO_DO_STATUS[status]}</span>
+    <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full font-label-sm text-label-sm ${COR_DO_STATUS[status]}`}>
+      {comIcone && (
+        <span aria-hidden="true" data-icone-do-status className="material-symbols-outlined text-[14px] leading-none">
+          {ICONE_DO_STATUS[status]}
+        </span>
+      )}
+      {ROTULO_DO_STATUS[status]}
+    </span>
   );
 }
 
@@ -75,32 +102,62 @@ export function BotoesDaReuniao({ reuniao, acoes, ocupado }: { reuniao: ReuniaoV
 }
 
 export function CartaoReuniao({ reuniao, acoes, ocupado }: { reuniao: ReuniaoView; acoes: AcoesDaReuniao; ocupado: boolean }) {
+  const status = reuniao.status;
   return (
-    <article className="bg-surface-card rounded-2xl p-space-md shadow-sm flex flex-col gap-3" aria-label={`Reunião com ${reuniao.lead.nome}`}>
-      <div className="flex items-start justify-between gap-3 flex-wrap">
-        <div className="flex items-center gap-3 min-w-0">
-          <span className="font-label-lg text-label-lg text-primary shrink-0">{horaDe(reuniao.agendadaPara)}</span>
-          <Link href={`/pipeline/${reuniao.oportunidadeId}`} className="font-headline-sm text-headline-sm text-text-primary hover:text-primary truncate">
-            {reuniao.lead.nome}
-          </Link>
-          <SeloStatus status={reuniao.status} />
+    <article
+      className={`rounded-2xl shadow-sm overflow-hidden border-l-4 ${BORDA_DO_STATUS[status]} ${status === 'no_show' ? 'bg-danger-surface/20' : 'bg-surface-card'}`}
+      aria-label={`Reunião com ${reuniao.lead.nome}`}
+    >
+      <div className="p-space-md flex flex-col gap-3">
+        <div className="flex items-start gap-3">
+          <div className="w-16 shrink-0 rounded-lg bg-surface-subtle py-1.5 flex flex-col items-center font-label-md text-label-md text-text-secondary">
+            <span className={status === 'em_andamento' ? 'text-primary font-bold' : 'text-text-primary font-semibold'}>{horaDe(reuniao.agendadaPara)}</span>
+            {reuniao.encerradaEm && (
+              <>
+                <span aria-hidden="true" className="material-symbols-outlined text-[14px] leading-none text-text-muted">
+                  arrow_downward
+                </span>
+                <span>{horaDe(reuniao.encerradaEm)}</span>
+              </>
+            )}
+          </div>
+          <div className="flex-1 min-w-0 flex flex-col gap-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              <Link
+                href={`/pipeline/${reuniao.oportunidadeId}`}
+                className={`font-headline-sm text-headline-sm hover:text-primary truncate ${status === 'no_show' ? 'text-text-primary' : 'text-text-primary'}`}
+              >
+                {reuniao.lead.nome}
+              </Link>
+              <SeloStatus status={status} />
+            </div>
+            <div className="flex items-center gap-1.5 text-text-secondary">
+              <span aria-hidden="true" className="material-symbols-outlined text-[16px] text-text-muted">
+                person
+              </span>
+              <p className="font-body-sm text-body-sm">Closer: {reuniao.closer?.nome ?? 'Sem responsável'}</p>
+            </div>
+          </div>
+          <div className="text-right shrink-0">
+            <span className="font-headline-sm text-headline-sm text-text-primary">
+              {reuniao.valor !== null ? MOEDA.format(Number(reuniao.valor)) : '—'} <span className="font-body-sm text-body-sm text-text-muted">/mês</span>
+            </span>
+          </div>
         </div>
-        <span className="font-label-lg text-label-lg text-text-primary">
-          {reuniao.valor !== null ? MOEDA.format(Number(reuniao.valor)) : '—'} <span className="font-body-sm text-body-sm text-text-muted">/mês</span>
-        </span>
+        {status === 'realizada' && (reuniao.resumo || reuniao.anexoId) && (
+          <div className="rounded-lg bg-surface-subtle px-3 py-2 font-body-sm text-body-sm text-text-secondary flex flex-col gap-1">
+            {reuniao.resumo && <p>{reuniao.resumo}</p>}
+            {reuniao.anexoId && (
+              <a href={`/api/anexos/${reuniao.anexoId}`} target="_blank" rel="noreferrer" className="text-primary font-semibold hover:underline w-fit">
+                Abrir evidência
+              </a>
+            )}
+          </div>
+        )}
+        <div className="pt-3 border-t border-surface-container">
+          <BotoesDaReuniao reuniao={reuniao} acoes={acoes} ocupado={ocupado} />
+        </div>
       </div>
-      <p className="font-body-sm text-body-sm text-text-secondary">Closer: {reuniao.closer?.nome ?? 'Sem responsável'}</p>
-      {reuniao.status === 'realizada' && (reuniao.resumo || reuniao.anexoId) && (
-        <div className="font-body-sm text-body-sm text-text-secondary">
-          {reuniao.resumo && <p>{reuniao.resumo}</p>}
-          {reuniao.anexoId && (
-            <a href={`/api/anexos/${reuniao.anexoId}`} target="_blank" rel="noreferrer" className="text-primary font-semibold hover:underline">
-              Abrir evidência
-            </a>
-          )}
-        </div>
-      )}
-      <BotoesDaReuniao reuniao={reuniao} acoes={acoes} ocupado={ocupado} />
     </article>
   );
 }

@@ -75,3 +75,8 @@
 - Refs: US-120, AC-473, AC-763
 - Arquivos: src/components/tarefas/kpis-atrasados.tsx, src/components/tarefas/tarefas-atrasadas.tsx, test/components/tarefas/atrasadas-tela.test.tsx
 - Notas: décimo quinto ajuste da série do dono (03/11). Só os cartões do topo e a etiqueta do cabeçalho mudam (a altura fixa já veio no T-298). Escolhas minhas: o quarto cartão é "Cards em risco" porque a "Recuperação de SLA" do protótipo (88,4%; 27 de 31 regularizados) não tem dado no sistema; o rodapé do "Maior tempo de atraso" mostra a ordenação da fila no lugar de "Expira redistribuição em" (regra que não existe). Os blocos "Regra de governança / transbordo > 4 horas" e "Plantão de Resgate" do protótipo continuam de fora: dependem de regras e de capacidade por consultor que o sistema não tem.
+
+## T-300 — A agenda fica mais perto do protótipo [pendente]
+- Refs: US-121, AC-764
+- Arquivos: src/components/agenda/kpis-agenda.tsx, src/components/agenda/agenda-tela.tsx, src/components/agenda/cartao-reuniao.tsx, src/components/agenda/lateral-agenda.tsx, src/components/agenda/visoes.tsx, test/components/agenda/agenda-tela.test.tsx
+- Notas: décimo sexto ajuste da série do dono (03/11). Só aparência, com os dados que a agenda já tem; nada de backend novo. O botão "Google Meet / Outlook" e "Entrar no Meet Agora" continuam "em breve": a integração com o Meet é uma funcionalidade à parte (Google Calendar, ver a conversa de 03/11). A altura fixa não foi aplicada: a agenda é uma página de leitura longa e o dono não pediu.

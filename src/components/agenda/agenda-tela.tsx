@@ -8,7 +8,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { AvisoTempoReal } from '@/components/pipeline/pecas/aviso-tempo-real';
-import { CartaoIndicador } from '@/components/pipeline/pecas/cartao-indicador';
 import { descreverMeta } from '@/lib/metas/catalogo';
 import { useMetas } from '@/lib/metas/usar-metas';
 import { ItemEmBreve } from '@/components/pipeline/pecas/selo-em-breve';
@@ -18,12 +17,12 @@ import { STATUS_DE_REUNIAO, ROTULO_DO_STATUS, type StatusReuniao } from '@/lib/r
 import { cancelarReuniao, registrarNoShow, type ResultadoAcaoAgenda } from './acoes-reuniao';
 import { CartaoReuniao, type AcoesDaReuniao } from './cartao-reuniao';
 import { diaDe, navegar, periodoDaVisao, rotuloDoPeriodo } from './datas';
+import { KpisAgenda } from './kpis-agenda';
 import { LateralAgenda } from './lateral-agenda';
 import { ModalAgendar, ModalConcluir, ModalReagendar } from './modais';
 import type { ReuniaoView, ResumoAgendaView, VisaoAgenda } from './tipos';
 import { VisaoDia, VisaoLista, VisaoMes, VisaoSemana } from './visoes';
 
-const MOEDA = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
 const ROTULO_DA_VISAO: Record<VisaoAgenda, string> = { mes: 'Mês', semana: 'Semana', dia: 'Dia', lista: 'Lista' };
 
 type Modal = { tipo: 'agendar' } | { tipo: 'reagendar'; reuniao: { id: string; leadNome: string } } | { tipo: 'concluir'; reuniao: ReuniaoView };
@@ -131,6 +130,14 @@ export function AgendaTela() {
 
   return (
     <div className="p-space-md space-y-space-md">
+      <nav aria-label="Trilha" className="flex items-center gap-1.5 font-label-sm text-label-sm uppercase tracking-wider text-text-muted">
+        <span>Operação comercial</span>
+        <span aria-hidden="true" className="material-symbols-outlined text-[14px]">chevron_right</span>
+        <span>Reuniões &amp; demonstrações</span>
+        <span aria-hidden="true" className="material-symbols-outlined text-[14px]">chevron_right</span>
+        <span className="text-primary font-semibold">/agenda</span>
+      </nav>
+
       <div className="flex items-start justify-between flex-wrap gap-space-md">
         <div>
           <h1 className="font-headline-lg text-headline-lg text-text-primary tracking-tight">Agenda de Reuniões Comerciais e No-Show</h1>
@@ -155,38 +162,7 @@ export function AgendaTela() {
 
       <AvisoTempoReal estadoConexao={estadoConexao} />
 
-      {resumo && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-space-md">
-          <CartaoIndicador
-            titulo="Reuniões agendadas hoje"
-            valor={String(resumo.hoje.total)}
-            legenda={`${resumo.hoje.emAndamentoOuPorVir} em andamento / próximas`}
-            icone="event"
-          />
-          <CartaoIndicador
-            titulo="Taxa de presença"
-            valor={resumo.presenca.taxa === null ? '—' : `${resumo.presenca.taxa}%`}
-            legenda={`${resumo.presenca.realizadas} realizadas na semana`}
-            icone="how_to_reg"
-            cor="success"
-            meta={descreverMeta(resumo.presenca.taxa, metas.taxa_presenca)}
-          />
-          <CartaoIndicador
-            titulo="Ocorrências de no-show"
-            valor={String(resumo.noShow.quantidade)}
-            legenda={resumo.noShow.percentual === null ? 'Sem reuniões com resultado na semana' : `${resumo.noShow.percentual}% na semana`}
-            icone="person_off"
-            cor="danger"
-          />
-          <CartaoIndicador
-            titulo="Pipeline em demonstração"
-            valor={MOEDA.format(resumo.pipelineEmDemonstracao.valor)}
-            legenda={`${resumo.pipelineEmDemonstracao.contas} ${resumo.pipelineEmDemonstracao.contas === 1 ? 'conta' : 'contas'}`}
-            icone="payments"
-            cor="info"
-          />
-        </div>
-      )}
+      {resumo && <KpisAgenda resumo={resumo} metaPresenca={descreverMeta(resumo.presenca.taxa, metas.taxa_presenca)} />}
 
       <section aria-label="Calendário" className="bg-surface-card rounded-2xl p-space-md shadow-sm space-y-space-sm">
         <div className="flex items-center justify-between flex-wrap gap-space-sm">
@@ -198,9 +174,15 @@ export function AgendaTela() {
                 role="tab"
                 aria-selected={visao === v}
                 onClick={() => setVisao(v)}
+                aria-label={ROTULO_DA_VISAO[v]}
                 className={`h-8 px-3 rounded-lg font-label-md text-label-md ${visao === v ? 'bg-surface-card text-primary font-semibold shadow-sm' : 'text-text-secondary'}`}
               >
                 {ROTULO_DA_VISAO[v]}
+                {v === 'lista' && reunioes !== null && reunioes.length > 0 && (
+                  <span aria-hidden="true" className="ml-1.5 px-1.5 py-0.5 rounded-full bg-surface-container text-text-secondary font-label-sm text-[11px]">
+                    {reunioes.length}
+                  </span>
+                )}
               </button>
             ))}
           </div>
@@ -214,8 +196,11 @@ export function AgendaTela() {
             <button type="button" aria-label="Próximo período" onClick={() => setReferencia((r) => navegar(visao, r, 1))} className="w-9 h-9 rounded-lg bg-surface-subtle">
               <span aria-hidden="true" className="material-symbols-outlined text-[18px]">chevron_right</span>
             </button>
-            <span aria-live="polite" className="font-label-lg text-label-lg text-text-primary">
-              {rotuloDoPeriodo(visao, referencia)}
+            <span className="flex items-center gap-1.5 pl-2 ml-1 border-l border-surface-container">
+              <span aria-hidden="true" className="material-symbols-outlined text-[18px] text-text-muted">calendar_month</span>
+              <span aria-live="polite" className="font-label-lg text-label-lg text-text-primary">
+                {rotuloDoPeriodo(visao, referencia)}
+              </span>
             </span>
           </div>
         </div>

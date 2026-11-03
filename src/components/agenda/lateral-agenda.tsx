@@ -5,6 +5,11 @@ import { ItemEmBreve } from '@/components/pipeline/pecas/selo-em-breve';
 import { diaDe, horaDe, rotuloDoDia } from './datas';
 import type { ResumoAgendaView } from './tipos';
 
+/** Só visual: verde a partir de 90%, azul a partir de 80%, âmbar abaixo disso. */
+function corDaTaxa(taxa: number | null): string {
+  return (taxa ?? 0) >= 90 ? 'bg-success-text' : (taxa ?? 0) >= 80 ? 'bg-primary' : 'bg-warning-text';
+}
+
 export function LateralAgenda({
   resumo,
   onReagendar,
@@ -23,7 +28,7 @@ export function LateralAgenda({
         </div>
         {resumo.resgateDeNoShows.length === 0 && <p className="font-body-sm text-body-sm text-text-muted">Nenhum no-show para resgatar.</p>}
         {resumo.resgateDeNoShows.map((n) => (
-          <div key={n.reuniaoId} className="rounded-xl bg-surface-subtle p-2 flex flex-col gap-1">
+          <div key={n.reuniaoId} className="rounded-xl bg-surface-subtle p-3 border-l-4 border-danger-text flex flex-col gap-1">
             <div className="flex items-center justify-between gap-2">
               <span className="font-label-lg text-label-lg text-text-primary">{n.leadNome}</span>
               <span className="font-body-sm text-body-sm text-text-muted">
@@ -59,7 +64,7 @@ export function LateralAgenda({
               </span>
             </div>
             <div className="h-1.5 rounded-full bg-surface-container overflow-hidden">
-              <div className="h-full bg-primary" style={{ width: `${c.taxa ?? 0}%` }} />
+              <div className={`h-full ${corDaTaxa(c.taxa)}`} style={{ width: `${c.taxa ?? 0}%` }} />
             </div>
           </div>
         ))}

@@ -243,6 +243,15 @@ reagir aos no-shows.
 - **Quando** a coluna da direita é renderizada
 - **Então** "Fila de Resgate de No-Shows" lista esses leads (com quando faltaram e o closer) com a ação "Reagendar", e "Performance por Closer (Semana)" mostra, por closer, a taxa de reuniões realizadas sobre as com resultado, com "N/M"
 
+#### AC-764 — A agenda segue o desenho do protótipo
+
+- **Dado** a tela da agenda
+- **Então** o topo tem a trilha "Operação comercial › Reuniões & demonstrações › /agenda", e os quatro cartões trazem rótulo, selo no canto ("Hoje"; "Atenção" quando há no-show), número grande, uma linha de apoio e uma barra de progresso embaixo (reuniões de hoje que já passaram, taxa de presença e percentual de no-show; o cartão do pipeline não tem barra, porque não há percentual natural)
+- **E** a aba "Lista" mostra quantas reuniões o período tem, e o período mostrado ganha o ícone de calendário
+- **E** cada reunião da fila de hoje tem a faixa colorida na borda pelo status (verde realizada, azul agendada e em andamento, âmbar aguardando resultado, vermelho no-show), um bloco de horário (com o fim, só quando a reunião terminou de fato), o status com ícone, e os botões separados por um traço; no-show ganha um fundo avermelhado
+- **E** na lateral, as barras da performance por closer são verdes a partir de 90%, azuis a partir de 80% e âmbar abaixo disso, e cada no-show do resgate ganha a faixa vermelha
+- **E** nada do que o protótipo traz sem dado no sistema aparece: variação da semana anterior (+4,5%), "Protocolo Anti-No-Show" com taxas de entrega, "aproveitamento de agenda", plano e contas do cliente, SDR, canal e link da sala
+
 #### AC-488 — Itens do protótipo sem backend aparecem como "em breve" ou não aparecem
 
 - **Dado** a agenda

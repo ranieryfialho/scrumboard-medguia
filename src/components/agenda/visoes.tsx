@@ -56,7 +56,7 @@ export function VisaoSemana({ reunioes, referencia, hoje }: { reunioes: ReuniaoV
                 <li key={r.id} className="bg-surface-card rounded-lg p-1.5 font-body-sm text-body-sm">
                   <span className="font-label-md text-label-md text-primary">{horaDe(r.agendadaPara)}</span> {r.lead.nome}
                   <div className="mt-0.5">
-                    <SeloStatus status={r.status} />
+                    <SeloStatus status={r.status} comIcone={false} />
                   </div>
                 </li>
               ))}
