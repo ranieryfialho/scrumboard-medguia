@@ -86,7 +86,7 @@ relance.
 #### AC-393 — Itens do funil sem backend aparecem como "em breve"
 
 - **Dado** o funil renderizado
-- **Quando** o usuário olha as ações do protótipo sem backend (busca global, "Iniciar Cadência em Massa", seletor de visões salvas)
+- **Quando** o usuário olha as ações do protótipo sem backend (busca global, seletor de visões salvas; o "Iniciar Cadência em Massa" funciona, AC-759)
 - **Então** elas aparecem visíveis, marcadas "em breve", e não disparam nenhuma ação
 
 #### AC-733 — Cada coluna do funil rola sozinha

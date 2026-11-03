@@ -167,6 +167,18 @@ export async function iniciarCadencia(
   });
 }
 
+/** `true` se o card já tem (ou já teve) toques de cadência — iniciar de novo bateria no índice único de sequência. */
+export async function cardTemToquesDeCadencia(db: NodePgDatabase, contexto: ContextoTenant, oportunidadeId: string): Promise<boolean> {
+  return comTenant(db, contexto, async (tx) => {
+    const [linha] = await tx
+      .select({ id: cadenciaAtividades.id })
+      .from(cadenciaAtividades)
+      .where(and(eq(cadenciaAtividades.oportunidadeId, oportunidadeId), eq(cadenciaAtividades.empresaId, contexto.empresaId)))
+      .limit(1);
+    return Boolean(linha);
+  });
+}
+
 export interface DadosConcluirAtividade {
   /** `version` que o chamador acredita ser a atual do card da atividade (lock otimista, AC-198). */
   version: number;

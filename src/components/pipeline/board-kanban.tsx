@@ -12,7 +12,10 @@ import {
 } from "@/hooks/use-stream-oportunidades";
 import { EsqueletoCarregando, EstadoErro, EstadoVazio } from "@/components/pipeline/pecas/estados";
 import { AvisoTempoReal } from "@/components/pipeline/pecas/aviso-tempo-real";
-import { ItemEmBreve } from "@/components/pipeline/pecas/selo-em-breve";
+import { DialogoIniciarCadencia } from "@/components/pipeline/lote/dialogo-iniciar-cadencia";
+import { iniciarCadenciaEmMassa } from "@/components/pipeline/lote/iniciar-cadencia-api";
+import { ResultadoLote } from "@/components/pipeline/lote/resultado-lote";
+import { MENSAGEM_DO_PEDIDO, type ResultadoDoLoteView } from "@/components/pipeline/lote/tipos";
 import { CardOportunidade, type CardBoard } from "./card-oportunidade";
 import { ColunaEtapa } from "./coluna-etapa";
 import { ModalDadoFaltante } from "./modal-dado-faltante";
@@ -20,6 +23,8 @@ import { FiltrosFunil, type OpcaoResponsavelFunil, type ValorFiltrosFunil } from
 import { IndicadoresFunil, type IndicadoresFunilView } from "./indicadores-funil";
 import { ModalNovoLead, type DadosNovoLead, type ResultadoSalvarNovoLead } from "./modal-novo-lead";
 import { criarCardNovoLead, criarLeadEIniciarCadencia } from "./novo-lead-api";
+
+const ETAPA_ENTRADA_DE_LEADS = 1;
 
 // Espelha `pipeline_etapas` (drizzle/0005_seeds.sql) — as 15 etapas são seed
 // fixo, versionado por migration; não vale buscar isso por rede toda vez.
@@ -158,6 +163,11 @@ export function BoardKanban() {
 
   // AC-391/AC-392.
   const [modalNovoLeadAberto, setModalNovoLeadAberto] = useState(false);
+  // T-296 (AC-759/AC-760): "Iniciar Cadência em Massa" — todos os cards da Entrada de leads que o filtro deixa à vista.
+  const [cadenciaEmMassaAberta, setCadenciaEmMassaAberta] = useState(false);
+  const [iniciandoCadencia, setIniciandoCadencia] = useState(false);
+  const [erroDaCadenciaEmMassa, setErroDaCadenciaEmMassa] = useState<string | null>(null);
+  const [resultadoDaCadenciaEmMassa, setResultadoDaCadenciaEmMassa] = useState<{ lote: ResultadoDoLoteView; nomes: Record<string, string> } | null>(null);
 
   const itens = useMemo<CardBoard[]>(() => {
     const comProximaAcao = itensBrutos.map((item) => ({
@@ -166,6 +176,8 @@ export function BoardKanban() {
     }));
     return idsPermitidos ? comProximaAcao.filter((item) => idsPermitidos.has(item.id)) : comProximaAcao;
   }, [itensBrutos, idsPermitidos, proximasAcoes]);
+
+  const cardsDaEntrada = useMemo(() => itens.filter((item) => item.etapaId === ETAPA_ENTRADA_DE_LEADS), [itens]);
 
   const carregarBoard = useCallback(async () => {
     setErroCarga(null);
@@ -438,17 +450,45 @@ export function BoardKanban() {
     [carregarBoard, carregarIndicadores]
   );
 
+  async function iniciarCadenciaEmMassaDaEntrada() {
+    const nomes: Record<string, string> = {};
+    for (const item of cardsDaEntrada) nomes[item.id] = item.leadNome;
+    setIniciandoCadencia(true);
+    setErroDaCadenciaEmMassa(null);
+    try {
+      const lote = await iniciarCadenciaEmMassa(cardsDaEntrada.map((item) => item.id));
+      setCadenciaEmMassaAberta(false);
+      setResultadoDaCadenciaEmMassa({ lote, nomes });
+      await carregarBoard();
+      void carregarIndicadores();
+    } catch (erro) {
+      setErroDaCadenciaEmMassa(MENSAGEM_DO_PEDIDO[erro instanceof Error ? erro.message : ""] ?? "Não foi possível iniciar a cadência. Tente de novo.");
+    } finally {
+      setIniciandoCadencia(false);
+    }
+  }
+
   return (
     // AC-733: o quadro ocupa a altura da tela (tela menos o topo de 4rem) e quem rola é cada coluna, não a página
     <div className="flex flex-col gap-space-md p-space-md h-[calc(100dvh-4rem)] min-h-[40rem]">
       <div className="flex items-center justify-between flex-wrap gap-space-sm">
         <h1 className="font-headline-lg text-headline-lg text-text-primary tracking-tight">Funil Pipeline de Vendas</h1>
         <div className="flex items-center gap-space-sm">
-          <ItemEmBreve
-            rotulo="Iniciar Cadência em Massa"
-            icone="schedule_send"
-            className="h-10 px-4 rounded-xl bg-surface-card shadow-sm"
-          />
+          <button
+            type="button"
+            disabled={cardsDaEntrada.length === 0}
+            title={cardsDaEntrada.length === 0 ? "Não há cards em Entrada de leads" : undefined}
+            onClick={() => {
+              setErroDaCadenciaEmMassa(null);
+              setCadenciaEmMassaAberta(true);
+            }}
+            className="h-10 px-4 rounded-xl bg-surface-card hover:bg-surface-subtle shadow-sm flex items-center gap-2 font-label-md text-label-md font-semibold text-text-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <span aria-hidden="true" className="material-symbols-outlined text-[19px]">
+              schedule_send
+            </span>
+            Iniciar Cadência em Massa
+          </button>
           <button
             type="button"
             onClick={() => setModalNovoLeadAberto(true)}
@@ -463,6 +503,25 @@ export function BoardKanban() {
       </div>
 
       <AvisoTempoReal estadoConexao={estadoConexao} />
+
+      {resultadoDaCadenciaEmMassa && (
+        <ResultadoLote
+          acao="cadencia"
+          lote={resultadoDaCadenciaEmMassa.lote}
+          nomes={resultadoDaCadenciaEmMassa.nomes}
+          onFechar={() => setResultadoDaCadenciaEmMassa(null)}
+        />
+      )}
+
+      {cadenciaEmMassaAberta && (
+        <DialogoIniciarCadencia
+          quantidade={cardsDaEntrada.length}
+          enviando={iniciandoCadencia}
+          erro={erroDaCadenciaEmMassa}
+          onConfirmar={() => void iniciarCadenciaEmMassaDaEntrada()}
+          onFechar={() => setCadenciaEmMassaAberta(false)}
+        />
+      )}
 
       {indicadores ? <IndicadoresFunil dados={indicadores} /> : <EsqueletoCarregando linhas={1} />}
 

@@ -367,21 +367,69 @@ describe('T-160: tela do funil', () => {
   });
 
   describe('AC-393: itens do funil sem backend aparecem "em breve"', () => {
-    test('"Iniciar Cadência em Massa" e "Período" aparecem marcados, sem disparar ação @spec:AC-393', async () => {
+    test('"Período" aparece marcado, sem disparar ação @spec:AC-393', async () => {
       render(<PipelinePage />);
       await screen.findByText('Clínica Vitae');
 
-      const cadenciaEmMassa = screen.getByRole('button', { name: 'Iniciar Cadência em Massa (em breve)' });
       const periodo = screen.getByRole('button', { name: 'Período (em breve)' });
-      expect(cadenciaEmMassa.getAttribute('aria-disabled')).toBe('true');
       expect(periodo.getAttribute('aria-disabled')).toBe('true');
 
       const chamadasAntes = fetchFalso.mock.calls.length;
       const usuario = userEvent.setup();
-      await usuario.click(cadenciaEmMassa);
       await usuario.click(periodo);
 
       expect(fetchFalso.mock.calls.length).toBe(chamadasAntes);
+    });
+  });
+
+  describe('AC-759: "Iniciar Cadência em Massa" inicia a cadência de toda a Entrada de leads à vista', () => {
+    test('pede confirmação com a quantidade, manda só os ids da Entrada de leads e mostra o resultado @spec:AC-759', async () => {
+      const usuario = userEvent.setup();
+      const base = fetchFalso.getMockImplementation() as (u: string, i?: RequestInit) => Promise<Response>;
+      fetchFalso.mockImplementation(((url: string, init?: RequestInit) => {
+        if (url === '/api/oportunidades/lote/iniciar-cadencia' && init?.method === 'POST') {
+          return resposta(200, {
+            resultados: [
+              { id: OP_A, ok: true },
+              { id: OP_B, ok: false, codigo: 'CADENCIA_JA_INICIADA' },
+            ],
+            aplicados: 1,
+            falhas: 1,
+          });
+        }
+        return base(url, init);
+      }) as typeof fetch);
+      render(<PipelinePage />);
+      await screen.findByText('Clínica Vitae');
+
+      await usuario.click(screen.getByRole('button', { name: 'Iniciar Cadência em Massa' }));
+      const dialogo = screen.getByRole('alertdialog');
+      expect(within(dialogo).getByText('Iniciar a cadência de 2 cards?')).toBeTruthy();
+      await usuario.click(within(dialogo).getByRole('button', { name: 'Cancelar' }));
+      expect(fetchFalso.mock.calls.some(([u]) => u === '/api/oportunidades/lote/iniciar-cadencia')).toBe(false);
+
+      await usuario.click(screen.getByRole('button', { name: 'Iniciar Cadência em Massa' }));
+      await usuario.click(within(screen.getByRole('alertdialog')).getByRole('button', { name: 'Iniciar 2 cards' }));
+
+      const chamada = await waitFor(() => {
+        const c = fetchFalso.mock.calls.find(([u]) => u === '/api/oportunidades/lote/iniciar-cadencia');
+        expect(c).toBeTruthy();
+        return c!;
+      });
+      expect(JSON.parse((chamada[1] as RequestInit).body as string)).toEqual({ ids: [OP_A, OP_B] });
+
+      const resultado = await screen.findByRole('region', { name: 'Resultado da ação em lote' });
+      expect(within(resultado).getByText(/1 com a cadência iniciada, 1 sem a cadência iniciada/)).toBeTruthy();
+      expect(within(resultado).getByText(/Este card já tem toques de cadência/)).toBeTruthy();
+      expect(screen.queryByRole('alertdialog')).toBeNull();
+    });
+
+    test('sem cards na Entrada de leads o botão fica desabilitado @spec:AC-759', async () => {
+      boardItens = boardItens.filter((item) => item.etapaId !== 1);
+      render(<PipelinePage />);
+      await screen.findByText('Hospital São Lucas');
+
+      expect((screen.getByRole('button', { name: 'Iniciar Cadência em Massa' }) as HTMLButtonElement).disabled).toBe(true);
     });
   });
 });

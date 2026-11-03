@@ -29,6 +29,7 @@
 | Última migration em `drizzle/` é a `0028_cadencia_inicio_no_turno.sql` (se entrar outra depois, acrescente aqui) | `ls drizzle` |
 | No nginx-proxy-manager do host do CRM (staging e produção), `client_max_body_size 20m;` em *Advanced* — o padrão do nginx é 1 MB e barraria o envio de áudio e arquivos do WhatsApp (até 16 MB) com erro 413 | enviar um PDF de 2 MB pela conversa de um card |
 | Acesso SSH root à VPS; código em `/root/crm-staging` (nunca em `~/scrumboard-medguia`, que é o legado) | — |
+| Depois da carga de dados, iniciar a cadência dos leads que devem ter tarefas: no funil, **Iniciar Cadência em Massa** (todos de "Entrada de leads" à vista, em pedaços de 100) ou, na lista, marcar e **Iniciar Cadência**. Sem isso "Tarefas do Turno" fica vazia (a migração põe todos em "Entrada de leads", sem toques) | abrir "Tarefas do Turno" |
 | Janela combinada com a operação (o legado sai do ar durante a troca) | — |
 | Plano de volta lido (seção 9) | — |
 

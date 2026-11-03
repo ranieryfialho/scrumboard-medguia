@@ -68,6 +68,13 @@ Como SDR, quero iniciar a cadência de um card e ver apenas os 3 toques do turno
 - **Então** o primeiro bloco é o da manhã (sequências 1–3) e passa a valer às 8h do primeiro dia útil seguinte (no mesmo dia, se ainda não deu 8h) — assim ele aparece como o turno em andamento, e não como atrasado, quando o expediente começa
 - **E** a regra é a mesma no banco e no domínio puro: os dois dão o mesmo turno e a mesma hora em qualquer instante
 
+#### AC-758 — Entrar em "1º dia de contato" por qualquer caminho inicia a cadência
+
+- **Dado** um card que ainda não teve nenhum toque de cadência
+- **Quando** ele é movido para "1º dia de contato" por qualquer caminho da tela — arrastar no funil, "Mover Etapa" do card, "Mover Etapa em Lote" ou voltar de "Follow de longo prazo"
+- **Então** é como clicar em "Iniciar Cadência": o card entra na etapa e passa a ter os 3 toques do primeiro bloco do turno (AC-756), o ponteiro da cadência e o evento "cadência iniciada", tudo numa transação só
+- **E** versão desatualizada continua recusada (409) sem criar toque nenhum; um card que já teve toques (de uma cadência anterior) só muda de etapa, como antes; mover para qualquer outra etapa não mexe em toques
+
 ### US-054 — Concluir um toque e liberar o próximo bloco
 
 Como SDR, quero registrar o resultado de cada toque e ter o próximo bloco liberado sozinho, para seguir a cadência sem controle externo.
