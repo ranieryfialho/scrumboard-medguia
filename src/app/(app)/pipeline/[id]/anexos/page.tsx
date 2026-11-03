@@ -72,7 +72,7 @@ function ConteudoAnexos({ cardId, onMudou }: { cardId: string; onMudou: () => vo
   }, [anexos, filtro]);
 
   return (
-    <div className="p-gutter flex flex-col gap-space-md w-full">
+    <div className="p-gutter flex flex-col gap-space-md w-full lg:flex-1 lg:min-h-0">
       <div className="flex flex-wrap items-center justify-between gap-space-sm">
         <div>
           <h2 className="font-headline-md text-headline-md text-text-primary">Anexos &amp; Evidências</h2>
@@ -97,24 +97,27 @@ function ConteudoAnexos({ cardId, onMudou }: { cardId: string; onMudou: () => vo
 
       <FiltrosAnexos valor={filtro} contagens={contagens} onMudar={(parcial) => setFiltro((atual) => ({ ...atual, ...parcial }))} />
 
-      {carregando && <EsqueletoCarregando />}
-      {!carregando && erro && <EstadoErro onTentarDeNovo={carregar} />}
-      {!carregando && !erro && anexos && anexos.length === 0 && (
-        <EstadoVazio titulo="Nenhum anexo ainda" proximoPasso="envie o primeiro pela área abaixo" icone="attachment" />
-      )}
-      {!carregando && !erro && anexos && anexos.length > 0 && visiveis.length === 0 && (
-        <EstadoVazio titulo="Nenhum anexo com estes filtros" proximoPasso="tente mudar a busca ou o tipo" icone="filter_alt_off" />
-      )}
-      {!carregando && !erro && visiveis.length > 0 && <ListaAnexos anexos={visiveis} />}
+      {/* AC-749: título e filtros ficam parados; a lista e a área de envio rolam por dentro. */}
+      <div className="relative flex flex-col gap-space-md lg:flex-1 lg:min-h-0 lg:overflow-y-auto">
+        {carregando && <EsqueletoCarregando />}
+        {!carregando && erro && <EstadoErro onTentarDeNovo={carregar} />}
+        {!carregando && !erro && anexos && anexos.length === 0 && (
+          <EstadoVazio titulo="Nenhum anexo ainda" proximoPasso="envie o primeiro pela área abaixo" icone="attachment" />
+        )}
+        {!carregando && !erro && anexos && anexos.length > 0 && visiveis.length === 0 && (
+          <EstadoVazio titulo="Nenhum anexo com estes filtros" proximoPasso="tente mudar a busca ou o tipo" icone="filter_alt_off" />
+        )}
+        {!carregando && !erro && visiveis.length > 0 && <ListaAnexos anexos={visiveis} />}
 
-      <EnvioAnexos
-        cardId={cardId}
-        inputRef={inputRef}
-        onEnviado={() => {
-          void carregar();
-          onMudou();
-        }}
-      />
+        <EnvioAnexos
+          cardId={cardId}
+          inputRef={inputRef}
+          onEnviado={() => {
+            void carregar();
+            onMudou();
+          }}
+        />
+      </div>
     </div>
   );
 }
@@ -125,7 +128,7 @@ export default function PipelineAnexosPage({ params }: { params: Promise<{ id: s
   const [versao, setVersao] = useState(0);
 
   return (
-    <MoldeDoCard cardId={id} aba="anexos" versaoDosContadores={versao}>
+    <MoldeDoCard cardId={id} aba="anexos" versaoDosContadores={versao} alturaFixa>
       {(card) => <ConteudoAnexos cardId={card.id} onMudou={() => setVersao((atual) => atual + 1)} />}
     </MoldeDoCard>
   );

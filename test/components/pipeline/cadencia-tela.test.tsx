@@ -201,6 +201,21 @@ describe('T-173: tela da cadência de 18 toques', () => {
     });
   });
 
+  describe('AC-749: a tela tem altura fixa', () => {
+    test('o quadro ocupa a altura da tela, o título fica parado e o resto rola por dentro @spec:AC-749', async () => {
+      await abrirTela();
+
+      const raiz = screen.getByRole('navigation', { name: 'Abas do card' }).closest('[class*="lg:h-[calc(100dvh-4rem)]"]') as HTMLElement;
+      expect(raiz).toBeTruthy();
+
+      const rolagem = document.querySelector('.lg\\:overflow-y-auto') as HTMLElement;
+      expect(rolagem.className).toContain('lg:min-h-0');
+      expect(rolagem.className).toContain('lg:flex-1');
+      expect(rolagem.className).toContain('relative');
+      expect(rolagem.contains(screen.getByRole('heading', { name: 'Cadência de 18 Toques' }))).toBe(false);
+    });
+  });
+
   describe('AC-433: sem cadência iniciada, a tela mostra o caminho para iniciar', () => {
     test('mostra o vazio com "Iniciar cadência" e, ao usar, a matriz aparece sem recarregar a página @spec:AC-433', async () => {
       const usuario = userEvent.setup();

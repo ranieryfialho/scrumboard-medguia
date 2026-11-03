@@ -85,3 +85,8 @@
 - Refs: US-114, AC-748
 - Arquivos: src/components/pipeline/card/molde-do-card.tsx, src/app/(app)/pipeline/[id]/conversa/page.tsx, src/components/pipeline/conversa/conversa-lead.tsx, test/components/pipeline/conversa-tela.test.tsx
 - Notas: oitavo ajuste de tela da série do dono (03/11), mesmo padrão do funil, da lista e dos arquivados. Só a conversa usa (`alturaFixa` do molde); Cadência e Anexos continuam com a altura do conteúdo. A altura fixa vale a partir de `lg`.
+
+## T-292 — Anexos e Cadência do card têm altura fixa [pendente]
+- Refs: US-112, US-113, AC-749
+- Arquivos: src/app/(app)/pipeline/[id]/anexos/page.tsx, src/app/(app)/pipeline/[id]/cadencia/page.tsx, test/components/pipeline/anexos-tela.test.tsx, test/components/pipeline/cadencia-tela.test.tsx
+- Notas: nono ajuste de tela da série do dono (03/11): o pedido foi para Anexos, e Cadência recebeu o mesmo padrão da conversa (T-291) porque tem a mesma lista longa. Lição: a área que rola precisa ser `relative`, senão itens `absolute` dentro dela (o `<input type="file">` escondido do envio) escapam do corte e a página inteira volta a rolar (medido: 1759px numa janela de 900px com 12 anexos).

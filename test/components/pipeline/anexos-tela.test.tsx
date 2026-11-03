@@ -267,6 +267,25 @@ describe('T-172: tela de anexos e evidências', () => {
     });
   });
 
+  describe('AC-749: a tela tem altura fixa', () => {
+    test('o quadro ocupa a altura da tela e só a área dos anexos rola por dentro, contendo também o que é posicionado @spec:AC-749', async () => {
+      await abrirTela();
+
+      const raiz = screen.getByRole('navigation', { name: 'Abas do card' }).closest('[class*="lg:h-[calc(100dvh-4rem)]"]') as HTMLElement;
+      expect(raiz).toBeTruthy();
+      expect(raiz.className).toContain('lg:min-h-[40rem]');
+
+      const rolagem = document.querySelector('.lg\\:overflow-y-auto') as HTMLElement;
+      expect(rolagem.className).toContain('lg:min-h-0');
+      expect(rolagem.className).toContain('lg:flex-1');
+      // `relative` faz a área ser o ancestral dos itens `absolute` (como o campo de arquivo escondido); sem ele eles escapam
+      // da rolagem e a página inteira volta a crescer.
+      expect(rolagem.className).toContain('relative');
+      expect(rolagem.textContent).toContain('Adicionar Arquivos');
+      expect(rolagem.contains(screen.getByRole('heading', { name: /Anexos/ }))).toBe(false);
+    });
+  });
+
   describe('AC-422: a tela tem estado de vazio e de erro', () => {
     test('sem anexos mostra o vazio com o próximo passo @spec:AC-422', async () => {
       anexosDoServidor = [];

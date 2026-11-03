@@ -296,6 +296,14 @@ cadência ao lado, para agir sem trocar de tela.
 - **E** a coluna da direita (cadência, proposta, qualificação e notas) rola sozinha quando não cabe
 - **E** em janela estreita a página volta a rolar normalmente
 
+#### AC-749 — Anexos e Cadência têm altura fixa
+
+- **Dado** as telas de Anexos e de Cadência numa janela larga
+- **Quando** há muitos anexos ou toques
+- **Então** a página não cresce: o quadro ocupa a altura da tela, o cabeçalho do card, as abas e o título da tela ficam parados, e o resto (filtros, lista e envio em Anexos; resumo, matriz e histórico em Cadência) rola por dentro
+- **E** nada posicionado dentro da área que rola (como o campo de arquivo escondido) pode empurrar a altura da página
+- **E** em janela estreita a página volta a rolar normalmente
+
 ## Fora de escopo
 
 - **Enviar arquivo e áudio pelo WhatsApp**: feito em AC-744 a AC-747 (pedido de 03/11).
