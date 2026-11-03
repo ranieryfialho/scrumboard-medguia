@@ -21,6 +21,7 @@ describe('T-290: mídia na conversa do WhatsApp', () => {
   let amb: AmbienteAnexos;
   let servidor: Server;
   let chamadas: Chamada[];
+  let envios = 0;
   let respostaDoEnvio: { status: number; corpo: unknown };
   let enviar: typeof import('../../src/app/api/whatsapp/send-midia/route');
   let abrir: typeof import('../../src/app/api/whatsapp/midia/[id]/route');
@@ -62,7 +63,10 @@ describe('T-290: mídia na conversa do WhatsApp', () => {
           return;
         }
         res.statusCode = respostaDoEnvio.status;
-        res.end(JSON.stringify(respostaDoEnvio.corpo));
+        // A Evolution de verdade devolve um id novo a cada envio (e `whatsapp_mensagens` tem índice único por empresa e id).
+        const corpo = respostaDoEnvio.corpo as { key?: unknown } | null;
+        envios += 1;
+        res.end(JSON.stringify(corpo?.key ? { key: { id: `EVO-ENVIADA-${envios}` } } : respostaDoEnvio.corpo));
       });
     });
     await new Promise<void>((ok) => servidor.listen(0, '127.0.0.1', ok));
@@ -96,8 +100,8 @@ describe('T-290: mídia na conversa do WhatsApp', () => {
     const envio = chamadas.at(-1)!;
     expect(envio.caminho).toBe('/message/sendWhatsAppAudio/inst-a');
     expect(envio.corpo).toEqual({ number: NUMERO, audio: audio.toString('base64') });
-    expect(sql(`SELECT mensagem || '|' || direcao || '|' || midia_tipo || '|' || midia_mimetype || '|' || evolution_message_id FROM whatsapp_mensagens ORDER BY criado_em DESC LIMIT 1`)).toBe(
-      '[áudio]|enviada|audio|audio/webm|EVO-ENVIADA'
+    expect(sql(`SELECT mensagem || '|' || direcao || '|' || midia_tipo || '|' || midia_mimetype || '|' || evolution_message_id FROM whatsapp_mensagens ORDER BY criado_em DESC LIMIT 1`)).toMatch(
+      /^\[áudio\]\|enviada\|audio\|audio\/webm\|EVO-ENVIADA-\d+$/
     );
 
     const aberto = await abrirMidia(ultimaMensagem());

@@ -40,6 +40,8 @@ describe('T-170: listagem da cadência do card (servidor)', () => {
     } finally {
       vi.useRealTimers();
     }
+    // O toque nasce liberado na hora fixada (junho de 2026); a leitura da lista compara com o relógio real, então sem isto ele já seria "atrasado".
+    sql(`UPDATE "cadencia_atividades" SET "liberada_em" = now() WHERE "oportunidade_id" = '${cardId}'`);
   }
 
   async function iniciarAgora(cookie: string, cardId: string, version: number) {

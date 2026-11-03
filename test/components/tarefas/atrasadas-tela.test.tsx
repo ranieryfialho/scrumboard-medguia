@@ -117,7 +117,7 @@ describe('T-183: TarefasAtrasadas', () => {
     render(<TarefasAtrasadas />);
     await screen.findByText('Receita (MRR) sob risco');
 
-    const cartao = (rotulo: string) => screen.getByText(rotulo).closest('div.rounded-2xl') as HTMLElement;
+    const cartao = (rotulo: string) => screen.getByText(rotulo, { selector: 'span' }).closest('div.rounded-2xl') as HTMLElement;
     const atrasados = cartao('Toques atrasados');
     expect(within(atrasados).getAllByText('4')).toHaveLength(2); // o número grande e o rodapé "Cards afetados"
     expect(within(atrasados).getByText('Crítico')).toBeTruthy();
@@ -148,7 +148,7 @@ describe('T-183: TarefasAtrasadas', () => {
     render(<TarefasAtrasadas />);
     await screen.findByText('Receita (MRR) sob risco');
 
-    const cartao = (rotulo: string) => screen.getByText(rotulo).closest('div.rounded-2xl') as HTMLElement;
+    const cartao = (rotulo: string) => screen.getByText(rotulo, { selector: 'span' }).closest('div.rounded-2xl') as HTMLElement;
     expect(within(cartao('Toques atrasados')).getByText('Em dia')).toBeTruthy();
     expect(within(cartao('Toques atrasados')).queryByText('Crítico')).toBeNull();
     expect(within(cartao('Maior tempo de atraso')).getByText('—')).toBeTruthy();
@@ -273,7 +273,8 @@ describe('T-183: TarefasAtrasadas', () => {
     const rolagem = secao.querySelector('.overflow-auto') as HTMLElement;
     expect(rolagem.className).toContain('min-h-0');
     expect(rolagem.className).toContain('relative');
-    expect(rolagem.contains(screen.getByText('Cardio Vida'))).toBe(true);
+    expect(rolagem.textContent).toContain('Cardio Vida');
+    expect(within(rolagem).getAllByText('Cardio Vida').length).toBeGreaterThan(0);
     expect(rolagem.contains(screen.getByRole('heading', { name: 'Fila de Resgate Imediato' }))).toBe(false);
     expect((rolagem.querySelector('thead') as HTMLElement).className).toContain('sticky');
   });

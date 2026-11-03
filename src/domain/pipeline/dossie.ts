@@ -9,6 +9,7 @@ const EXTENSAO_POR_MIME: Record<string, string> = { 'image/png': 'png', 'image/j
 export function nomeSeguroNoZip(nome: string | null, mime: string, id: string): string {
   const limpo = (nome ?? '')
     .replace(/[\\/:*?"<>|\u0000-\u001f]/g, '_')
+    .trim()
     .replace(/^\.+/, '')
     .trim()
     .slice(0, 120);

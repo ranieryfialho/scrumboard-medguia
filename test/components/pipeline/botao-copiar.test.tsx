@@ -38,7 +38,7 @@ describe('T-287: copiar telefone e e-mail', () => {
 
     await waitFor(() => expect(escrever).toHaveBeenCalledTimes(3));
     expect(escrever.mock.calls.map((c) => c[0])).toEqual(['5511987654321', '5511911112222', 'contato@clinica.com.br']);
-    expect(await screen.findAllByText('Copiado')).toHaveLength(1);
+    expect(await screen.findAllByText('Copiado')).toHaveLength(3); // cada botão avisa por si
   });
 
   test('se o navegador recusar a cópia, avisa que não foi possível @spec:AC-738', async () => {

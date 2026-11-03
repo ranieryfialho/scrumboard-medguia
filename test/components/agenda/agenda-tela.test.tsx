@@ -431,13 +431,12 @@ describe('T-186: AgendaTela', () => {
     });
 
     test('reunião agendada com sala tem "Link da Sala", que copia o endereço, e sem sala oferece "Gerar link do Meet" @spec:AC-767', async () => {
-      const escrever = vi.fn().mockResolvedValue(undefined);
-      Object.defineProperty(navigator, 'clipboard', { value: { writeText: escrever }, configurable: true });
       comMeet({ conectado: true, conta: 'contato@medguia.com.br' }, [
         r('a', 'Lead A', '2026-06-11T15:00:00Z', 'agendada', { meetUrl: 'https://meet.google.com/aaa-bbbb-ccc' }),
         r('c', 'Lead C', '2026-06-11T16:00:00Z', 'agendada'),
       ]);
-      const u = usuario();
+      const u = usuario(); // o `userEvent.setup()` instala a própria área de transferência: só depois dele dá para espiá-la
+      const escrever = vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined);
       render(<AgendaTela />);
       const fila = await screen.findByRole('region', { name: 'Fila de Reuniões e Sessões Clínicas (Hoje)' });
       const comSala = await within(fila).findByLabelText('Reunião com Lead A');
