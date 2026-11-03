@@ -41,3 +41,8 @@
 - Refs: US-093, AC-731
 - Arquivos: src/worker/config.ts, src/worker/index.ts, docker-compose.yml, docker-compose.staging.yml, test/worker/lp-opcional.test.ts
 - Notas: decidido pelo dono do produto em 03/11: a landing page não está mais ativa em produção e sai do cutover. Mantém a LP funcionando quando as duas variáveis dela estão presentes.
+
+## T-283 — O healthcheck do worker passa a ser um arquivo executado de verdade [pendente]
+- Refs: US-091, AC-323, AC-732
+- Arquivos: src/worker/healthcheck.ts, docker-compose.yml, docker-compose.staging.yml, test/worker/compose.spec.test.ts, test/worker/healthcheck.test.ts
+- Notas: achado no staging em 03/11: o script do YAML recebia `undefined` ao desestruturar o `import()` dentro de `tsx -e` ("carregarConfiguracaoWorker is not a function"), engolia o erro e o container ficava `unhealthy` para sempre, com o worker perfeito. Nunca tinha sido executado: só o texto do comando era testado.
