@@ -31,6 +31,8 @@ export interface ReuniaoDaAgenda {
   etapaId: number;
   version: number;
   closer: { id: string; nome: string } | null;
+  /** T-301 (AC-765): o link da sala do Meet, quando o Google está conectado e a sala foi criada. */
+  meetUrl: string | null;
 }
 
 /** Início (inclusive) de um dia `YYYY-MM-DD` de São Paulo, em UTC. */
@@ -99,6 +101,7 @@ function paraAgenda(l: Linha, agora: Date): ReuniaoDaAgenda {
     etapaId: l.etapaId,
     version: l.version,
     closer: l.responsavelId && l.closerNome ? { id: l.responsavelId, nome: l.closerNome } : null,
+    meetUrl: r.meetUrl,
   };
 }
 

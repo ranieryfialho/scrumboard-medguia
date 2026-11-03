@@ -144,6 +144,7 @@ describe('AC-348: o menu traz os grupos e itens do protótipo', () => {
       'metas',
       'investimento-midia',
       'email-empresa',
+      'google-meet',
       'empresas',
     ];
     const idsRenderizados = Array.from(container.querySelectorAll('a[data-path]')).map((a) =>

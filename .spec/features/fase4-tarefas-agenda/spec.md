@@ -336,6 +336,46 @@ verdade, com carregando, vazio e erro, para nunca cair numa página quebrada.
 - **Então** a página não cresce com a quantidade de toques: o quadro ocupa a altura da tela, o título, os indicadores, a próxima tarefa e os filtros ficam parados, e só a tabela dos toques rola por dentro, com o cabeçalho (Horário, Lead, Etapa…) fixo no topo dela
 - **E** a paginação, e em atrasados a barra de ações dos selecionados, ficam sempre à vista embaixo
 
+#### AC-765 — Conectar a conta Google da empresa
+
+- **Dado** um gerente, master ou super admin na tela "Google Meet" (Administração), com as credenciais do Google no servidor
+- **Quando** ele clica em "Conectar com o Google", entra com a conta da empresa (ex.: contato@medguia.com.br) e autoriza
+- **Então** o Google o devolve à tela, a conta fica guardada para a empresa — o e-mail visível, o token cifrado e nunca mostrado — e a tela mostra "Conectado" com a conta
+- **E** a volta do Google só vale com o código de segurança que foi criado no início da conexão (cookie de 10 minutos); código errado, cancelamento, recusa do Google, resposta sem o e-mail ou sem permissão offline, e servidor sem o segredo de cifra viram um aviso na tela e nada é guardado
+- **E** sem as credenciais do Google no servidor, a tela explica o que falta (passo a passo no runbook) e não oferece conectar; atendente não acessa a tela nem a API de conexão
+
+#### AC-766 — Ver o estado da conexão e desconectar
+
+- **Dado** a empresa com ou sem conta Google conectada
+- **Então** a agenda mostra no topo "Google Meet" com um ponto verde quando há conta (a conta aparece ao passar o mouse), ou "Conectar Google Meet", que leva à configuração, quando não há; enquanto não se sabe o estado, o botão segue "em breve"
+- **E** qualquer papel vê o estado; só a gestão vê e usa a conexão; cada empresa vê só a sua; o token nunca sai do servidor
+- **E** "Desconectar" (com confirmação) tira a permissão no Google, apaga o token e a conta; as reuniões novas passam a nascer sem sala, e as já criadas continuam no Calendar
+
+#### AC-767 — Cada reunião agendada ganha a sala do Meet e o convite
+
+- **Dado** o Google conectado e um card em "Qualificado p/ reunião"
+- **Quando** a reunião é agendada
+- **Então** é criado no Calendar da conta conectada o evento "Demonstração MedGuia — <lead>", com a hora da reunião, duração de 1 hora, a sala do Google Meet, e o convite por e-mail ao lead (se tiver e-mail válido) e ao closer — sem repetir e-mail, sem convidar a própria conta, sem e-mail inválido — e o link da sala fica guardado na reunião
+- **E** na agenda, a reunião agendada mostra o endereço da sala e o botão "Link da Sala" (copia o endereço); a em andamento mostra "Entrar no Meet Agora", que abre a sala em outra aba
+- **E** uma reunião sem sala, com o Google conectado, oferece "Gerar link do Meet" (reunião agendada ou em andamento, só em card em que o usuário pode agir; reunião que já tem sala devolve a que tem, sem criar outra); sem o Google conectado o botão da sala segue "em breve"
+
+#### AC-768 — Reagendar mantém a mesma sala
+
+- **Dado** uma reunião com sala do Meet
+- **Quando** ela é reagendada
+- **Então** o evento do Calendar muda para o novo horário (e os convidados são avisados), a reunião nova herda o evento e o link, e nenhum evento novo é criado; se a reunião antiga nunca teve sala, a nova ganha uma
+
+#### AC-769 — Cancelar apaga o evento
+
+- **Dado** uma reunião agendada com evento no Calendar
+- **Quando** ela é cancelada
+- **Então** o evento sai do Calendar (e os convidados são avisados); se o Google não responder, a reunião é cancelada do mesmo jeito
+
+#### AC-770 — A agenda nunca depende do Google
+
+- **Dado** o Google fora do ar, sem conexão, ou com as credenciais do servidor ausentes
+- **Então** agendar, reagendar e cancelar funcionam como sempre, a reunião fica sem link, e a tela mostra o motivo quando o usuário pede "Gerar link do Meet" ("O Google não respondeu" ou "O Google Meet ainda não está conectado")
+
 ## Fora de escopo
 
 - **Integrações externas:** Google Meet e Outlook (link de sala, "Entrar no Meet", sincronização de calendário) e os lembretes automáticos por WhatsApp e e-mail do "Protocolo Anti-No-Show": não existem no sistema; aparecem "em breve" ou somem.

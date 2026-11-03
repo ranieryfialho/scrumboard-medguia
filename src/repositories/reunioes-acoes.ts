@@ -12,6 +12,7 @@ import { reunioes } from '../db/schema';
 import type { ContextoTenant } from '../lib/auth/tenant';
 import { comTenant } from './contexto';
 import { buscarOportunidadePorId } from './oportunidades';
+import { apagarEventoDaReuniao, criarMeetDaReuniao, eventoDaReuniao, moverEventoDaReuniao } from './reunioes-meet';
 import {
   ETAPA_NO_SHOW,
   ETAPA_QUALIFICADO_P_REUNIAO,
@@ -70,6 +71,8 @@ export async function agendarReuniao(
   if (!movido.ok) return movido;
 
   const id = await inserir(db, contexto, { oportunidadeId: card.id, agendadaPara: entrada.agendadaPara });
+  // AC-765: a sala do Meet nasce junto; se o Google não estiver pronto a reunião vale do mesmo jeito, só sem o link.
+  await criarMeetDaReuniao(db, contexto, id);
   return reuniaoPorId(db, contexto, id);
 }
 
@@ -150,6 +153,15 @@ export async function reagendarReuniao(
   }
 
   const novaId = await inserir(db, contexto, { oportunidadeId: r.oportunidadeId, agendadaPara: entrada.agendadaPara, remarcadaDe: id });
+  // AC-768: a sala é a mesma — o evento do Calendar muda de horário (os convidados são avisados) e passa para a reunião nova; sem evento antes, cria um.
+  const eventoAntigo = await eventoDaReuniao(db, contexto, id);
+  if (eventoAntigo && r.meetUrl && (await moverEventoDaReuniao(db, contexto, id, entrada.agendadaPara))) {
+    await comTenant(db, contexto, (tx) =>
+      tx.update(reunioes).set({ calendarEventId: eventoAntigo, meetUrl: r.meetUrl }).where(and(eq(reunioes.id, novaId), eq(reunioes.empresaId, contexto.empresaId)))
+    );
+  } else {
+    await criarMeetDaReuniao(db, contexto, novaId);
+  }
   return reuniaoPorId(db, contexto, novaId);
 }
 
@@ -168,6 +180,24 @@ export async function cancelarReuniao(db: NodePgDatabase, contexto: ContextoTena
   const movido = await transicionarCard(db, contexto, r.oportunidadeId, { version: r.version, etapaDestinoId: ETAPA_QUALIFICADO_P_REUNIAO });
   if (!movido.ok) return movido;
 
+  const eventoId = await eventoDaReuniao(db, contexto, id);
   await comTenant(db, contexto, (tx) => tx.delete(reunioes).where(and(eq(reunioes.id, id), eq(reunioes.empresaId, contexto.empresaId))));
+  // AC-769: o evento sai do Calendar (e os convidados são avisados); se o Google não responder, a reunião já foi cancelada do mesmo jeito.
+  await apagarEventoDaReuniao(db, contexto, eventoId);
   return { ok: true };
+}
+
+/**
+ * T-301 (AC-767): gera a sala do Meet de uma reunião que ainda não tem (o Google não estava conectado ou falhou na hora de agendar).
+ * Só vale para reunião agendada ou em andamento do card em que o usuário pode agir.
+ */
+export async function gerarMeetDaReuniao(
+  db: NodePgDatabase,
+  contexto: ContextoTenant,
+  id: string
+): Promise<{ ok: true; meetUrl: string | null } | { ok: false; codigo: string }> {
+  const r = await reuniaoDoUsuario(db, contexto, id);
+  if (!r) return { ok: false, codigo: 'REUNIAO_NAO_ENCONTRADA' };
+  if (r.status !== 'agendada' && r.status !== 'em_andamento') return { ok: false, codigo: 'REUNIAO_NAO_PODE_GERAR_MEET' };
+  return criarMeetDaReuniao(db, contexto, id);
 }

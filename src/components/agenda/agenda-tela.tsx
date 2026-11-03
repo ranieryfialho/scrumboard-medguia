@@ -10,11 +10,13 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AvisoTempoReal } from '@/components/pipeline/pecas/aviso-tempo-real';
 import { descreverMeta } from '@/lib/metas/catalogo';
 import { useMetas } from '@/lib/metas/usar-metas';
+import Link from 'next/link';
+
 import { ItemEmBreve } from '@/components/pipeline/pecas/selo-em-breve';
 import { EsqueletoCarregando, EstadoErro } from '@/components/pipeline/pecas/estados';
 import { useStreamOportunidades, type EventoStreamCliente } from '@/hooks/use-stream-oportunidades';
 import { STATUS_DE_REUNIAO, ROTULO_DO_STATUS, type StatusReuniao } from '@/lib/reunioes/status';
-import { cancelarReuniao, registrarNoShow, type ResultadoAcaoAgenda } from './acoes-reuniao';
+import { cancelarReuniao, gerarMeetDaReuniao, registrarNoShow, type ResultadoAcaoAgenda } from './acoes-reuniao';
 import { CartaoReuniao, type AcoesDaReuniao } from './cartao-reuniao';
 import { diaDe, navegar, periodoDaVisao, rotuloDoPeriodo } from './datas';
 import { KpisAgenda } from './kpis-agenda';
@@ -43,6 +45,8 @@ export function AgendaTela() {
   const [modal, setModal] = useState<Modal | null>(null);
   const [podeFiltrar, setPodeFiltrar] = useState(false);
   const [closers, setClosers] = useState<{ id: string; nome: string }[]>([]);
+  // T-301: o estado do Google Meet (null = ainda não sabemos, então o botão segue "em breve").
+  const [meet, setMeet] = useState<{ conectado: boolean; conta: string | null } | null>(null);
 
   const periodo = useMemo(() => periodoDaVisao(visao, referencia), [visao, referencia]);
 
@@ -86,6 +90,19 @@ export function AgendaTela() {
     };
   }, []);
 
+  useEffect(() => {
+    let cancelado = false;
+    fetch('/api/reunioes/meet')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((corpo: { conectado?: boolean; conta?: string | null } | null) => {
+        if (!cancelado && corpo && typeof corpo.conectado === 'boolean') setMeet({ conectado: corpo.conectado, conta: corpo.conta ?? null });
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelado = true;
+    };
+  }, []);
+
   // AC-495: o funil mudou (agendar, no-show, concluir, reagendar) → a agenda relê o período visível.
   const aoReceberEvento = useCallback(
     (evento: EventoStreamCliente) => {
@@ -114,6 +131,13 @@ export function AgendaTela() {
       await aposAcao(await cancelarReuniao(r.id));
       setOcupado(false);
     },
+    onGerarMeet: async (r) => {
+      setOcupado(true);
+      setAviso(null);
+      await aposAcao(await gerarMeetDaReuniao(r.id));
+      setOcupado(false);
+    },
+    meetConectado: meet?.conectado === true,
     onConcluir: (r) => setModal({ tipo: 'concluir', reuniao: r }),
     onReagendar: (r) => setModal({ tipo: 'reagendar', reuniao: { id: r.id, leadNome: r.lead.nome } }),
   };
@@ -146,7 +170,24 @@ export function AgendaTela() {
           </p>
         </div>
         <div className="flex items-center gap-space-sm flex-wrap">
-          <ItemEmBreve rotulo="Google Meet / Outlook" icone="sync" className="h-10 px-3 rounded-xl bg-surface-card shadow-sm" />
+          {meet === null && <ItemEmBreve rotulo="Google Meet / Outlook" icone="sync" className="h-10 px-3 rounded-xl bg-surface-card shadow-sm" />}
+          {meet?.conectado && (
+            <span
+              title={meet.conta ? `Conta conectada: ${meet.conta}` : undefined}
+              className="h-10 px-3 rounded-xl bg-surface-card shadow-sm flex items-center gap-2 font-label-md text-label-md text-text-primary"
+            >
+              <span aria-hidden="true" className="material-symbols-outlined text-[18px] text-primary">videocam</span>
+              Google Meet
+              <span aria-hidden="true" className="w-2 h-2 rounded-full bg-success-text" />
+              <span className="sr-only">conectado</span>
+            </span>
+          )}
+          {meet && !meet.conectado && (
+            <Link href="/configuracoes/google" className="h-10 px-3 rounded-xl bg-surface-card hover:bg-surface-subtle shadow-sm flex items-center gap-2 font-label-md text-label-md text-text-secondary">
+              <span aria-hidden="true" className="material-symbols-outlined text-[18px]">videocam_off</span>
+              Conectar Google Meet
+            </Link>
+          )}
           <button
             type="button"
             onClick={() => setModal({ tipo: 'agendar' })}

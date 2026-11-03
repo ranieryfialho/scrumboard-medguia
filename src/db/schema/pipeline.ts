@@ -255,6 +255,8 @@ export const reunioes = pgTable('reunioes', {
     .references(() => empresas.id, { onDelete: 'cascade' }),
   agendadaPara: timestamp('agendada_para', { withTimezone: true }).notNull(),
   calendarEventId: text('calendar_event_id'),
+  // T-301 (migration 0029): o link da sala do Google Meet criada junto com o evento do Calendar.
+  meetUrl: text('meet_url'),
   iniciadaEm: timestamp('iniciada_em', { withTimezone: true }),
   encerradaEm: timestamp('encerrada_em', { withTimezone: true }),
   duracaoMinutos: integer('duracao_minutos'),

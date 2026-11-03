@@ -47,6 +47,7 @@ function r(id: string, nome: string, quando: string, status: string, extra: Reco
     etapaId: 8,
     version: 1,
     closer: { id: 'u2', nome: 'Bia' },
+    meetUrl: null,
     ...extra,
   };
 }
@@ -399,5 +400,84 @@ describe('T-186: AgendaTela', () => {
     expect(cor('Alta')).toContain('bg-success-text');
     expect(cor('Média')).toContain('bg-primary');
     expect(cor('Baixa')).toContain('bg-warning-text');
+  });
+
+  describe('AC-767/AC-770: o Google Meet na agenda', () => {
+    function comMeet(estado: { conectado: boolean; conta: string | null } | null, reunioesDeHoje: ReturnType<typeof r>[]) {
+      const base = fetchFalso.getMockImplementation()!;
+      fetchFalso.mockImplementation((url: string, init?: { method?: string }) => {
+        if (url === '/api/reunioes/meet') return estado ? resposta(200, estado) : resposta(404, {});
+        if (url.startsWith('/api/reunioes?') && url.includes('de=2026-06-11&ate=2026-06-11')) return resposta(200, { reunioes: reunioesDeHoje });
+        return base(url, init);
+      });
+    }
+
+    test('com o Google conectado o topo mostra "Google Meet" com a conta, e a reunião em andamento tem o botão que abre a sala @spec:AC-767', async () => {
+      comMeet({ conectado: true, conta: 'contato@medguia.com.br' }, [r('b', 'Lead B', '2026-06-11T13:30:00Z', 'em_andamento', { meetUrl: 'https://meet.google.com/abc-defg-hij' })]);
+      render(<AgendaTela />);
+      const fila = await screen.findByRole('region', { name: 'Fila de Reuniões e Sessões Clínicas (Hoje)' });
+      const cartao = await within(fila).findByLabelText('Reunião com Lead B');
+
+      const entrar = within(cartao).getByRole('link', { name: /Entrar no Meet Agora/ });
+      expect(entrar.getAttribute('href')).toBe('https://meet.google.com/abc-defg-hij');
+      expect(entrar.getAttribute('target')).toBe('_blank');
+      expect(entrar.getAttribute('rel')).toContain('noopener');
+      expect(within(cartao).getByText('meet.google.com/abc-defg-hij')).toBeTruthy();
+      expect(within(cartao).queryByText(/em breve/i)).toBeNull();
+
+      const pilula = screen.getByTitle('Conta conectada: contato@medguia.com.br');
+      expect(pilula.textContent).toContain('Google Meet');
+      expect(screen.queryByRole('button', { name: 'Google Meet / Outlook (em breve)' })).toBeNull();
+    });
+
+    test('reunião agendada com sala tem "Link da Sala", que copia o endereço, e sem sala oferece "Gerar link do Meet" @spec:AC-767', async () => {
+      const escrever = vi.fn().mockResolvedValue(undefined);
+      Object.defineProperty(navigator, 'clipboard', { value: { writeText: escrever }, configurable: true });
+      comMeet({ conectado: true, conta: 'contato@medguia.com.br' }, [
+        r('a', 'Lead A', '2026-06-11T15:00:00Z', 'agendada', { meetUrl: 'https://meet.google.com/aaa-bbbb-ccc' }),
+        r('c', 'Lead C', '2026-06-11T16:00:00Z', 'agendada'),
+      ]);
+      const u = usuario();
+      render(<AgendaTela />);
+      const fila = await screen.findByRole('region', { name: 'Fila de Reuniões e Sessões Clínicas (Hoje)' });
+      const comSala = await within(fila).findByLabelText('Reunião com Lead A');
+
+      await u.click(within(comSala).getByRole('button', { name: 'Link da Sala' }));
+      expect(escrever).toHaveBeenCalledWith('https://meet.google.com/aaa-bbbb-ccc');
+      expect(await within(comSala).findByText('Copiado')).toBeTruthy();
+      expect(within(comSala).queryByRole('button', { name: /Gerar link do Meet/ })).toBeNull();
+
+      const semSala = within(fila).getByLabelText('Reunião com Lead C');
+      expect(within(semSala).queryByRole('button', { name: 'Link da Sala' })).toBeNull();
+      await u.click(within(semSala).getByRole('button', { name: 'Gerar link do Meet: Lead C' }));
+      await waitFor(() => expect(fetchFalso.mock.calls.some((c) => c[0] === '/api/reunioes/c/meet' && c[1]?.method === 'POST')).toBe(true));
+    });
+
+    test('se gerar o link falhar, a agenda mostra o motivo @spec:AC-770', async () => {
+      comMeet({ conectado: true, conta: null }, [r('c', 'Lead C', '2026-06-11T16:00:00Z', 'agendada')]);
+      const comMeetOk = fetchFalso.getMockImplementation()!;
+      fetchFalso.mockImplementation((url: string, init?: { method?: string }) =>
+        url === '/api/reunioes/c/meet' ? resposta(502, { codigo: 'FALHA_NO_GOOGLE' }) : comMeetOk(url, init)
+      );
+      const u = usuario();
+      render(<AgendaTela />);
+      await u.click(await screen.findByRole('button', { name: 'Gerar link do Meet: Lead C' }));
+      expect(await screen.findByText(/O Google não respondeu/)).toBeTruthy();
+    });
+
+    test('sem o Google conectado o topo leva à configuração e o botão da sala continua "em breve"; sem saber o estado, também @spec:AC-766', async () => {
+      comMeet({ conectado: false, conta: null }, [r('b', 'Lead B', '2026-06-11T13:30:00Z', 'em_andamento')]);
+      render(<AgendaTela />);
+      expect((await screen.findByRole('link', { name: /Conectar Google Meet/ })).getAttribute('href')).toBe('/configuracoes/google');
+      const fila = await screen.findByRole('region', { name: 'Fila de Reuniões e Sessões Clínicas (Hoje)' });
+      const cartao = await within(fila).findByLabelText('Reunião com Lead B');
+      expect(within(cartao).getByRole('button', { name: 'Entrar no Meet Agora (em breve)' }).getAttribute('aria-disabled')).toBe('true');
+      expect(within(cartao).queryByRole('button', { name: /Gerar link do Meet/ })).toBeNull();
+      cleanup();
+
+      comMeet(null, [r('b', 'Lead B', '2026-06-11T13:30:00Z', 'em_andamento')]);
+      render(<AgendaTela />);
+      expect(await screen.findByRole('button', { name: 'Google Meet / Outlook (em breve)' })).toBeTruthy();
+    });
   });
 });
