@@ -10,7 +10,6 @@ import type { ReactNode } from 'react';
 import Link from 'next/link';
 
 import { SeloEtapa } from '@/components/pipeline/pecas/selo-etapa';
-import { ItemEmBreve } from '@/components/pipeline/pecas/selo-em-breve';
 
 export interface EtapaOpcao {
   id: number;
@@ -120,12 +119,6 @@ export function CabecalhoCard({
             )}
 
             {acoesExtras}
-
-            <ItemEmBreve
-              rotulo="Editar Informações"
-              icone="edit"
-              className="p-2 rounded-lg bg-surface-subtle hover:bg-surface-container-high"
-            />
           </div>
         </div>
       </div>

@@ -30,6 +30,7 @@ import { Jornada, nomeDaEtapa } from '@/components/pipeline/detalhe/jornada';
 import { ConsentimentoWhatsapp } from '@/components/pipeline/detalhe/consentimento-whatsapp';
 import { Informacoes, type TelefoneInformacao } from '@/components/pipeline/detalhe/informacoes';
 import { LinhaDoTempo } from '@/components/pipeline/detalhe/linha-do-tempo';
+import { ModalEditarCard, type ResultadoEdicaoCard, type ValoresEdicaoCard } from '@/components/pipeline/detalhe/modal-editar-card';
 import { RegistroRapido } from '@/components/pipeline/detalhe/registro-rapido';
 import { AbasDoCard } from '@/components/pipeline/card/abas-do-card';
 import { useContadoresDoCard } from '@/components/pipeline/card/use-contadores-do-card';
@@ -49,6 +50,7 @@ interface DetalheOportunidade {
   leadNome: string;
   origem: string | null;
   email: string | null;
+  telefoneE164: string | null;
   criadoEm: string;
   responsavelId: string | null;
   responsavelNome: string | null;
@@ -77,6 +79,44 @@ function PipelineDetalheConteudo({ id }: { id: string }) {
   const [mensagem, setMensagem] = useState<string | null>(null);
   const [dadoFaltante, setDadoFaltante] = useState<DadoFaltantePendente | null>(null);
   const [versaoLinhaDoTempo, setVersaoLinhaDoTempo] = useState(0);
+  const [editando, setEditando] = useState(false);
+
+  /** T-287 (AC-736): salva a edição, recarrega o card e o log da linha do tempo; devolve o erro do servidor ao modal. */
+  async function salvarEdicao(valores: ValoresEdicaoCard): Promise<ResultadoEdicaoCard> {
+    try {
+      const resposta = await fetch(`/api/oportunidades/${id}`, {
+        method: 'PATCH',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          nome: valores.nome,
+          email: valores.email,
+          origem: valores.origem,
+          telefone: valores.telefone,
+          valor: valores.valor.trim() === '' ? null : valores.valor,
+        }),
+      });
+      if (!resposta.ok) {
+        const corpo = (await resposta.json().catch(() => null)) as { codigo?: string; campo?: keyof ValoresEdicaoCard } | null;
+        const mensagens: Record<string, string> = {
+          TELEFONE_DUPLICADO: 'Esse telefone já pertence a outro lead.',
+          VALOR_OBRIGATORIO_NA_PROPOSTA: 'Na etapa Proposta o valor estimado é obrigatório.',
+          CAMPO_INVALIDO: 'Confira esse campo.',
+        };
+        return { ok: false, erro: mensagens[corpo?.codigo ?? ''] ?? 'Não foi possível salvar. Tente de novo.', campo: corpo?.campo };
+      }
+      const novo = await fetch(`/api/oportunidades/${id}`);
+      if (novo.ok) {
+        const corpoNovo = (await novo.json()) as DetalheOportunidade;
+        setDados(corpoNovo);
+        await carregarTelefones(corpoNovo.leadId);
+      }
+      setVersaoLinhaDoTempo((versao) => versao + 1);
+      setEditando(false);
+      return { ok: true };
+    } catch {
+      return { ok: false, erro: 'Sem conexão. Tente de novo.' };
+    }
+  }
 
   // T-171 (AC-420): contadores das abas (toques de 18 e anexos); falha só omite o número.
   const contagens = useContadoresDoCard(dados ? id : null);
@@ -284,6 +324,7 @@ function PipelineDetalheConteudo({ id }: { id: string }) {
               proximaAcaoEm={dados.proximaAcaoEm}
               telefones={telefones}
               email={dados.email}
+              onEditar={() => setEditando(true)}
             />
             <ConsentimentoWhatsapp leadId={dados.leadId} />
           </div>
@@ -294,6 +335,20 @@ function PipelineDetalheConteudo({ id }: { id: string }) {
           </div>
         </div>
       </div>
+
+      {editando && (
+        <ModalEditarCard
+          inicial={{
+            nome: dados.leadNome,
+            email: dados.email ?? '',
+            origem: dados.origem ?? '',
+            telefone: dados.telefoneE164 ?? '',
+            valor: dados.valor ? String(Number(dados.valor)) : '',
+          }}
+          onFechar={() => setEditando(false)}
+          onSalvar={salvarEdicao}
+        />
+      )}
 
       {dadoFaltante && (
         <ModalDadoFaltante

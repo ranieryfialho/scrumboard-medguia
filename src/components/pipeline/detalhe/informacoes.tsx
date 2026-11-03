@@ -7,6 +7,8 @@
 // `oportunidades`/`lead_telefones`.
 import { useState } from 'react';
 
+import { BotaoCopiar } from './botao-copiar';
+
 export interface TelefoneInformacao {
   numero: string;
   principal: boolean;
@@ -21,6 +23,8 @@ interface InformacoesProps {
   proximaAcaoEm: string | null;
   telefones: TelefoneInformacao[];
   email: string | null;
+  /** T-287 (AC-736): abre o modal de edição do card; sem isso o botão "Editar" não aparece. */
+  onEditar?: () => void;
 }
 
 function formatarMoeda(valor: string | null): string | null {
@@ -44,7 +48,7 @@ function haNDias(iso: string, agora: number): string {
 }
 
 /** AC-407: mostra valor estimado, origem, data de entrada, responsável, próxima ação, telefones e e-mail — nada além disso. */
-export function Informacoes({ valor, origem, criadoEm, responsavelNome, proximaAcaoEm, telefones, email }: InformacoesProps) {
+export function Informacoes({ valor, origem, criadoEm, responsavelNome, proximaAcaoEm, telefones, email, onEditar }: InformacoesProps) {
   const valorFormatado = formatarMoeda(valor);
   // "agora" fixado na montagem: ler `Date.now()` direto no render é impuro (react-hooks/purity).
   const [agora] = useState(() => Date.now());
@@ -59,6 +63,18 @@ export function Informacoes({ valor, origem, criadoEm, responsavelNome, proximaA
           </span>
           Informações Principais
         </h2>
+        {onEditar && (
+          <button
+            type="button"
+            onClick={onEditar}
+            className="h-8 px-3 rounded-lg bg-surface-subtle hover:bg-surface-container font-label-md text-label-md font-semibold text-text-primary flex items-center gap-1.5 transition-colors"
+          >
+            <span aria-hidden="true" className="material-symbols-outlined text-[16px]">
+              edit
+            </span>
+            Editar
+          </button>
+        )}
       </div>
 
       <div className="bg-surface-subtle p-space-md rounded-lg flex items-center justify-between">
@@ -145,11 +161,14 @@ export function Informacoes({ valor, origem, criadoEm, responsavelNome, proximaA
                 </span>
                 {telefone.numero}
               </span>
-              {telefone.principal && (
-                <span className="px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed-variant text-[10px] font-bold">
-                  Principal
-                </span>
-              )}
+              <span className="flex items-center gap-1">
+                {telefone.principal && (
+                  <span className="px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed-variant text-[10px] font-bold">
+                    Principal
+                  </span>
+                )}
+                <BotaoCopiar texto={telefone.numero} rotulo={`Copiar telefone ${telefone.numero}`} />
+              </span>
             </div>
           ))}
         </div>
@@ -161,7 +180,8 @@ export function Informacoes({ valor, origem, criadoEm, responsavelNome, proximaA
             mail
           </span>
           <span className="text-text-secondary">E-mail:</span>
-          <span className="font-label-md text-text-primary">{email}</span>
+          <span className="font-label-md text-text-primary break-all">{email}</span>
+          <BotaoCopiar texto={email} rotulo="Copiar e-mail" />
         </div>
       )}
     </div>
