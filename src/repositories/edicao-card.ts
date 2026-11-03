@@ -14,6 +14,15 @@ export const TIPO_EVENTO_EDICAO_CARD = 'edicao_card';
 const ETAPA_PROPOSTA = 11;
 
 export type CampoEditavel = 'nome' | 'email' | 'origem' | 'telefone' | 'valor';
+/** T-289: campos dos dados comerciais (`dados-comerciais.ts`) que entram no mesmo evento `edicao_card`. */
+export type CampoComercialRegistrado =
+  | 'previsao_fechamento'
+  | 'condicao_especial'
+  | 'plano'
+  | 'porte_clinica'
+  | 'prontuario_legado'
+  | 'faturamento_tiss'
+  | 'termo_lgpd';
 
 export interface DadosEdicaoCard {
   nome?: unknown;
@@ -24,7 +33,7 @@ export interface DadosEdicaoCard {
 }
 
 export interface Alteracao {
-  campo: CampoEditavel;
+  campo: CampoEditavel | CampoComercialRegistrado;
   de: string | null;
   para: string | null;
 }

@@ -4,7 +4,7 @@
 // do card — fonte visual `docs/ui/stitch_medcrm_interface_design/11._pipeline_id_conversa_whatsapp_do_lead/`.
 // Vive no grupo `(app)` e dentro do `MoldeDoCard` (T-171): cabeçalho, abas e os
 // estados de carregando, erro e "não encontrado" do card. "Ligar Agora" abre o discador
-// com o telefone do lead (fase5-acoes-rapidas, Q-049).
+// com o telefone do lead (fase5-acoes-rapidas, Q-049). A coluna da direita traz cadência, proposta, qualificação e notas.
 import { use } from 'react';
 
 import { MoldeDoCard } from '@/components/pipeline/card/molde-do-card';
@@ -37,7 +37,7 @@ export default function PipelineConversaPage({ params }: { params: Promise<{ id:
               <ConversaLead leadId={card.leadId} leadNome={card.leadNome} />
             </div>
             <div className="lg:col-span-4">
-              <PainelLateral cardId={card.id} />
+              <PainelLateral cardId={card.id} valor={card.valor ?? null} />
             </div>
           </div>
         </div>

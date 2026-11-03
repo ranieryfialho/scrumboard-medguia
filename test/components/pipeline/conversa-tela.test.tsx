@@ -122,6 +122,9 @@ beforeEach(() => {
     }
     if (url === `/api/oportunidades/${CARD_ID}/linha-do-tempo?tipo=anotacao`) return resposta(200, { itens: notas });
     if (url === `/api/oportunidades/${CARD_ID}/anotacoes` && metodo === 'POST') return resposta(201, {});
+    if (url === `/api/oportunidades/${CARD_ID}/comercial`) {
+      return resposta(200, { previsaoFechamento: null, condicaoEspecial: null, plano: null, porteClinica: null, prontuarioLegado: null, faturamentoTiss: null, termoLgpdValidado: false });
+    }
     if (url === `/api/whatsapp/messages?leadId=${LEAD_ID}`) return respostaDasMensagens();
     if (url === `/api/leads/${LEAD_ID}/telefones` && metodo === 'GET') return resposta(200, { telefones });
     if (url === '/api/whatsapp/status') return resposta(200, statusDoWhatsapp);
@@ -331,7 +334,7 @@ describe('T-174: tela da conversa de WhatsApp do lead', () => {
   });
 
   describe('AC-443: o painel lateral mostra a cadência e as anotações internas do card', () => {
-    test('mostra o toque atual e o progresso da cadência, sem proposta nem qualificação @spec:AC-443', async () => {
+    test('mostra o toque atual e o progresso da cadência, e os blocos de proposta e qualificação @spec:AC-443', async () => {
       await abrirTela();
 
       const painel = await screen.findByRole('complementary', { name: 'Painel do card' });
@@ -339,8 +342,9 @@ describe('T-174: tela da conversa de WhatsApp do lead', () => {
       expect(within(painel).getByText(/#3 · Dia 1, Manhã \(Ligação\)/)).toBeTruthy();
       expect(within(painel).getByRole('link', { name: 'Ver a cadência completa' }).getAttribute('href')).toBe(`/pipeline/${CARD_ID}/cadencia`);
 
-      expect(screen.queryByText(/Dados da Proposta/)).toBeNull();
-      expect(screen.queryByText(/Qualificação Técnica/)).toBeNull();
+      // AC-742: os dois blocos novos estão no painel (a prova deles é blocos-comerciais.test.tsx).
+      expect(await within(painel).findByRole('region', { name: 'Dados da Proposta' })).toBeTruthy();
+      expect(within(painel).getByRole('region', { name: 'Qualificação Técnica' })).toBeTruthy();
     });
 
     test('lista as notas internas e o campo rápido grava uma nova anotação no card @spec:AC-443', async () => {

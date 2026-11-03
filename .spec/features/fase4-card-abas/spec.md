@@ -218,7 +218,7 @@ cadência ao lado, para agir sem trocar de tela.
 
 - **Dado** a tela de conversa
 - **Quando** o usuário olha a coluna da direita
-- **Então** vê "Cadência Comercial" (toque da vez, progresso e a próxima ação) e "Notas Internas" com as anotações internas do card (as da aba Resumo) e o campo "Adicionar nota interna rápida" que grava uma nova anotação no card; os blocos "Dados da Proposta" e "Qualificação Técnica" do protótipo **não aparecem** (sem dado)
+- **Então** vê "Cadência Comercial" (toque da vez, progresso e a próxima ação) e "Notas Internas" com as anotações internas do card (as da aba Resumo) e o campo "Adicionar nota interna rápida" que grava uma nova anotação no card; entre os dois ficam "Dados da Proposta" e "Qualificação Técnica" (AC-742)
 
 #### AC-444 — Anexar arquivo segue "em breve"
 
@@ -247,6 +247,22 @@ cadência ao lado, para agir sem trocar de tela.
 - **Quando** o usuário clica numa resposta rápida ou escolhe um template na lista
 - **Então** o texto, com {{nome}} e {{primeiro_nome}} trocados pelos do lead, vai para o campo da mensagem (depois do que já estiver escrito) e nada é enviado até o usuário enviar
 - **E** só templates aprovados aparecem; sem nenhum, a tela avisa "Nenhum template aprovado ainda."
+
+#### AC-742 — Dados da proposta e qualificação técnica no card
+
+- **Dado** a tela de conversa
+- **Quando** o usuário olha a coluna da direita
+- **Então** vê "Dados da Proposta" (MRR ofertado, previsão de fechamento, condição especial e plano) e "Qualificação Técnica" (porte da clínica, prontuário legado, faturamento TISS e termo LGPD validado), com "—" onde nada foi preenchido e o termo como "Não"
+- **E** o "MRR ofertado" é o valor estimado do card, o mesmo que se edita no detalhe
+- **E** cada bloco tem o próprio "Editar": qualquer papel que acessa o card salva só o que mudou, e o dado volta igual ao recarregar; data inexistente, texto acima de 200 caracteres ou tipo errado são recusados com o campo, sem gravar nada
+- **E** "Qualificação Técnica" mostra a porcentagem dos quatro itens preenchidos (o termo conta quando validado)
+- **E** os dados de um card nunca aparecem em outra empresa, e card de outra empresa ou inexistente é "não encontrado"
+
+#### AC-743 — A edição comercial fica na linha do tempo
+
+- **Dado** uma edição dos dados comerciais
+- **Então** a linha do tempo do card ganha um evento com quem editou, quando, e o valor de antes e o de depois de cada campo que mudou (o termo aparece como "sim"/"não")
+- **E** salvar sem mudar nada não registra nada
 
 ## Fora de escopo
 

@@ -24,6 +24,7 @@ export interface CardDoMolde {
   leadNome: string;
   telefoneE164?: string | null;
   responsavelNome: string | null;
+  valor?: string | null;
   version: number;
 }
 

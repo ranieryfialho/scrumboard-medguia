@@ -79,7 +79,15 @@ function textoDoEvento(
     }
     case 'edicao_card': {
       // AC-737: o que mudou, com o valor de antes e o de depois (telefone, e-mail e valor entram como foram gravados).
-      const rotulos: Record<string, string> = { nome: 'Nome', email: 'E-mail', origem: 'Origem', telefone: 'Telefone', valor: 'Valor estimado' };
+      const rotulos: Record<string, string> = { nome: 'Nome', email: 'E-mail', origem: 'Origem', telefone: 'Telefone', valor: 'Valor estimado',
+        previsao_fechamento: 'Previsão de fechamento',
+        condicao_especial: 'Condição especial',
+        plano: 'Plano',
+        porte_clinica: 'Porte da clínica',
+        prontuario_legado: 'Prontuário legado',
+        faturamento_tiss: 'Faturamento TISS',
+        termo_lgpd: 'Termo LGPD validado',
+      };
       const lista = Array.isArray(dados.alteracoes) ? (dados.alteracoes as Array<Record<string, unknown>>) : [];
       const partes = lista.map((a) => {
         const de = typeof a.de === 'string' && a.de ? `"${a.de}"` : 'vazio';
