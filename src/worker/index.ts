@@ -45,7 +45,7 @@ import { executarMigracaoLp, ORIGEM_ETL_LP } from '../etl/lp/executar';
 import { consultarCardsDoEspelho } from '../espelho/consulta';
 import { montarLinhasDoEspelho } from '../espelho/linhas';
 import { gravarEspelho, type ClienteSheetsEspelho } from '../espelho/gravar';
-import { carregarConfiguracaoWorker, ErroConfiguracaoWorker, type ConfiguracaoWorker } from './config';
+import { carregarConfiguracaoWorker, ErroConfiguracaoWorker, lpHabilitada, type ConfiguracaoWorker } from './config';
 import { rodarCicloImportacao, rodarCiclosImportacao, type CicloOrigem, type ResultadoImportacao } from './ciclo';
 
 const ORIGEM_SHEETS = 'import-sheets';
@@ -192,13 +192,13 @@ export function construirCicloEspelho(
   };
 }
 
-/** Monta os dois ciclos de origem (Sheets e LP), sem decisões (ASM-107, ASM-109). */
-function construirCiclosOrigem(
+/** Monta os ciclos de origem (Sheets e, se configurada, LP), sem decisões (ASM-107, ASM-109). */
+export function construirCiclosOrigem(
   db: NodePgDatabase,
   config: ConfiguracaoWorker,
   env: Record<string, string | undefined> = process.env
 ): CicloOrigem[] {
-  return [
+  const ciclos: CicloOrigem[] = [
     {
       job: ORIGEM_SHEETS,
       executarImportacao: async () => {
@@ -223,24 +223,31 @@ function construirCiclosOrigem(
         return somarRelatorioSheets(relatorio.linhas);
       },
     },
-    {
-      job: ORIGEM_LP,
-      executarImportacao: async () => {
-        const { cadastros, total } = await lerTodosCadastros({
-          url: config.supabaseLpUrl,
-          chaveServico: config.supabaseLpServiceKey,
-        });
-        const empresaId = await buscarEmpresaId(db);
-        const contexto: ContextoExecucao = { origem: ORIGEM_ETL_LP, simulacao: false };
-        const relatorio = await executarMigracaoLp(db, contexto, empresaId, cadastros, total);
-        return {
-          linhasLidas: relatorio.lidas,
-          linhasCriadas: relatorio.criadas,
-          linhasIgnoradas: relatorio.ignoradas + relatorio.emRevisao,
-        };
-      },
-    },
   ];
+
+  // AC-731: a LP é opcional (desativada em produção): sem as variáveis dela, o worker roda só o Sheets.
+  if (lpHabilitada(config)) {
+    ciclos.push(
+      {
+        job: ORIGEM_LP,
+        executarImportacao: async () => {
+          const { cadastros, total } = await lerTodosCadastros({
+            url: config.supabaseLpUrl as string,
+            chaveServico: config.supabaseLpServiceKey as string,
+          });
+          const empresaId = await buscarEmpresaId(db);
+          const contexto: ContextoExecucao = { origem: ORIGEM_ETL_LP, simulacao: false };
+          const relatorio = await executarMigracaoLp(db, contexto, empresaId, cadastros, total);
+          return {
+            linhasLidas: relatorio.lidas,
+            linhasCriadas: relatorio.criadas,
+            linhasIgnoradas: relatorio.ignoradas + relatorio.emRevisao,
+          };
+        },
+      }
+    );
+  }
+  return ciclos;
 }
 
 /**

@@ -52,6 +52,13 @@ Como operação, quero que cadastros novos do Sheets e da landing page apareçam
 - **Então** os leads e cards da empresa são gravados e as mensagens sem lead são ligadas, sem recusa do isolamento por empresa (o ETL informa a empresa ao banco, como as telas)
 - **E** o worker não precisa do papel dono das tabelas (`crm_migrator`, AC-008) em tempo de execução
 
+#### AC-731 — A LP é opcional: sem as variáveis dela, o worker roda só o Sheets
+
+- **Dado** o worker configurado sem `SUPABASE_LP_URL` e sem `SUPABASE_LP_SERVICE_KEY` (a LP está desativada em produção)
+- **Quando** o worker sobe
+- **Então** ele sobe normalmente, roda só o ciclo do Sheets, e o healthcheck do container considera só o Sheets (a LP não entra na conta)
+- **E** se só uma das duas variáveis da LP estiver configurada, a subida é recusada, listando o nome da que falta
+
 ### US-091 — Saber se a importação está saudável
 
 Como responsável técnico, quero ver no banco e na saúde do container se a última importação deu certo, para descobrir uma falha silenciosa antes da operação.

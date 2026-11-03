@@ -44,7 +44,9 @@ services:
             const config = carregarConfiguracaoWorker();
             const pool = new Pool({ connectionString: config.databaseUrl });
             const db = drizzle(pool);
-            const resultado = await verificarSaudeWorker(db, ['import-sheets', 'import-lp'], config.intervaloImportacaoMin);
+            const origens = ['import-sheets'];
+            if (config.supabaseLpUrl) origens.push('import-lp');
+            const resultado = await verificarSaudeWorker(db, origens, config.intervaloImportacaoMin);
             await pool.end();
             process.exit(resultado.status === 'saudavel' ? 0 : 1);
           }).catch(() => process.exit(1));

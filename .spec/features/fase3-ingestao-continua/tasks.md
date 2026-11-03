@@ -36,3 +36,8 @@
 - Refs: US-090, AC-730
 - Arquivos: src/etl/comum.ts, src/etl/sheets/executar.ts, src/etl/lp/executar.ts, test/etl/sheets-como-crm-app.test.ts
 - Notas: achado no staging em 30/10: o ciclo do Sheets falhava no worker (crm_app) com "Failed query ... whatsapp_mensagens", porque o ETL nunca definia `app.empresa_id` e só funcionava como dono das tabelas.
+
+## T-282 — A LP é opcional no worker [pendente]
+- Refs: US-093, AC-731
+- Arquivos: src/worker/config.ts, src/worker/index.ts, docker-compose.yml, docker-compose.staging.yml, test/worker/lp-opcional.test.ts
+- Notas: decidido pelo dono do produto em 03/11: a landing page não está mais ativa em produção e sai do cutover. Mantém a LP funcionando quando as duas variáveis dela estão presentes.
