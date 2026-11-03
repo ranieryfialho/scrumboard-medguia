@@ -13,6 +13,8 @@ export interface AnexoDaLista {
   enviadoPorNome: string | null;
   criadoEm: string;
   evidencia: { etapaId: number; etapaNome: string } | null;
+  /** T-294: o usuário pode excluir este anexo (gestor, ou quem o enviou). Ausente = não pode. */
+  podeExcluir?: boolean;
 }
 
 export function tipoDoAnexo(mime: string): TipoDoAnexo {

@@ -4,10 +4,15 @@
 import { NextResponse, type NextRequest } from 'next/server';
 
 import { getDb } from '../../../../db/client';
+import { rm } from 'node:fs/promises';
+import path from 'node:path';
+
+import { diretorioDeAnexos } from '../../../../lib/anexos/armazenamento';
 import { assinarUrl } from '../../../../lib/anexos/assinatura';
 import { getAuth } from '../../../../lib/auth/instancia';
 import { ErroSessaoInvalida, resolverContextoTenant, type ContextoTenant } from '../../../../lib/auth/tenant';
 import { buscarAnexoPorId } from '../../../../repositories/anexos';
+import { excluirAnexo } from '../../../../repositories/anexos-gestao';
 
 export const dynamic = 'force-dynamic';
 
@@ -38,4 +43,26 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   const resposta = NextResponse.redirect(new URL(url, request.url), 302);
   resposta.headers.set('Cache-Control', 'no-store');
   return resposta;
+}
+
+const STATUS_DA_EXCLUSAO = { ANEXO_NAO_ENCONTRADO: 404, SEM_PERMISSAO: 403, ANEXO_E_EVIDENCIA: 409 } as const;
+
+/**
+ * T-294 (AC-754/AC-755): exclui o anexo — o registro e o arquivo do volume. Gestor exclui qualquer um; os outros, só os que enviaram.
+ * Anexo que é evidência não sai (409). O evento `anexo_excluido` na linha do tempo guarda o nome, o tipo, o tamanho e o SHA-256.
+ */
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const contexto = await resolverContexto(request);
+  if (!contexto) return NextResponse.json({ codigo: 'NAO_AUTENTICADO' }, { status: 401 });
+
+  const { id } = await params;
+  if (!UUID.test(id)) return NextResponse.json({ codigo: 'ANEXO_NAO_ENCONTRADO' }, { status: 404 });
+
+  const resultado = await excluirAnexo(getDb(), contexto, id);
+  if (!resultado.ok) return NextResponse.json({ codigo: resultado.codigo }, { status: STATUS_DA_EXCLUSAO[resultado.codigo] });
+
+  // O registro já saiu; o arquivo some em seguida. Se o volume falhar, sobra só um arquivo órfão, sem nenhum registro apontando.
+  const completo = path.resolve(diretorioDeAnexos(), resultado.caminho);
+  if (path.dirname(completo) === diretorioDeAnexos()) await rm(completo, { force: true }).catch(() => undefined);
+  return NextResponse.json({ excluido: true });
 }

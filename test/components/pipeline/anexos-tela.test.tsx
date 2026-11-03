@@ -22,6 +22,7 @@ interface AnexoTeste {
   enviadoPorNome: string | null;
   criadoEm: string;
   evidencia: { etapaId: number; etapaNome: string } | null;
+  podeExcluir?: boolean;
 }
 
 const PROPOSTA: AnexoTeste = {
@@ -33,6 +34,7 @@ const PROPOSTA: AnexoTeste = {
   enviadoPorNome: 'Dra. Juliana Rocha',
   criadoEm: '2026-10-27T14:20:00.000Z',
   evidencia: { etapaId: 11, etapaNome: 'Proposta' },
+  podeExcluir: true,
 };
 const PRINT: AnexoTeste = {
   id: 'anx-2',
@@ -43,6 +45,7 @@ const PRINT: AnexoTeste = {
   enviadoPorNome: 'Ana Clara',
   criadoEm: '2026-10-26T10:00:00.000Z',
   evidencia: null,
+  podeExcluir: true,
 };
 const ANTIGO: AnexoTeste = {
   id: 'anx-3',
@@ -64,6 +67,7 @@ let fetchFalso: ReturnType<typeof vi.fn>;
 let anexosDoServidor: AnexoTeste[];
 let respostaDaLista: () => Promise<Response>;
 let respostaDoUpload: () => Promise<Response>;
+let respostaDaGestao: (url: string, metodo: string) => Promise<Response>;
 
 function chamadas(metodo: 'GET' | 'POST', caminho: string) {
   return fetchFalso.mock.calls.filter(
@@ -75,11 +79,13 @@ beforeEach(() => {
   anexosDoServidor = [PROPOSTA, PRINT, ANTIGO];
   respostaDaLista = () => resposta(200, { anexos: anexosDoServidor });
   respostaDoUpload = () => resposta(201, { anexoId: 'novo', url: '/api/anexos/novo' });
+  respostaDaGestao = () => resposta(200, { alterado: true });
   fetchFalso = vi.fn((url: string, init?: RequestInit) => {
     if (url === `/api/oportunidades/${CARD_ID}`) return resposta(200, CARD);
     if (url === `/api/oportunidades/${CARD_ID}/anexos`) return respostaDaLista();
     if (url === `/api/oportunidades/${CARD_ID}/cadencia`) return resposta(200, { iniciada: false, concluidos: 0, total: 18 });
     if (url === '/api/anexos' && init?.method === 'POST') return respostaDoUpload();
+    if (/^\/api\/anexos\/anx-[^/]+(\/evidencia)?$/.test(url) && (init?.method === 'POST' || init?.method === 'DELETE')) return respostaDaGestao(url, init.method);
     return resposta(404, { codigo: 'NAO_ENCONTRADO' });
   });
   globalThis.fetch = fetchFalso as unknown as typeof fetch;
@@ -238,7 +244,7 @@ describe('T-172: tela de anexos e evidências', () => {
   });
 
   describe('AC-429: ações do protótipo sem backend aparecem como "em breve"', () => {
-    test('excluir, tornar evidência, marcar como evidência e vincular à etapa não disparam nada @spec:AC-429', async () => {
+    test('marcar como evidência e vincular à etapa, no envio, não disparam nada @spec:AC-429', async () => {
       const usuario = userEvent.setup();
       await abrirTela();
 
@@ -248,12 +254,9 @@ describe('T-172: tela de anexos e evidências', () => {
       ]) {
         expect(screen.getByText(rotulo).closest('*[class*="rounded"]')!.textContent!.toLowerCase()).toContain('em breve');
       }
-      expect(within(linhaDe('print-aceite.png')).getByText('Tornar Evidência')).toBeTruthy();
-      expect(within(linhaDe('print-aceite.png')).getAllByText('Excluir').length).toBe(1);
-      expect(within(linhaDe('Proposta Comercial v1.2.pdf')).queryByText('Tornar Evidência')).toBeNull();
 
       const antes = fetchFalso.mock.calls.length;
-      await usuario.click(within(linhaDe('print-aceite.png')).getByText('Excluir'));
+      await usuario.click(screen.getByText('Vincular à etapa'));
       expect(fetchFalso.mock.calls.length).toBe(antes);
     });
 
@@ -262,6 +265,70 @@ describe('T-172: tela de anexos e evidências', () => {
 
       expect(screen.queryByText(/ISO-27799|ISO 27799|Governança/)).toBeNull();
       expect(screen.queryByText(/Espaço utilizado/i)).toBeNull();
+    });
+  });
+
+  describe('AC-752 a AC-755: tornar evidência, remover evidência e excluir', () => {
+    test('"Tornar Evidência" só aparece em quem não é evidência, chama a rota e relê a lista; "Remover evidência" faz o inverso @spec:AC-752', async () => {
+      const usuario = userEvent.setup();
+      await abrirTela();
+
+      expect(within(linhaDe('Proposta Comercial v1.2.pdf')).queryByRole('button', { name: 'Tornar Evidência' })).toBeNull();
+      expect(within(linhaDe('Proposta Comercial v1.2.pdf')).getByRole('button', { name: 'Remover evidência' })).toBeTruthy();
+
+      anexosDoServidor = [PROPOSTA, { ...PRINT, evidencia: { etapaId: 11, etapaNome: 'Proposta' } }, ANTIGO];
+      await usuario.click(within(linhaDe('print-aceite.png')).getByRole('button', { name: 'Tornar Evidência' }));
+
+      await waitFor(() => expect(chamadas('POST', '/api/anexos/anx-2/evidencia')).toHaveLength(1));
+      expect(await within(linhaDe('print-aceite.png')).findByText(/Evidência · Proposta/)).toBeTruthy();
+
+      anexosDoServidor = [PROPOSTA, PRINT, ANTIGO];
+      await usuario.click(within(linhaDe('print-aceite.png')).getByRole('button', { name: 'Remover evidência' }));
+      await waitFor(() => expect(fetchFalso.mock.calls.some(([u, i]) => u === '/api/anexos/anx-2/evidencia' && (i as RequestInit).method === 'DELETE')).toBe(true));
+      expect(await within(linhaDe('print-aceite.png')).findByRole('button', { name: 'Tornar Evidência' })).toBeTruthy();
+    });
+
+    test('"Excluir" pede confirmação, cancelar não faz nada e confirmar exclui e relê a lista @spec:AC-754', async () => {
+      const usuario = userEvent.setup();
+      await abrirTela();
+
+      await usuario.click(within(linhaDe('print-aceite.png')).getByRole('button', { name: /Excluir/ }));
+      const dialogo = screen.getByRole('alertdialog');
+      expect(within(dialogo).getByText('print-aceite.png')).toBeTruthy();
+      await usuario.click(within(dialogo).getByRole('button', { name: 'Cancelar' }));
+      expect(screen.queryByRole('alertdialog')).toBeNull();
+      expect(fetchFalso.mock.calls.some(([, i]) => (i as RequestInit | undefined)?.method === 'DELETE')).toBe(false);
+
+      anexosDoServidor = [PROPOSTA, ANTIGO];
+      await usuario.click(within(linhaDe('print-aceite.png')).getByRole('button', { name: /Excluir/ }));
+      await usuario.click(within(screen.getByRole('alertdialog')).getByRole('button', { name: 'Excluir' }));
+
+      await waitFor(() => expect(fetchFalso.mock.calls.some(([u, i]) => u === '/api/anexos/anx-2' && (i as RequestInit).method === 'DELETE')).toBe(true));
+      await waitFor(() => expect(screen.queryByText('print-aceite.png')).toBeNull());
+    });
+
+    test('anexo que é evidência não pode ser excluído e quem não pode excluir nem vê o botão @spec:AC-755', async () => {
+      await abrirTela();
+
+      const botao = within(linhaDe('Proposta Comercial v1.2.pdf')).getByRole('button', { name: /Excluir/ }) as HTMLButtonElement;
+      expect(botao.disabled).toBe(true);
+      expect(botao.title).toBe('Remova a evidência antes de excluir');
+      expect(within(linhaDe('print-aceite.png')).getByRole('button', { name: /Excluir/ })).toBeTruthy();
+      // o ANTIGO veio sem `podeExcluir`: quem não enviou e não é gestor não vê o botão
+      expect(within(linhaDe('Anexo PDF — ' + new Date(ANTIGO.criadoEm).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }))).queryByRole('button', { name: /Excluir/ })).toBeNull();
+    });
+
+    test('se o servidor recusar, a tela mostra o motivo e não esconde o anexo @spec:AC-755', async () => {
+      const usuario = userEvent.setup();
+      respostaDaGestao = () => resposta(403, { codigo: 'SEM_PERMISSAO' });
+      await abrirTela();
+
+      await usuario.click(within(linhaDe('print-aceite.png')).getByRole('button', { name: /Excluir/ }));
+      await usuario.click(within(screen.getByRole('alertdialog')).getByRole('button', { name: 'Excluir' }));
+
+      expect((await screen.findByRole('alert')).textContent).toContain('Só quem enviou o anexo ou um gerente');
+      expect(screen.queryByRole('alertdialog')).toBeNull();
+      expect(screen.getByText('print-aceite.png')).toBeTruthy();
     });
   });
 

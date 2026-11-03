@@ -1,10 +1,13 @@
-// T-172 (fase4-card-abas, US-112, AC-424/AC-426/AC-429): as linhas da lista de
-// anexos do card — ícone do tipo, nome, selo de evidência (só quando o anexo foi
-// usado numa mudança de etapa), tamanho, quem enviou, data e início do hash.
+'use client';
+
+// T-172 (fase4-card-abas, US-112, AC-424/AC-426; T-294 AC-752 a AC-755): as linhas da lista de
+// anexos do card — ícone do tipo, nome, selo de evidência (anexo usado numa mudança de
+// etapa ou marcado por "Tornar Evidência"), tamanho, quem enviou, data e início do hash.
 // Fonte visual: uma linha de `12._pipeline_id_anexos_prints_e_evid_ncias_do_card/`.
 // Os selos "aprovada/em revisão/válida" do protótipo não existem no sistema e
-// não aparecem; "Tornar Evidência" e desvincular ficam "em breve" (AC-429).
-import { ItemEmBreve } from '@/components/pipeline/pecas/selo-em-breve';
+// não aparecem. "Tornar Evidência", "Remover evidência" e "Excluir" (com confirmação) funcionam.
+import { useState } from 'react';
+
 import {
   formatarDataHora,
   formatarTamanho,
@@ -29,9 +32,40 @@ function IconeDoTipo({ mime }: { mime: string }) {
   );
 }
 
-export function LinhaDeAnexo({ anexo }: { anexo: AnexoDaLista }) {
+const MENSAGENS_DE_ERRO: Record<string, string> = {
+  SEM_PERMISSAO: 'Só quem enviou o anexo ou um gerente pode excluí-lo.',
+  ANEXO_E_EVIDENCIA: 'Este anexo é evidência de uma etapa. Remova a evidência antes de excluir.',
+  ANEXO_NAO_ENCONTRADO: 'Este anexo não existe mais.',
+};
+
+export function LinhaDeAnexo({ anexo, onMudou }: { anexo: AnexoDaLista; onMudou?: () => void }) {
   const nome = nomeParaExibir(anexo);
   const href = `/api/anexos/${anexo.id}`;
+  const [trabalhando, setTrabalhando] = useState(false);
+  const [confirmando, setConfirmando] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
+
+  /** AC-752 a AC-754: chama a rota, mostra o motivo se recusar e, se der certo, pede à tela para reler a lista. */
+  async function chamar(url: string, metodo: 'POST' | 'DELETE') {
+    setTrabalhando(true);
+    setErro(null);
+    try {
+      const resposta = await fetch(url, { method: metodo });
+      if (resposta.ok) {
+        setConfirmando(false);
+        onMudou?.();
+        return;
+      }
+      const corpo = (await resposta.json().catch(() => null)) as { codigo?: string } | null;
+      setErro(MENSAGENS_DE_ERRO[corpo?.codigo ?? ''] ?? 'Não foi possível concluir. Tente de novo.');
+      setConfirmando(false);
+    } catch {
+      setErro('Não foi possível concluir. Tente de novo.');
+      setConfirmando(false);
+    } finally {
+      setTrabalhando(false);
+    }
+  }
 
   return (
     <div className="bg-surface-card rounded-xl p-space-md shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row md:items-center justify-between gap-space-md">
@@ -94,20 +128,87 @@ export function LinhaDeAnexo({ anexo }: { anexo: AnexoDaLista }) {
             download
           </span>
         </a>
-        {!anexo.evidencia && (
-          <ItemEmBreve rotulo="Tornar Evidência" className="px-2.5 py-1.5 rounded-lg bg-surface-subtle" />
+        {anexo.evidencia ? (
+          <button
+            type="button"
+            disabled={trabalhando}
+            onClick={() => void chamar(`/api/anexos/${anexo.id}/evidencia`, 'DELETE')}
+            className="px-2.5 py-1.5 rounded-lg bg-surface-subtle hover:bg-surface-container-high font-label-md text-label-md text-text-secondary flex items-center gap-1.5 transition-colors disabled:opacity-60"
+          >
+            <span aria-hidden="true" className="material-symbols-outlined text-[16px]">
+              remove_done
+            </span>
+            Remover evidência
+          </button>
+        ) : (
+          <button
+            type="button"
+            disabled={trabalhando}
+            onClick={() => void chamar(`/api/anexos/${anexo.id}/evidencia`, 'POST')}
+            title="Marcar como evidência da etapa atual do card"
+            className="px-2.5 py-1.5 rounded-lg bg-surface-subtle hover:bg-surface-container-high font-label-md text-label-md text-text-primary flex items-center gap-1.5 transition-colors disabled:opacity-60"
+          >
+            <span aria-hidden="true" className="material-symbols-outlined text-[16px]">
+              verified
+            </span>
+            Tornar Evidência
+          </button>
         )}
-        <ItemEmBreve rotulo="Excluir" icone="link_off" className="px-2.5 py-1.5 rounded-lg bg-surface-subtle" />
+        {anexo.podeExcluir && (
+          <button
+            type="button"
+            disabled={trabalhando || anexo.evidencia !== null}
+            onClick={() => setConfirmando(true)}
+            title={anexo.evidencia ? 'Remova a evidência antes de excluir' : 'Excluir anexo'}
+            aria-label={`Excluir ${nome}`}
+            className="px-2.5 py-1.5 rounded-lg bg-surface-subtle hover:bg-danger-surface hover:text-danger-text font-label-md text-label-md text-text-primary flex items-center gap-1.5 transition-colors disabled:opacity-50 disabled:hover:bg-surface-subtle disabled:hover:text-text-primary"
+          >
+            <span aria-hidden="true" className="material-symbols-outlined text-[16px]">
+              delete
+            </span>
+            Excluir
+          </button>
+        )}
       </div>
+      {erro && (
+        <p role="alert" className="basis-full font-body-sm text-body-sm text-danger-text bg-danger-surface rounded-lg px-3 py-2">
+          {erro}
+        </p>
+      )}
+      {confirmando && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" role="alertdialog" aria-modal="true" aria-labelledby={`excluir-${anexo.id}`}>
+          <div className="w-full max-w-md bg-surface-card rounded-2xl shadow-xl p-space-lg flex flex-col gap-space-md">
+            <h2 id={`excluir-${anexo.id}`} className="font-headline-sm text-headline-sm text-text-primary">
+              Excluir este anexo?
+            </h2>
+            <p className="font-body-md text-body-md text-text-secondary">
+              <strong className="text-text-primary break-all">{nome}</strong> será apagado do servidor e não poderá ser recuperado. A exclusão fica registrada na linha do tempo do card.
+            </p>
+            <div className="flex justify-end gap-2">
+              <button type="button" onClick={() => setConfirmando(false)} disabled={trabalhando} className="h-10 px-4 rounded-xl bg-surface-subtle hover:bg-surface-container font-label-md text-label-md font-semibold text-text-primary">
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={() => void chamar(`/api/anexos/${anexo.id}`, 'DELETE')}
+                disabled={trabalhando}
+                className="h-10 px-4 rounded-xl bg-danger-text text-on-primary font-label-md text-label-md font-semibold shadow-md disabled:opacity-60"
+              >
+                {trabalhando ? 'Excluindo…' : 'Excluir'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-export function ListaAnexos({ anexos }: { anexos: AnexoDaLista[] }) {
+export function ListaAnexos({ anexos, onMudou }: { anexos: AnexoDaLista[]; onMudou?: () => void }) {
   return (
     <div className="flex flex-col gap-space-sm">
       {anexos.map((anexo) => (
-        <LinhaDeAnexo key={anexo.id} anexo={anexo} />
+        <LinhaDeAnexo key={anexo.id} anexo={anexo} onMudou={onMudou} />
       ))}
     </div>
   );

@@ -128,7 +128,13 @@ function ConteudoAnexos({ cardId, onMudou }: { cardId: string; onMudou: () => vo
         {!carregando && !erro && anexos && anexos.length > 0 && visiveis.length === 0 && (
           <EstadoVazio titulo="Nenhum anexo com estes filtros" proximoPasso="tente mudar a busca ou o tipo" icone="filter_alt_off" />
         )}
-        {!carregando && !erro && visiveis.length > 0 && <ListaAnexos anexos={visiveis} />}
+        {!carregando && !erro && visiveis.length > 0 && <ListaAnexos
+            anexos={visiveis}
+            onMudou={() => {
+              void carregar();
+              onMudou();
+            }}
+          />}
 
         <EnvioAnexos
           cardId={cardId}

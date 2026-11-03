@@ -77,6 +77,18 @@ function textoDoEvento(
         ? `Responsável alterado: de "${dados.deNome}" para "${para}"`
         : `Responsável definido: "${para}"`;
     }
+    case 'evidencia_marcada': {
+      const nome = typeof dados.nome === 'string' && dados.nome ? `"${dados.nome}"` : 'Anexo';
+      return `${nome} marcado como evidência da etapa "${etapaDestinoNome}"`;
+    }
+    case 'evidencia_removida': {
+      const nome = typeof dados.nome === 'string' && dados.nome ? `"${dados.nome}"` : 'Anexo';
+      return `Evidência removida de ${nome}`;
+    }
+    case 'anexo_excluido': {
+      const nome = typeof dados.nome === 'string' && dados.nome ? `"${dados.nome}"` : 'sem nome';
+      return `Anexo ${nome} excluído (SHA-256 ${typeof dados.hash === 'string' ? dados.hash.slice(0, 12) : '—'}…)`;
+    }
     case 'dossie_exportado': {
       const arquivos = typeof dados.arquivos === 'number' ? dados.arquivos : 0;
       const problemas = (typeof dados.divergentes === 'number' ? dados.divergentes : 0) + (typeof dados.ausentes === 'number' ? dados.ausentes : 0);

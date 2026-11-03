@@ -50,6 +50,9 @@ const ICONES: Record<string, string> = {
   reatribuicao: 'swap_horiz',
   edicao_card: 'edit_note',
   dossie_exportado: 'folder_zip',
+  evidencia_marcada: 'verified',
+  evidencia_removida: 'remove_done',
+  anexo_excluido: 'delete',
 };
 
 function formatarData(iso: string): string {

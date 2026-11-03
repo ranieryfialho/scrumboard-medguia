@@ -122,7 +122,7 @@ segurança e enviar novos, para manter o dossiê da negociação em um lugar só
 #### AC-429 — Ações do protótipo sem backend aparecem como "em breve"
 
 - **Dado** a tela de anexos
-- **Quando** o usuário olha "Tornar Evidência", o ícone de excluir, a caixa "Marcar como evidência" e "Vincular à etapa" do envio
+- **Quando** o usuário olha a caixa "Marcar como evidência" e "Vincular à etapa" do envio
 - **Então** aparecem visíveis, marcados "em breve", sem disparar nenhuma ação; o bloco de governança "ISO-27799" e o "espaço utilizado" **não aparecem** (sem dado)
 
 ### US-113 — Acompanhar a cadência de 18 toques do card (tela 10)
@@ -319,6 +319,34 @@ cadência ao lado, para agir sem trocar de tela.
 - **Então** cada anexo é conferido contra o SHA-256 gravado no envio: "ok" se confere, "divergente" se o arquivo mudou no servidor, "ausente" se sumiu — e um arquivo ausente não derruba a exportação (fica só no manifesto, sem o arquivo)
 - **E** a linha do tempo do card registra quem exportou, quando, quantos arquivos iam no dossiê e quantos tinham problema de integridade
 - **E** o manifesto é CSV em UTF-8 com BOM, e textos que começariam com `=`, `+`, `-` ou `@` ganham um apóstrofo para o Excel não rodá-los como fórmula; nomes de arquivo dentro do ZIP nunca levam pasta, caractere de controle nem ponto na frente
+
+#### AC-752 — Tornar um anexo evidência
+
+- **Dado** um anexo que ainda não é evidência
+- **Quando** qualquer usuário que acessa o card clica em "Tornar Evidência"
+- **Então** o anexo passa a mostrar o selo "Evidência · <etapa atual do card>", e a linha do tempo registra quem marcou, quando e qual anexo
+- **E** marcar de novo um anexo que já é evidência não muda nada nem registra de novo; anexo de outra empresa ou inexistente é "não encontrado"
+
+#### AC-753 — Remover a evidência
+
+- **Dado** um anexo que é evidência (de uma mudança de etapa ou marcado à mão)
+- **Quando** o usuário clica em "Remover evidência"
+- **Então** o selo some, a linha do tempo registra quem removeu e quando, e o registro da mudança de etapa que usou o anexo continua na linha do tempo
+- **E** vale sempre o último que aconteceu com o anexo: marcar de novo depois de remover volta a valer
+
+#### AC-754 — Excluir um anexo
+
+- **Dado** um anexo que o usuário pode excluir
+- **Quando** clica em "Excluir" e confirma na janela "Excluir este anexo?" (cancelar não faz nada)
+- **Então** o registro e o arquivo saem do servidor, a lista se atualiza, o contador da aba diminui, e a linha do tempo registra quem excluiu, quando, e o nome, o tipo, o tamanho e o SHA-256 do que foi excluído
+- **E** excluir um anexo que já foi excluído é "não encontrado"
+
+#### AC-755 — Quem pode excluir e o que não se exclui
+
+- **Dado** a lista de anexos de um card
+- **Então** o botão "Excluir" só aparece para gerente, master e super admin (qualquer anexo) e para quem enviou o anexo (só os dele); quem não pode não vê o botão, e a rota responde 403
+- **E** anexo que é evidência não é excluído: o botão aparece desabilitado com a dica "Remova a evidência antes de excluir", e a rota responde 409
+- **E** anexo de outra empresa nunca é alterado (404)
 
 ## Fora de escopo
 
