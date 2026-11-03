@@ -89,6 +89,13 @@ relance.
 - **Quando** o usuário olha as ações do protótipo sem backend (busca global, "Iniciar Cadência em Massa", seletor de visões salvas)
 - **Então** elas aparecem visíveis, marcadas "em breve", e não disparam nenhuma ação
 
+#### AC-733 — Cada coluna do funil rola sozinha
+
+- **Dado** uma etapa com muitos cards (por exemplo, 200 em "Entrada de leads")
+- **Quando** o funil abre
+- **Então** a página não cresce com a quantidade de cards: o quadro ocupa a altura da tela, e cada coluna rola por dentro, com o título e o contador sempre visíveis no topo dela
+- **E** arrastar um card continua funcionando entre as colunas
+
 ### US-107 — Ver todos os leads em lista, com filtro e paginação
 
 Como gerente, quero a mesma carteira em tabela, filtrada e paginada pelo

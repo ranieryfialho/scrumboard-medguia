@@ -439,7 +439,8 @@ export function BoardKanban() {
   );
 
   return (
-    <div className="flex flex-col gap-space-md p-space-md">
+    // AC-733: o quadro ocupa a altura da tela (tela menos o topo de 4rem) e quem rola é cada coluna, não a página
+    <div className="flex flex-col gap-space-md p-space-md h-[calc(100dvh-4rem)] min-h-[40rem]">
       <div className="flex items-center justify-between flex-wrap gap-space-sm">
         <h1 className="font-headline-lg text-headline-lg text-text-primary tracking-tight">Funil Pipeline de Vendas</h1>
         <div className="flex items-center gap-space-sm">
@@ -487,7 +488,7 @@ export function BoardKanban() {
 
       {!carregando && !erroCarga && itensBrutos.length > 0 && (
         <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd} onDragCancel={handleDragCancel}>
-          <div className="flex-1 flex w-full overflow-x-auto items-start gap-4 pb-10">
+          <div className="flex-1 min-h-0 flex w-full overflow-x-auto items-stretch gap-4 pb-2">
             {ETAPAS.map((etapa) => (
               <ColunaEtapa
                 key={etapa.id}

@@ -50,7 +50,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       />
       <div className="md:pl-64">
         <Topo usuario={usuario} aoAbrirGaveta={() => setGavetaAberta(true)} />
-        <main className="w-full min-h-screen">{children}</main>
+        <main className="w-full min-h-[calc(100dvh-4rem)]">{children}</main>
       </div>
     </div>
   );

@@ -101,3 +101,8 @@
 - Arquivos: src/lib/auth/rotas.ts, src/components/shell/menu-config.ts, test/auth/rotas-pipeline.test.ts
 - Esforço: medio
 - Notas: acrescenta `/pipeline/lista` e `/pipeline/arquivados` à tabela de permissões por rota (mesmo mínimo de `/pipeline`) e os itens "Lista" e "Arquivados" ao menu, com o item ativo certo em cada tela. Confirma que não sobrou rota nem teste duplicado da tela antiga (AC-415). Roda por último.
+
+## T-284 — O funil tem altura fixa e cada coluna rola sozinha [pendente]
+- Refs: US-106, AC-733
+- Arquivos: src/app/(app)/layout.tsx, src/components/pipeline/board-kanban.tsx, src/components/pipeline/coluna-etapa.tsx, test/components/pipeline/funil-rolagem.test.tsx
+- Notas: pedido do dono do produto em 03/11, ao ver 200 cards numa coluna só fazerem a página inteira crescer. Primeira de uma série de ajustes de tela.
