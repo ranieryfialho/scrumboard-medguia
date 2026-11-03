@@ -334,7 +334,8 @@ function PipelineListaConteudo() {
   }
 
   return (
-    <div className="p-space-md space-y-space-md">
+    // AC-734: altura da tela (menos o topo); só a tabela rola por dentro.
+    <div className="p-space-md flex flex-col gap-space-md h-[calc(100dvh-4rem)] min-h-[40rem]">
       <div className="flex items-start justify-between flex-wrap gap-space-md">
         <div>
           <h1 className="font-headline-lg text-headline-lg text-text-primary tracking-tight">Pipeline em Lista</h1>
@@ -401,7 +402,7 @@ function PipelineListaConteudo() {
         <EstadoVazio titulo="Nenhum lead ainda" proximoPasso="crie o primeiro no Funil Pipeline" />
       )}
       {!carregando && !erro && dados && dados.total > 0 && (
-        <>
+        <div className="flex-1 min-h-0 flex flex-col gap-space-md">
           <TabelaLista
             itens={dados.itens}
             selecionados={selecionados}
@@ -409,7 +410,7 @@ function PipelineListaConteudo() {
             onAlternarTodos={alternarTodos}
             barraDeAcoes={<BarraLote quantidade={selecionados.size} podeReatribuir={podeReatribuir} onAbrir={abrirAcao} onDispararWhatsapp={() => setDisparoAberto(true)} />}
           />
-          <div className="px-space-md py-2 flex items-center gap-1.5">
+          <div className="px-space-md py-2 flex items-center gap-1.5 flex-shrink-0">
             <label htmlFor="pipeline-lista-exibir" className="font-body-sm text-body-sm text-text-muted">
               Exibir:
             </label>
@@ -433,7 +434,7 @@ function PipelineListaConteudo() {
             onMudarPagina={setPagina}
             rotuloItem="leads"
           />
-        </>
+        </div>
       )}
 
       {disparoAberto && <DialogoWhatsappLote oportunidadeIds={[...selecionados]} onFechar={() => setDisparoAberto(false)} />}

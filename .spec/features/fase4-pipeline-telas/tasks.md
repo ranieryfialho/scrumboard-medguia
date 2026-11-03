@@ -106,3 +106,8 @@
 - Refs: US-106, AC-733
 - Arquivos: src/app/(app)/layout.tsx, src/components/pipeline/board-kanban.tsx, src/components/pipeline/coluna-etapa.tsx, test/components/pipeline/funil-rolagem.test.tsx
 - Notas: pedido do dono do produto em 03/11, ao ver 200 cards numa coluna só fazerem a página inteira crescer. Primeira de uma série de ajustes de tela.
+
+## T-285 — A lista tem altura fixa e só a tabela rola [pendente]
+- Refs: US-107, AC-734
+- Arquivos: src/app/(app)/pipeline/lista/page.tsx, src/components/pipeline/tabela-lista.tsx, src/components/pipeline/pecas/paginacao.tsx, test/components/pipeline/lista-rolagem.test.tsx
+- Notas: segundo ajuste de tela da série pedida pelo dono em 03/11, igual ao do funil (T-284).

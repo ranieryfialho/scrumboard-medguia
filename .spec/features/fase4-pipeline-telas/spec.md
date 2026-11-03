@@ -96,6 +96,13 @@ relance.
 - **Então** a página não cresce com a quantidade de cards: o quadro ocupa a altura da tela, e cada coluna rola por dentro, com o título e o contador sempre visíveis no topo dela
 - **E** arrastar um card continua funcionando entre as colunas
 
+#### AC-734 — A lista tem altura fixa e só a tabela rola
+
+- **Dado** uma lista com muitos leads (por exemplo, 50 por página)
+- **Quando** a lista abre
+- **Então** a página não cresce com a quantidade de linhas: o quadro ocupa a altura da tela, o cabeçalho da tabela fica fixo no topo dela e só as linhas rolam por dentro
+- **E** o seletor "Exibir" e a paginação ficam sempre visíveis embaixo
+
 ### US-107 — Ver todos os leads em lista, com filtro e paginação
 
 Como gerente, quero a mesma carteira em tabela, filtrada e paginada pelo
