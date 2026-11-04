@@ -37,6 +37,8 @@ export interface ContextoTenant {
   empresaId: string;
   papel: PapelUsuario;
   isSuperAdmin: boolean;
+  /** T-322: módulos liberados do vínculo (`null` ou ausente = padrão do papel). */
+  modulos?: string[] | null;
 }
 
 /**
@@ -89,7 +91,7 @@ export async function resolverContextoTenant(
     const [escolhida] = await db.select({ id: empresas.id }).from(empresas).where(eq(empresas.id, sessao.empresaAtivaId)).limit(1);
     if (escolhida) {
       const [vinculoNaEscolhida] = await db
-        .select({ papel: empresasUsuarios.papel })
+        .select({ papel: empresasUsuarios.papel, modulos: empresasUsuarios.modulos })
         .from(empresasUsuarios)
         .where(and(eq(empresasUsuarios.usuarioId, sessao.usuarioId), eq(empresasUsuarios.empresaId, escolhida.id), eq(empresasUsuarios.ativo, true)))
         .limit(1);
@@ -99,7 +101,7 @@ export async function resolverContextoTenant(
 
   const empresaAtiva = usuario.isSuperAdmin ? sql`true` : eq(empresas.ativo, true);
   const vinculos = await db
-    .select({ empresaId: empresasUsuarios.empresaId, papel: empresasUsuarios.papel })
+    .select({ empresaId: empresasUsuarios.empresaId, papel: empresasUsuarios.papel, modulos: empresasUsuarios.modulos })
     .from(empresasUsuarios)
     .innerJoin(empresas, eq(empresas.id, empresasUsuarios.empresaId))
     .where(and(eq(empresasUsuarios.usuarioId, sessao.usuarioId), eq(empresasUsuarios.ativo, true), empresaAtiva))
@@ -116,5 +118,6 @@ export async function resolverContextoTenant(
     empresaId: vinculo.empresaId,
     papel: vinculo.papel,
     isSuperAdmin: usuario.isSuperAdmin,
+    ...(vinculo.modulos ? { modulos: vinculo.modulos } : {}),
   };
 }

@@ -12,12 +12,15 @@ import { comTenant } from './contexto';
 const CHAVE_API = 'resend_api_key';
 const CHAVE_FINAL = 'resend_api_key_final';
 const CHAVE_REMETENTE = 'resend_remetente';
-const CHAVES = [CHAVE_API, CHAVE_FINAL, CHAVE_REMETENTE];
+const CHAVE_RESPONDER_PARA = 'resend_reply_to';
+const CHAVES = [CHAVE_API, CHAVE_FINAL, CHAVE_REMETENTE, CHAVE_RESPONDER_PARA];
 
 export interface ConfiguracaoDeEmailPublica {
   chaveConfigurada: boolean;
   chaveFinal: string | null;
   remetente: string | null;
+  /** T-307: o e-mail para onde vão as respostas dos destinatários (cabeçalho Reply-To); só vem quando configurado. */
+  responderPara?: string;
 }
 
 async function lerValores(tx: Parameters<Parameters<typeof comTenant>[2]>[0], empresaId: string): Promise<Record<string, unknown>> {
@@ -36,7 +39,7 @@ const PREFIXO_FINAL = 'f:';
 /** AC-695: o que a tela pode ver — nunca a chave. */
 export async function lerConfiguracaoDeEmailPublica(db: NodePgDatabase, contexto: Pick<ContextoTenant, 'empresaId'>): Promise<ConfiguracaoDeEmailPublica> {
   const v = await comTenant(db, contexto, (tx) => lerValores(tx, contexto.empresaId));
-  return { chaveConfigurada: texto(v[CHAVE_API]) !== null, chaveFinal: texto(v[CHAVE_FINAL])?.startsWith(PREFIXO_FINAL) ? (texto(v[CHAVE_FINAL]) as string).slice(PREFIXO_FINAL.length) : null, remetente: texto(v[CHAVE_REMETENTE]) };
+  return { chaveConfigurada: texto(v[CHAVE_API]) !== null, chaveFinal: texto(v[CHAVE_FINAL])?.startsWith(PREFIXO_FINAL) ? (texto(v[CHAVE_FINAL]) as string).slice(PREFIXO_FINAL.length) : null, remetente: texto(v[CHAVE_REMETENTE]), ...(texto(v[CHAVE_RESPONDER_PARA]) ? { responderPara: texto(v[CHAVE_RESPONDER_PARA]) as string } : {}) };
 }
 
 /**
@@ -46,7 +49,7 @@ export async function lerConfiguracaoDeEmailPublica(db: NodePgDatabase, contexto
 export async function gravarConfiguracaoDeEmail(
   db: NodePgDatabase,
   contexto: Pick<ContextoTenant, 'empresaId'>,
-  alteracao: { chave?: string | null; remetente?: string | null },
+  alteracao: { chave?: string | null; remetente?: string | null; responderPara?: string | null },
   segredo: string | null = segredoDeConfiguracoes()
 ): Promise<void> {
   if (typeof alteracao.chave === 'string' && !segredo) throw new ErroConfiguracaoIndisponivel();
@@ -70,6 +73,7 @@ export async function gravarConfiguracaoDeEmail(
       await gravar(CHAVE_FINAL, `${PREFIXO_FINAL}${alteracao.chave.slice(-4)}`);
     }
     if (alteracao.remetente !== undefined) await gravar(CHAVE_REMETENTE, alteracao.remetente);
+    if (alteracao.responderPara !== undefined) await gravar(CHAVE_RESPONDER_PARA, alteracao.responderPara);
   });
 }
 
@@ -78,12 +82,12 @@ export async function lerConfiguracaoDeEmail(
   db: NodePgDatabase,
   empresaId: string,
   segredo: string | null = segredoDeConfiguracoes()
-): Promise<{ apiKey: string; remetente: string | null } | null> {
+): Promise<{ apiKey: string; remetente: string | null; replyTo?: string } | null> {
   const v = await comTenant(db, { empresaId }, (tx) => lerValores(tx, empresaId));
   const cifrado = texto(v[CHAVE_API]);
   if (!cifrado || !segredo) return null;
   try {
-    return { apiKey: decifrar(cifrado, segredo), remetente: texto(v[CHAVE_REMETENTE]) };
+    return { apiKey: decifrar(cifrado, segredo), remetente: texto(v[CHAVE_REMETENTE]), ...(texto(v[CHAVE_RESPONDER_PARA]) ? { replyTo: texto(v[CHAVE_RESPONDER_PARA]) as string } : {}) };
   } catch {
     return null;
   }

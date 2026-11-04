@@ -67,10 +67,10 @@ describe('T-214: ConvidarUsuario', () => {
     expect(within(previa).getByText('Pendente')).toBeTruthy();
     expect(within(previa).getByText('DM')).toBeTruthy();
     const matriz = screen.getByRole('region', { name: 'Matriz de Acessos' });
-    expect(within(matriz).getByText(/Indicadores e relatórios/)).toBeTruthy(); // bloqueado para o atendente
+    expect(within(matriz).getByText(/Indicadores \(exige GERENTE\)/)).toBeTruthy(); // bloqueado para o atendente
     expect(within(matriz).getByText('Agenda de reuniões')).toBeTruthy();
     await u.click(screen.getByLabelText('MASTER'));
-    expect(within(screen.getByRole('region', { name: 'Matriz de Acessos' })).getByText('Convidar qualquer papel')).toBeTruthy();
+    expect(within(screen.getByRole('region', { name: 'Matriz de Acessos' })).getByText('Nada bloqueado.')).toBeTruthy();
     expect(screen.getByText(/Validade do convite: /).textContent).toContain('24 horas');
     cleanup();
 
@@ -93,7 +93,7 @@ describe('T-214: ConvidarUsuario', () => {
 
     await u.click(botao());
     await waitFor(() => expect(posts()).toHaveLength(1));
-    expect(JSON.parse(posts()[0][1].body)).toEqual({ nome: 'Dra. Nova', email: 'nova@clinica.com', papel: 'GERENTE' });
+    expect(JSON.parse(posts()[0][1].body)).toEqual({ nome: 'Dra. Nova', email: 'nova@clinica.com', papel: 'GERENTE', modulos: null });
     expect(await screen.findByText('Convite criado para nova@clinica.com')).toBeTruthy();
     expect(screen.getByText('https://crm.teste/convite/abc')).toBeTruthy();
     expect(screen.queryByText(/O e-mail não pôde ser enviado/)).toBeFalsy();
@@ -122,6 +122,20 @@ describe('T-214: ConvidarUsuario', () => {
     for (const rotulo of ['WhatsApp Corporativo', 'Departamento / Squad', 'Exigir 2FA no primeiro acesso', 'Atribuir leads automaticamente', 'Validade do token', 'Mensagem personalizada de boas-vindas']) {
       expect(screen.getByRole('button', { name: `${rotulo} (em breve)` }).getAttribute('aria-disabled')).toBe('true');
     }
-    expect(screen.queryByText(/licenças|Garantias de Governança|HIPAA/i)).toBeFalsy();
+    expect(screen.queryByText(/Garantias de Governança|HIPAA/i)).toBeFalsy();
+  });
+
+  test('os módulos liberados vêm do papel e o convite leva só os desmarcados como lista @spec:AC-592', async () => {
+    const u = usuario();
+    render(<ConvidarUsuario />);
+    await u.type(screen.getByLabelText('Nome completo'), 'Dra. Nova');
+    await u.type(screen.getByLabelText('E-mail corporativo'), 'nova@clinica.com');
+    await u.click(screen.getByLabelText('ATENDENTE'));
+    expect((screen.getByLabelText('WhatsApp') as HTMLInputElement).checked).toBe(true);
+    expect((screen.getByLabelText('Indicadores') as HTMLInputElement).disabled).toBe(true);
+    await u.click(screen.getByLabelText('WhatsApp'));
+    await u.click(botao());
+    await waitFor(() => expect(posts()).toHaveLength(1));
+    expect(JSON.parse(posts()[0][1].body).modulos).toEqual(['pipeline', 'tarefas', 'agenda']);
   });
 });

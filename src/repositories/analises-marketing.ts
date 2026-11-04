@@ -14,6 +14,8 @@ import { limitesDoPeriodo } from './kpis';
 const ETAPA_AGENDADA = 8;
 const ETAPA_REALIZADA = 10;
 const ETAPA_GANHO = 15;
+const ETAPA_PERDIDO = 14;
+const ETAPA_NO_SHOW = 9;
 const SEM_ORIGEM = 'Sem origem';
 
 export type Agrupamento = 'dia' | 'semana' | 'mes';
@@ -34,6 +36,54 @@ export interface LinhaDeOrigem {
   roas?: number | null;
 }
 
+/** T-312: o desempenho de cada anúncio (`dados.anuncio` do lead, vindo do formulário/planilha) dentro de uma origem. */
+export interface LinhaDeAnuncio {
+  origem: string;
+  anuncio: string;
+  leads: number;
+  contratos: number;
+  conversaoFinal: number | null;
+}
+
+/** T-312: um lead do período, para a lista nominal. */
+export interface LeadDoPeriodo {
+  id: string;
+  oportunidadeId: string | null;
+  nome: string;
+  etapa: string | null;
+  etapaId: number | null;
+  especialidade: string | null;
+  origem: string;
+  anuncio: string | null;
+  criadoEm: string;
+  observacoes: string | null;
+}
+
+export const LIMITE_DE_LEADS_NA_LISTA = 500;
+
+/** T-315: leads por especialidade do lead (`dados.especialidade`, do formulário/planilha) e o que viraram. */
+export interface LinhaDeEspecialidade {
+  especialidade: string;
+  leads: number;
+  contratos: number;
+  /** Fração 0–1 dos leads do período. */
+  participacao: number;
+  /** Valor ganho ÷ contratos; `null` sem contrato. */
+  ticketMedio: number | null;
+}
+
+/** T-315: comportamento do período: quando os leads chegam, a rapidez do 1º contato e as faltas. */
+export interface InsightsDeMarketing {
+  /** O dia (`YYYY-MM-DD`) com mais leads, quantos leads e quantos deles viraram reunião agendada. */
+  diaDeMaisLeads: { dia: string; leads: number; agendadas: number } | null;
+  /** A hora do dia (0–23, São Paulo) em que mais leads chegam. */
+  melhorHora: number | null;
+  /** Média de minutos entre o lead chegar e a 1ª mensagem enviada a ele pelo WhatsApp; `null` sem nenhuma. */
+  velocidadeMediaMinutos: number | null;
+  /** No-show ÷ reuniões agendadas, entre os leads do período. */
+  noShow: { taxa: number | null; noShows: number; agendadas: number };
+}
+
 export interface RespostaMarketing {
   resumo: { leads: number; conectados: number; reunioesRealizadas: number; contratos: number; conversaoFinal: number | null };
   /** AC-634/AC-637: `null` sem investimento cadastrado no período — a tela não mostra o bloco de custo. */
@@ -42,6 +92,20 @@ export interface RespostaMarketing {
   serie: { inicio: string; leads: number; reunioes: number }[];
   porOrigem: LinhaDeOrigem[];
   origens: string[];
+  /** T-312: leads do período cujo card está em "Perdido". */
+  desqualificados?: number;
+  /** T-312: a origem com maior conversão final (empate: a de mais leads); `null` se nenhuma tem lead. */
+  melhorCanal?: { origem: string; conversaoFinal: number | null } | null;
+  porAnuncio?: LinhaDeAnuncio[];
+  /** T-312: leads criados em cada dia da semana (0 = domingo … 6 = sábado), no fuso de São Paulo. */
+  porDiaDaSemana?: number[];
+  /** T-316: leads criados ANTES do período cujo card mudou de etapa DENTRO dele (a base antiga sendo trabalhada). */
+  recuperacaoDeBase?: number;
+  leadsDoPeriodo?: LeadDoPeriodo[];
+  especialidades?: LinhaDeEspecialidade[];
+  insights?: InsightsDeMarketing;
+  /** T-320: as especialidades que existem nos leads, para o filtro. */
+  especialidadesDisponiveis?: string[];
 }
 
 function iso(d: Date): string {
@@ -93,14 +157,18 @@ function custoDaLinha(habilitado: boolean, investimento: number | undefined, lea
 export async function obterMarketing(
   db: NodePgDatabase,
   contexto: ContextoTenant,
-  filtro: { de?: string; ate?: string; origem?: string; agrupar?: Agrupamento; agora: Date }
+  filtro: { de?: string; ate?: string; origem?: string; especialidade?: string; agrupar?: Agrupamento; agora: Date }
 ): Promise<RespostaMarketing> {
   const { inicio, fimExclusivo } = limitesDoPeriodo(filtro.agora, filtro.de, filtro.ate);
   const periodo = periodoLocal(filtro.agora, filtro.de, filtro.ate);
   const agrupar = filtro.agrupar ?? agrupamentoPadrao(periodo.de, periodo.ate);
   const unidade = agrupar === 'mes' ? 'month' : agrupar === 'semana' ? 'week' : 'day';
   const origemDe = sql`coalesce(nullif(btrim(l.origem), ''), ${SEM_ORIGEM})`;
-  const filtroOrigem: SQL = filtro.origem ? sql`AND lower(${origemDe}) = lower(${filtro.origem})` : sql``;
+  const filtroDaOrigem: SQL = filtro.origem ? sql`AND lower(${origemDe}) = lower(${filtro.origem})` : sql``;
+  // T-320: a especialidade do lead; "Sem especialidade informada" pega os leads que não a têm.
+  const especialidadeDe = sql`coalesce(nullif(btrim(l.dados ->> 'especialidade'), ''), 'Sem especialidade informada')`;
+  const filtroDaEspecialidade: SQL = filtro.especialidade ? sql`AND lower(${especialidadeDe}) = lower(${filtro.especialidade})` : sql``;
+  const filtroOrigem: SQL = sql`${filtroDaOrigem} ${filtroDaEspecialidade}`;
   const chegou = (etapa: number) =>
     sql`EXISTS (SELECT 1 FROM oportunidades o JOIN oportunidade_eventos e ON e.oportunidade_id = o.id WHERE o.lead_id = l.id AND e.tipo = 'transicao_etapa' AND e.etapa_destino_id = ${etapa})`;
 
@@ -139,11 +207,89 @@ export async function obterMarketing(
       GROUP BY 1
     `);
 
+    // T-312: o que o painel de tráfego do sistema antigo mostrava, com os dados que o ETL guardou no lead.
+    const etapaAtual = sql`(SELECT o.etapa_id FROM oportunidades o WHERE o.lead_id = l.id ORDER BY o.criado_em DESC LIMIT 1)`;
+    const noPeriodo = sql`l.criado_em >= ${inicio.toISOString()}::timestamptz AND l.criado_em < ${fimExclusivo.toISOString()}::timestamptz`;
+    const [{ desq }] = (
+      await tx.execute<{ desq: number }>(sql`SELECT count(*) FILTER (WHERE ${etapaAtual} = ${ETAPA_PERDIDO})::int AS desq FROM leads l WHERE ${noPeriodo} ${filtroOrigem}`)
+    ).rows;
+    const [{ antigos }] = (
+      await tx.execute<{ antigos: number }>(sql`
+        SELECT count(DISTINCT l.id)::int AS antigos
+        FROM leads l
+        JOIN oportunidades o ON o.lead_id = l.id
+        JOIN oportunidade_eventos e ON e.oportunidade_id = o.id AND e.tipo = 'transicao_etapa'
+        WHERE l.criado_em < ${inicio.toISOString()}::timestamptz
+          AND e.ocorrido_em >= ${inicio.toISOString()}::timestamptz AND e.ocorrido_em < ${fimExclusivo.toISOString()}::timestamptz
+          ${filtroOrigem}
+      `)
+    ).rows;
+    const porAnuncioBruto = await tx.execute<{ origem: string; anuncio: string; leads: number; contratos: number }>(sql`
+      SELECT min(${origemDe}) AS origem, coalesce(nullif(btrim(l.dados ->> 'anuncio'), ''), 'Sem anúncio') AS anuncio,
+        count(*)::int AS leads, count(*) FILTER (WHERE ${chegou(ETAPA_GANHO)})::int AS contratos
+      FROM leads l WHERE ${noPeriodo} ${filtroOrigem}
+      GROUP BY lower(${origemDe}), 2 ORDER BY 3 DESC, 2 LIMIT 100
+    `);
+    const porDiaBruto = await tx.execute<{ dia: number; total: number }>(sql`
+      SELECT extract(dow FROM l.criado_em AT TIME ZONE 'America/Sao_Paulo')::int AS dia, count(*)::int AS total
+      FROM leads l WHERE ${noPeriodo} ${filtroOrigem} GROUP BY 1
+    `);
+    const leadsBruto = await tx.execute<{ id: string; opp: string | null; nome: string; etapa_id: number | null; etapa: string | null; especialidade: string | null; origem: string; anuncio: string | null; criado: string; obs: string | null }>(sql`
+      SELECT l.id, (SELECT o.id FROM oportunidades o WHERE o.lead_id = l.id ORDER BY o.criado_em DESC LIMIT 1)::text AS opp,
+        l.nome, ${etapaAtual} AS etapa_id,
+        (SELECT pe.nome FROM pipeline_etapas pe WHERE pe.id = ${etapaAtual}) AS etapa,
+        nullif(btrim(l.dados ->> 'especialidade'), '') AS especialidade, ${origemDe} AS origem,
+        nullif(btrim(l.dados ->> 'anuncio'), '') AS anuncio, l.criado_em::text AS criado, nullif(btrim(l.dados ->> 'observacoes'), '') AS obs
+      FROM leads l WHERE ${noPeriodo} ${filtroOrigem}
+      ORDER BY l.criado_em DESC LIMIT ${LIMITE_DE_LEADS_NA_LISTA}
+    `);
+
+    // T-315: especialidades e insights do período (dados do lead que o ETL guardou).
+    const valorGanhoDoLead = sql`(SELECT coalesce(sum(o.valor), 0) FROM oportunidades o WHERE o.lead_id = l.id
+      AND EXISTS (SELECT 1 FROM oportunidade_eventos e WHERE e.oportunidade_id = o.id AND e.tipo = 'transicao_etapa' AND e.etapa_destino_id = ${ETAPA_GANHO}))`;
+    const especialidadesBruto = await tx.execute<{ nome: string; leads: number; contratos: number; valor: string }>(sql`
+      SELECT coalesce(nullif(btrim(l.dados ->> 'especialidade'), ''), 'Sem especialidade informada') AS nome, count(*)::int AS leads,
+        count(*) FILTER (WHERE ${chegou(ETAPA_GANHO)})::int AS contratos, coalesce(sum(${valorGanhoDoLead}), 0)::text AS valor
+      FROM leads l WHERE ${noPeriodo} ${filtroOrigem} GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 12
+    `);
+    const [diaTop] = (
+      await tx.execute<{ dia: string; leads: number; agendadas: number }>(sql`
+        SELECT to_char(l.criado_em AT TIME ZONE 'America/Sao_Paulo', 'YYYY-MM-DD') AS dia, count(*)::int AS leads, count(*) FILTER (WHERE ${chegou(ETAPA_AGENDADA)})::int AS agendadas
+        FROM leads l WHERE ${noPeriodo} ${filtroOrigem} GROUP BY 1 ORDER BY 2 DESC, 1 DESC LIMIT 1
+      `)
+    ).rows;
+    const [horaTop] = (
+      await tx.execute<{ hora: number }>(sql`
+        SELECT extract(hour FROM l.criado_em AT TIME ZONE 'America/Sao_Paulo')::int AS hora
+        FROM leads l WHERE ${noPeriodo} ${filtroOrigem} GROUP BY 1 ORDER BY count(*) DESC, 1 LIMIT 1
+      `)
+    ).rows;
+    const [velocidade] = (
+      await tx.execute<{ minutos: string | null }>(sql`
+        SELECT avg(extract(epoch FROM (p.primeira - l.criado_em)) / 60.0)::text AS minutos
+        FROM leads l
+        JOIN LATERAL (SELECT min(w.criado_em) AS primeira FROM whatsapp_mensagens w WHERE w.lead_id = l.id AND w.direcao = 'enviada' AND w.criado_em >= l.criado_em) p ON p.primeira IS NOT NULL
+        WHERE ${noPeriodo} ${filtroOrigem}
+      `)
+    ).rows;
+    const [faltas] = (
+      await tx.execute<{ agendadas: number; no_shows: number }>(sql`
+        SELECT count(*) FILTER (WHERE ${chegou(ETAPA_AGENDADA)})::int AS agendadas, count(*) FILTER (WHERE ${chegou(ETAPA_NO_SHOW)})::int AS no_shows
+        FROM leads l WHERE ${noPeriodo} ${filtroOrigem}
+      `)
+    ).rows;
+
+    const especialidadesExistentes = await tx.execute<{ nome: string }>(sql`
+      SELECT DISTINCT btrim(l.dados ->> 'especialidade') AS nome FROM leads l WHERE nullif(btrim(l.dados ->> 'especialidade'), '') IS NOT NULL ORDER BY 1 LIMIT 100
+    `);
+
     const origensExistentes = await tx.execute<{ origem: string }>(sql`
       SELECT min(${origemDe}) AS origem FROM leads l GROUP BY lower(${origemDe}) ORDER BY 1 LIMIT 100
     `);
 
     const investimentos = investimentoDoPeriodo(await lerInvestimentoNoPeriodo(tx, periodo.de, periodo.ate), periodo.de, periodo.ate);
+    // O investimento é por canal, não por especialidade: com o filtro de especialidade o custo não se aplica.
+    if (filtro.especialidade) investimentos.clear();
     if (filtro.origem) for (const chave of [...investimentos.keys()]) if (chave !== chaveDoCanal(filtro.origem)) investimentos.delete(chave);
     const usados = new Set<string>();
 
@@ -172,6 +318,10 @@ export async function obterMarketing(
     const mapaLeads = new Map(leadsPorIntervalo.rows.map((r) => [r.inicio, r.total]));
     const mapaReunioes = new Map(reunioesPorIntervalo.rows.map((r) => [r.inicio, r.total]));
 
+    const candidatas = porOrigem.filter((l) => l.leads > 0 && l.origem !== SEM_ORIGEM);
+    const melhor = [...candidatas].sort((a, b) => (b.conversaoFinal ?? 0) - (a.conversaoFinal ?? 0) || b.leads - a.leads)[0];
+    const porDiaDaSemana = Array.from({ length: 7 }, (_, d) => porDiaBruto.rows.find((r) => r.dia === d)?.total ?? 0);
+
     return {
       resumo: { leads, conectados: soma('conectados'), reunioesRealizadas: soma('reunioesRealizadas'), contratos: soma('contratos'), conversaoFinal: leads > 0 ? soma('contratos') / leads : null },
       custo:
@@ -191,6 +341,37 @@ export async function obterMarketing(
       })),
       porOrigem,
       origens: origensExistentes.rows.map((r) => r.origem),
+      desqualificados: desq,
+      melhorCanal: melhor ? { origem: melhor.origem, conversaoFinal: melhor.conversaoFinal } : null,
+      porAnuncio: porAnuncioBruto.rows.map((r) => ({ origem: r.origem, anuncio: r.anuncio, leads: r.leads, contratos: r.contratos, conversaoFinal: r.leads > 0 ? r.contratos / r.leads : null })),
+      porDiaDaSemana,
+      recuperacaoDeBase: antigos,
+      especialidades: especialidadesBruto.rows.map((r) => ({
+        especialidade: r.nome,
+        leads: r.leads,
+        contratos: r.contratos,
+        participacao: leads > 0 ? r.leads / leads : 0,
+        ticketMedio: r.contratos > 0 ? Number(r.valor) / r.contratos : null,
+      })),
+      especialidadesDisponiveis: especialidadesExistentes.rows.map((r) => r.nome),
+      insights: {
+        diaDeMaisLeads: diaTop ? { dia: diaTop.dia, leads: diaTop.leads, agendadas: diaTop.agendadas } : null,
+        melhorHora: horaTop ? horaTop.hora : null,
+        velocidadeMediaMinutos: velocidade?.minutos != null ? Math.round(Number(velocidade.minutos) * 10) / 10 : null,
+        noShow: { taxa: faltas && faltas.agendadas > 0 ? faltas.no_shows / faltas.agendadas : null, noShows: faltas?.no_shows ?? 0, agendadas: faltas?.agendadas ?? 0 },
+      },
+      leadsDoPeriodo: leadsBruto.rows.map((r) => ({
+        id: r.id,
+        oportunidadeId: r.opp,
+        nome: r.nome,
+        etapa: r.etapa,
+        etapaId: r.etapa_id,
+        especialidade: r.especialidade,
+        origem: r.origem,
+        anuncio: r.anuncio,
+        criadoEm: new Date(r.criado).toISOString(),
+        observacoes: r.obs,
+      })),
     };
   });
 }

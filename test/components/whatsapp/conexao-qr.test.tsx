@@ -65,7 +65,10 @@ describe('T-192: ConexaoQr', () => {
     expect(screen.getAllByText('Desconectado').length).toBeGreaterThan(0);
     expect(await screen.findByText('10')).toBeTruthy();
     expect(screen.getByText('7 recebidas · 3 enviadas')).toBeTruthy();
-    expect(screen.queryByText(/Latência|Aparelho pareado|Diagnóstico|Criptografia|IP de conexão/i)).toBeFalsy();
+    // T-304: a latência é a da própria consulta de estado e o diagnóstico só mostra o que o sistema mede; nada de IP, certificado ou aparelho.
+    expect(screen.getByText('Latência da consulta')).toBeTruthy();
+    expect(screen.getByRole('region', { name: 'Diagnóstico em Tempo Real' })).toBeTruthy();
+    expect(screen.queryByText(/Criptografia|IP de conexão|Certificado/i)).toBeFalsy();
   });
 
   test('gerar o QR mostra a imagem e os passos, consulta o estado a cada 3 s e troca por "Conectado" @spec:AC-519', async () => {
@@ -156,15 +159,17 @@ describe('T-192: ConexaoQr', () => {
 
   test('desconectar, pareamento e nova instância aparecem "em breve"; a instância é uma só @spec:AC-522', async () => {
     render(<ConexaoQr />);
-    await screen.findByRole('region', { name: 'Instâncias da Clínica' });
-    for (const rotulo of ['Desconectar Sessão', 'Código Numérico (Pairing)', 'Nova Instância']) {
+    await screen.findByRole('region', { name: 'Instâncias' });
+    // T-304: "Desconectar Sessão" é real (fica travado enquanto não há sessão conectada); pareamento e nova instância seguem "em breve".
+    expect((screen.getByRole('button', { name: 'Desconectar Sessão' }) as HTMLButtonElement).disabled).toBe(true);
+    for (const rotulo of ['Código Numérico (Pairing)', 'Nova Instância']) {
       expect(screen.getByRole('button', { name: `${rotulo} (em breve)` }).getAttribute('aria-disabled')).toBe('true');
     }
-    const instancias = screen.getByRole('region', { name: 'Instâncias da Clínica' });
+    const instancias = screen.getByRole('region', { name: 'Instâncias' });
     expect(within(instancias).getAllByRole('article')).toHaveLength(1);
     expect(within(instancias).getByText('matriz')).toBeTruthy();
     expect(within(instancias).getByRole('button', { name: 'Reconectar' })).toBeTruthy();
-    expect(within(instancias).getByRole('link', { name: 'Configurações Evolution' }).getAttribute('href')).toBe('/whatsapp/configuracao');
+    expect(within(screen.getByRole('region', { name: 'Diagnóstico em Tempo Real' })).getByRole('link', { name: /Configurações Evolution/ }).getAttribute('href')).toBe('/whatsapp/configuracao');
   });
 
   test('carregando mostra esqueleto, falha mostra erro com "Tentar de novo" e não configurado explica @spec:AC-531', async () => {

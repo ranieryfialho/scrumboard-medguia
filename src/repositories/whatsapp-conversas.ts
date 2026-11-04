@@ -6,7 +6,7 @@
 import { and, desc, eq, inArray, isNull } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
-import { leads, oportunidades, usuarios, whatsappMensagens } from '../db/schema';
+import { leads, oportunidades, usuarios, whatsappAvulsos, whatsappMensagens } from '../db/schema';
 import { dataLocalEmSaoPaulo } from '../domain/cadencia/turno';
 import type { ContextoTenant } from '../lib/auth/tenant';
 import { comTenant } from './contexto';
@@ -23,6 +23,8 @@ export interface ConversaDaCaixa {
   leadId: string | null;
   numero: string;
   nome: string | null;
+  /** T-303: motivo da abordagem, só nas avulsas que informaram. */
+  categoria?: string | null;
   ultimaMensagem: string;
   ultimaEm: string;
   ultimaDirecao: 'enviada' | 'recebida';
@@ -150,6 +152,24 @@ export async function listarConversas(
       }
     }
 
+    // T-303: o nome e o motivo que quem enviou a avulsa informou.
+    const avulsoPorNumero = new Map<string, { nome: string | null; categoria: string | null }>();
+    if ([...porChave.values()].some((c) => !c.leadId)) {
+      const avulsos = await tx
+        .select({ numero: whatsappAvulsos.numero, nome: whatsappAvulsos.nome, categoria: whatsappAvulsos.categoria })
+        .from(whatsappAvulsos)
+        .where(eq(whatsappAvulsos.empresaId, contexto.empresaId));
+      for (const a of avulsos) avulsoPorNumero.set(chaveCanonicaNumero(a.numero), a);
+    }
+    for (const c of porChave.values()) {
+      if (c.leadId) continue;
+      const a = avulsoPorNumero.get(chaveCanonicaNumero(c.numero));
+      if (a) {
+        c.nome = a.nome ?? c.nome;
+        c.categoria = a.categoria;
+      }
+    }
+
     let visiveis = [...porChave.values()].map((c) => {
       const card = c.leadId ? (cardPorLead.get(c.leadId) ?? null) : null;
       return { conversa: c, card };
@@ -197,6 +217,7 @@ export async function listarConversas(
       leadId: conversa.leadId,
       numero: conversa.numero,
       nome: conversa.nome,
+      categoria: conversa.categoria ?? null,
       ultimaMensagem: conversa.ultimaMensagem,
       ultimaEm: conversa.ultimaEmData.toISOString(),
       ultimaDirecao: conversa.ultimaDirecao,

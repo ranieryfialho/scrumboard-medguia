@@ -66,6 +66,8 @@ export interface ConvidarUsuarioInput {
   papel: PapelUsuario;
   /** Só é lido quando o ator é super admin (AC-038) — obrigatório nesse caso. */
   empresaId?: string;
+  /** T-322: módulos liberados do convidado (já validados); ausente ou `null` = padrão do papel. */
+  modulos?: string[] | null;
 }
 
 export interface EventoAuditoriaConvite {
@@ -174,6 +176,7 @@ export async function convidarUsuario(
       usuarioId: id,
       papel: input.papel,
       ativo: true,
+      ...(input.modulos ? { modulos: input.modulos } : {}),
     });
 
     await tx.insert(tokensVerificacao).values({

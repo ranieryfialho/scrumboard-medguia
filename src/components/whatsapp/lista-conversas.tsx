@@ -26,7 +26,7 @@ export function ListaConversas({ conversas, contagens, aba, busca, selecionada, 
   ];
 
   return (
-    <section aria-label="Conversas" className="bg-surface-card rounded-2xl shadow-sm flex flex-col min-h-[32rem] overflow-hidden">
+    <section aria-label="Conversas" className="bg-surface-card rounded-2xl shadow-sm flex flex-col max-h-[28rem] xl:max-h-none xl:h-full xl:min-h-0 overflow-hidden">
       <div className="p-space-md flex flex-col gap-space-sm">
         <input
           type="search"
@@ -53,7 +53,7 @@ export function ListaConversas({ conversas, contagens, aba, busca, selecionada, 
         <ItemEmBreve rotulo="Filtrar por status do pipeline" icone="filter_list" className="font-body-sm" />
       </div>
 
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 min-h-0 overflow-y-auto border-t border-surface-container">
         {conversas.length === 0 && <p className="px-space-md py-space-md font-body-md text-body-md text-text-secondary">Nenhuma conversa encontrada</p>}
         <ul>
           {conversas.map((c) => {

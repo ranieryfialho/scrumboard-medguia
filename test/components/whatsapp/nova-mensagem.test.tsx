@@ -99,7 +99,8 @@ describe('T-191: NovaMensagem', () => {
     await u.type(campoMensagem(), '  Olá, tudo bem?  ');
     await u.click(botao());
     await waitFor(() => expect(envios()).toHaveLength(1));
-    expect(JSON.parse(envios()[0][1].body)).toEqual({ numero: '5511987214490', mensagem: 'Olá, tudo bem?' });
+    // T-303: o envio leva também o nome, o motivo e o "virar lead se responder" (marcado por padrão).
+    expect(JSON.parse(envios()[0][1].body)).toEqual({ numero: '5511987214490', mensagem: 'Olá, tudo bem?', destinatarioNome: '', categoria: '', criarLeadAoResponder: true });
     expect(await screen.findByText(/Mensagem enviada/)).toBeTruthy();
     expect(screen.getByRole('link', { name: 'Abrir conversa' }).getAttribute('href')).toBe('/whatsapp?numero=5511987214490');
     expect((campoNumero() as HTMLInputElement).value).toBe('');
@@ -150,13 +151,18 @@ describe('T-191: NovaMensagem', () => {
     expect(await screen.findByText('Nenhum disparo avulso ainda')).toBeTruthy();
   });
 
-  test('os itens sem backend aparecem "em breve" e a instância é só leitura @spec:AC-516', async () => {
+  test('nome, motivo, anexo, criar lead, rascunho e reenviar funcionam e a instância é só leitura @spec:AC-516', async () => {
     render(<NovaMensagem />);
     await screen.findByText('matriz');
-    for (const rotulo of ['Nome do destinatário', 'Motivo / Categoria', 'Anexo complementar', 'Criar lead se houver resposta', 'Salvar como Rascunho', 'Reenviar']) {
-      expect(screen.getByRole('button', { name: `${rotulo} (em breve)` }).getAttribute('aria-disabled')).toBe('true');
-    }
-    expect(screen.getByRole('region', { name: 'Parâmetros do Envio' }).querySelector('select')).toBeFalsy();
+    expect(screen.getByLabelText('Nome do destinatário')).toBeTruthy();
+    expect(screen.getByLabelText('Motivo ou categoria')).toBeTruthy();
+    expect(screen.getByLabelText('Anexo complementar')).toBeTruthy();
+    expect((screen.getByRole('checkbox') as HTMLInputElement).checked).toBe(true);
+    expect(screen.getByRole('button', { name: 'Salvar como Rascunho' })).toBeTruthy();
+    await screen.findAllByRole('button', { name: 'Reenviar' });
+    expect(screen.queryByRole('button', { name: /\(em breve\)/ })).toBeNull();
+    // a instância é só um texto: o único seletor da seção é o do motivo da abordagem
+    expect(screen.getByRole('region', { name: 'Parâmetros do Envio' }).querySelectorAll('select')).toHaveLength(1);
     // @spec:AC-650: o item genérico "em breve" foi trocado pelo botão de promover em cada disparo avulso
     expect(screen.queryByRole('button', { name: 'Promover a Lead (em breve)' })).toBeNull();
   });

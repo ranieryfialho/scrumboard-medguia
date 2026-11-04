@@ -226,6 +226,8 @@ export const oportunidadeComercial = pgTable('oportunidade_comercial', {
   prontuarioLegado: text('prontuario_legado'),
   faturamentoTiss: text('faturamento_tiss'),
   termoLgpdValidado: boolean('termo_lgpd_validado').notNull().default(false),
+  /** T-318: desconto concedido na proposta, em % (migration 0032). */
+  descontoPercentual: numeric('desconto_percentual', { precision: 5, scale: 2 }),
   atualizadoEm: timestamp('atualizado_em', { withTimezone: true }).notNull().defaultNow(),
   atualizadoPor: uuid('atualizado_por').references(() => usuarios.id, { onDelete: 'set null' }),
 });

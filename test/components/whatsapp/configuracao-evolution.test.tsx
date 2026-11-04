@@ -102,7 +102,7 @@ describe('T-194: ConfiguracaoEvolution', () => {
     const u = userEvent.setup();
     render(<ConfiguracaoEvolution />);
     await u.click(await screen.findByRole('button', { name: 'Verificar Conexão com o Servidor' }));
-    expect(await screen.findByText(/Servidor respondeu em \d+ ms \(instância conectada\)/)).toBeTruthy();
+    expect(await screen.findByText(/HTTP 200 OK · \d+ms \(instância conectada\)/)).toBeTruthy();
 
     statusResposta = () => resposta(500, {});
     await u.click(screen.getByRole('button', { name: 'Verificar Conexão com o Servidor' }));
@@ -119,18 +119,24 @@ describe('T-194: ConfiguracaoEvolution', () => {
     expect(within(secao).getByText('MESSAGES_UPSERT')).toBeTruthy();
     expect(within(secao).getByText('Essencial')).toBeTruthy();
     expect(within(secao).queryByText(/MESSAGES_UPDATE|CONNECTION_UPDATE|SEND_MESSAGE/)).toBeFalsy();
-    expect(within(secao).queryAllByRole('checkbox')).toHaveLength(0);
+    // T-304: os eventos registrados aparecem marcados e travados (só leitura); nenhum outro evento é oferecido.
+    expect(within(secao).getAllByRole('checkbox')).toHaveLength(1);
+    expect((within(secao).getByRole('checkbox') as HTMLInputElement).disabled).toBe(true);
     await u.click(within(secao).getByRole('button', { name: 'Copiar' }));
     expect(escrever).toHaveBeenCalledWith(CONFIG.webhookUrl);
+    // T-305: o teste do webhook é real (botões habilitados para quem pode alterar).
     for (const rotulo of ['Testar Disparo de Webhook', 'Simular Evento de Teste (Ping)']) {
-      expect(screen.getByRole('button', { name: `${rotulo} (em breve)` }).getAttribute('aria-disabled')).toBe('true');
+      expect(screen.getByRole('button', { name: rotulo })).toBeTruthy();
     }
   });
 
   test('as diretrizes anti-ban e restaurar padrões aparecem "em breve", sem versão nem manutenção @spec:AC-529', async () => {
     render(<ConfiguracaoEvolution />);
     await screen.findByRole('region', { name: 'Diretrizes de Segurança Anti-Ban & Cadência' });
-    for (const rotulo of ['Intervalo mínimo entre mensagens', 'Limite de disparos por hora', 'Digitação humana simulada', 'Auto-reconexão inteligente', 'Restaurar Padrões de Fábrica']) {
+    // O intervalo e o limite do lote são regras reais, mostradas só para leitura.
+    expect(screen.getByText('15 a 45 segundos')).toBeTruthy();
+    expect(screen.getByText('50 mensagens por lote')).toBeTruthy();
+    for (const rotulo of ['Digitação humana simulada', 'Auto-reconexão inteligente', 'Restaurar Padrões de Fábrica']) {
       expect(screen.getByRole('button', { name: `${rotulo} (em breve)` }).getAttribute('aria-disabled')).toBe('true');
     }
     expect(screen.queryByText(/Evolution Adapter|janela de manutenção/i)).toBeFalsy();

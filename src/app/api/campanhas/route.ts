@@ -180,6 +180,7 @@ export async function POST(request: NextRequest) {
     corpoHtml: campos.corpoHtml,
     criadoPor: contexto.usuarioId,
     origem,
+    protegerFrequencia: (corpoBruto as Record<string, unknown>).protegerFrequencia === true,
   });
 
   return NextResponse.json(
@@ -189,6 +190,7 @@ export async function POST(request: NextRequest) {
       descartadosInvalidos: resultado.descartadosInvalidos,
       descartadosRepetidos: resultado.descartadosRepetidos,
       descartadosDescadastrados: resultado.descartadosDescadastrados,
+      descartadosProtegidos: resultado.descartadosProtegidos,
     },
     { status: 201 }
   );

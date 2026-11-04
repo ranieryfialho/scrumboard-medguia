@@ -22,6 +22,7 @@ export type CampoComercialRegistrado =
   | 'porte_clinica'
   | 'prontuario_legado'
   | 'faturamento_tiss'
+  | 'desconto_percentual'
   | 'termo_lgpd';
 
 export interface DadosEdicaoCard {

@@ -43,7 +43,7 @@ export function GraficoLinhas({ titulo, rotulos, series, formatarValor = (v) => 
   const marcas = [0, 0.25, 0.5, 0.75, 1].map((f) => f * teto);
 
   return (
-    <figure className="flex flex-col gap-2">
+    <figure className="relative flex flex-col gap-2">
       <div className="flex items-center gap-4 flex-wrap font-body-sm text-body-sm text-text-secondary">
         {series.map((s) => (
           <span key={s.nome} className="flex items-center gap-1.5">

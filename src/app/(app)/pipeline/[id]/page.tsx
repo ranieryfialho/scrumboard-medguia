@@ -17,7 +17,7 @@
 // `test/components/pipeline/iniciar-cadencia.test.tsx` prova esse
 // comportamento contra esta mesma página, e apagar a função teria apagado a
 // prova de um critério de outra feature, o que a constituição proíbe.
-import { use, useCallback, useEffect, useState } from 'react';
+import { use, useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 
 import type { CodigoErroTransicao } from '@/domain/pipeline/tipos';
@@ -28,7 +28,10 @@ import { EsqueletoCarregando, EstadoErro } from '@/components/pipeline/pecas/est
 import { CabecalhoCard, type EtapaOpcao } from '@/components/pipeline/detalhe/cabecalho-card';
 import { Jornada, nomeDaEtapa } from '@/components/pipeline/detalhe/jornada';
 import { ConsentimentoWhatsapp } from '@/components/pipeline/detalhe/consentimento-whatsapp';
+import { BlocoFechamento } from '@/components/pipeline/detalhe/bloco-fechamento';
 import { Informacoes, type TelefoneInformacao } from '@/components/pipeline/detalhe/informacoes';
+import { ModalFechamentoDoCard } from '@/components/pipeline/modal-fechamento';
+import type { DadosFechamento } from '@/domain/pipeline/fechamento';
 import { LinhaDoTempo } from '@/components/pipeline/detalhe/linha-do-tempo';
 import { ModalEditarCard, type ResultadoEdicaoCard, type ValoresEdicaoCard } from '@/components/pipeline/detalhe/modal-editar-card';
 import { RegistroRapido } from '@/components/pipeline/detalhe/registro-rapido';
@@ -78,6 +81,9 @@ function PipelineDetalheConteudo({ id }: { id: string }) {
   const [enviando, setEnviando] = useState(false);
   const [mensagem, setMensagem] = useState<string | null>(null);
   const [dadoFaltante, setDadoFaltante] = useState<DadoFaltantePendente | null>(null);
+  // T-313: mover para "Contrato (Ganho)" pede antes os dados do fechamento (como no CRM antigo).
+  const [pedirFechamento, setPedirFechamento] = useState(false);
+  const fechamentoRef = useRef<DadosFechamento | null>(null);
   const [versaoLinhaDoTempo, setVersaoLinhaDoTempo] = useState(0);
   const [editando, setEditando] = useState(false);
 
@@ -203,19 +209,24 @@ function PipelineDetalheConteudo({ id }: { id: string }) {
   const enviarTransicao = useCallback(
     async (etapaDestinoId: number, dadoExtra: DadoPreenchido = {}) => {
       if (!dados) return;
+      if (etapaDestinoId === ETAPA_CONTRATO_GANHO && !fechamentoRef.current) {
+        setPedirFechamento(true);
+        return;
+      }
       setEnviando(true);
       setMensagem(null);
       try {
         const resposta = await fetch(`/api/oportunidades/${dados.id}/transicao`, {
           method: 'POST',
           headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ version: dados.version, etapaDestinoId, ...dadoExtra }),
+          body: JSON.stringify({ version: dados.version, etapaDestinoId, ...dadoExtra, ...(etapaDestinoId === ETAPA_CONTRATO_GANHO && fechamentoRef.current ? { fechamento: fechamentoRef.current } : {}) }),
         });
 
         if (resposta.ok) {
           const movida = await resposta.json();
           setDados((atual) => (atual ? { ...atual, etapaId: movida.etapaId, version: movida.version } : atual));
           setDadoFaltante(null);
+          fechamentoRef.current = null;
           setVersaoLinhaDoTempo((versao) => versao + 1);
           await carregarGrafo(movida.etapaId);
           return;
@@ -326,6 +337,7 @@ function PipelineDetalheConteudo({ id }: { id: string }) {
               email={dados.email}
               onEditar={() => setEditando(true)}
             />
+            <BlocoFechamento cardId={dados.id} etapaId={dados.etapaId} versao={versaoLinhaDoTempo} />
             <ConsentimentoWhatsapp leadId={dados.leadId} />
           </div>
 
@@ -350,12 +362,27 @@ function PipelineDetalheConteudo({ id }: { id: string }) {
         />
       )}
 
+      {pedirFechamento && (
+        <ModalFechamentoDoCard
+          cardId={dados.id}
+          modo="fechar"
+          onCancelar={() => setPedirFechamento(false)}
+          onConfirmar={(d) => {
+            fechamentoRef.current = d;
+            setPedirFechamento(false);
+            void enviarTransicao(ETAPA_CONTRATO_GANHO);
+          }}
+        />
+      )}
       {dadoFaltante && (
         <ModalDadoFaltante
           codigo={dadoFaltante.codigo}
           aberto
           oportunidadeId={dados.id}
-          onCancelar={() => setDadoFaltante(null)}
+          onCancelar={() => {
+            setDadoFaltante(null);
+            fechamentoRef.current = null;
+          }}
           onConfirmar={(dado) => enviarTransicao(dadoFaltante.etapaDestinoId, dado)}
         />
       )}

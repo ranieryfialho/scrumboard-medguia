@@ -26,6 +26,7 @@ import { sql } from 'drizzle-orm';
 
 import { campanhas, enviosCampanha, leads, oportunidades } from '../db/schema';
 import type { ContextoTenant } from '../lib/auth/tenant';
+import { emailsComEnvioRecente } from './campanhas-frequencia';
 import { comTenant } from './contexto';
 import { emailsDescadastrados } from './email-descadastros';
 
@@ -172,6 +173,8 @@ export interface DadosNovaCampanha {
   corpoHtml: string;
   criadoPor?: string | null;
   origem: OrigemDestinatarios;
+  /** T-308: deixa de fora quem recebeu e-mail de campanha nas últimas 72 h. */
+  protegerFrequencia?: boolean;
 }
 
 export interface ResultadoCriarCampanha {
@@ -181,6 +184,8 @@ export interface ResultadoCriarCampanha {
   descartadosRepetidos: number;
   /** fase5-email-descadastro (AC-718): destinatários que a empresa já descadastrou, deixados de fora. */
   descartadosDescadastrados: number;
+  /** T-308: destinatários deixados de fora pela proteção de frequência. */
+  descartadosProtegidos: number;
 }
 
 /**
@@ -224,8 +229,12 @@ export async function criarCampanha(
     const { descartadosInvalidos, descartadosRepetidos } = normalizados;
     // AC-718: quem a empresa descadastrou nunca vira destinatário.
     const fora = await emailsDescadastrados(tx, contexto.empresaId, normalizados.destinatarios.map((d) => d.email));
-    const destinatarios = normalizados.destinatarios.filter((d) => !fora.has(d.email));
-    const descartadosDescadastrados = normalizados.destinatarios.length - destinatarios.length;
+    const semDescadastrados = normalizados.destinatarios.filter((d) => !fora.has(d.email));
+    const descartadosDescadastrados = normalizados.destinatarios.length - semDescadastrados.length;
+    // T-308: proteção de frequência (anti-fadiga).
+    const recentes = dados.protegerFrequencia ? await emailsComEnvioRecente(tx, contexto.empresaId, semDescadastrados.map((d) => d.email)) : new Set<string>();
+    const destinatarios = semDescadastrados.filter((d) => !recentes.has(d.email));
+    const descartadosProtegidos = semDescadastrados.length - destinatarios.length;
 
     const [campanha] = await tx
       .insert(campanhas)
@@ -255,6 +264,7 @@ export async function criarCampanha(
       descartadosInvalidos,
       descartadosRepetidos,
       descartadosDescadastrados,
+      descartadosProtegidos,
     };
   });
 }

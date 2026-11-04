@@ -17,7 +17,8 @@ export type CampoComercial =
   | 'porteClinica'
   | 'prontuarioLegado'
   | 'faturamentoTiss'
-  | 'termoLgpdValidado';
+  | 'termoLgpdValidado'
+  | 'descontoPercentual';
 
 export interface DadosComerciais {
   previsaoFechamento: string | null;
@@ -27,6 +28,8 @@ export interface DadosComerciais {
   prontuarioLegado: string | null;
   faturamentoTiss: string | null;
   termoLgpdValidado: boolean;
+  /** T-318: desconto concedido, em % (0 a 100, até duas casas); `null` sem desconto informado. */
+  descontoPercentual?: number | null;
 }
 
 export const DADOS_COMERCIAIS_VAZIOS: DadosComerciais = {
@@ -58,6 +61,15 @@ function textoOuNulo(valor: unknown, campo: CampoComercial): string | null {
   return aparado === '' ? null : aparado;
 }
 
+/** T-318: porcentagem de 0 a 100 com até duas casas, ou `null` para limpar. */
+function descontoOuNulo(valor: unknown): number | null {
+  if (valor === null || valor === '') return null;
+  if (typeof valor !== 'number' || !Number.isFinite(valor) || valor < 0 || valor > 100 || Math.abs(valor * 100 - Math.round(valor * 100)) > 1e-6) {
+    throw new ErroCampoComercialInvalido('descontoPercentual');
+  }
+  return valor;
+}
+
 /** `AAAA-MM-DD` de um dia que existe (31/02 não passa), ou `null` para limpar. */
 function dataOuNula(valor: unknown): string | null {
   if (valor === null || valor === '') return null;
@@ -77,6 +89,7 @@ function daLinha(linha: typeof oportunidadeComercial.$inferSelect | undefined): 
     prontuarioLegado: linha.prontuarioLegado,
     faturamentoTiss: linha.faturamentoTiss,
     termoLgpdValidado: linha.termoLgpdValidado,
+    descontoPercentual: linha.descontoPercentual === null ? null : Number(linha.descontoPercentual),
   };
 }
 
@@ -100,6 +113,7 @@ const ROTULO: Record<CampoComercial, CampoComercialRegistrado> = {
   prontuarioLegado: 'prontuario_legado',
   faturamentoTiss: 'faturamento_tiss',
   termoLgpdValidado: 'termo_lgpd',
+  descontoPercentual: 'desconto_percentual',
 };
 
 /** AC-742/AC-743: aplica só os campos informados que mudaram; devolve o que mudou e os dados já atualizados. */
@@ -114,6 +128,7 @@ export async function editarDadosComerciais(
   for (const campo of TEXTOS) {
     if (entrada[campo] !== undefined) (novos as Record<string, string | null>)[campo] = textoOuNulo(entrada[campo], campo);
   }
+  if (entrada.descontoPercentual !== undefined) novos.descontoPercentual = descontoOuNulo(entrada.descontoPercentual);
   if (entrada.termoLgpdValidado !== undefined) {
     if (typeof entrada.termoLgpdValidado !== 'boolean') throw new ErroCampoComercialInvalido('termoLgpdValidado');
     novos.termoLgpdValidado = entrada.termoLgpdValidado;
@@ -136,19 +151,20 @@ export async function editarDadosComerciais(
 
     const alteracoes: Alteracao[] = [];
     for (const campo of Object.keys(novos) as CampoComercial[]) {
-      if (atuais[campo] === novos[campo]) continue;
-      const texto = (v: unknown) => (typeof v === 'boolean' ? (v ? 'sim' : 'não') : (v as string | null));
+      if ((atuais[campo] ?? null) === novos[campo]) continue;
+      const texto = (v: unknown) => (typeof v === 'boolean' ? (v ? 'sim' : 'não') : typeof v === 'number' ? String(v) : (v as string | null));
       alteracoes.push({ campo: ROTULO[campo], de: texto(atuais[campo]), para: texto(novos[campo]) });
     }
     if (alteracoes.length === 0) return { alteracoes, dados: atuais };
 
     const dados: DadosComerciais = { ...atuais, ...novos };
+    const gravavel = { ...dados, descontoPercentual: dados.descontoPercentual == null ? null : dados.descontoPercentual.toFixed(2) };
     await tx
       .insert(oportunidadeComercial)
-      .values({ oportunidadeId, empresaId: contexto.empresaId, ...dados, atualizadoPor: contexto.usuarioId })
+      .values({ oportunidadeId, empresaId: contexto.empresaId, ...gravavel, atualizadoPor: contexto.usuarioId })
       .onConflictDoUpdate({
         target: oportunidadeComercial.oportunidadeId,
-        set: { ...dados, atualizadoEm: new Date(), atualizadoPor: contexto.usuarioId },
+        set: { ...gravavel, atualizadoEm: new Date(), atualizadoPor: contexto.usuarioId },
       });
     await tx.insert(oportunidadeEventos).values({
       empresaId: contexto.empresaId,

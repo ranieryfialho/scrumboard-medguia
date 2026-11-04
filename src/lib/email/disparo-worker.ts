@@ -51,11 +51,11 @@ export interface ResumoDoDisparo {
 
 type Dependencias = Required<OpcoesDoDisparo>;
 
-async function enviarUm(db: NodePgDatabase, empresaId: string, envio: EnvioParaEnviar, config: { apiKey: string; remetente: string | null }, d: Dependencias, segredo: string): Promise<boolean> {
+async function enviarUm(db: NodePgDatabase, empresaId: string, envio: EnvioParaEnviar, config: { apiKey: string; remetente: string | null; replyTo?: string }, d: Dependencias, segredo: string): Promise<boolean> {
   const link = linkDeDescadastro(d.baseUrl, empresaId, envio.email, segredo);
   const html = prepararCorpoComDescadastro(renderizarCorpoDeCampanha(envio.corpoHtml, envio.nome), link);
   const resultado = await d
-    .transporte({ apiKey: config.apiKey, remetente: config.remetente, destinatario: envio.email, assunto: envio.assunto, html, cabecalhos: cabecalhosDeDescadastro(link), envioId: envio.id, empresaId })
+    .transporte({ apiKey: config.apiKey, remetente: config.remetente, ...(config.replyTo ? { replyTo: config.replyTo } : {}), destinatario: envio.email, assunto: envio.assunto, html, cabecalhos: cabecalhosDeDescadastro(link), envioId: envio.id, empresaId })
     .catch((): { ok: false; erro: 'FALHA_DE_REDE' } => ({ ok: false, erro: 'FALHA_DE_REDE' }));
   if (resultado.ok) await registrarEnviado(db, empresaId, envio.id, d.agora());
   else await registrarFalha(db, empresaId, envio.id, resultado.erro);

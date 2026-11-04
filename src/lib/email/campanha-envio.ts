@@ -10,6 +10,8 @@ export type MotivoDeFalhaNoEnvio = 'RESEND_RECUSOU' | 'FALHA_DE_REDE';
 export interface EmailDeCampanha {
   apiKey: string;
   remetente: string | null;
+  /** T-307: para onde vão as respostas (Reply-To); ausente, o cliente responde ao próprio remetente. */
+  replyTo?: string | null;
   destinatario: string;
   assunto: string;
   html: string;
@@ -30,6 +32,7 @@ export const transporteResendDeCampanha: TransporteDeCampanha = async (email) =>
       body: JSON.stringify({
         from: email.remetente ?? process.env.RESEND_REMETENTE ?? REMETENTE_PADRAO,
         to: [email.destinatario],
+        ...(email.replyTo ? { reply_to: email.replyTo } : {}),
         subject: email.assunto,
         html: email.html,
         headers: email.cabecalhos,

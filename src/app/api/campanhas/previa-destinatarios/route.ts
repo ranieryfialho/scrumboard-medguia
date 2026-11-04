@@ -36,5 +36,5 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ codigo: 'PARAMETRO_INVALIDO', mensagem: 'etapaIds inválido.' }, { status: 400 });
   }
 
-  return NextResponse.json(await preverDestinatarios(getDb(), contexto, [...new Set(ids)]));
+  return NextResponse.json(await preverDestinatarios(getDb(), contexto, [...new Set(ids)], request.nextUrl.searchParams.get('protegerFrequencia') === '1'));
 }

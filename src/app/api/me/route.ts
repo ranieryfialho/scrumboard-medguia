@@ -64,6 +64,8 @@ export async function GET(request: NextRequest) {
     papel: contexto.papel,
     isSuperAdmin: contexto.isSuperAdmin,
     empresaAtiva,
+    // T-322: os módulos liberados da pessoa (ausente = padrão do papel); a casca esconde do menu o que não for dela.
+    ...(contexto.modulos ? { modulos: contexto.modulos } : {}),
   };
 
   if (contexto.isSuperAdmin) {

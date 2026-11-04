@@ -10,6 +10,9 @@ export interface ColaboradorView {
   papel: Papel;
   status: Situacao;
   ultimoAcesso: string | null;
+  imagem?: string;
+  /** T-322: módulos liberados; ausente = padrão do papel. */
+  modulos?: string[];
 }
 
 export interface UsuarioLogado {

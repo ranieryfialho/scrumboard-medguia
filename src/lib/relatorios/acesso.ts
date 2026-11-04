@@ -41,6 +41,8 @@ export interface ParametrosDeRelatorio {
   ate?: string;
   responsavelId?: string;
   origem?: string;
+  /** T-320: a especialidade do lead (`dados.especialidade`); "Sem especialidade informada" filtra os leads sem ela. */
+  especialidade?: string;
   agrupar?: 'dia' | 'semana' | 'mes';
 }
 
@@ -51,6 +53,7 @@ export function lerParametros(p: URLSearchParams): { ok: true; parametros: Param
   const responsavelId = p.get('responsavelId') ?? undefined;
   const origem = p.get('origem') ?? undefined;
   const agrupar = p.get('agrupar') ?? undefined;
+  const especialidade = p.get('especialidade')?.trim() || undefined;
 
   if (de !== undefined && !dataValida(de)) return recusa(`Data inicial "${de}" inválida. Use o formato AAAA-MM-DD.`);
   if (ate !== undefined && !dataValida(ate)) return recusa(`Data final "${ate}" inválida. Use o formato AAAA-MM-DD.`);
@@ -60,7 +63,8 @@ export function lerParametros(p: URLSearchParams): { ok: true; parametros: Param
     if (dias > DIAS_MAXIMOS) return recusa(`O período pode ter no máximo ${DIAS_MAXIMOS} dias.`);
   }
   if (responsavelId !== undefined && !FORMATO_UUID.test(responsavelId)) return recusa('"responsavelId" inválido.');
+  if (especialidade !== undefined && especialidade.length > 100) return recusa('"especialidade" muito longa.');
   if (agrupar !== undefined && agrupar !== 'dia' && agrupar !== 'semana' && agrupar !== 'mes') return recusa('"agrupar" deve ser dia, semana ou mes.');
 
-  return { ok: true, parametros: { de, ate, responsavelId, origem, agrupar: agrupar as ParametrosDeRelatorio['agrupar'] } };
+  return { ok: true, parametros: { de, ate, responsavelId, origem, especialidade, agrupar: agrupar as ParametrosDeRelatorio['agrupar'] } };
 }

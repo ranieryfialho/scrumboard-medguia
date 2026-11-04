@@ -13,6 +13,7 @@ import { CabecalhoCard } from '@/components/pipeline/detalhe/cabecalho-card';
 import { nomeDaEtapa } from '@/components/pipeline/detalhe/jornada';
 import { EsqueletoCarregando, EstadoErro } from '@/components/pipeline/pecas/estados';
 import { ModalDadoFaltante } from '@/components/pipeline/modal-dado-faltante';
+import { ModalFechamentoDoCard } from '@/components/pipeline/modal-fechamento';
 import { AbasDoCard, type AbaDoCard } from './abas-do-card';
 import { useContadoresDoCard } from './use-contadores-do-card';
 import { useTransicaoDoCard } from './use-transicao-do-card';
@@ -130,6 +131,7 @@ export function MoldeDoCard({ cardId, aba, versaoDosContadores = 0, alturaFixa =
           onConfirmar={(dado) => void transicao.enviarTransicao(transicao.dadoFaltante!.etapaDestinoId, dado)}
         />
       )}
+      {transicao.pedirFechamento && <ModalFechamentoDoCard cardId={card.id} modo="fechar" onCancelar={transicao.cancelarFechamento} onConfirmar={transicao.confirmarFechamento} />}
       <AbasDoCard cardId={card.id} ativa={aba} contagens={contagens} />
       {alturaFixa ? <div className="flex flex-col lg:flex-1 lg:min-h-0">{children(card)}</div> : children(card)}
     </div>

@@ -86,6 +86,8 @@ export const empresasUsuarios = pgTable(
       .references(() => usuarios.id, { onDelete: 'cascade' }),
     papel: papelUsuarioEnum('papel').notNull(),
     ativo: boolean('ativo').notNull().default(true),
+    /** T-322: módulos liberados (migration 0034); `null` = padrão do papel. */
+    modulos: text('modulos').array(),
     criadoEm: timestamp('criado_em', { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [primaryKey({ columns: [t.empresaId, t.usuarioId] })]

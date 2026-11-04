@@ -1,6 +1,6 @@
 // T-186 (fase4-tarefas-agenda, AC-484): as quatro visões do calendário — Lista,
 // Dia, Semana e Mês — sobre as reuniões que o servidor devolveu para o período.
-import { CartaoReuniao, SeloStatus, type AcoesDaReuniao } from './cartao-reuniao';
+import { CartaoReuniao, LinhaReuniao, SeloStatus, type AcoesDaReuniao } from './cartao-reuniao';
 import { DIAS_DA_SEMANA, diaDe, diasDoPeriodo, horaDe, inicioDaSemana, periodoDaVisao, rotuloDoDia } from './datas';
 import type { ReuniaoView } from './tipos';
 
@@ -14,15 +14,25 @@ function Vazio() {
   return <p className="font-body-md text-body-md text-text-secondary py-space-md">Nenhuma reunião neste período</p>;
 }
 
+/** A lista é compacta: uma linha por reunião, agrupada pelo dia (o dia aparece uma vez só). */
 export function VisaoLista({ reunioes, acoes, ocupado }: ComumProps) {
   if (reunioes.length === 0) return <Vazio />;
+  const porDia = new Map<string, ReuniaoView[]>();
+  for (const r of reunioes) {
+    const dia = diaDe(r.agendadaPara);
+    porDia.set(dia, [...(porDia.get(dia) ?? []), r]);
+  }
   return (
-    <div className="flex flex-col gap-space-sm">
-      {reunioes.map((r) => (
-        <div key={r.id} className="flex flex-col gap-1">
-          <span className="font-label-sm text-label-sm text-text-muted uppercase tracking-wider">{rotuloDoDia(diaDe(r.agendadaPara))}</span>
-          <CartaoReuniao reuniao={r} acoes={acoes} ocupado={ocupado} />
-        </div>
+    <div className="flex flex-col gap-space-md">
+      {[...porDia.entries()].map(([dia, doDia]) => (
+        <section key={dia} aria-label={rotuloDoDia(dia)} className="flex flex-col gap-1.5">
+          <h3 className="font-label-sm text-label-sm text-text-muted uppercase tracking-wider">{rotuloDoDia(dia)}</h3>
+          <div className="bg-surface-card rounded-2xl shadow-sm divide-y divide-surface-container overflow-hidden">
+            {doDia.map((r) => (
+              <LinhaReuniao key={r.id} reuniao={r} acoes={acoes} ocupado={ocupado} />
+            ))}
+          </div>
+        </section>
       ))}
     </div>
   );

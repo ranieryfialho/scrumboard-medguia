@@ -258,14 +258,16 @@ describe('T-190: CaixaDeEntrada', () => {
     expect(chamadas('/api/whatsapp/conversas').length).toBeGreaterThan(meio);
   });
 
-  test('respostas rápidas, anexo, emoji, microfone e filtro de status aparecem "em breve" @spec:AC-509', async () => {
+  test('anexo, emoji, microfone e filtro de status aparecem "em breve" e as respostas rápidas são os templates @spec:AC-509', async () => {
     const u = usuario();
     render(<CaixaDeEntrada />);
     await u.click(await screen.findByRole('button', { name: /Dr\. Marcos Albuquerque/ }));
     await screen.findByLabelText('Mensagem');
-    for (const rotulo of ['Respostas rápidas', 'Anexar arquivo', 'Emoji', 'Microfone', 'Filtrar por status do pipeline']) {
+    for (const rotulo of ['Anexar arquivo', 'Emoji', 'Microfone']) {
       expect(screen.getByRole('button', { name: `${rotulo} (em breve)` }).getAttribute('aria-disabled')).toBe('true');
     }
+    expect(screen.getByRole('button', { name: 'Filtrar por status do pipeline (em breve)' }).getAttribute('aria-disabled')).toBe('true');
+    expect(screen.getByText('Respostas rápidas:')).toBeTruthy();
   });
 
   test('carregando mostra esqueleto, sem conversas mostra o vazio e falha mostra erro com "Tentar de novo" @spec:AC-531', async () => {

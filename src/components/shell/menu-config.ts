@@ -5,6 +5,7 @@
 // `src/lib/auth/rotas.ts` (ASM-123) — mesma regra: só o super admin vê
 // "Empresas"; Análises e o resto de Administração exigem GERENTE+.
 import type { PapelUsuario } from '@/lib/auth/convites';
+import { MODULOS, modulosEfetivos } from '@/lib/auth/modulos';
 
 export interface ItemMenu {
   id: string;
@@ -108,13 +109,18 @@ function podeVerItem(item: ItemMenu, papel: PapelUsuario, isSuperAdmin: boolean)
 }
 
 /** AC-349: filtra grupos e itens pelo papel/`isSuperAdmin` da sessão — o super admin vê tudo, inclusive Empresas. */
-export function menuParaPapel(papel: PapelUsuario, isSuperAdmin: boolean): GrupoMenu[] {
+export function menuParaPapel(papel: PapelUsuario, isSuperAdmin: boolean, modulos?: readonly string[] | null): GrupoMenu[] {
+  // T-322: com módulos liberados, só aparecem os itens dos módulos marcados (o papel continua sendo o teto).
+  const liberados = modulos && !isSuperAdmin ? modulosEfetivos(papel, false, modulos) : null;
+  const itensLiberados = liberados ? new Set(MODULOS.filter((m) => liberados.has(m.id)).flatMap((m) => m.itensMenu)) : null;
   return GRUPOS_MENU.filter(
     (grupo) => isSuperAdmin || !grupo.papelMinimo || HIERARQUIA_PAPEL[papel] >= HIERARQUIA_PAPEL[grupo.papelMinimo]
-  ).map((grupo) => ({
-    ...grupo,
-    itens: grupo.itens.filter((item) => podeVerItem(item, papel, isSuperAdmin)),
-  }));
+  )
+    .map((grupo) => ({
+      ...grupo,
+      itens: grupo.itens.filter((item) => podeVerItem(item, papel, isSuperAdmin) && (!itensLiberados || itensLiberados.has(item.id))),
+    }))
+    .filter((grupo) => !itensLiberados || grupo.itens.length > 0);
 }
 
 function combinaRota(pathname: string, href: string): boolean {

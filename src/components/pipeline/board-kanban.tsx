@@ -19,6 +19,8 @@ import { MENSAGEM_DO_PEDIDO, type ResultadoDoLoteView } from "@/components/pipel
 import { CardOportunidade, type CardBoard } from "./card-oportunidade";
 import { ColunaEtapa } from "./coluna-etapa";
 import { ModalDadoFaltante } from "./modal-dado-faltante";
+import { ModalFechamentoDoCard } from "./modal-fechamento";
+import type { DadosFechamento } from "@/domain/pipeline/fechamento";
 import { FiltrosFunil, type OpcaoResponsavelFunil, type ValorFiltrosFunil } from "./filtros-funil";
 import { IndicadoresFunil, type IndicadoresFunilView } from "./indicadores-funil";
 import { ModalNovoLead, type DadosNovoLead, type ResultadoSalvarNovoLead } from "./modal-novo-lead";
@@ -147,6 +149,9 @@ export function BoardKanban() {
   const [mensagem, setMensagem] = useState<string | null>(null);
   const [cardAtivo, setCardAtivo] = useState<CardBoard | null>(null);
   const [dadoFaltante, setDadoFaltante] = useState<DadoFaltantePendente | null>(null);
+  // T-313: mover para "Contrato (Ganho)" pede antes os dados do fechamento (como no CRM antigo).
+  const [fechamentoPendente, setFechamentoPendente] = useState<{ oportunidadeId: string; version: number } | null>(null);
+  const fechamentoRef = useRef<DadosFechamento | null>(null);
   const [oportunidadesAtrasadas, setOportunidadesAtrasadas] = useState<Set<string>>(new Set());
   const [proximasAcoes, setProximasAcoes] = useState<Map<string, string | null>>(new Map());
 
@@ -383,6 +388,7 @@ export function BoardKanban() {
         void carregarIndicadores();
         setMensagem(null);
         setDadoFaltante(null);
+        fechamentoRef.current = null;
         return;
       }
 
@@ -422,6 +428,10 @@ export function BoardKanban() {
     const alcancaveis = grafo[card.etapaId] ?? [];
     if (!alcancaveis.includes(etapaDestinoId)) return; // AC-094: coluna nem deveria estar droppable.
 
+    if (etapaDestinoId === 15) {
+      setFechamentoPendente({ oportunidadeId: card.id, version: card.version });
+      return;
+    }
     enviarTransicao(card.id, { version: card.version, etapaDestinoId });
   };
 
@@ -570,14 +580,32 @@ export function BoardKanban() {
           codigo={dadoFaltante.codigo}
           oportunidadeId={dadoFaltante.oportunidadeId}
           aberto
-          onCancelar={() => setDadoFaltante(null)}
+          onCancelar={() => {
+            setDadoFaltante(null);
+            fechamentoRef.current = null;
+          }}
           onConfirmar={(dado) =>
             enviarTransicao(dadoFaltante.oportunidadeId, {
               version: dadoFaltante.version,
               etapaDestinoId: dadoFaltante.etapaDestinoId,
               ...dado,
+              ...(dadoFaltante.etapaDestinoId === 15 && fechamentoRef.current ? { fechamento: fechamentoRef.current } : {}),
             })
           }
+        />
+      )}
+
+      {fechamentoPendente && (
+        <ModalFechamentoDoCard
+          cardId={fechamentoPendente.oportunidadeId}
+          modo="fechar"
+          onCancelar={() => setFechamentoPendente(null)}
+          onConfirmar={(dados) => {
+            fechamentoRef.current = dados;
+            const { oportunidadeId, version } = fechamentoPendente;
+            setFechamentoPendente(null);
+            void enviarTransicao(oportunidadeId, { version, etapaDestinoId: 15, fechamento: dados });
+          }}
         />
       )}
 

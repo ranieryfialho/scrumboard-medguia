@@ -84,7 +84,8 @@ describe('T-207: RelatorioComercial', () => {
     expect(await screen.findByRole('heading', { name: 'Relatórios Comerciais e Produtividade de Vendas' })).toBeTruthy();
     expect(existsSync(join(__dirname, '..', '..', '..', 'src/app/(app)/relatorios-comerciais/page.tsx'))).toBe(true);
     await screen.findByRole('region', { name: 'Ranking da Equipe Comercial' });
-    expect(urls()[0]).toBe('/api/relatorios/comercial?de=2026-11-01&ate=2026-11-30');
+    // o período anterior é pedido antes, e a última chamada é sempre a do período na tela (T-317)
+    expect(urls()).toContain('/api/relatorios/comercial?de=2026-11-01&ate=2026-11-30');
     await screen.findByRole('option', { name: 'Dra. Juliana Rocha' });
     await u.click(screen.getByRole('button', { name: 'Últimos 7 dias' }));
     await waitFor(() => expect(urls().at(-1)).toBe('/api/relatorios/comercial?de=2026-11-12&ate=2026-11-18'));
@@ -92,17 +93,18 @@ describe('T-207: RelatorioComercial', () => {
     await waitFor(() => expect(urls().at(-1)).toBe('/api/relatorios/comercial?de=2026-11-12&ate=2026-11-18&responsavelId=u1'));
   });
 
-  test('os quatro cartões mostram MRR, pipeline, ciclo e win rate, sem meta nem ponderado @spec:AC-570', async () => {
+  test('os quatro cartões mostram MRR, pipeline (com o ponderado), ciclo e win rate @spec:AC-570', async () => {
     render(<RelatorioComercial />);
     await screen.findByText('Novo MRR contratado');
     expect(screen.getByText(/428\.000/)).toBeTruthy();
-    expect(screen.getByText(/\/mês · 51 contratos · ticket médio R\$\s?8\.392/)).toBeTruthy();
+    expect(screen.getByText(/51 contratos · ticket médio R\$\s?8\.392/)).toBeTruthy();
     expect(screen.getByText(/1\.124\.500/)).toBeTruthy();
-    expect(screen.getByText('82 propostas')).toBeTruthy();
+    expect(screen.getByText(/82 propostas em estágio de fechamento/)).toBeTruthy();
+    expect(screen.getByText(/Ponderado pelo win rate do período/)).toBeTruthy();
     expect(screen.getAllByText('14,2 dias').length).toBeGreaterThan(0);
     expect(screen.getByText('34,8%')).toBeTruthy();
     expect(screen.getByText('51 ganhos · 95 perdas')).toBeTruthy();
-    expect(screen.queryByText(/Meta alcançada|Ponderado|Inbound|Outbound/)).toBeFalsy();
+    expect(screen.queryByText(/Meta alcançada/)).toBeFalsy();
     cleanup();
 
     corpo = { ...DADOS, resumo: { ...DADOS.resumo, mrrNovo: 0, contratos: 0, ticketMedio: null, cicloMedioDias: null, winRate: { valor: null, ganhos: 0, perdas: 0 } } };
@@ -118,7 +120,9 @@ describe('T-207: RelatorioComercial', () => {
     const grafico = within(secao).getByRole('img', { name: 'Valor fechado e valor de propostas geradas por semana' });
     expect(grafico.querySelectorAll('polyline')).toHaveLength(2);
     expect(within(secao).getAllByText('Novo MRR assinado (R$)').length).toBeGreaterThan(0);
-    expect(secao.textContent).not.toMatch(/Melhor dia|Ticket campeão|Desconto/i);
+    // os insights de fechamento só mostram valor quando a API os traz; sem eles, o traço (T-317/T-319)
+    expect(secao.textContent).toMatch(/Melhor dia de fechamento/);
+    expect(secao.textContent).toMatch(/Desconto médio concedido/);
     cleanup();
 
     corpo = { ...DADOS, semanal: DADOS.semanal.map((s) => ({ ...s, valorFechado: 0, pipelineCriado: 0 })) };
@@ -130,7 +134,7 @@ describe('T-207: RelatorioComercial', () => {
     const u = usuario();
     render(<RelatorioComercial />);
     const secao = await screen.findByRole('region', { name: 'Ranking da Equipe Comercial' });
-    const nomes = () => within(secao).getAllByRole('row').slice(1, -1).map((l) => within(l).getAllByRole('cell')[0].textContent);
+    const nomes = () => within(secao).getAllByRole('row').slice(1, -1).map((l) => l.getAttribute('data-responsavel'));
     expect(nomes()).toEqual(['Dra. Juliana Rocha', 'Carlos Mendes', 'Gabriela Siqueira']);
     await u.selectOptions(within(secao).getByLabelText('Ordenar por'), 'winrate');
     expect(nomes()).toEqual(['Gabriela Siqueira', 'Dra. Juliana Rocha', 'Carlos Mendes']);
@@ -140,8 +144,8 @@ describe('T-207: RelatorioComercial', () => {
     const linhas = within(secao).getAllByRole('row');
     const totais = linhas[linhas.length - 1];
     expect(totais.textContent).toContain('Totais consolidados');
-    expect(within(totais).getAllByRole('cell')[1].textContent).toBe('99'); // reuniões 38+36+25
-    expect(within(totais).getAllByRole('cell')[3].textContent).toBe('43'); // contratos 21+10+12
+    expect(within(totais).getAllByRole('cell')[2].textContent).toBe('99'); // demos (reuniões) 38+36+25
+    expect(within(totais).getAllByRole('cell')[4].textContent).toBe('43'); // fechados 21+10+12
     expect(totais.textContent).toMatch(/325\.600/); // valor fechado
     expect(totais.textContent).toContain('14,2 dias');
     cleanup();
@@ -166,7 +170,7 @@ describe('T-207: RelatorioComercial', () => {
 
     corpo = { ...DADOS, motivosPerda: [{ motivo: 'Sem motivo informado', quantidade: 2, percentual: 100 }], totalPerdas: 2 };
     render(<RelatorioComercial />);
-    expect(await screen.findByText('Sem motivo informado')).toBeTruthy();
+    expect(await screen.findByText(/Sem motivo informado/)).toBeTruthy();
     cleanup();
 
     corpo = { ...DADOS, motivosPerda: [], totalPerdas: 0 };
@@ -174,13 +178,12 @@ describe('T-207: RelatorioComercial', () => {
     expect(await screen.findByText('Nenhuma perda no período')).toBeTruthy();
   });
 
-  test('exportar e especialidade ficam "em breve" e a distribuição por especialidade não aparece @spec:AC-574', async () => {
+  test('exportar e o filtro de especialidade funcionam (T-320) @spec:AC-574', async () => {
     render(<RelatorioComercial />);
     await screen.findByRole('region', { name: 'Ranking da Equipe Comercial' });
-    for (const rotulo of ['Exportar Dados (CSV/XLSX)', 'Filtrar por especialidade']) {
-      expect(screen.getByRole('button', { name: `${rotulo} (em breve)` }).getAttribute('aria-disabled')).toBe('true');
-    }
-    expect(screen.queryByText(/Distribuição por Especialidade|Meta atingida|107%/i)).toBeFalsy();
+    expect((screen.getByRole('button', { name: 'Exportar Dados (CSV)' }) as HTMLButtonElement).disabled).toBe(false);
+    expect(screen.getByRole('combobox', { name: 'Especialidade' })).toBeTruthy();
+    expect(screen.queryByRole('button', { name: /Filtrar por especialidade \(em breve\)/ })).toBeNull();
   });
 
   test('"Configurar Metas de Vendas" leva à tela de metas @spec:AC-626', async () => {

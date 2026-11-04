@@ -10,10 +10,11 @@ import { timingSafeEqual } from 'node:crypto';
 import { and, desc, eq, inArray, isNull, or, sql } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
-import { empresaConfiguracoes, leadTelefones, leads, oportunidades, whatsappMensagens } from '../db/schema';
+import { empresaConfiguracoes, leadTelefones, leads, oportunidades, whatsappAvulsos, whatsappMensagens } from '../db/schema';
 import { normalizarNumero, variantesNumero } from '../domain/whatsapp/numero';
 import type { ContextoTenant } from '../lib/auth/tenant';
 import { comTenant, type TransacaoTenant } from './contexto';
+import { promoverNaTransacao } from './whatsapp-promover';
 
 export type Lead = typeof leads.$inferSelect;
 
@@ -173,11 +174,31 @@ export async function registrarMensagemRecebida(
       return { nova: false, mensagemId: null, leadId };
     }
 
+    // T-303: o número avulso respondeu e quem enviou pediu "criar lead se houver resposta" — vira lead com card em "Entrada de leads".
+    let leadFinal = leadId;
+    if (!leadId) {
+      const [avulso] = await tx
+        .select({ nome: whatsappAvulsos.nome, criadoPor: whatsappAvulsos.criadoPor })
+        .from(whatsappAvulsos)
+        .where(and(eq(whatsappAvulsos.empresaId, contexto.empresaId), inArray(whatsappAvulsos.numero, variantesNumero(dados.numero)), eq(whatsappAvulsos.criarLeadAoResponder, true)))
+        .limit(1);
+      if (avulso) {
+        const promovido = await promoverNaTransacao(
+          tx,
+          { empresaId: contexto.empresaId, usuarioId: avulso.criadoPor },
+          avulso.nome ?? `WhatsApp ${dados.numero}`,
+          dados.numero,
+          variantesNumero(dados.numero)
+        );
+        if (promovido.ok) leadFinal = promovido.leadId;
+      }
+    }
+
     await tx.execute(
-      sql`select registrar_conexao_whatsapp(${contexto.empresaId}::uuid, ${leadId}::uuid, ${dados.evolutionMessageId})`
+      sql`select registrar_conexao_whatsapp(${contexto.empresaId}::uuid, ${leadFinal}::uuid, ${dados.evolutionMessageId})`
     );
 
-    return { nova: true, mensagemId: inserida.id, leadId };
+    return { nova: true, mensagemId: inserida.id, leadId: leadFinal };
   });
 }
 

@@ -5,10 +5,13 @@
 // API) que não aparecem em `REGRAS_PAPEL` só exigem sessão válida — nenhuma
 // restrição extra de papel.
 import type { PapelUsuario } from './convites';
+import { modulosEfetivos, moduloDaRota } from './modulos';
 
 export interface ContextoAcesso {
   papel: PapelUsuario;
   isSuperAdmin: boolean;
+  /** T-322: módulos liberados da pessoa (`null` ou ausente = padrão do papel). */
+  modulos?: string[] | null;
 }
 
 const HIERARQUIA_PAPEL: Record<PapelUsuario, number> = {
@@ -102,9 +105,14 @@ function encontrarRegra(pathname: string): RegraPapel | undefined {
 
 /** AC-381/AC-349: decide se o papel autenticado pode acessar a rota (página ou API). */
 export function podeAcessarRota(contexto: ContextoAcesso, pathname: string): boolean {
+  if (contexto.isSuperAdmin) return true;
+  // T-322: nas PÁGINAS, os módulos liberados da pessoa também contam (as APIs seguem só as regras de papel).
+  if (contexto.modulos && !pathname.startsWith('/api/')) {
+    const modulo = moduloDaRota(pathname);
+    if (modulo && !modulosEfetivos(contexto.papel, false, contexto.modulos).has(modulo.id)) return false;
+  }
   const regra = encontrarRegra(pathname);
   if (!regra) return true;
-  if (contexto.isSuperAdmin) return true;
   if (regra.somenteSuperAdmin) return false;
   if (!regra.papelMinimo) return true;
   return HIERARQUIA_PAPEL[contexto.papel] >= HIERARQUIA_PAPEL[regra.papelMinimo];

@@ -47,6 +47,7 @@ const ICONES: Record<string, string> = {
   cadencia_esgotada: 'hourglass_disabled',
   cadencia_dia_avancado: 'update',
   conexao_whatsapp: 'chat',
+  fechamento_registrado: 'handshake',
   reatribuicao: 'swap_horiz',
   edicao_card: 'edit_note',
   dossie_exportado: 'folder_zip',

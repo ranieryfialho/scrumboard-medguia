@@ -210,3 +210,13 @@ export async function getQRCode(
   if (data?.instance?.state === 'open') return { state: 'open' };
   return { base64: data?.base64 || data?.qrcode?.base64, state: data?.state };
 }
+
+/** T-304: encerra a sessão do WhatsApp da instância (o aparelho sai de "Aparelhos conectados"); a instância continua existindo. */
+export async function logoutInstance(config: EvolutionConfig): Promise<boolean> {
+  try {
+    const res = await fetch(`${base(config)}/instance/logout/${config.instance}`, { method: 'DELETE', headers: { apikey: config.apiKey } });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}

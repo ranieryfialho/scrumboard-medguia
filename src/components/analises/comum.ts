@@ -63,3 +63,23 @@ export interface Responsavel {
   id: string;
   nome: string;
 }
+
+function somarDias(iso: string, dias: number): string {
+  const [a, m, d] = iso.split('-').map(Number);
+  return new Date(Date.UTC(a, m - 1, d + dias)).toISOString().slice(0, 10);
+}
+
+/** O período logo antes do escolhido, para a comparação: mês e trimestre voltam um mês/trimestre inteiro; os demais, o mesmo número de dias. */
+export function periodoAnterior(preset: Preset, agora: Date = new Date()): { de: string; ate: string } {
+  const { de, ate } = periodoDoPreset(preset, agora);
+  if (preset === 'mes' || preset === 'trimestre') {
+    const meses = preset === 'mes' ? 1 : 3;
+    const [a, m] = de.split('-').map(Number);
+    const novoDe = new Date(Date.UTC(a, m - 1 - meses, 1));
+    const novoAte = new Date(Date.UTC(a, m - 1, 0));
+    return { de: novoDe.toISOString().slice(0, 10), ate: novoAte.toISOString().slice(0, 10) };
+  }
+  const dias = Math.round((Date.parse(ate) - Date.parse(de)) / 86_400_000) + 1;
+  const novoAte = somarDias(de, -1);
+  return { de: somarDias(novoAte, -(dias - 1)), ate: novoAte };
+}
