@@ -31,5 +31,5 @@ export async function exigirSuperAdmin(request: NextRequest): Promise<{ contexto
 }
 
 export function baseDaUrl(request: NextRequest): string {
-  return process.env.NEXT_PUBLIC_APP_URL || `https://${request.headers.get('host')}`;
+  return (process.env['APP_URL'] || process.env.NEXT_PUBLIC_APP_URL) || `https://${request.headers.get('host')}`;
 }

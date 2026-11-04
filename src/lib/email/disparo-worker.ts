@@ -93,7 +93,7 @@ export async function rodarCicloDeEmail(db: NodePgDatabase, opcoes: OpcoesDoDisp
     dormir: opcoes.dormir ?? ((ms) => new Promise((r) => setTimeout(r, ms))),
     transporte: opcoes.transporte ?? transporteResendDeCampanha,
     segredo: opcoes.segredo === undefined ? segredoDeConfiguracoes() : opcoes.segredo,
-    baseUrl: opcoes.baseUrl ?? process.env.NEXT_PUBLIC_APP_URL ?? BASE_URL_PADRAO,
+    baseUrl: opcoes.baseUrl ?? (process.env['APP_URL'] || process.env.NEXT_PUBLIC_APP_URL) ?? BASE_URL_PADRAO,
   };
   const ativas = await db.select({ id: empresas.id }).from(empresas).where(eq(empresas.ativo, true));
   const resumo: ResumoDoDisparo = { empresas: ativas.length, enviados: 0, falhas: 0, descadastrados: 0, semChave: 0, interrompidos: 0, finalizadas: 0, empresasComErro: 0 };
