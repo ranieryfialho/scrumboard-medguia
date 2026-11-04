@@ -161,7 +161,8 @@ describe('T-191: NovaMensagem', () => {
     expect(screen.getByRole('button', { name: 'Salvar como Rascunho' })).toBeTruthy();
     await screen.findAllByRole('button', { name: 'Reenviar' });
     expect(screen.queryByRole('button', { name: /\(em breve\)/ })).toBeNull();
-    expect(screen.getByRole('region', { name: 'Parâmetros do Envio' }).querySelector('select')).toBeFalsy();
+    // a instância é só um texto: o único seletor da seção é o do motivo da abordagem
+    expect(screen.getByRole('region', { name: 'Parâmetros do Envio' }).querySelectorAll('select')).toHaveLength(1);
     // @spec:AC-650: o item genérico "em breve" foi trocado pelo botão de promover em cada disparo avulso
     expect(screen.queryByRole('button', { name: 'Promover a Lead (em breve)' })).toBeNull();
   });

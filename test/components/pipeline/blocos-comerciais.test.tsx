@@ -86,7 +86,7 @@ describe('T-289: blocos comerciais da conversa', () => {
     await waitFor(() => expect(screen.queryByRole('button', { name: 'Salvar' })).toBeNull());
     expect(corposDe('PATCH', `/api/oportunidades/${CARD}`)).toEqual([{ valor: 7200 }]);
     expect(corposDe('PUT', `/api/oportunidades/${CARD}/comercial`)).toEqual([
-      { previsaoFechamento: '2026-11-25', condicaoEspecial: '60 Dias Carência', plano: 'Enterprise' },
+      { previsaoFechamento: '2026-11-25', condicaoEspecial: '60 Dias Carência', plano: 'Enterprise', descontoPercentual: null },
     ]);
     expect(screen.getByText(/7\.200,00/)).toBeTruthy();
     expect(screen.getByText('60 Dias Carência')).toBeTruthy();

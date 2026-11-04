@@ -200,7 +200,7 @@ describe('T-198: NovaCampanha', () => {
 
   test('o que ainda não existe aparece "em breve" e o resto funciona @spec:AC-546', async () => {
     render(<NovaCampanha />);
-    for (const rotulo of ['Especialidade médica predominante', 'Porte da clínica', 'Proteção de frequência']) {
+    for (const rotulo of ['Especialidade médica predominante', 'Porte da clínica']) {
       expect(screen.getByRole('button', { name: `${rotulo} (em breve)` }).getAttribute('aria-disabled')).toBe('true');
     }
     // T-306: os modelos, a barra de formatação, o pré-cabeçalho e o e-mail de teste agora funcionam.
