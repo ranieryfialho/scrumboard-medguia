@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
         ativo: true,
         empresa_id: finalEmpresaId,
       },
-      redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/nova-senha`
+      redirectTo: `${(process.env['APP_URL'] || process.env.NEXT_PUBLIC_APP_URL)}/nova-senha`
     });
 
     if (error) throw error;

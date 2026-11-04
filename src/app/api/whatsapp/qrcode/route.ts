@@ -90,7 +90,7 @@ export async function GET(request: NextRequest) {
   }
 
   const segredo = await obterOuCriarSegredoWebhook(db, contexto);
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || `https://${request.headers.get('host')}`;
+  const appUrl = (process.env['APP_URL'] || process.env.NEXT_PUBLIC_APP_URL) || `https://${request.headers.get('host')}`;
   const webhookUrl = `${appUrl}/api/whatsapp/webhook?empresa_id=${contexto.empresaId}&secret=${segredo}`;
   const webhookRegistrado = await setWebhook(config, webhookUrl);
 

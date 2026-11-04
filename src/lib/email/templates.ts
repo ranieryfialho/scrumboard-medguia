@@ -13,7 +13,7 @@ export interface OpcoesTemplateRedefinicaoSenha {
 }
 
 function baseUrlPadrao(): string {
-  return process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.medguia.cloud';
+  return (process.env['APP_URL'] || process.env.NEXT_PUBLIC_APP_URL) ?? 'https://app.medguia.cloud';
 }
 
 /** AC-365: e-mail marcado MedCRM com o link de redefinição `/redefinir-senha/<token>`. */

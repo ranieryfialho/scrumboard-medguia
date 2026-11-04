@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
   // T-193 (AC-524): além de `{ empresaId, config }`, o que a tela de configuração mostra —
   // a URL do servidor e se a chave existe (nunca a chave), a URL do webhook com o
   // segredo mascarado e os eventos que o CRM registra.
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || `https://${request.headers.get('host')}`;
+  const appUrl = (process.env['APP_URL'] || process.env.NEXT_PUBLIC_APP_URL) || `https://${request.headers.get('host')}`;
   return NextResponse.json({
     empresaId: contexto.empresaId,
     config,
