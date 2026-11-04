@@ -11,7 +11,9 @@ import { contextoDaSessao } from '../../../../lib/auth/sessao';
 import { buildConfig, sendAudioMessage, sendMediaMessage } from '../../../../lib/evolution-api';
 import { gravarMidia } from '../../../../lib/whatsapp/midia-armazenamento';
 import { listarTelefonesLead } from '../../../../repositories/lead-telefones';
+import { normalizarNumero } from '../../../../domain/whatsapp/numero';
 import { registrarMensagemEnviada } from '../../../../repositories/whatsapp';
+import { dadosAvulsoDoCorpo, registrarAvulso } from '../../../../repositories/whatsapp-avulsos';
 import { buscarNomeInstancia } from '../../../../repositories/whatsapp-instancia';
 
 export const dynamic = 'force-dynamic';
@@ -31,9 +33,13 @@ export async function POST(request: NextRequest) {
   const arquivo = formulario.get('arquivo');
   const modo = formulario.get('modo');
   const leadId = formulario.get('leadId');
+  // T-303: número avulso (sem lead) — a tela de nova mensagem envia `numero` no lugar de `leadId`.
+  const numeroBruto = formulario.get('numero');
+  const numeroAvulso = typeof numeroBruto === 'string' && numeroBruto.trim() !== '' ? normalizarNumero(numeroBruto) : null;
   const telefoneId = formulario.get('telefoneId');
   const legendaBruta = formulario.get('legenda');
-  if (!(arquivo instanceof File) || (modo !== 'audio' && modo !== 'arquivo') || typeof leadId !== 'string' || !UUID.test(leadId)) {
+  const destinoValido = numeroAvulso ? leadId === null : typeof leadId === 'string' && UUID.test(leadId);
+  if (!(arquivo instanceof File) || (modo !== 'audio' && modo !== 'arquivo') || !destinoValido || (numeroBruto !== null && !numeroAvulso)) {
     return erro('REQUISICAO_INVALIDA', 400);
   }
   if (telefoneId !== null && (typeof telefoneId !== 'string' || !UUID.test(telefoneId))) return erro('REQUISICAO_INVALIDA', 400);
@@ -50,16 +56,20 @@ export async function POST(request: NextRequest) {
   if (!bytesCombinamComMimetype(arquivo.type, bytes)) return erro('TIPO_NAO_PERMITIDO', 415);
 
   const db = getDb();
-  const telefones = await listarTelefonesLead(db, contexto, leadId);
-  if (!telefones) return erro('LEAD_NAO_ENCONTRADO', 404);
   let numeroDestino: string;
-  if (telefoneId) {
-    const extra = telefones.extras.find((telefone) => telefone.id === telefoneId);
-    if (!extra) return erro('TELEFONE_NAO_ENCONTRADO', 404);
-    numeroDestino = extra.numero;
+  if (numeroAvulso) {
+    numeroDestino = numeroAvulso;
   } else {
-    if (!telefones.principal) return erro('LEAD_SEM_TELEFONE', 422);
-    numeroDestino = telefones.principal;
+    const telefones = await listarTelefonesLead(db, contexto, leadId as string);
+    if (!telefones) return erro('LEAD_NAO_ENCONTRADO', 404);
+    if (telefoneId) {
+      const extra = telefones.extras.find((telefone) => telefone.id === telefoneId);
+      if (!extra) return erro('TELEFONE_NAO_ENCONTRADO', 404);
+      numeroDestino = extra.numero;
+    } else {
+      if (!telefones.principal) return erro('LEAD_SEM_TELEFONE', 422);
+      numeroDestino = telefones.principal;
+    }
   }
 
   const nomeInstancia = await buscarNomeInstancia(db, contexto);
@@ -96,6 +106,14 @@ export async function POST(request: NextRequest) {
       evolutionMessageId: resultado.key?.id ?? null,
       midia: { tipo, mimetype: mimetypeBase(arquivo.type), nome: tipo === 'documento' ? nome : null, arquivo: caminho },
     });
+    if (numeroAvulso) {
+      const campos: Record<string, unknown> = {
+        destinatarioNome: formulario.get('destinatarioNome'),
+        categoria: formulario.get('categoria'),
+        criarLeadAoResponder: formulario.get('criarLeadAoResponder') === 'true',
+      };
+      await registrarAvulso(db, contexto, numeroDestino, dadosAvulsoDoCorpo(campos)).catch(() => undefined);
+    }
     return NextResponse.json({ success: true, messageId: resultado.key?.id ?? null, mensagemId: registrado.mensagemId, leadId: registrado.leadId });
   } catch {
     return erro('ENVIADO_SEM_REGISTRO', 500);

@@ -1,8 +1,8 @@
 import { sql } from 'drizzle-orm';
-import { index, integer, pgEnum, pgTable, text, timestamp, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
+import { boolean, index, integer, jsonb, pgEnum, pgTable, text, timestamp, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
 
 import { empresas, usuarios } from './identidade';
-import { leads } from './pipeline';
+import { leads, oportunidades } from './pipeline';
 
 export const whatsappDirecaoEnum = pgEnum('whatsapp_direcao', ['enviada', 'recebida']);
 
@@ -139,3 +139,75 @@ export const emailDescadastros = pgTable(
   },
   (t) => [uniqueIndex('email_descadastros_empresa_email_unico').on(t.empresaId, t.email)]
 );
+
+/** T-303 (fase4-whatsapp, US-125): para quem foi a mensagem avulsa e por quê; um por número da empresa (migration 0030). */
+export const whatsappAvulsos = pgTable(
+  'whatsapp_avulsos',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    empresaId: uuid('empresa_id')
+      .notNull()
+      .references(() => empresas.id, { onDelete: 'cascade' }),
+    numero: text('numero').notNull(),
+    nome: text('nome'),
+    categoria: text('categoria'),
+    criarLeadAoResponder: boolean('criar_lead_ao_responder').notNull().default(false),
+    criadoPor: uuid('criado_por').references(() => usuarios.id, { onDelete: 'set null' }),
+    criadoEm: timestamp('criado_em', { withTimezone: true }).notNull().defaultNow(),
+    atualizadoEm: timestamp('atualizado_em', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex('whatsapp_avulsos_empresa_numero_unico').on(t.empresaId, t.numero)]
+);
+
+/** T-303: o rascunho da mensagem avulsa de cada pessoa; um por usuário (migration 0030). */
+export const whatsappRascunhos = pgTable(
+  'whatsapp_rascunhos',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    empresaId: uuid('empresa_id')
+      .notNull()
+      .references(() => empresas.id, { onDelete: 'cascade' }),
+    usuarioId: uuid('usuario_id')
+      .notNull()
+      .references(() => usuarios.id, { onDelete: 'cascade' }),
+    numero: text('numero').notNull().default(''),
+    nome: text('nome').notNull().default(''),
+    categoria: text('categoria').notNull().default(''),
+    mensagem: text('mensagem').notNull().default(''),
+    criarLeadAoResponder: boolean('criar_lead_ao_responder').notNull().default(true),
+    atualizadoEm: timestamp('atualizado_em', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex('whatsapp_rascunhos_empresa_usuario_unico').on(t.empresaId, t.usuarioId)]
+);
+
+/** T-313 (fase4-pipeline, US-114): dados do fechamento do cliente, uma linha por card (migration 0031). */
+export const oportunidadeFechamento = pgTable('oportunidade_fechamento', {
+  oportunidadeId: uuid('oportunidade_id')
+    .primaryKey()
+    .references(() => oportunidades.id, { onDelete: 'cascade' }),
+  empresaId: uuid('empresa_id')
+    .notNull()
+    .references(() => empresas.id, { onDelete: 'cascade' }),
+  plataformaAnterior: text('plataforma_anterior').notNull(),
+  deixouADesejar: text('deixou_a_desejar').notNull(),
+  maisInteressou: text('mais_interessou').notNull(),
+  plano: text('plano').notNull(),
+  porOndeConheceu: text('por_onde_conheceu').notNull(),
+  observacoes: text('observacoes').notNull(),
+  registradoEm: timestamp('registrado_em', { withTimezone: true }).notNull().defaultNow(),
+  registradoPor: uuid('registrado_por').references(() => usuarios.id, { onDelete: 'set null' }),
+});
+
+/** T-321 (fase4-admin, US-137): auditoria da equipe — convites, trocas de papel, desativações e reativações (migration 0033, append-only). */
+export const auditoriaEquipe = pgTable('auditoria_equipe', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  empresaId: uuid('empresa_id')
+    .notNull()
+    .references(() => empresas.id, { onDelete: 'cascade' }),
+  atorId: uuid('ator_id').references(() => usuarios.id, { onDelete: 'set null' }),
+  alvoId: uuid('alvo_id').references(() => usuarios.id, { onDelete: 'set null' }),
+  alvoEmail: text('alvo_email').notNull(),
+  acao: text('acao').notNull(),
+  detalhe: jsonb('detalhe').notNull().default({}),
+  criadoEm: timestamp('criado_em', { withTimezone: true }).notNull().defaultNow(),
+});

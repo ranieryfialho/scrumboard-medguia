@@ -13,12 +13,15 @@ function corDaTaxa(taxa: number | null): string {
 export function LateralAgenda({
   resumo,
   onReagendar,
+  lado = false,
 }: {
   resumo: ResumoAgendaView;
   onReagendar: (reuniao: { id: string; leadNome: string }) => void;
+  /** Painéis lado a lado (quando não há a fila de hoje ao lado). */
+  lado?: boolean;
 }) {
   return (
-    <aside className="flex flex-col gap-space-md">
+    <aside className={lado ? 'grid grid-cols-1 lg:grid-cols-2 gap-space-md items-start' : 'flex flex-col gap-space-md'}>
       <section aria-label="Fila de Resgate de No-Shows" className="bg-surface-card rounded-2xl p-space-md shadow-sm flex flex-col gap-2">
         <div className="flex items-center justify-between">
           <h2 className="font-headline-sm text-headline-sm text-text-primary">Fila de Resgate de No-Shows</h2>

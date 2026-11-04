@@ -14,6 +14,6 @@ export async function GET(request: NextRequest) {
   const leitura = lerParametros(request.nextUrl.searchParams);
   if (!leitura.ok) return leitura.resposta;
 
-  const { de, ate, origem, agrupar } = leitura.parametros;
-  return NextResponse.json(await obterMarketing(getDb(), acesso.contexto, { de, ate, origem, agrupar, agora: new Date() }));
+  const { de, ate, origem, especialidade, agrupar } = leitura.parametros;
+  return NextResponse.json(await obterMarketing(getDb(), acesso.contexto, { de, ate, origem, especialidade, agrupar, agora: new Date() }));
 }

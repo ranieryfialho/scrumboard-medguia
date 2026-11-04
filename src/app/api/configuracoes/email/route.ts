@@ -11,6 +11,7 @@ import { contarDescadastrados } from '../../../../repositories/email-descadastro
 export const dynamic = 'force-dynamic';
 
 const CHAVE_RESEND = /^re_\S{17,197}$/;
+const EMAIL_SIMPLES = /^[^<>@\s]+@[^<>@\s]+\.[^<>@\s]+$/;
 const REMETENTE = /^(?:[^<>@\s]+@[^<>@\s]+\.[^<>@\s]+|[^<>]{1,80}<[^<>@\s]+@[^<>@\s]+\.[^<>@\s]+>)$/;
 const recusa = (campo: string, mensagem: string) => NextResponse.json({ codigo: 'PARAMETRO_INVALIDO', campo, mensagem }, { status: 400 });
 
@@ -29,10 +30,10 @@ export async function PUT(request: NextRequest) {
   const acesso = await exigirGerente(request);
   if ('resposta' in acesso) return acesso.resposta;
 
-  const corpo = (await request.json().catch(() => null)) as { chave?: unknown; remetente?: unknown } | null;
+  const corpo = (await request.json().catch(() => null)) as { chave?: unknown; remetente?: unknown; responderPara?: unknown } | null;
   if (!corpo || typeof corpo !== 'object') return recusa('chave', 'Informe a configuração.');
 
-  const alteracao: { chave?: string | null; remetente?: string | null } = {};
+  const alteracao: { chave?: string | null; remetente?: string | null; responderPara?: string | null } = {};
   if (corpo.chave !== undefined) {
     if (corpo.chave === null) alteracao.chave = null;
     else if (typeof corpo.chave === 'string' && CHAVE_RESEND.test(corpo.chave.trim()) && corpo.chave.trim().length <= 200) alteracao.chave = corpo.chave.trim();
@@ -42,6 +43,11 @@ export async function PUT(request: NextRequest) {
     if (corpo.remetente === null || corpo.remetente === '') alteracao.remetente = null;
     else if (typeof corpo.remetente === 'string' && corpo.remetente.trim().length <= 200 && REMETENTE.test(corpo.remetente.trim())) alteracao.remetente = corpo.remetente.trim();
     else return recusa('remetente', 'Informe o remetente como email@dominio.com ou Nome <email@dominio.com>.');
+  }
+  if (corpo.responderPara !== undefined) {
+    if (corpo.responderPara === null || corpo.responderPara === '') alteracao.responderPara = null;
+    else if (typeof corpo.responderPara === 'string' && corpo.responderPara.trim().length <= 200 && EMAIL_SIMPLES.test(corpo.responderPara.trim())) alteracao.responderPara = corpo.responderPara.trim();
+    else return recusa('responderPara', 'Informe um e-mail válido, como atendimento@dominio.com.');
   }
   if (Object.keys(alteracao).length === 0) return recusa('chave', 'Informe a chave ou o remetente.');
 

@@ -8,7 +8,7 @@ import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { leads, oportunidades, whatsappMensagens } from '../db/schema';
 import { normalizarNumero, variantesNumero } from '../domain/whatsapp/numero';
 import type { ContextoTenant } from '../lib/auth/tenant';
-import { comTenant } from './contexto';
+import { comTenant, type TransacaoTenant } from './contexto';
 
 const ETAPA_ENTRADA_DE_LEADS = 1;
 const ORIGEM_WHATSAPP = 'WhatsApp';
@@ -28,27 +28,36 @@ export async function promoverNumeroAvulso(
   if (!numero) return { ok: false, codigo: 'NUMERO_INVALIDO' };
   const variantes = variantesNumero(numero);
 
-  return comTenant(db, contexto, async (tx) => {
-    const existente = await tx
-      .select({ id: leads.id })
-      .from(leads)
-      .where(and(eq(leads.empresaId, contexto.empresaId), inArray(leads.telefoneE164, variantes)))
-      .limit(1);
-    if (existente.length > 0) return { ok: false, codigo: 'NUMERO_JA_E_LEAD' } as const;
+  return comTenant(db, contexto, (tx) => promoverNaTransacao(tx, contexto, nome, numero, variantes));
+}
 
-    const [lead] = await tx
-      .insert(leads)
-      .values({ empresaId: contexto.empresaId, nome, telefoneE164: numero, origem: ORIGEM_WHATSAPP })
-      .returning({ id: leads.id });
-    const [card] = await tx
-      .insert(oportunidades)
-      .values({ empresaId: contexto.empresaId, leadId: lead.id, etapaId: ETAPA_ENTRADA_DE_LEADS, responsavelId: contexto.usuarioId })
-      .returning({ id: oportunidades.id });
-    const ligadas = await tx
-      .update(whatsappMensagens)
-      .set({ leadId: lead.id })
-      .where(and(eq(whatsappMensagens.empresaId, contexto.empresaId), isNull(whatsappMensagens.leadId), inArray(whatsappMensagens.numero, variantes)))
-      .returning({ id: whatsappMensagens.id });
-    return { ok: true, leadId: lead.id, oportunidadeId: card.id, mensagensVinculadas: ligadas.length } as const;
-  });
+/** O miolo da promoção, para quem já está dentro de uma transação do tenant (o webhook, quando o avulso responde). */
+export async function promoverNaTransacao(
+  tx: TransacaoTenant,
+  contexto: { empresaId: string; usuarioId: string | null },
+  nome: string,
+  numero: string,
+  variantes: string[]
+): Promise<ResultadoPromocao> {
+  const existente = await tx
+    .select({ id: leads.id })
+    .from(leads)
+    .where(and(eq(leads.empresaId, contexto.empresaId), inArray(leads.telefoneE164, variantes)))
+    .limit(1);
+  if (existente.length > 0) return { ok: false, codigo: 'NUMERO_JA_E_LEAD' } as const;
+
+  const [lead] = await tx
+    .insert(leads)
+    .values({ empresaId: contexto.empresaId, nome, telefoneE164: numero, origem: ORIGEM_WHATSAPP })
+    .returning({ id: leads.id });
+  const [card] = await tx
+    .insert(oportunidades)
+    .values({ empresaId: contexto.empresaId, leadId: lead.id, etapaId: ETAPA_ENTRADA_DE_LEADS, responsavelId: contexto.usuarioId })
+    .returning({ id: oportunidades.id });
+  const ligadas = await tx
+    .update(whatsappMensagens)
+    .set({ leadId: lead.id })
+    .where(and(eq(whatsappMensagens.empresaId, contexto.empresaId), isNull(whatsappMensagens.leadId), inArray(whatsappMensagens.numero, variantes)))
+    .returning({ id: whatsappMensagens.id });
+  return { ok: true, leadId: lead.id, oportunidadeId: card.id, mensagensVinculadas: ligadas.length } as const;
 }

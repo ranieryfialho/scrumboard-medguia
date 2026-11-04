@@ -156,11 +156,13 @@ describe('T-192: ConexaoQr', () => {
 
   test('desconectar, pareamento e nova instância aparecem "em breve"; a instância é uma só @spec:AC-522', async () => {
     render(<ConexaoQr />);
-    await screen.findByRole('region', { name: 'Instâncias da Clínica' });
-    for (const rotulo of ['Desconectar Sessão', 'Código Numérico (Pairing)', 'Nova Instância']) {
+    await screen.findByRole('region', { name: 'Instâncias' });
+    // T-304: "Desconectar Sessão" é real (fica travado enquanto não há sessão conectada); pareamento e nova instância seguem "em breve".
+    expect((screen.getByRole('button', { name: 'Desconectar Sessão' }) as HTMLButtonElement).disabled).toBe(true);
+    for (const rotulo of ['Código Numérico (Pairing)', 'Nova Instância']) {
       expect(screen.getByRole('button', { name: `${rotulo} (em breve)` }).getAttribute('aria-disabled')).toBe('true');
     }
-    const instancias = screen.getByRole('region', { name: 'Instâncias da Clínica' });
+    const instancias = screen.getByRole('region', { name: 'Instâncias' });
     expect(within(instancias).getAllByRole('article')).toHaveLength(1);
     expect(within(instancias).getByText('matriz')).toBeTruthy();
     expect(within(instancias).getByRole('button', { name: 'Reconectar' })).toBeTruthy();

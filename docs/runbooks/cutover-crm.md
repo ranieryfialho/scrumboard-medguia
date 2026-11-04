@@ -26,7 +26,7 @@
 | Item | Como conferir |
 |---|---|
 | Todas as PRs da fase 5 mergeadas (#47 a #54 e a meta de receita) e o `Release` da `main` verde | `gh pr list --state merged`, `gh run list --workflow release.yml` |
-| Última migration em `drizzle/` é a `0029_reuniao_meet.sql` (se entrar outra depois, acrescente aqui) | `ls drizzle` |
+| Última migration em `drizzle/` é a `0034_modulos_do_colaborador.sql` (se entrar outra depois, acrescente aqui) | `ls drizzle` |
 | No nginx-proxy-manager do host do CRM (staging e produção), `client_max_body_size 20m;` em *Advanced* — o padrão do nginx é 1 MB e barraria o envio de áudio e arquivos do WhatsApp (até 16 MB) com erro 413 | enviar um PDF de 2 MB pela conversa de um card |
 | Acesso SSH root à VPS; código em `/root/crm-staging` (nunca em `~/scrumboard-medguia`, que é o legado) | — |
 | Depois da carga de dados, iniciar a cadência dos leads que devem ter tarefas: no funil, **Iniciar Cadência em Massa** (todos de "Entrada de leads" à vista, em pedaços de 100) ou, na lista, marcar e **Iniciar Cadência**. Sem isso "Tarefas do Turno" fica vazia (a migração põe todos em "Entrada de leads", sem toques) | abrir "Tarefas do Turno" |
@@ -43,7 +43,7 @@ pg_dumpall -U postgres | gzip > /root/backups/pg-master-pre-cutover_$(date +%F_%
 
 1. Se `crm_prod`, `crm_app` e `crm_migrator` ainda não existem, crie-os como no
    [`provisionar-staging.md`](provisionar-staging.md) (`infra/postgres/init/01-databases-and-roles.sql`).
-2. Aplique **todos** os `.sql` de `drizzle/` (de `0000` até a `0029`), **em ordem**, com `psql` como `crm_migrator`,
+2. Aplique **todos** os `.sql` de `drizzle/` (de `0000` até a `0034`), **em ordem**, com `psql` como `crm_migrator`,
    direto no `crm_prod`. **Não use `npm run db:migrate`:** o `_journal.json` só conhece
    4 das migrations (as demais são escritas à mão).
 
@@ -74,6 +74,11 @@ O que cada migration das fases 4 e 5 faz (todas **só acrescentam**; nenhuma apa
 | `0027_whatsapp_midia` | colunas de mídia (áudio, imagem, vídeo, documento) nas mensagens do WhatsApp |
 | `0028_cadencia_inicio_no_turno` | a cadência iniciada à tarde começa pelo bloco da tarde (troca a função `iniciar_cadencia`) |
 | `0029_reuniao_meet` | o link da sala do Google Meet em cada reunião (`reunioes.meet_url`) |
+| `0030_whatsapp_avulsos` | nome, motivo e "virar lead se responder" de cada número avulso do WhatsApp, e o rascunho de cada pessoa |
+| `0031_fechamento_card` | os dados do Fechamento de Clientes (plataforma anterior, plano, por onde conheceu...) de cada card ganho |
+| `0032_desconto_proposta` | o desconto concedido (%) nos dados da proposta do card, para o desconto médio do relatório comercial |
+| `0033_auditoria_equipe` | o registro de auditoria da equipe (convites, trocas de papel, desativações e reativações), que o botão Logs de Auditoria mostra |
+| `0034_modulos_do_colaborador` | os módulos liberados de cada colaborador (coluna `modulos` em `empresas_usuarios`; vazio = padrão do papel) |
 | `0024_envios_campanha_erro` | a coluna `erro` (motivo da falha) em `envios_campanha` e o índice dos envios pendentes, para o worker de e-mail |
 
 **Conferência do banco** (como `crm_migrator`; os números vêm do estado de 29/10, ajuste se

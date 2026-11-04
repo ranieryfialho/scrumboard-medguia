@@ -15,6 +15,7 @@ import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
 import { contas, sessoes, tokensVerificacao, usuarios } from '../../db/schema';
 import { hashSenha, verificarSenha } from './definir-senha';
+import { DURACAO_DA_SESSAO_SEGUNDOS } from './sessao-config';
 
 /** ID do provedor de credencial — literal exigido pelas rotas internas do Better Auth (sign-in, reset). Nunca traduzir. */
 export const PROVEDOR_CREDENCIAL_BETTER_AUTH = 'credential';
@@ -51,7 +52,7 @@ export function criarAuth(db: NodePgDatabase, opcoes: CriarAuthOpcoes = {}) {
     },
     session: {
       // Q-006 (spec): sessão expira em 7 dias.
-      expiresIn: 60 * 60 * 24 * 7,
+      expiresIn: DURACAO_DA_SESSAO_SEGUNDOS,
       modelName: 'sessoes',
       fields: {
         userId: 'usuarioId',

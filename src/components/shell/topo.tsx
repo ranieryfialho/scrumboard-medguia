@@ -24,6 +24,8 @@ export interface UsuarioSessao {
   email: string;
   papel: PapelUsuario;
   isSuperAdmin: boolean;
+  /** T-322: módulos liberados (ausente = padrão do papel). */
+  modulos?: string[] | null;
   empresaAtiva: EmpresaResumo;
   empresas?: EmpresaResumo[];
 }

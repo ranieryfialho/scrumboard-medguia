@@ -68,7 +68,7 @@ describe('T-203: relatório comercial', () => {
     expect(corpo.resumo.mrrNovo).toBe(4000);
     expect(corpo.resumo.contratos).toBe(2);
     expect(corpo.resumo.ticketMedio).toBe(2000);
-    expect(corpo.resumo.pipelineEmNegociacao).toEqual({ valor: 6000, propostas: 2 });
+    expect(corpo.resumo.pipelineEmNegociacao).toEqual({ valor: 6000, propostas: 2, ponderado: 3000 });
     expect(corpo.resumo.cicloMedioDias).toBe(15);
     expect(corpo.resumo.winRate).toEqual({ valor: 0.5, ganhos: 2, perdas: 2 });
     expect(corpo.totalPerdas).toBe(2);

@@ -158,8 +158,8 @@ export function DetalheCampanha({ id }: { id: string }) {
   const podeIniciar = campanha.status === 'RASCUNHO' && total > 0;
 
   return (
-    <div className="p-space-md space-y-space-md">
-      <section className="bg-surface-card rounded-2xl p-space-md shadow-sm flex items-start justify-between flex-wrap gap-space-md">
+    <div className="p-space-md flex flex-col gap-space-md h-[calc(100dvh-4rem)] min-h-[40rem]">
+      <section className="bg-surface-card rounded-2xl p-space-md shadow-sm flex items-start justify-between flex-wrap gap-space-md shrink-0">
         <div className="flex flex-col gap-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <Link href="/campanhas" className="font-label-md text-label-md text-primary font-semibold hover:underline">Voltar</Link>
@@ -222,7 +222,7 @@ export function DetalheCampanha({ id }: { id: string }) {
         </p>
       )}
 
-      <section aria-label="Progresso do envio" className="bg-surface-card rounded-2xl p-space-md shadow-sm flex flex-col gap-2">
+      <section aria-label="Progresso do envio" className="bg-surface-card rounded-2xl p-space-md shadow-sm flex flex-col gap-2 shrink-0">
         <div className="flex items-center justify-between font-body-sm text-body-sm text-text-secondary">
           <span>{enviando ? 'Transmissão em fila ativa' : 'Envio'}: {enviados} de {total} e-mails enviados</span>
           <span>{Math.round(concluido)}% concluído</span>
@@ -240,7 +240,7 @@ export function DetalheCampanha({ id }: { id: string }) {
         </div>
       </section>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-space-md">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-space-md shrink-0">
         <CartaoIndicador titulo="Volume total de disparo" valor={String(total)} legenda={`${enviados} enviados · ${naFila} na fila · ${contagens.erro} falhas`} icone="outgoing_mail" />
         <CartaoIndicador titulo="Taxa de entrega" valor={formatarPorcentagem(porcentagemDe(enviados, enviados + contagens.erro))} legenda="enviados sem falha" icone="verified" cor="success" meta={descreverMeta(porcentagemDe(enviados, enviados + contagens.erro), metas.taxa_entrega_email)} />
         <CartaoIndicador titulo="Taxa de abertura única" valor={formatarPorcentagem(porcentagemDe(contagens.aberto + contagens.clicado, enviados))} legenda={`${contagens.aberto + contagens.clicado} abriram`} icone="drafts" cor="info" meta={descreverMeta(porcentagemDe(contagens.aberto + contagens.clicado, enviados), metas.taxa_abertura_email)} />
@@ -248,7 +248,7 @@ export function DetalheCampanha({ id }: { id: string }) {
       </div>
 
       {contagens.erro > 0 && (
-        <section aria-label="Aviso de falhas" className="bg-warning-surface rounded-2xl p-space-md flex items-center justify-between gap-3 flex-wrap">
+        <section aria-label="Aviso de falhas" className="bg-warning-surface rounded-2xl p-space-md flex items-center justify-between gap-3 flex-wrap shrink-0">
           <p className="font-body-md text-body-md text-warning-text">
             {contagens.erro} {contagens.erro === 1 ? 'disparo apresentou falha' : 'disparos apresentaram falha'} de entrega.
           </p>
@@ -258,8 +258,8 @@ export function DetalheCampanha({ id }: { id: string }) {
         </section>
       )}
 
-      <section className="bg-surface-card rounded-2xl p-space-md shadow-sm flex flex-col gap-space-md">
-        <div role="tablist" aria-label="Seções da campanha" className="flex items-center gap-2 flex-wrap">
+      <section className="bg-surface-card rounded-2xl p-space-md shadow-sm flex flex-col gap-space-md flex-1 min-h-0">
+        <div role="tablist" aria-label="Seções da campanha" className="flex items-center gap-2 flex-wrap shrink-0">
           <button type="button" role="tab" aria-selected={aba === 'destinatarios'} onClick={() => setAba('destinatarios')} className={`h-9 px-3 rounded-lg font-label-md text-label-md ${aba === 'destinatarios' ? 'bg-primary text-on-primary font-semibold' : 'bg-surface-subtle text-text-secondary'}`}>
             Destinatários e Status Individual ({total})
           </button>
@@ -271,10 +271,12 @@ export function DetalheCampanha({ id }: { id: string }) {
         </div>
 
         {aba === 'previa' ? (
-          <PreviaEmail assunto={campanha.assunto} corpoHtml={campanha.corpoHtml} largura="desktop" />
+          <div className="flex-1 min-h-0 overflow-y-auto">
+            <PreviaEmail assunto={campanha.assunto} corpoHtml={campanha.corpoHtml} largura="desktop" />
+          </div>
         ) : (
           <>
-            <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex items-center gap-2 flex-wrap shrink-0">
               <input
                 type="search"
                 value={busca}
@@ -310,9 +312,9 @@ export function DetalheCampanha({ id }: { id: string }) {
               <p className="font-body-md text-body-md text-text-secondary">Nenhum destinatário neste filtro</p>
             ) : (
               <>
-                <div className="overflow-x-auto">
+                <div className="overflow-auto flex-1 min-h-0">
                   <table className="w-full text-left">
-                    <thead className="bg-surface-subtle">
+                    <thead className="bg-surface-subtle sticky top-0 z-10">
                       <tr className="font-label-sm text-table-header uppercase text-text-muted tracking-wider">
                         <th className="px-space-md py-3">Destinatário</th>
                         <th className="px-space-md py-3">Status do disparo</th>

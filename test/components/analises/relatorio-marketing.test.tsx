@@ -58,10 +58,9 @@ describe('T-206: RelatorioMarketing', () => {
 
   const usuario = () => userEvent.setup({ advanceTimers: () => undefined });
 
-  test('abre com o título dentro do grupo (app), sem "Tráfego e Atribuição" @spec:AC-562', async () => {
+  test('abre com o título dentro do grupo (app) @spec:AC-562', async () => {
     render(<RelatorioMarketing />);
-    expect(await screen.findByRole('heading', { name: 'Relatórios de Marketing e Origem dos Leads' })).toBeTruthy();
-    expect(screen.queryByText(/Tráfego|Atribuição/)).toBeFalsy();
+    expect(await screen.findByRole('heading', { name: 'Relatórios de Marketing, Tráfego e Atribuição' })).toBeTruthy();
     expect(existsSync(join(__dirname, '..', '..', '..', 'src/app/(app)/relatorios/page.tsx'))).toBe(true);
   });
 
@@ -69,7 +68,8 @@ describe('T-206: RelatorioMarketing', () => {
     const u = usuario();
     render(<RelatorioMarketing />);
     await screen.findByRole('region', { name: 'Desempenho por Origem' });
-    expect(urls()[0]).toBe('/api/relatorios/marketing?de=2026-10-20&ate=2026-11-18');
+    // o período anterior é pedido antes, e a última chamada é sempre a do período na tela (T-315)
+    expect(urls()).toContain('/api/relatorios/marketing?de=2026-10-20&ate=2026-11-18');
     expect(screen.getByRole('button', { name: 'Últimos 30 dias' }).getAttribute('aria-pressed')).toBe('true');
     await u.click(screen.getByRole('button', { name: 'Hoje' }));
     await waitFor(() => expect(urls().at(-1)).toBe('/api/relatorios/marketing?de=2026-11-18&ate=2026-11-18'));
@@ -81,10 +81,9 @@ describe('T-206: RelatorioMarketing', () => {
     await u.click(screen.getByRole('button', { name: 'Atualizar' }));
     await waitFor(() => expect(urls().length).toBeGreaterThan(antes));
 
-    for (const titulo of ['Leads captados', 'Leads conectados', 'Reuniões realizadas', 'Contratos fechados']) {
+    for (const titulo of ['Leads captados', 'Reuniões realizadas', 'Taxa de conversão']) {
       expect(screen.getAllByText(titulo).length).toBeGreaterThan(0);
     }
-    expect(screen.getByText('5,0% dos leads')).toBeTruthy();
   });
 
   test('o gráfico mostra leads e reuniões e os botões Diário, Semanal e Mensal pedem o agrupamento @spec:AC-565', async () => {
@@ -126,22 +125,24 @@ describe('T-206: RelatorioMarketing', () => {
     expect(await screen.findByText('Nenhum lead neste período')).toBeTruthy();
   });
 
-  test('o que depende de mídia não aparece e exportar e especialidade ficam "em breve" @spec:AC-567', async () => {
+  test('exportar e o filtro de especialidade funcionam e o que depende de cliques e CPM não aparece @spec:AC-567', async () => {
     render(<RelatorioMarketing />);
     await screen.findByRole('region', { name: 'Desempenho por Origem' });
-    for (const rotulo of ['Exportar Relatório Completo (CSV/PDF)', 'Filtrar por especialidade']) {
-      expect(screen.getByRole('button', { name: `${rotulo} (em breve)` }).getAttribute('aria-disabled')).toBe('true');
-    }
-    // sem investimento cadastrado, nada de custo (o atalho "Cadastrar investimento" é um link, não um número)
-    expect(screen.queryByText(/CAC|ROAS|CPL|CPM|Cliques|Top Campanhas|Segmentação por Especialidade|Melhor Horário/i)).toBeFalsy();
+    expect((screen.getByRole('button', { name: 'Exportar Relatório (CSV)' }) as HTMLButtonElement).disabled).toBe(false);
+    expect(screen.getByRole('combobox', { name: 'Especialidade' })).toBeTruthy();
+    // o que o sistema não mede (cliques, CPM) nunca aparece
+    expect(screen.queryByText(/CPM|Cliques e visitas/i)).toBeFalsy();
     expect(screen.queryByRole('group', { name: 'Custo de aquisição' })).toBeNull();
   });
 
-  test('sem investimento no período não há cartões nem colunas de custo, só o atalho para cadastrar @spec:AC-637', async () => {
+  test('sem investimento no período os valores de custo ficam em traço e há o atalho para cadastrar @spec:AC-637', async () => {
     render(<RelatorioMarketing />);
     const tabela = await screen.findByRole('region', { name: 'Desempenho por Origem' });
     expect(screen.queryByRole('group', { name: 'Custo de aquisição' })).toBeNull();
-    expect(within(tabela).queryByRole('columnheader', { name: 'CPL' })).toBeNull();
+    expect(within(screen.getByRole('article', { name: 'Investimento total em tráfego' })).getByText('—')).toBeTruthy();
+    expect(within(screen.getByRole('article', { name: 'CAC médio geral' })).getByText('—')).toBeTruthy();
+    expect(within(tabela).getByRole('columnheader', { name: 'CPL' })).toBeTruthy();
+    expect(within(within(tabela).getByRole('row', { name: /Google Ads/ })).getAllByText('—').length).toBeGreaterThanOrEqual(3);
     expect(screen.getByRole('link', { name: /Cadastrar investimento/ }).getAttribute('href')).toBe('/configuracoes/investimento');
   });
 
@@ -155,12 +156,11 @@ describe('T-206: RelatorioMarketing', () => {
       ],
     } as never;
     render(<RelatorioMarketing />);
-    const cartoes = await screen.findByRole('group', { name: 'Custo de aquisição' });
-    expect(within(cartoes).getByText('Investimento')).toBeTruthy();
-    expect(within(cartoes).getByText(/4\.500/)).toBeTruthy();
-    expect(within(cartoes).getByText('Custo por lead')).toBeTruthy();
-    expect(within(cartoes).getByText('CAC')).toBeTruthy();
-    expect(within(cartoes).getByText('6,0x')).toBeTruthy();
+    const investimento = await screen.findByRole('article', { name: 'Investimento total em tráfego' });
+    expect(within(investimento).getByText(/4\.500/)).toBeTruthy();
+    expect(within(screen.getByRole('article', { name: 'Leads captados' })).getByText(/CPL: R\$\s?50/)).toBeTruthy();
+    expect(within(screen.getByRole('article', { name: 'CAC médio geral' })).getByText(/500/)).toBeTruthy();
+    expect(within(screen.getByRole('article', { name: 'ROAS e receita nova' })).getByText('6,0x')).toBeTruthy();
     const tabela = screen.getByRole('region', { name: 'Desempenho por Origem' });
     for (const coluna of ['Investimento', 'CPL', 'CAC', 'ROAS']) expect(within(tabela).getByRole('columnheader', { name: coluna })).toBeTruthy();
     const linha = within(tabela).getByRole('row', { name: /TikTok Ads/ });

@@ -62,7 +62,8 @@ describe('T-205: IndicadoresFunil', () => {
     render(<IndicadoresFunil />);
     expect(await screen.findByRole('heading', { name: 'Indicadores de Governança Comercial & Funil de Vendas' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Este mês' }).getAttribute('aria-pressed')).toBe('true');
-    await waitFor(() => expect(urls('/api/relatorios/kpis')[0]).toBe('/api/relatorios/kpis?de=2026-11-01&ate=2026-11-30'));
+    // o período anterior é pedido antes (T-310); o escolhido está sempre entre as chamadas
+    await waitFor(() => expect(urls('/api/relatorios/kpis')).toContain('/api/relatorios/kpis?de=2026-11-01&ate=2026-11-30'));
     expect(urls('/api/relatorios/funil')[0]).toBe('/api/relatorios/funil?de=2026-11-01&ate=2026-11-30');
     expect(existsSync(join(__dirname, '..', '..', '..', 'src/app/(app)/indicadores/page.tsx'))).toBe(true);
   });
@@ -108,7 +109,9 @@ describe('T-205: IndicadoresFunil', () => {
     expect(etapas[1].textContent).toContain('Retenção 68,5% · Perda 31,5%');
     expect(etapas[5].textContent).toContain('Contrato Assinado');
     expect(etapas[5].textContent).toContain('Retenção 52,9% · Perda 47,1%');
-    expect(funil.textContent).not.toMatch(/Ciclo médio|Ticket|MRR/);
+    expect(funil.textContent).not.toMatch(/Ciclo médio/);
+    // o ticket médio e o MRR só aparecem na etapa final, calculados da receita ganha (184.200 ÷ 36 contratos)
+    expect(etapas[5].textContent).toMatch(/Ticket médio R\$\s?5\.117/);
   });
 
   test('a tabela por responsável mostra os números, a receita e a linha sem responsável @spec:AC-560', async () => {
@@ -132,19 +135,18 @@ describe('T-205: IndicadoresFunil', () => {
     expect(await screen.findByText('Nenhum card neste período')).toBeTruthy();
   });
 
-  test('Relatório Executivo e Exportar CSV aparecem "em breve" e a meta e os alertas não existem @spec:AC-561', async () => {
+  test('Relatório Executivo leva à página do relatório, Exportar CSV funciona e o índice de eficiência não existe @spec:AC-561', async () => {
     render(<IndicadoresFunil />);
     await screen.findByRole('region', { name: 'Desempenho por Responsável' });
-    for (const rotulo of ['Relatório Executivo', 'Exportar CSV']) {
-      expect(screen.getByRole('button', { name: `${rotulo} (em breve)` }).getAttribute('aria-disabled')).toBe('true');
-    }
-    expect(screen.queryByText(/Meta Comercial|Índice de Eficiência|Disparar Minutas|Risco de Esfriamento/i)).toBeFalsy();
+    expect(screen.getByRole('link', { name: /Relatório Executivo/ }).getAttribute('href')).toMatch(/^\/indicadores\/executivo\?periodo=/);
+    expect((screen.getByRole('button', { name: 'Exportar CSV' }) as HTMLButtonElement).disabled).toBe(false);
+    expect(screen.queryByText(/Índice de Eficiência|Disparar Minutas/i)).toBeFalsy();
   });
 
   test('"Configurar Metas" deixou de ser "em breve" e leva à tela de metas @spec:AC-626', async () => {
     render(<IndicadoresFunil />);
     await screen.findByRole('region', { name: 'Desempenho por Responsável' });
-    expect(screen.getByRole('link', { name: /Configurar Metas/ }).getAttribute('href')).toBe('/configuracoes/metas');
+    for (const link of screen.getAllByRole('link', { name: /Configurar Metas/ })) expect(link.getAttribute('href')).toBe('/configuracoes/metas');
   });
 
   test('carregando mostra esqueleto e a falha mostra erro com "Tentar de novo", sem apagar os números @spec:AC-576', async () => {

@@ -8,7 +8,7 @@ import Link from 'next/link';
 
 import { agruparPorDia, formatarHora, statusDaMensagem, type MensagemDaConversa } from '@/components/pipeline/conversa/formatos';
 import { EVENTO_CONTADORES_MUDARAM } from '@/components/shell/use-contadores';
-import { ItemEmBreve } from '@/components/pipeline/pecas/selo-em-breve';
+import { RespostasETemplates } from '@/components/pipeline/conversa/respostas-e-templates';
 import { EsqueletoCarregando, EstadoErro, EstadoVazio } from './estados';
 import { formatarNumero, iniciais, mensagemDeErroDoEnvio, MENSAGEM_ERRO_PADRAO_DO_ENVIO, nomeDaConversa, type ConversaView } from './comum';
 
@@ -103,8 +103,8 @@ export function PainelConversa({ conversa, versao, onAtualizou }: PainelConversa
 
   const nome = nomeDaConversa(conversa);
   return (
-    <section aria-label="Conversa aberta" className="bg-surface-card rounded-2xl shadow-sm flex flex-col min-h-[32rem]">
-      <div className="p-space-md border-b border-border-subtle flex items-center justify-between gap-3">
+    <section aria-label="Conversa aberta" className="bg-surface-card rounded-2xl shadow-sm flex flex-col min-h-[32rem] xl:min-h-0 xl:h-full overflow-hidden">
+      <div className="p-space-md border-b border-border-subtle flex items-center justify-between gap-3 shrink-0">
         <div className="flex items-center gap-3 min-w-0">
           <span aria-hidden="true" className="w-11 h-11 rounded-full bg-surface-container flex items-center justify-center font-label-lg text-label-lg text-text-secondary">
             {iniciais(nome)}
@@ -121,14 +121,14 @@ export function PainelConversa({ conversa, versao, onAtualizou }: PainelConversa
         )}
       </div>
 
-      <div className="flex-1 overflow-y-auto p-space-md flex flex-col gap-space-sm bg-surface-subtle/40">
+      <div className="flex-1 min-h-0 overflow-y-auto p-space-md flex flex-col gap-space-sm bg-surface-subtle/40">
         {mensagens === null && !erro && <EsqueletoCarregando />}
         {erro && <EstadoErro onTentarDeNovo={carregar} />}
         {!erro && mensagens !== null && mensagens.length === 0 && <EstadoVazio titulo="Nenhuma mensagem ainda" proximoPasso="escreva a primeira abaixo" icone="chat" />}
         {!erro &&
           grupos.map((g) => (
             <div key={g.rotulo} className="flex flex-col gap-space-sm">
-              <p className="self-center font-label-sm text-label-sm text-primary uppercase tracking-wider font-bold">{g.rotulo}</p>
+              <p className="self-center px-3 py-1 rounded-full bg-surface-card border border-border-subtle font-label-sm text-label-sm text-text-secondary">{g.rotulo}</p>
               {g.mensagens.map((m) => {
                 const enviada = m.direcao === 'enviada';
                 return (
@@ -148,30 +148,37 @@ export function PainelConversa({ conversa, versao, onAtualizou }: PainelConversa
         <div ref={fimRef} />
       </div>
 
-      <div className="p-space-md border-t border-border-subtle flex flex-col gap-space-sm">
-        <div className="flex items-center gap-2 flex-wrap">
-          <ItemEmBreve rotulo="Respostas rápidas" icone="bolt" className="h-9 px-2 rounded-lg bg-surface-subtle" />
-          <ItemEmBreve rotulo="Anexar arquivo" icone="attach_file" className="h-9 px-2 rounded-lg bg-surface-subtle" />
-          <ItemEmBreve rotulo="Emoji" icone="mood" className="h-9 px-2 rounded-lg bg-surface-subtle" />
-          <ItemEmBreve rotulo="Microfone" icone="mic" className="h-9 px-2 rounded-lg bg-surface-subtle" />
-        </div>
-        <div className="flex items-end gap-2">
+      <div className="p-space-md border-t border-border-subtle flex flex-col gap-space-sm shrink-0">
+        <RespostasETemplates leadNome={nome} onEscolher={setTexto} />
+        <div className="flex items-center gap-2">
+          {[
+            ['Anexar arquivo', 'attach_file'],
+            ['Emoji', 'mood'],
+          ].map(([rotulo, icone]) => (
+            <div key={rotulo} role="button" aria-disabled="true" aria-label={`${rotulo} (em breve)`} title="Em breve" className="w-10 h-10 rounded-full flex items-center justify-center text-text-muted opacity-60 shrink-0">
+              <span aria-hidden="true" className="material-symbols-outlined text-[22px]">{icone}</span>
+            </div>
+          ))}
           <textarea
             value={texto}
             onChange={(e) => setTexto(e.target.value)}
             onKeyDown={aoTeclar}
-            rows={3}
+            rows={2}
             placeholder={`Digite uma mensagem para ${nome} (Enter para enviar)`}
             aria-label="Mensagem"
-            className="flex-1 min-h-[84px] resize-y rounded-xl border border-border-subtle bg-surface-card px-3 py-2 font-body-md text-body-md text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/30"
+            className="flex-1 resize-none rounded-xl border border-border-subtle bg-surface-subtle px-3 py-2 font-body-md text-body-md text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/30"
           />
+          <div role="button" aria-disabled="true" aria-label="Microfone (em breve)" title="Em breve" className="w-10 h-10 rounded-full flex items-center justify-center text-text-muted opacity-60 shrink-0">
+            <span aria-hidden="true" className="material-symbols-outlined text-[22px]">mic</span>
+          </div>
           <button
             type="button"
             onClick={() => void enviar()}
             disabled={enviando || texto.trim() === ''}
-            className="h-12 px-5 rounded-xl bg-primary text-on-primary font-label-lg text-label-lg font-semibold shadow-md disabled:opacity-50"
+            className="h-11 px-5 rounded-xl bg-primary text-on-primary font-label-lg text-label-lg font-semibold shadow-md disabled:opacity-50 flex items-center gap-2 shrink-0"
           >
             Enviar
+            <span aria-hidden="true" className="material-symbols-outlined text-[18px]">send</span>
           </button>
         </div>
         {erroDeEnvio && (
@@ -179,7 +186,7 @@ export function PainelConversa({ conversa, versao, onAtualizou }: PainelConversa
             {erroDeEnvio}
           </p>
         )}
-        <p className="font-body-sm text-[11px] text-text-muted text-right">
+        <p className="font-body-sm text-[11px] text-text-muted text-right hidden md:block">
           Pressione <strong>Enter</strong> para enviar e <strong>Shift + Enter</strong> para quebra de linha
         </p>
       </div>

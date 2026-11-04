@@ -3,13 +3,14 @@
 // T-288 (fase4-card-abas, US-111, AC-739): mover o card de etapa (e marcar como ganho ou perdido) a partir das abas Cadência,
 // WhatsApp e Anexos — o mesmo caminho do Resumo (`GET /api/oportunidades?etapaId=` para os destinos que o papel alcança e
 // `POST /api/oportunidades/:id/transicao`, com o modal de dado faltante), só que como hook, sem mexer na página do Resumo.
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import type { CodigoErroTransicao } from '@/domain/pipeline/tipos';
 import { exigeDadoFaltante } from '@/domain/pipeline/classificar-erro-transicao';
 import type { EtapaOpcao } from '@/components/pipeline/detalhe/cabecalho-card';
 import { nomeDaEtapa } from '@/components/pipeline/detalhe/jornada';
 import type { DadoPreenchido } from '@/components/pipeline/modal-dado-faltante';
+import type { DadosFechamento } from '@/domain/pipeline/fechamento';
 
 const ETAPA_PERDIDO = 14;
 const ETAPA_CONTRATO_GANHO = 15;
@@ -37,6 +38,9 @@ export function useTransicaoDoCard(card: CardParaTransicao | null, aoMover: (eta
   const [enviando, setEnviando] = useState(false);
   const [mensagem, setMensagem] = useState<string | null>(null);
   const [dadoFaltante, setDadoFaltante] = useState<DadoFaltantePendente | null>(null);
+  // T-313: ir para "Contrato (Ganho)" primeiro pede os dados do fechamento (como no CRM antigo).
+  const fechamentoRef = useRef<DadosFechamento | null>(null);
+  const [pedirFechamento, setPedirFechamento] = useState(false);
 
   const etapaAtualId = card?.etapaId ?? null;
 
@@ -65,17 +69,22 @@ export function useTransicaoDoCard(card: CardParaTransicao | null, aoMover: (eta
   const enviarTransicao = useCallback(
     async (etapaDestinoId: number, dadoExtra: DadoPreenchido = {}) => {
       if (!card) return;
+      if (etapaDestinoId === ETAPA_CONTRATO_GANHO && !fechamentoRef.current) {
+        setPedirFechamento(true);
+        return;
+      }
       setEnviando(true);
       setMensagem(null);
       try {
         const resposta = await fetch(`/api/oportunidades/${card.id}/transicao`, {
           method: 'POST',
           headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ version: card.version, etapaDestinoId, ...dadoExtra }),
+          body: JSON.stringify({ version: card.version, etapaDestinoId, ...dadoExtra, ...(etapaDestinoId === ETAPA_CONTRATO_GANHO && fechamentoRef.current ? { fechamento: fechamentoRef.current } : {}) }),
         });
         if (resposta.ok) {
           const movida = (await resposta.json()) as { etapaId: number; version: number };
           setDadoFaltante(null);
+          fechamentoRef.current = null;
           aoMover(movida.etapaId, movida.version);
           return;
         }
@@ -99,7 +108,17 @@ export function useTransicaoDoCard(card: CardParaTransicao | null, aoMover: (eta
     enviando,
     mensagem,
     dadoFaltante,
-    cancelarDadoFaltante: () => setDadoFaltante(null),
+    cancelarDadoFaltante: () => {
+      setDadoFaltante(null);
+      fechamentoRef.current = null;
+    },
     enviarTransicao,
+    pedirFechamento,
+    cancelarFechamento: () => setPedirFechamento(false),
+    confirmarFechamento: (dados: DadosFechamento) => {
+      fechamentoRef.current = dados;
+      setPedirFechamento(false);
+      void enviarTransicao(ETAPA_CONTRATO_GANHO);
+    },
   };
 }

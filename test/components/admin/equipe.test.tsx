@@ -183,12 +183,13 @@ describe('T-213: Equipe', () => {
     expect((await screen.findByRole('alert')).textContent).toBe('Esta pessoa não tem convite pendente.');
   });
 
-  test('Políticas, exportar, frentes, logs e IP ficam "em breve" e a seleção em massa e o bloco LGPD não existem @spec:AC-585', async () => {
+  test('Políticas, exportar, logs e sessão funcionam, só as frentes seguem "em breve" e a seleção em massa e o bloco LGPD não existem @spec:AC-585', async () => {
     render(<Equipe />);
     await screen.findByText('Juliana Rocha');
-    for (const rotulo of ['Políticas & Perfis', 'Exportar Auditoria (CSV)', 'Todas as Frentes Comerciais', 'Logs de Auditoria', 'Configurar IP Allowlist & Sessão']) {
-      expect(screen.getByRole('button', { name: `${rotulo} (em breve)` }).getAttribute('aria-disabled')).toBe('true');
+    for (const rotulo of ['Políticas & Perfis', 'Exportar Auditoria (CSV)', 'Logs de Auditoria', 'Sessão e acesso']) {
+      expect((screen.getByRole('button', { name: rotulo }) as HTMLButtonElement).disabled).toBe(false);
     }
+    expect(screen.getByRole('button', { name: 'Todas as Frentes Comerciais (em breve)' }).getAttribute('aria-disabled')).toBe('true');
     expect(screen.queryAllByRole('checkbox')).toHaveLength(0);
     expect(screen.queryByText(/Políticas LGPD vigentes|Auditoria criptográfica|Segurança e Acesso Restrito/i)).toBeFalsy();
   });

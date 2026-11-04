@@ -12,6 +12,8 @@ import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { contas, empresasUsuarios, sessoes, tokensVerificacao, usuarios, empresas } from '../db/schema';
 import { TTL_CONVITE_MS, convidarUsuario, identificadorConvite, type PapelUsuario } from '../lib/auth/convites';
 import type { ContextoTenant } from '../lib/auth/tenant';
+import { lerModulos } from '../lib/auth/modulos';
+import { registrarAuditoriaDaEquipe } from './auditoria-equipe';
 
 export const PAPEIS: readonly PapelUsuario[] = ['ATENDENTE', 'GERENTE', 'MASTER'];
 export type SituacaoDoColaborador = 'ativo' | 'pendente' | 'inativo';
@@ -23,6 +25,10 @@ export interface Colaborador {
   papel: PapelUsuario;
   status: SituacaoDoColaborador;
   ultimoAcesso: string | null;
+  /** T-321: foto do usuário (`usuarios.imagem`), só quando existe. */
+  imagem?: string;
+  /** T-322: módulos liberados; ausente = padrão do papel. */
+  modulos?: string[];
 }
 
 export interface ListaDaEquipe {
@@ -42,6 +48,8 @@ export async function todosOsColaboradores(db: NodePgDatabase, empresaId: string
       papel: empresasUsuarios.papel,
       vinculoAtivo: empresasUsuarios.ativo,
       usuarioAtivo: usuarios.ativo,
+      imagem: usuarios.imagem,
+      modulos: empresasUsuarios.modulos,
     })
     .from(empresasUsuarios)
     .innerJoin(usuarios, eq(usuarios.id, empresasUsuarios.usuarioId))
@@ -71,6 +79,8 @@ export async function todosOsColaboradores(db: NodePgDatabase, empresaId: string
       papel: l.papel,
       status: (!l.vinculoAtivo || !l.usuarioAtivo ? 'inativo' : !comSenha.has(l.usuarioId) ? 'pendente' : 'ativo') as SituacaoDoColaborador,
       ultimoAcesso: ultimos.get(l.usuarioId) ? new Date(ultimos.get(l.usuarioId) as Date).toISOString() : null,
+      ...(l.imagem ? { imagem: l.imagem } : {}),
+      ...(l.modulos ? { modulos: l.modulos } : {}),
     }))
     .sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
 }
@@ -102,14 +112,14 @@ export async function listarEquipe(
   return { colaboradores: filtrados, total, resumo, assentos };
 }
 
-export type ResultadoAlteracao = { ok: true; colaborador: Colaborador } | { ok: false; codigo: 'COLABORADOR_NAO_ENCONTRADO' | 'NAO_PODE_ALTERAR_A_SI' | 'ULTIMO_MASTER' | 'SEM_ASSENTOS' };
+export type ResultadoAlteracao = { ok: true; colaborador: Colaborador } | { ok: false; codigo: 'COLABORADOR_NAO_ENCONTRADO' | 'NAO_PODE_ALTERAR_A_SI' | 'ULTIMO_MASTER' | 'SEM_ASSENTOS' | 'MODULOS_INVALIDOS' };
 
 /** AC-582/AC-583: troca o papel e/ou ativa e desativa o vínculo da pessoa nesta empresa. */
 export async function alterarColaborador(
   db: NodePgDatabase,
   contexto: ContextoTenant,
   usuarioId: string,
-  alteracao: { papel?: PapelUsuario; ativo?: boolean }
+  alteracao: { papel?: PapelUsuario; ativo?: boolean; /** T-322: `null` volta ao padrão do papel; ausente não mexe. */ modulos?: unknown }
 ): Promise<ResultadoAlteracao> {
   const todos = await todosOsColaboradores(db, contexto.empresaId);
   const alvo = todos.find((c) => c.usuarioId === usuarioId);
@@ -124,13 +134,23 @@ export async function alterarColaborador(
     if (outros.length === 0) return { ok: false, codigo: 'ULTIMO_MASTER' };
   }
 
+  // T-322: módulos liberados. Mudar o papel sem informar módulos volta ao padrão do novo papel (os antigos podem não caber nele).
+  let novosModulos: string[] | null | undefined;
+  if (alteracao.modulos !== undefined) {
+    const lidos = lerModulos(alteracao.modulos, novoPapel);
+    if (lidos === undefined || (lidos !== null && novoPapel === 'MASTER')) return { ok: false, codigo: 'MODULOS_INVALIDOS' };
+    novosModulos = lidos;
+  } else if (novoPapel !== alvo.papel) {
+    novosModulos = null;
+  }
+
   const reativando = alvo.status === 'inativo' && ficaAtivo;
   try {
     await db.transaction(async (tx) => {
       if (reativando) await garantirAssento(tx, contexto.empresaId); // AC-656
       await tx
         .update(empresasUsuarios)
-        .set({ papel: novoPapel, ativo: ficaAtivo })
+        .set({ papel: novoPapel, ativo: ficaAtivo, ...(novosModulos !== undefined ? { modulos: novosModulos } : {}) })
         .where(and(eq(empresasUsuarios.empresaId, contexto.empresaId), eq(empresasUsuarios.usuarioId, usuarioId)));
     });
   } catch (erro) {
@@ -139,6 +159,13 @@ export async function alterarColaborador(
   }
 
   const [atualizado] = (await todosOsColaboradores(db, contexto.empresaId)).filter((c) => c.usuarioId === usuarioId);
+  // T-321: o que mudou entra no registro de auditoria da equipe.
+  if (novoPapel !== alvo.papel) await registrarAuditoriaDaEquipe(db, contexto, { acao: 'papel_alterado', alvoId: usuarioId, alvoEmail: alvo.email, detalhe: { de: alvo.papel, para: novoPapel } });
+  if (novosModulos !== undefined && JSON.stringify(novosModulos) !== JSON.stringify(alvo.modulos ?? null)) {
+    await registrarAuditoriaDaEquipe(db, contexto, { acao: 'acessos_alterados', alvoId: usuarioId, alvoEmail: alvo.email, detalhe: { modulos: novosModulos } });
+  }
+  if (reativando) await registrarAuditoriaDaEquipe(db, contexto, { acao: 'reativado', alvoId: usuarioId, alvoEmail: alvo.email });
+  else if (alvo.status !== 'inativo' && !ficaAtivo) await registrarAuditoriaDaEquipe(db, contexto, { acao: 'desativado', alvoId: usuarioId, alvoEmail: alvo.email });
   return { ok: true, colaborador: atualizado };
 }
 
@@ -162,6 +189,7 @@ export async function reenviarConvite(db: NodePgDatabase, contexto: ContextoTena
   if (!contexto.isSuperAdmin && contexto.papel === 'GERENTE' && alvo.papel !== 'ATENDENTE') return { ok: false, codigo: 'SEM_PERMISSAO' };
   if (alvo.status !== 'pendente') return { ok: false, codigo: 'CONVITE_NAO_PENDENTE' };
   const { token, expiraEm } = await emitirToken(db, alvo.email);
+  await registrarAuditoriaDaEquipe(db, contexto, { acao: 'reenvio_convite', alvoId: usuarioId, alvoEmail: alvo.email });
   return { ok: true, email: alvo.email, token, expiraEm };
 }
 
@@ -179,7 +207,7 @@ export function emailValido(email: string): boolean {
 export async function convidarParaEquipe(
   db: NodePgDatabase,
   contexto: ContextoTenant,
-  entrada: { email: string; nome: string; papel: PapelUsuario }
+  entrada: { email: string; nome: string; papel: PapelUsuario; /** T-322: já validados por `lerModulos`. */ modulos?: string[] | null }
 ): Promise<ResultadoConvite> {
   const email = entrada.email.trim().toLowerCase();
   const ehGerente = !contexto.isSuperAdmin && contexto.papel === 'GERENTE';
@@ -200,7 +228,7 @@ export async function convidarParaEquipe(
         await garantirAssento(tx, contexto.empresaId); // AC-656
         await tx
           .update(empresasUsuarios)
-          .set({ papel: entrada.papel, ativo: true })
+          .set({ papel: entrada.papel, ativo: true, modulos: entrada.modulos ?? null })
           .where(and(eq(empresasUsuarios.empresaId, contexto.empresaId), eq(empresasUsuarios.usuarioId, existente.usuarioId)));
         await tx.update(usuarios).set({ ativo: true }).where(eq(usuarios.id, existente.usuarioId));
       });
@@ -208,6 +236,7 @@ export async function convidarParaEquipe(
       if (erro instanceof ErroSemAssentos) return { ok: false, codigo: 'SEM_ASSENTOS' };
       throw erro;
     }
+    await registrarAuditoriaDaEquipe(db, contexto, { acao: 'reativado', alvoId: existente.usuarioId, alvoEmail: email, detalhe: { papel: entrada.papel } });
     if (comConta) return { ok: true, usuarioId: existente.usuarioId, papel: entrada.papel, token: null, expiraEm: null, reativado: true, email };
     const { token, expiraEm } = await emitirToken(db, email);
     return { ok: true, usuarioId: existente.usuarioId, papel: entrada.papel, token, expiraEm, reativado: true, email };
@@ -218,12 +247,13 @@ export async function convidarParaEquipe(
     resultado = await convidarUsuario(
       db,
       { usuarioId: contexto.usuarioId, empresaId: contexto.empresaId, papel: contexto.papel, isSuperAdmin: contexto.isSuperAdmin },
-      { email, nome: entrada.nome, papel: entrada.papel, empresaId: contexto.empresaId }
+      { email, nome: entrada.nome, papel: entrada.papel, empresaId: contexto.empresaId, modulos: entrada.modulos ?? null }
     );
   } catch (erro) {
     if (erro instanceof ErroSemAssentos) return { ok: false, codigo: 'SEM_ASSENTOS' };
     throw erro;
   }
+  await registrarAuditoriaDaEquipe(db, contexto, { acao: 'convite', alvoId: resultado.usuarioId, alvoEmail: email, detalhe: { papel: resultado.papel, ...(entrada.modulos ? { modulos: entrada.modulos } : {}) } });
   return { ok: true, usuarioId: resultado.usuarioId, papel: resultado.papel, token: resultado.token, expiraEm: resultado.expiraEm, reativado: false, email };
 }
 

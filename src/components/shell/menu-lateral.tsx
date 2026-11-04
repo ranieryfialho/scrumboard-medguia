@@ -20,6 +20,8 @@ import { useContadores } from './use-contadores';
 export interface MenuLateralProps {
   papel: PapelUsuario;
   isSuperAdmin: boolean;
+  /** T-322: módulos liberados da pessoa (`null` ou ausente = padrão do papel). */
+  modulos?: string[] | null;
   /** AC-356: controla a gaveta no celular — fechada por padrão (desktop ignora). */
   gavetaAberta?: boolean;
   aoFecharGaveta?: () => void;
@@ -35,9 +37,9 @@ const CLASSES_CONTADOR: Record<NonNullable<ItemMenu['contador']>, string> = {
   whatsappNaoLidas: 'bg-success-surface text-success-text',
 };
 
-export function MenuLateral({ papel, isSuperAdmin, gavetaAberta = false, aoFecharGaveta }: MenuLateralProps) {
+export function MenuLateral({ papel, isSuperAdmin, modulos, gavetaAberta = false, aoFecharGaveta }: MenuLateralProps) {
   const pathname = usePathname();
-  const grupos = menuParaPapel(papel, isSuperAdmin);
+  const grupos = menuParaPapel(papel, isSuperAdmin, modulos);
   const itemAtivo = encontrarItemAtivo(grupos, pathname ?? '');
   const contadores = useContadores();
 

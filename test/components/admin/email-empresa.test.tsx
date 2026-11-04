@@ -54,12 +54,12 @@ describe('T-263: tela de e-mail da empresa', () => {
     await u.type(remetente, 'novo@clinica.com');
     await u.click(screen.getByRole('button', { name: 'Salvar configuração' }));
     expect(await screen.findByText('Configuração salva')).toBeTruthy();
-    expect(put()).toEqual({ remetente: 'novo@clinica.com' }); // sem `chave`: mantém a atual
+    expect(put()).toEqual({ remetente: 'novo@clinica.com', responderPara: null }); // sem `chave`: mantém a atual; o e-mail de resposta em branco sai (T-307)
 
     await u.type(screen.getByLabelText('Chave do Resend'), 're_nova_chave_1234567890abcdefwxyz');
     await u.click(screen.getByRole('button', { name: 'Salvar configuração' }));
     await screen.findByText('Chave configurada (termina em …wxyz)');
-    expect(put()).toEqual({ remetente: 'novo@clinica.com', chave: 're_nova_chave_1234567890abcdefwxyz' });
+    expect(put()).toEqual({ remetente: 'novo@clinica.com', responderPara: null, chave: 're_nova_chave_1234567890abcdefwxyz' });
     expect((screen.getByLabelText('Chave do Resend') as HTMLInputElement).value).toBe('');
   });
 

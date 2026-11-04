@@ -97,13 +97,13 @@ describe('T-198: NovaCampanha', () => {
     await u.click(screen.getByLabelText('Follow de longo prazo'));
     await u.click(screen.getByLabelText('No-show'));
     await waitFor(() => expect(screen.getByLabelText('Destinatários qualificados').textContent).toBe('351'));
-    expect(fetchFalso.mock.calls.some((c) => c[0] === '/api/campanhas/previa-destinatarios?etapaIds=7,9')).toBe(true);
+    expect(fetchFalso.mock.calls.some((c) => c[0] === '/api/campanhas/previa-destinatarios?etapaIds=7,9&protegerFrequencia=1')).toBe(true);
     expect(screen.getByText(/840\.000/)).toBeTruthy();
 
     await u.click(screen.getByRole('tab', { name: 'Lista colada' }));
     await u.type(screen.getByLabelText('Contatos'), 'Ana, ana@x.com{Enter}Bia;bia@x.com{Enter}ANA, ANA@x.com{Enter}sem-email{Enter}carlos@x.com');
     expect(screen.getByLabelText('Destinatários qualificados').textContent).toBe('3');
-    for (const rotulo of ['Especialidade médica predominante', 'Porte da clínica', 'Proteção de frequência']) {
+    for (const rotulo of ['Especialidade médica predominante', 'Porte da clínica']) {
       expect(screen.getByRole('button', { name: `${rotulo} (em breve)` }).getAttribute('aria-disabled')).toBe('true');
     }
     expect(lerListaColada('x@y.com\nx@y.com')).toHaveLength(1);
@@ -131,6 +131,7 @@ describe('T-198: NovaCampanha', () => {
       assunto: 'Olá',
       corpoHtml: '<p>Oi</p>',
       origem: { tipo: 'etapas', etapaIds: [9, 7] },
+      protegerFrequencia: true,
     });
     await waitFor(() => expect(empurrar).toHaveBeenCalledWith('/campanhas/nova-1'));
 
@@ -194,25 +195,19 @@ describe('T-198: NovaCampanha', () => {
     const estimativa = screen.getByRole('region', { name: 'Estimativa de Impacto Comercial' });
     await waitFor(() => expect(within(estimativa).getByText('219')).toBeTruthy());
     expect(within(estimativa).getByText(/840\.000/)).toBeTruthy();
-    expect(screen.queryByText(/Checklist de Qualidade|Taxa média esperada/i)).toBeFalsy();
+    expect(screen.queryByText(/Taxa média esperada/i)).toBeFalsy();
   });
 
-  test('canal, resposta, remetente, pré-cabeçalho, modelos, formatação e e-mail de teste aparecem "em breve" @spec:AC-546', async () => {
+  test('o que ainda não existe aparece "em breve" e o resto funciona @spec:AC-546', async () => {
     render(<NovaCampanha />);
-    for (const rotulo of [
-      'Canal de envio',
-      'E-mail de resposta',
-      'Nome e assinatura do remetente',
-      'Texto de pré-cabeçalho',
-      'Modelo Institucional',
-      'Modelo TISS & Propostas',
-      'Modelo Reativação',
-      'Barra de formatação',
-      'Inserir tag',
-      'Enviar E-mail de Teste para Mim',
-    ]) {
+    for (const rotulo of ['Especialidade médica predominante', 'Porte da clínica', 'Proteção de frequência']) {
       expect(screen.getByRole('button', { name: `${rotulo} (em breve)` }).getAttribute('aria-disabled')).toBe('true');
     }
+    // T-306: os modelos, a barra de formatação, o pré-cabeçalho e o e-mail de teste agora funcionam.
+    for (const rotulo of ['Modelo Institucional', 'Modelo TISS & Propostas', 'Modelo Reativação', 'Enviar E-mail de Teste para Mim']) {
+      expect(screen.getByRole('button', { name: rotulo })).toBeTruthy();
+    }
+    expect(screen.getByRole('toolbar', { name: 'Barra de formatação' })).toBeTruthy();
   });
 
   test('o rascunho carregando mostra esqueleto e a falha mostra erro com "Tentar de novo" @spec:AC-554', async () => {

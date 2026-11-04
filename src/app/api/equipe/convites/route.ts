@@ -6,6 +6,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { getDb } from '../../../../db/client';
 import { baseDaUrl, exigirGerente } from '../../../../lib/equipe/acesso';
 import { enviarConviteSemFalhar } from '../../../../lib/equipe/enviar-convite';
+import { lerModulos } from '../../../../lib/auth/modulos';
 import { PAPEIS, convidarParaEquipe, emailValido } from '../../../../repositories/equipe';
 import type { PapelUsuario } from '../../../../lib/auth/convites';
 
@@ -15,7 +16,7 @@ export async function POST(request: NextRequest) {
   const acesso = await exigirGerente(request);
   if ('resposta' in acesso) return acesso.resposta;
 
-  const corpo = (await request.json().catch(() => null)) as { email?: unknown; nome?: unknown; papel?: unknown } | null;
+  const corpo = (await request.json().catch(() => null)) as { email?: unknown; nome?: unknown; papel?: unknown; modulos?: unknown } | null;
   const email = typeof corpo?.email === 'string' ? corpo.email.trim() : '';
   const nome = typeof corpo?.nome === 'string' ? corpo.nome.trim() : '';
   const papel = corpo?.papel;
@@ -25,7 +26,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ codigo: 'PARAMETRO_INVALIDO', campo: 'papel', mensagem: 'Papel inválido.' }, { status: 400 });
   }
 
-  const r = await convidarParaEquipe(getDb(), acesso.contexto, { email, nome, papel: papel as PapelUsuario });
+  // T-322: módulos liberados (opcional); o papel é o teto, e MASTER sempre tem tudo.
+  let modulos: string[] | null = null;
+  if (corpo?.modulos !== undefined && corpo.modulos !== null) {
+    const lidos = lerModulos(corpo.modulos, papel as PapelUsuario);
+    if (!lidos || papel === 'MASTER') return NextResponse.json({ codigo: 'PARAMETRO_INVALIDO', campo: 'modulos', mensagem: 'Os módulos escolhidos não valem para este papel.' }, { status: 400 });
+    modulos = lidos;
+  }
+
+  const r = await convidarParaEquipe(getDb(), acesso.contexto, { email, nome, papel: papel as PapelUsuario, modulos });
   if (!r.ok) return NextResponse.json({ codigo: r.codigo }, { status: r.codigo === 'JA_E_COLABORADOR' || r.codigo === 'SEM_ASSENTOS' ? 409 : 403 });
 
   const envio = r.token ? await enviarConviteSemFalhar(r.email, r.token, baseDaUrl(request), undefined) : { emailEnviado: false, linkConvite: null };

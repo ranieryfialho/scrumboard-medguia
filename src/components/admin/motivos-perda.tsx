@@ -121,8 +121,8 @@ export function MotivosPerda() {
   const visiveis = dados?.motivos.slice((pagina - 1) * POR_PAGINA, pagina * POR_PAGINA) ?? [];
 
   return (
-    <div className="p-space-md space-y-space-md">
-      <div className="flex items-start justify-between flex-wrap gap-space-md">
+    <div className="p-space-md flex flex-col gap-space-md h-[calc(100dvh-4rem)] min-h-[30rem]">
+      <div className="flex items-start justify-between flex-wrap gap-space-md shrink-0">
         <div>
           <h1 className="font-headline-lg text-headline-lg text-text-primary tracking-tight">Motivos de Perda &amp; Churn Comercial</h1>
           <p className="font-body-md text-body-md text-text-secondary mt-1 max-w-2xl">Os motivos que o time escolhe ao mandar um card para &quot;Perdido&quot;, e quanto cada um pesa na sua empresa.</p>
@@ -137,7 +137,7 @@ export function MotivosPerda() {
         </div>
       </div>
 
-      <section aria-label="Requisito bloqueante" className="bg-surface-card rounded-2xl p-space-md shadow-sm flex items-center justify-between gap-3 flex-wrap">
+      <section aria-label="Requisito bloqueante" className="bg-surface-card rounded-2xl p-space-md shadow-sm flex items-center justify-between gap-3 flex-wrap shrink-0">
         <p className="font-body-md text-body-md text-text-secondary max-w-3xl">
           <strong className="text-text-primary">Requisito bloqueante:</strong> nenhum card passa para &quot;Perdido&quot; sem um motivo escolhido deste catálogo.
         </p>
@@ -145,7 +145,7 @@ export function MotivosPerda() {
       </section>
 
       {aviso && (
-        <p role={aviso.ok ? 'status' : 'alert'} className={`font-body-md text-body-md rounded-lg px-3 py-2 ${aviso.ok ? 'text-success-text bg-success-surface' : 'text-danger-text bg-danger-surface'}`}>
+        <p role={aviso.ok ? 'status' : 'alert'} className={`shrink-0 font-body-md text-body-md rounded-lg px-3 py-2 ${aviso.ok ? 'text-success-text bg-success-surface' : 'text-danger-text bg-danger-surface'}`}>
           {aviso.texto}
         </p>
       )}
@@ -153,8 +153,8 @@ export function MotivosPerda() {
       {erro && <EstadoErro mensagem="Não foi possível carregar os motivos. Tente de novo." onTentarDeNovo={carregar} />}
       {!erro && !dados && <EsqueletoCarregando />}
       {dados && (
-        <>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-space-md">
+        <div className="relative flex flex-col gap-space-md flex-1 min-h-0">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-space-md shrink-0">
             <CartaoIndicador titulo="Catálogo de motivos" valor={`${dados.totais.ativos} ativos`} legenda={`${dados.totais.sistemicos} sistêmicos · ${dados.totais.personalizados} personalizados`} icone="rule" />
             <CartaoIndicador titulo="Perdas no mês" valor={String(dados.resumo.perdasNoMes)} legenda="cards que foram para Perdido" icone="trending_down" cor="danger" />
             <CartaoIndicador
@@ -166,7 +166,7 @@ export function MotivosPerda() {
             />
           </div>
 
-          <section aria-label="Filtros" className="bg-surface-card rounded-2xl p-space-md shadow-sm flex items-center gap-2 flex-wrap">
+          <section aria-label="Filtros" className="bg-surface-card rounded-2xl p-space-md shadow-sm flex items-center gap-2 flex-wrap shrink-0">
             <input
               type="search"
               value={busca}
@@ -204,10 +204,10 @@ export function MotivosPerda() {
               <EstadoVazio titulo="Nenhum motivo encontrado" proximoPasso="ajuste os filtros" icone="rule" />
             </section>
           ) : (
-            <section aria-label="Motivos" className="bg-surface-card rounded-2xl shadow-sm overflow-hidden">
-              <div className="overflow-x-auto">
+            <section aria-label="Motivos" className="bg-surface-card rounded-2xl shadow-sm overflow-hidden flex flex-col flex-1 min-h-0">
+              <div className="overflow-auto flex-1 min-h-0">
                 <table className="w-full text-left">
-                  <thead className="bg-surface-subtle">
+                  <thead className="bg-surface-subtle sticky top-0 z-10">
                     <tr className="font-label-sm text-table-header uppercase text-text-muted tracking-wider">
                       <th className="px-space-md py-3">Motivo</th>
                       <th className="px-space-md py-3">Natureza</th>
@@ -252,8 +252,8 @@ export function MotivosPerda() {
             </section>
           )}
 
-          <ItemEmBreve rotulo="Abrir Playbook de Objeções Médicas" icone="menu_book" />
-        </>
+          <ItemEmBreve rotulo="Abrir Playbook de Objeções Médicas" icone="menu_book" className="shrink-0" />
+        </div>
       )}
 
       {criando && (

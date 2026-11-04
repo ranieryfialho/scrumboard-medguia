@@ -26,6 +26,7 @@ import {
   type Situacao,
   type UsuarioLogado,
 } from './comum';
+import { DialogoDeAcessos, DialogoDeAuditoria, DialogoDePoliticas, DialogoDeSessao, ROTULO_DA_ACAO, dataEHora, detalheDoEvento, type EventoDeAuditoria } from './equipe-dialogos';
 import { EsqueletoCarregando, EstadoErro, EstadoVazio } from './estados';
 
 const POR_PAGINA = 10;
@@ -48,6 +49,9 @@ export function Equipe() {
   const [aConfirmar, setAConfirmar] = useState<ColaboradorView | null>(null);
   const [trabalhando, setTrabalhando] = useState(false);
   const [aviso, setAviso] = useState<{ ok: boolean; texto: string } | null>(null);
+  const [painel, setPainel] = useState<'politicas' | 'auditoria' | 'sessao' | null>(null);
+  const [exportando, setExportando] = useState(false);
+  const [editandoAcessos, setEditandoAcessos] = useState<ColaboradorView | null>(null);
 
   const carregar = useCallback(async () => {
     const q = new URLSearchParams({ pagina: String(pagina), porPagina: String(POR_PAGINA) });
@@ -122,20 +126,48 @@ export function Equipe() {
     }
   }
 
+  async function exportarAuditoria() {
+    setExportando(true);
+    setAviso(null);
+    try {
+      const r = await fetch('/api/equipe/auditoria');
+      if (!r.ok) throw new Error('auditoria');
+      const { eventos } = (await r.json()) as { eventos: EventoDeAuditoria[] };
+      const linhas = [['Quando', 'Quem fez', 'Ação', 'Sobre', 'Detalhe'], ...eventos.map((e) => [dataEHora(e.quando), e.ator ?? '', ROTULO_DA_ACAO[e.acao], e.alvo, detalheDoEvento(e)])];
+      const texto = linhas.map((l) => l.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(';')).join('\n');
+      const url = URL.createObjectURL(new Blob([`\uFEFF${texto}`], { type: 'text/csv;charset=utf-8' }));
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'auditoria-da-equipe.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      setAviso({ ok: false, texto: 'Não foi possível exportar a auditoria. Tente de novo.' });
+    } finally {
+      setExportando(false);
+    }
+  }
+
   const gestor = podeGerir(eu);
   const souGerente = eu?.papel === 'GERENTE' && !eu?.isSuperAdmin;
   const total = dados?.total ?? 0;
 
   return (
-    <div className="p-space-md space-y-space-md">
-      <div className="flex items-start justify-between flex-wrap gap-space-md">
+    <div className="p-space-md flex flex-col gap-space-md h-[calc(100dvh-4rem)] min-h-[30rem]">
+      <div className="flex items-start justify-between flex-wrap gap-space-md shrink-0">
         <div>
           <h1 className="font-headline-lg text-headline-lg text-text-primary tracking-tight">Gestão da Equipe e Acessos</h1>
           <p className="font-body-md text-body-md text-text-secondary mt-1 max-w-2xl">Quem tem acesso à empresa, com que papel, e a situação de cada convite.</p>
         </div>
         <div className="flex items-center gap-space-sm flex-wrap">
-          <ItemEmBreve rotulo="Políticas & Perfis" icone="shield" className="h-10 px-4 rounded-xl bg-surface-card shadow-sm" />
-          <ItemEmBreve rotulo="Exportar Auditoria (CSV)" icone="download" className="h-10 px-4 rounded-xl bg-surface-card shadow-sm" />
+          <button type="button" onClick={() => setPainel('politicas')} className="h-10 px-4 rounded-xl bg-surface-card shadow-sm font-label-md text-label-md font-semibold text-text-primary flex items-center gap-2">
+            <span aria-hidden="true" className="material-symbols-outlined text-[18px]">shield</span>
+            Políticas &amp; Perfis
+          </button>
+          <button type="button" onClick={() => void exportarAuditoria()} disabled={exportando} className="h-10 px-4 rounded-xl bg-surface-card shadow-sm font-label-md text-label-md font-semibold text-text-primary flex items-center gap-2 disabled:opacity-50">
+            <span aria-hidden="true" className="material-symbols-outlined text-[18px]">download</span>
+            {exportando ? 'Exportando...' : 'Exportar Auditoria (CSV)'}
+          </button>
           <Link href="/equipe/convidar" className="h-10 px-4 rounded-xl bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md font-semibold shadow-md flex items-center gap-2">
             <span aria-hidden="true" className="material-symbols-outlined text-[19px]">person_add</span>
             Convidar Usuário
@@ -144,7 +176,7 @@ export function Equipe() {
       </div>
 
       {aviso && (
-        <p role={aviso.ok ? 'status' : 'alert'} className={`font-body-md text-body-md rounded-lg px-3 py-2 break-all ${aviso.ok ? 'text-success-text bg-success-surface' : 'text-danger-text bg-danger-surface'}`}>
+        <p role={aviso.ok ? 'status' : 'alert'} className={`shrink-0 font-body-md text-body-md rounded-lg px-3 py-2 break-all ${aviso.ok ? 'text-success-text bg-success-surface' : 'text-danger-text bg-danger-surface'}`}>
           {aviso.texto}
         </p>
       )}
@@ -152,8 +184,8 @@ export function Equipe() {
       {erro && <EstadoErro mensagem="Não foi possível carregar a equipe. Tente de novo." onTentarDeNovo={carregar} />}
       {!erro && !dados && <EsqueletoCarregando />}
       {dados && (
-        <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-space-md">
+        <div className="relative flex flex-col gap-space-md flex-1 min-h-0">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-space-md shrink-0">
             <CartaoIndicador titulo="Total de colaboradores" valor={String(dados.resumo.total)} legenda="na empresa" icone="groups" />
             <CartaoIndicador titulo="Usuários ativos" valor={String(dados.resumo.ativos)} legenda="com acesso" icone="check_circle" cor="success" />
             <CartaoIndicador titulo="Convites pendentes" valor={String(dados.resumo.pendentes)} legenda="aguardando a senha" icone="mark_email_unread" cor="warning" />
@@ -161,7 +193,7 @@ export function Equipe() {
             {dados.assentos?.limite && <CartaoIndicador titulo="Assentos" valor={`${dados.assentos.emUso} de ${dados.assentos.limite}`} legenda="assentos em uso" icone="event_seat" />}
           </div>
 
-          <section aria-label="Filtros" className="bg-surface-card rounded-2xl p-space-md shadow-sm flex items-center gap-2 flex-wrap">
+          <section aria-label="Filtros" className="bg-surface-card rounded-2xl p-space-md shadow-sm flex items-center gap-2 flex-wrap shrink-0">
             <input
               type="search"
               value={busca}
@@ -198,10 +230,10 @@ export function Equipe() {
               <EstadoVazio titulo="Nenhum colaborador encontrado" proximoPasso="ajuste os filtros ou convide alguém em Convidar Usuário" icone="groups" />
             </section>
           ) : (
-            <section aria-label="Colaboradores" className="bg-surface-card rounded-2xl shadow-sm overflow-hidden">
-              <div className="overflow-x-auto">
+            <section aria-label="Colaboradores" className="bg-surface-card rounded-2xl shadow-sm overflow-hidden flex flex-col flex-1 min-h-0">
+              <div className="overflow-auto flex-1 min-h-0">
                 <table className="w-full text-left">
-                  <thead className="bg-surface-subtle">
+                  <thead className="bg-surface-subtle sticky top-0 z-10">
                     <tr className="font-label-sm text-table-header uppercase text-text-muted tracking-wider">
                       <th className="px-space-md py-3">Colaborador</th>
                       <th className="px-space-md py-3">Papel no CRM</th>
@@ -218,7 +250,14 @@ export function Equipe() {
                         <tr key={c.usuarioId} className={`border-t border-surface-container ${c.status === 'pendente' ? 'bg-warning-surface/20' : ''} ${c.status === 'inativo' ? 'opacity-70' : ''}`}>
                           <td className="px-space-md py-3">
                             <div className="flex items-center gap-3">
-                              <span aria-hidden="true" className="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center font-label-md text-label-md text-text-secondary">{iniciais(c.nome)}</span>
+                              <span aria-hidden="true" className="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center font-label-md text-label-md text-text-secondary overflow-hidden shrink-0">
+                                {c.imagem ? (
+                                  // eslint-disable-next-line @next/next/no-img-element
+                                  <img src={c.imagem} alt="" className="w-9 h-9 object-cover" referrerPolicy="no-referrer" />
+                                ) : (
+                                  iniciais(c.nome)
+                                )}
+                              </span>
                               <div className="flex flex-col min-w-0">
                                 <span className={`font-label-lg text-label-lg text-text-primary truncate ${c.status === 'inativo' ? 'line-through' : ''}`}>{c.nome}</span>
                                 <span className="font-body-sm text-body-sm text-text-muted truncate">{c.email}</span>
@@ -255,6 +294,13 @@ export function Equipe() {
                                   Reenviar convite
                                 </button>
                               )}
+                              {gestor && !ehEu && c.papel !== 'MASTER' && c.status !== 'inativo' && (
+                                <button type="button" disabled={trabalhando} onClick={() => setEditandoAcessos(c)} aria-label={`Acessos: ${c.nome}`} className="h-8 px-3 rounded-lg bg-surface-subtle text-text-primary font-label-md text-label-md font-semibold disabled:opacity-50 flex items-center gap-1.5">
+                                  <span aria-hidden="true" className="material-symbols-outlined text-[16px]">key</span>
+                                  Acessos
+                                  {c.modulos && <span className="px-1.5 rounded-full bg-warning-surface text-warning-text font-label-sm text-[10px]">personalizado</span>}
+                                </button>
+                              )}
                               {gestor && !ehEu && (
                                 <button
                                   type="button"
@@ -278,12 +324,32 @@ export function Equipe() {
             </section>
           )}
 
-          <section className="bg-surface-card rounded-2xl p-space-md shadow-sm flex items-center justify-end gap-2 flex-wrap">
-            <ItemEmBreve rotulo="Logs de Auditoria" icone="history" className="h-9 px-3 rounded-lg bg-surface-subtle" />
-            <ItemEmBreve rotulo="Configurar IP Allowlist & Sessão" icone="shield" className="h-9 px-3 rounded-lg bg-surface-subtle" />
+          <section className="bg-surface-card rounded-2xl p-space-md shadow-sm flex items-center justify-end gap-2 flex-wrap shrink-0">
+            <button type="button" onClick={() => setPainel('auditoria')} className="h-9 px-3 rounded-lg bg-surface-subtle font-label-md text-label-md font-semibold text-text-primary flex items-center gap-2">
+              <span aria-hidden="true" className="material-symbols-outlined text-[18px]">history</span>
+              Logs de Auditoria
+            </button>
+            <button type="button" onClick={() => setPainel('sessao')} className="h-9 px-3 rounded-lg bg-surface-subtle font-label-md text-label-md font-semibold text-text-primary flex items-center gap-2">
+              <span aria-hidden="true" className="material-symbols-outlined text-[18px]">shield</span>
+              Sessão e acesso
+            </button>
           </section>
-        </>
+        </div>
       )}
+      {editandoAcessos && (
+        <DialogoDeAcessos
+          colaborador={editandoAcessos}
+          onFechar={() => setEditandoAcessos(null)}
+          onSalvo={(texto) => {
+            setEditandoAcessos(null);
+            setAviso({ ok: true, texto });
+            void carregar();
+          }}
+        />
+      )}
+      {painel === 'politicas' && <DialogoDePoliticas onFechar={() => setPainel(null)} />}
+      {painel === 'auditoria' && <DialogoDeAuditoria onFechar={() => setPainel(null)} />}
+      {painel === 'sessao' && <DialogoDeSessao onFechar={() => setPainel(null)} />}
 
       {aConfirmar && (
         <Dialog open onOpenChange={(aberto) => !aberto && setAConfirmar(null)}>

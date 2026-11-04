@@ -11,6 +11,7 @@ interface Configuracao {
   chaveConfigurada: boolean;
   chaveFinal: string | null;
   remetente: string | null;
+  responderPara?: string;
   /** fase5-email-descadastro (AC-719): só a contagem. */
   descadastrados?: number;
 }
@@ -19,6 +20,7 @@ export function EmailEmpresa() {
   const [config, setConfig] = useState<Configuracao | null>(null);
   const [chave, setChave] = useState('');
   const [remetente, setRemetente] = useState('');
+  const [responderPara, setResponderPara] = useState('');
   const [erro, setErro] = useState(false);
   const [aviso, setAviso] = useState<{ ok: boolean; texto: string } | null>(null);
   const [erroDoCampo, setErroDoCampo] = useState<{ campo: string; mensagem: string } | null>(null);
@@ -31,6 +33,7 @@ export function EmailEmpresa() {
       const c = (await r.json()) as Configuracao;
       setConfig(c);
       setRemetente(c.remetente ?? '');
+      setResponderPara(c.responderPara ?? '');
       setErro(false);
     } catch {
       setErro(true);
@@ -64,7 +67,7 @@ export function EmailEmpresa() {
   }
 
   function salvar() {
-    const corpo: Record<string, unknown> = { remetente: remetente.trim() === '' ? null : remetente.trim() };
+    const corpo: Record<string, unknown> = { remetente: remetente.trim() === '' ? null : remetente.trim(), responderPara: responderPara.trim() === '' ? null : responderPara.trim() };
     if (chave.trim() !== '') corpo.chave = chave.trim(); // chave em branco mantém a atual
     void enviar(corpo, 'Configuração salva');
   }
@@ -116,6 +119,26 @@ export function EmailEmpresa() {
               className="h-10 px-3 rounded-xl bg-surface-subtle font-body-md text-body-md text-text-primary"
             />
             {erroDoCampo?.campo === 'remetente' && (
+              <span role="alert" className="font-body-sm text-body-sm text-danger-text">
+                {erroDoCampo.mensagem}
+              </span>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label htmlFor="responder-para-resend" className="font-label-md text-label-md text-text-secondary">
+              E-mail de resposta
+            </label>
+            <p className="font-body-sm text-body-sm text-text-muted">Quando o destinatário clicar em &quot;Responder&quot;, a resposta vai para este e-mail. Em branco, vai para o remetente.</p>
+            <input
+              id="responder-para-resend"
+              type="email"
+              value={responderPara}
+              onChange={(e) => setResponderPara(e.target.value)}
+              placeholder="atendimento@clinica.com.br"
+              className="h-10 px-3 rounded-xl bg-surface-subtle font-body-md text-body-md text-text-primary"
+            />
+            {erroDoCampo?.campo === 'responderPara' && (
               <span role="alert" className="font-body-sm text-body-sm text-danger-text">
                 {erroDoCampo.mensagem}
               </span>

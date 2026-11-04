@@ -48,6 +48,8 @@ export function AgendaTela() {
   // T-301: o estado do Google Meet (null = ainda não sabemos, então o botão segue "em breve").
   const [meet, setMeet] = useState<{ conectado: boolean; conta: string | null } | null>(null);
 
+  // Nas visões Dia e Lista as reuniões já estão na tela: repetir a fila de hoje só duplicaria o que se vê.
+  const filaDeHoje = visao === 'semana' || visao === 'mes';
   const periodo = useMemo(() => periodoDaVisao(visao, referencia), [visao, referencia]);
 
   const carregar = useCallback(async () => {
@@ -297,7 +299,8 @@ export function AgendaTela() {
         )}
       </section>
 
-      <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] gap-space-md items-start">
+      <div className={`grid grid-cols-1 gap-space-md items-start ${filaDeHoje ? 'xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]' : ''}`}>
+        {filaDeHoje && (
         <section aria-label="Fila de Reuniões e Sessões Clínicas (Hoje)" className="flex flex-col gap-space-sm">
           <h2 className="font-headline-sm text-headline-sm text-text-primary">Fila de Reuniões e Sessões Clínicas (Hoje)</h2>
           {reunioesHoje.length === 0 && <p className="font-body-md text-body-md text-text-secondary">Nenhuma reunião neste período</p>}
@@ -305,8 +308,9 @@ export function AgendaTela() {
             <CartaoReuniao key={r.id} reuniao={r} acoes={acoes} ocupado={ocupado} />
           ))}
         </section>
+        )}
         {resumo && (
-          <LateralAgenda resumo={resumo} onReagendar={(reuniao) => setModal({ tipo: 'reagendar', reuniao })} />
+          <LateralAgenda lado={!filaDeHoje} resumo={resumo} onReagendar={(reuniao) => setModal({ tipo: 'reagendar', reuniao })} />
         )}
       </div>
 

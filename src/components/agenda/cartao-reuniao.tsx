@@ -220,3 +220,30 @@ export function CartaoReuniao({ reuniao, acoes, ocupado }: { reuniao: ReuniaoVie
     </article>
   );
 }
+
+/** A reunião numa linha só (visão Lista): hora, lead, status, closer, valor e as ações à direita. */
+export function LinhaReuniao({ reuniao, acoes, ocupado }: { reuniao: ReuniaoView; acoes: AcoesDaReuniao; ocupado: boolean }) {
+  const status = reuniao.status;
+  return (
+    <article
+      aria-label={`Reunião com ${reuniao.lead.nome}`}
+      className={`border-l-4 ${BORDA_DO_STATUS[status]} ${status === 'no_show' ? 'bg-danger-surface/20' : ''} px-space-md py-2.5 flex flex-wrap items-center gap-x-4 gap-y-2`}
+    >
+      <span className="w-12 shrink-0 font-label-md text-label-md font-semibold text-text-primary">{horaDe(reuniao.agendadaPara)}</span>
+      <div className="flex-1 min-w-[12rem] flex flex-col">
+        <div className="flex items-center gap-2 flex-wrap">
+          <Link href={`/pipeline/${reuniao.oportunidadeId}`} className="font-label-md text-label-md font-semibold text-text-primary hover:text-primary truncate">
+            {reuniao.lead.nome}
+          </Link>
+          <SeloStatus status={status} comIcone={false} />
+        </div>
+        <p className="font-body-sm text-body-sm text-text-muted truncate">
+          {reuniao.closer?.nome ?? 'Sem responsável'}
+          {reuniao.valor !== null && ` · ${MOEDA.format(Number(reuniao.valor))}/mês`}
+          {status === 'realizada' && reuniao.resumo && ` · ${reuniao.resumo}`}
+        </p>
+      </div>
+      <BotoesDaReuniao reuniao={reuniao} acoes={acoes} ocupado={ocupado} />
+    </article>
+  );
+}

@@ -11,7 +11,7 @@ import type { PapelUsuario } from '../../../../lib/auth/convites';
 export const dynamic = 'force-dynamic';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const STATUS_HTTP: Record<string, number> = { COLABORADOR_NAO_ENCONTRADO: 404, NAO_PODE_ALTERAR_A_SI: 422, ULTIMO_MASTER: 422, SEM_ASSENTOS: 409 };
+const STATUS_HTTP: Record<string, number> = { COLABORADOR_NAO_ENCONTRADO: 404, NAO_PODE_ALTERAR_A_SI: 422, ULTIMO_MASTER: 422, SEM_ASSENTOS: 409, MODULOS_INVALIDOS: 422 };
 
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ usuarioId: string }> }) {
   const acesso = await exigirGerente(request);
@@ -21,16 +21,16 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   const { usuarioId } = await params;
   if (!UUID.test(usuarioId)) return NextResponse.json({ codigo: 'COLABORADOR_NAO_ENCONTRADO' }, { status: 404 });
 
-  const corpo = (await request.json().catch(() => null)) as { papel?: unknown; ativo?: unknown } | null;
+  const corpo = (await request.json().catch(() => null)) as { papel?: unknown; ativo?: unknown; modulos?: unknown } | null;
   const papel = corpo?.papel;
   const ativo = corpo?.ativo;
   const papelOk = papel === undefined || (typeof papel === 'string' && PAPEIS.includes(papel as PapelUsuario));
   const ativoOk = ativo === undefined || typeof ativo === 'boolean';
-  if (!corpo || !papelOk || !ativoOk || (papel === undefined && ativo === undefined)) {
+  if (!corpo || !papelOk || !ativoOk || (papel === undefined && ativo === undefined && corpo.modulos === undefined)) {
     return NextResponse.json({ codigo: 'REQUISICAO_INVALIDA' }, { status: 400 });
   }
 
-  const r = await alterarColaborador(getDb(), acesso.contexto, usuarioId, { papel: papel as PapelUsuario | undefined, ativo: ativo as boolean | undefined });
+  const r = await alterarColaborador(getDb(), acesso.contexto, usuarioId, { papel: papel as PapelUsuario | undefined, ativo: ativo as boolean | undefined, modulos: corpo.modulos });
   if (r.ok) return NextResponse.json(r.colaborador);
   return NextResponse.json({ codigo: r.codigo }, { status: STATUS_HTTP[r.codigo] ?? 422 });
 }

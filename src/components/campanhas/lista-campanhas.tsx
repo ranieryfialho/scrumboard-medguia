@@ -105,7 +105,7 @@ export function ListaCampanhas() {
   }
 
   const cabecalho = (
-    <div className="flex items-start justify-between flex-wrap gap-space-md">
+    <div className="flex items-start justify-between flex-wrap gap-space-md shrink-0">
       <div>
         <h1 className="font-headline-lg text-headline-lg text-text-primary tracking-tight">Campanhas de Comunicação &amp; Mala Direta</h1>
         <p className="font-body-md text-body-md text-text-secondary mt-1 max-w-xl">Envios em lote por e-mail para a base de leads, com o acompanhamento de cada disparo.</p>
@@ -134,21 +134,21 @@ export function ListaCampanhas() {
   const semFiltro = !status && !busca.trim() && !dias;
 
   return (
-    <div className="p-space-md space-y-space-md">
+    <div className="p-space-md flex flex-col gap-space-md h-[calc(100dvh-4rem)] min-h-[40rem]">
       {cabecalho}
 
       {erro && <EstadoErro mensagem="Não foi possível carregar as campanhas. Tente de novo." onTentarDeNovo={carregar} />}
       {!erro && dados === null && <EsqueletoCarregando />}
       {!erro && dados !== null && (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-space-md">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-space-md shrink-0">
             <CartaoIndicador titulo="Total de disparos no mês" valor={dados.resumo.disparosNoMes.toLocaleString('pt-BR')} legenda="e-mails enviados neste mês" icone="outgoing_mail" />
             <CartaoIndicador titulo="Taxa média de entrega" valor={formatarPorcentagem(dados.resumo.taxaEntrega)} legenda="enviados sem falha" icone="verified" cor="success" />
             <CartaoIndicador titulo="Taxa de abertura global" valor={formatarPorcentagem(dados.resumo.taxaAbertura)} legenda="sobre os enviados" icone="drafts" cor="info" />
             <CartaoIndicador titulo="Taxa de cliques (CTR)" valor={formatarPorcentagem(dados.resumo.taxaCliques)} legenda="sobre os enviados" icone="ads_click" cor="warning" />
           </div>
 
-          <section aria-label="Filtros" className="bg-surface-card rounded-2xl p-space-md shadow-sm flex items-center gap-2 flex-wrap">
+          <section aria-label="Filtros" className="bg-surface-card rounded-2xl p-space-md shadow-sm flex items-center gap-2 flex-wrap shrink-0">
             <input
               type="search"
               value={busca}
@@ -202,10 +202,10 @@ export function ListaCampanhas() {
               <p className="font-body-md text-body-md text-text-secondary">Nenhuma campanha encontrada</p>
             )
           ) : (
-            <section aria-label="Campanhas" className="bg-surface-card rounded-2xl shadow-sm overflow-hidden">
-              <div className="overflow-x-auto">
+            <section aria-label="Campanhas" className="bg-surface-card rounded-2xl shadow-sm overflow-hidden flex flex-col flex-1 min-h-0">
+              <div className="overflow-auto flex-1 min-h-0">
                 <table className="w-full text-left">
-                  <thead className="bg-surface-subtle">
+                  <thead className="bg-surface-subtle sticky top-0 z-10">
                     <tr className="font-label-sm text-table-header uppercase text-text-muted tracking-wider">
                       <th className="px-space-md py-3">Campanha &amp; assunto</th>
                       <th className="px-space-md py-3">Destinatários</th>
@@ -287,7 +287,7 @@ export function ListaCampanhas() {
             </section>
           )}
 
-          <ItemEmBreve rotulo="Auditar Entregabilidade" icone="shield" className="self-start" />
+          <ItemEmBreve rotulo="Auditar Entregabilidade" icone="shield" className="self-start shrink-0" />
         </>
       )}
 

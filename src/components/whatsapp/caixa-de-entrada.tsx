@@ -141,8 +141,8 @@ export function CaixaDeEntrada() {
   const selo = seloDaConexao(status);
 
   return (
-    <div className="p-space-md space-y-space-md">
-      <div className="flex items-start justify-between flex-wrap gap-space-md">
+    <div className="p-space-md flex flex-col gap-space-md xl:h-[calc(100dvh-4rem)] xl:min-h-[44rem]">
+      <div className="flex items-start justify-between flex-wrap gap-space-md shrink-0">
         <div className="flex items-center gap-space-md flex-wrap">
           <h1 className="font-headline-lg text-headline-lg text-text-primary tracking-tight">Central de Atendimento WhatsApp</h1>
           <span className={`px-3 py-1 rounded-full font-label-md text-label-md ${selo.classe}`}>{selo.texto}</span>
@@ -180,7 +180,7 @@ export function CaixaDeEntrada() {
       {!erro && dados === null && <EsqueletoCarregando />}
       {!erro && dados !== null && (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-space-md shrink-0">
             <CartaoIndicador titulo="Conversas ativas hoje" valor={String(dados.resumo.ativasHoje)} legenda="com mensagem hoje" icone="forum" />
             <CartaoIndicador titulo="Mensagens não lidas" valor={String(dados.resumo.naoLidas)} legenda="Aguardando resposta" icone="mark_chat_unread" cor="danger" />
           </div>
@@ -188,7 +188,7 @@ export function CaixaDeEntrada() {
           {dados.contagens.todas === 0 && !busca && !responsavelId ? (
             <EstadoVazio titulo="Nenhuma conversa ainda" proximoPasso="inicie uma em Nova Conversa Externa, ou espere o primeiro contato de um lead" icone="chat" />
           ) : (
-            <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] gap-space-md items-start">
+            <div className="grid grid-cols-1 xl:grid-cols-[22rem_minmax(0,1fr)_20rem] gap-space-md xl:flex-1 xl:min-h-0">
               <ListaConversas
                 conversas={dados.conversas}
                 contagens={dados.contagens}
@@ -199,17 +199,15 @@ export function CaixaDeEntrada() {
                 onBusca={setBusca}
                 onEscolher={setSelecionada}
               />
-              <div className="flex flex-col gap-space-md">
-                {aberta ? (
-                  <>
-                    <PainelConversa key={aberta.chave} conversa={aberta} versao={versao} onAtualizou={carregar} />
-                    <ContextoCard conversa={aberta} />
-                  </>
-                ) : (
-                  <section className="bg-surface-card rounded-2xl p-space-md shadow-sm">
-                    <EstadoVazio titulo="Escolha uma conversa" proximoPasso="clique em uma conversa da lista para ver o histórico e responder" icone="chat" />
-                  </section>
-                )}
+              {aberta ? (
+                <PainelConversa key={aberta.chave} conversa={aberta} versao={versao} onAtualizou={carregar} />
+              ) : (
+                <section className="bg-surface-card rounded-2xl p-space-md shadow-sm xl:h-full flex items-center justify-center">
+                  <EstadoVazio titulo="Escolha uma conversa" proximoPasso="clique em uma conversa da lista para ver o histórico e responder" icone="chat" />
+                </section>
+              )}
+              <div className="flex flex-col gap-space-md xl:min-h-0 xl:overflow-y-auto">
+                {aberta && <ContextoCard conversa={aberta} />}
                 <FaixaConexao status={status} />
               </div>
             </div>

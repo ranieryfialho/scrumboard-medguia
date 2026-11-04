@@ -45,6 +45,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <MenuLateral
         papel={usuario.papel}
         isSuperAdmin={usuario.isSuperAdmin}
+        modulos={usuario.modulos}
         gavetaAberta={gavetaAberta}
         aoFecharGaveta={() => setGavetaAberta(false)}
       />

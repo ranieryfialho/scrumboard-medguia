@@ -8,6 +8,7 @@ import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { campanhas, enviosCampanha, leads, oportunidades } from '../db/schema';
 import { dataLocalEmSaoPaulo } from '../domain/cadencia/turno';
 import type { ContextoTenant } from '../lib/auth/tenant';
+import { emailsComEnvioRecente } from './campanhas-frequencia';
 import { comTenant } from './contexto';
 import { emailsDescadastrados } from './email-descadastros';
 import { normalizarDestinatarios, type Campanha } from './campanhas';
@@ -160,13 +161,16 @@ export interface PreviaDeDestinatarios {
   valorEmPipeline: number;
   /** fase5-email-descadastro (AC-718): e-mails da seleção que a empresa já descadastrou — ficam fora de `total`. */
   descadastrados: number;
+  /** T-308: com a proteção de frequência ligada, quantos já receberam e-mail de campanha nas últimas 72 h — ficam fora de `total`. */
+  protegidos: number;
 }
 
 /** AC-540: quantos leads com e-mail válido cada etapa tem, o total único e o valor em pipeline (ASM-187). */
 export async function preverDestinatarios(
   db: NodePgDatabase,
   contexto: ContextoTenant,
-  etapaIds: number[]
+  etapaIds: number[],
+  protegerFrequencia = false
 ): Promise<PreviaDeDestinatarios> {
   return comTenant(db, contexto, async (tx) => {
     const condicoes: SQL[] = [
@@ -183,7 +187,9 @@ export async function preverDestinatarios(
 
     const comEmail = linhas.filter((l) => l.email !== null && l.email.trim() !== '');
     const fora = await emailsDescadastrados(tx, contexto.empresaId, comEmail.map((l) => l.email as string));
-    const validos = (contatos: { nome: string; email: string }[]) => normalizarDestinatarios(contatos).destinatarios.filter((d) => !fora.has(d.email));
+    const recentes = protegerFrequencia ? await emailsComEnvioRecente(tx, contexto.empresaId, comEmail.map((l) => l.email as string)) : new Set<string>();
+    const validos = (contatos: { nome: string; email: string }[]) => normalizarDestinatarios(contatos).destinatarios.filter((d) => !fora.has(d.email) && !recentes.has(d.email));
+    const protegidos = normalizarDestinatarios(comEmail.map((l) => ({ nome: l.nome, email: l.email as string }))).destinatarios.filter((d) => !fora.has(d.email) && recentes.has(d.email)).length;
     const descadastrados = normalizarDestinatarios(comEmail.map((l) => ({ nome: l.nome, email: l.email as string }))).destinatarios.filter((d) => fora.has(d.email)).length;
 
     const porEtapa = etapaIds.map((etapaId) => ({
@@ -201,6 +207,6 @@ export async function preverDestinatarios(
       valorEmPipeline += l.valor === null ? 0 : Number(l.valor);
     }
 
-    return { porEtapa, total, valorEmPipeline, descadastrados };
+    return { porEtapa, total, valorEmPipeline, descadastrados, protegidos };
   });
 }

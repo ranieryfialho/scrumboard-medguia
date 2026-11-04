@@ -14,6 +14,7 @@ interface DadosComerciais {
   prontuarioLegado: string | null;
   faturamentoTiss: string | null;
   termoLgpdValidado: boolean;
+  descontoPercentual?: number | null;
 }
 
 const MENSAGEM_DE_ERRO = 'Não foi possível salvar. Confira os campos e tente de novo.';
@@ -168,7 +169,7 @@ export function DadosDaProposta({ cardId, valor: valorInicial }: DadosDaProposta
   const [editando, setEditando] = useState(false);
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
-  const [rascunho, setRascunho] = useState({ mrr: '', previsao: '', condicao: '', plano: '' });
+  const [rascunho, setRascunho] = useState({ mrr: '', previsao: '', condicao: '', plano: '', desconto: '' });
 
   useEffect(() => setValor(valorInicial), [valorInicial]);
 
@@ -181,6 +182,7 @@ export function DadosDaProposta({ cardId, valor: valorInicial }: DadosDaProposta
       previsao: dados?.previsaoFechamento ?? '',
       condicao: dados?.condicaoEspecial ?? '',
       plano: dados?.plano ?? '',
+      desconto: dados?.descontoPercentual == null ? '' : String(dados.descontoPercentual).replace('.', ','),
     });
     setErro(null);
     setEditando(true);
@@ -209,6 +211,7 @@ export function DadosDaProposta({ cardId, valor: valorInicial }: DadosDaProposta
         previsaoFechamento: rascunho.previsao === '' ? null : rascunho.previsao,
         condicaoEspecial: rascunho.condicao,
         plano: rascunho.plano,
+        descontoPercentual: rascunho.desconto.trim() === '' ? null : Number(rascunho.desconto.replace(',', '.')),
       });
       if (!ok) {
         setErro(MENSAGEM_DE_ERRO);
@@ -228,6 +231,7 @@ export function DadosDaProposta({ cardId, valor: valorInicial }: DadosDaProposta
           <Entrada id="proposta-previsao" rotulo="Previsão de fechamento" type="date" value={rascunho.previsao} onChange={(e) => setRascunho((r) => ({ ...r, previsao: e.target.value }))} />
           <Entrada id="proposta-condicao" rotulo="Condição especial" maxLength={200} value={rascunho.condicao} onChange={(e) => setRascunho((r) => ({ ...r, condicao: e.target.value }))} />
           <Entrada id="proposta-plano" rotulo="Plano" maxLength={200} value={rascunho.plano} onChange={(e) => setRascunho((r) => ({ ...r, plano: e.target.value }))} />
+          <Entrada id="proposta-desconto" rotulo="Desconto concedido (%)" inputMode="decimal" value={rascunho.desconto} onChange={(e) => setRascunho((r) => ({ ...r, desconto: e.target.value }))} />
         </div>
       ) : (
         <div className="flex flex-col gap-2">
@@ -241,6 +245,7 @@ export function DadosDaProposta({ cardId, valor: valorInicial }: DadosDaProposta
           <Linha rotulo="Previsão Fechamento:">{formatarDia(dados.previsaoFechamento)}</Linha>
           <Linha rotulo="Condição Especial:">{dados.condicaoEspecial ?? '—'}</Linha>
           <Linha rotulo="Plano:">{dados.plano ?? '—'}</Linha>
+          <Linha rotulo="Desconto:">{dados.descontoPercentual == null ? '—' : `${dados.descontoPercentual.toLocaleString('pt-BR')}%`}</Linha>
         </div>
       )}
     </Bloco>

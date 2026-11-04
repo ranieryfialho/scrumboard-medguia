@@ -13,6 +13,7 @@ import { ErroSessaoInvalida, resolverContextoTenant, type ContextoTenant } from 
 import { buildConfig, sendTextMessage } from '../../../../lib/evolution-api';
 import { listarTelefonesLead } from '../../../../repositories/lead-telefones';
 import { registrarMensagemEnviada } from '../../../../repositories/whatsapp';
+import { dadosAvulsoDoCorpo, registrarAvulso } from '../../../../repositories/whatsapp-avulsos';
 import { buscarNomeInstancia } from '../../../../repositories/whatsapp-instancia';
 
 export const dynamic = 'force-dynamic';
@@ -155,6 +156,8 @@ export async function POST(request: NextRequest) {
       texto: corpo.mensagem,
       evolutionMessageId: resultadoEnvio.key?.id ?? null,
     });
+    // T-303: número avulso — lembra nome, motivo e "virar lead se responder"; falhar aqui não desfaz o envio.
+    if (corpo.numero) await registrarAvulso(db, contexto, numeroDestino, dadosAvulsoDoCorpo(corpoBruto as Record<string, unknown>)).catch(() => undefined);
     return NextResponse.json({
       success: true,
       messageId: resultadoEnvio.key?.id ?? null,

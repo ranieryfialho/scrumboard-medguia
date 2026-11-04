@@ -5,6 +5,7 @@ export interface ConversaView {
   leadId: string | null;
   numero: string;
   nome: string | null;
+  categoria?: string | null;
   ultimaMensagem: string;
   ultimaEm: string;
   ultimaDirecao: 'enviada' | 'recebida';
