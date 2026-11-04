@@ -6,7 +6,7 @@
 import { and, desc, eq, inArray, isNull } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
-import { leads, oportunidades, usuarios, whatsappAvulsos, whatsappMensagens } from '../db/schema';
+import { cadenciaAtividades, leads, oportunidades, usuarios, whatsappAvulsos, whatsappMensagens } from '../db/schema';
 import { dataLocalEmSaoPaulo } from '../domain/cadencia/turno';
 import type { ContextoTenant } from '../lib/auth/tenant';
 import { comTenant } from './contexto';
@@ -36,7 +36,24 @@ export interface ConversaDaCaixa {
     etapaId: number;
     valor: string | null;
     responsavel: { id: string; nome: string } | null;
+    /** Régua de cadência do card: quantos toques existem, quantos já foram feitos e o da vez. */
+    cadencia: CadenciaDaConversa | null;
   } | null;
+}
+
+export interface CadenciaDaConversa {
+  total: number;
+  feitos: number;
+  atual: { sequencia: number; dia: number; turno: 'manha' | 'tarde'; canal: 'telefone' | 'whatsapp'; tipo: 'ligacao' | 'mensagem' | 'breakup'; observacao: string | null } | null;
+}
+
+export interface IndicadoresDeAtendimento {
+  /** Média, em segundos, entre uma mensagem recebida hoje e a primeira resposta enviada; null sem nenhuma resposta hoje. */
+  tempoPrimeiraRespostaSeg: number | null;
+  /** % das conversas iniciadas pelo cliente hoje que já foram respondidas; null sem nenhuma hoje. */
+  taxaResposta: number | null;
+  /** Quantas conversas novas (primeira mensagem do cliente) chegaram hoje. */
+  novasHoje: number;
 }
 
 export interface RespostaConversas {
@@ -47,6 +64,7 @@ export interface RespostaConversas {
     naoLidas: number;
     mensagensHoje: { recebidas: number; enviadas: number };
   };
+  indicadores: IndicadoresDeAtendimento;
 }
 
 export interface OpcoesConversas {
@@ -93,6 +111,8 @@ export async function listarConversas(
       ultimaEmData: Date;
       recebidasHoje: number;
       enviadasHoje: number;
+      /** Mais antigas primeiro: serve ao tempo e à taxa de resposta. */
+      fluxo: { direcao: 'enviada' | 'recebida'; em: number }[];
     }
     const porChave = new Map<string, Acumulada>();
     for (const m of mensagens) {
@@ -111,6 +131,7 @@ export async function listarConversas(
           respondida: false,
           recebidasHoje: 0,
           enviadasHoje: 0,
+          fluxo: [],
         };
         porChave.set(chave, c);
       }
@@ -118,6 +139,7 @@ export async function listarConversas(
         c.respondida = true;
         if (!m.lidaEm) c.naoLidas += 1;
       }
+      c.fluxo.push({ direcao: m.direcao, em: m.criadoEm.getTime() });
       if (m.criadoEm.getTime() >= hoje) {
         if (m.direcao === 'recebida') c.recebidasHoje += 1;
         else c.enviadasHoje += 1;
@@ -126,6 +148,7 @@ export async function listarConversas(
 
     const leadIds = [...new Set([...porChave.values()].map((c) => c.leadId).filter((id): id is string => id !== null))];
     const cardPorLead = new Map<string, NonNullable<ConversaDaCaixa['card']> & { responsavelId: string | null }>();
+    const cadenciaPorCard = new Map<string, CadenciaDaConversa>();
     if (leadIds.length > 0) {
       const cards = await tx
         .select({
@@ -148,8 +171,35 @@ export async function listarConversas(
           valor: card.valor,
           responsavelId: card.responsavelId,
           responsavel: card.responsavelId && card.responsavelNome ? { id: card.responsavelId, nome: card.responsavelNome } : null,
+          cadencia: null,
         });
       }
+      const idsDosCards = [...cardPorLead.values()].map((c) => c.id);
+      const toques = await tx
+        .select({
+          oportunidadeId: cadenciaAtividades.oportunidadeId,
+          sequencia: cadenciaAtividades.sequencia,
+          dia: cadenciaAtividades.dia,
+          turno: cadenciaAtividades.turno,
+          canal: cadenciaAtividades.canal,
+          tipo: cadenciaAtividades.tipo,
+          resultado: cadenciaAtividades.resultado,
+          observacao: cadenciaAtividades.observacao,
+        })
+        .from(cadenciaAtividades)
+        .where(and(eq(cadenciaAtividades.empresaId, contexto.empresaId), inArray(cadenciaAtividades.oportunidadeId, idsDosCards)))
+        .orderBy(cadenciaAtividades.sequencia);
+      for (const t of toques) {
+        const r = cadenciaPorCard.get(t.oportunidadeId) ?? { total: 0, feitos: 0, atual: null };
+        r.total += 1;
+        if (t.resultado === 'pendente') {
+          r.atual ??= { sequencia: t.sequencia, dia: t.dia, turno: t.turno, canal: t.canal, tipo: t.tipo, observacao: t.observacao };
+        } else {
+          r.feitos += 1;
+        }
+        cadenciaPorCard.set(t.oportunidadeId, r);
+      }
+      for (const card of cardPorLead.values()) card.cadencia = cadenciaPorCard.get(card.id) ?? null;
     }
 
     // T-303: o nome e o motivo que quem enviou a avulsa informou.
@@ -191,6 +241,39 @@ export async function listarConversas(
       },
     };
 
+    // Tempo e taxa de resposta de hoje: cada vez que o cliente escreve sem estar
+    // esperando resposta abre um "pedido"; a primeira mensagem enviada depois o fecha.
+    let somaEspera = 0;
+    let respondidos = 0;
+    let pedidos = 0;
+    let novasHoje = 0;
+    for (const { conversa } of visiveis) {
+      const fluxo = [...conversa.fluxo].reverse();
+      let aberto: number | null = null;
+      for (const [i, f] of fluxo.entries()) {
+        if (f.direcao === 'recebida') {
+          if (aberto === null) {
+            aberto = f.em;
+            if (f.em >= hoje) {
+              pedidos += 1;
+              if (i === 0) novasHoje += 1;
+            }
+          }
+        } else if (aberto !== null) {
+          if (aberto >= hoje) {
+            respondidos += 1;
+            somaEspera += (f.em - aberto) / 1000;
+          }
+          aberto = null;
+        }
+      }
+    }
+    const indicadores: IndicadoresDeAtendimento = {
+      tempoPrimeiraRespostaSeg: respondidos > 0 ? Math.round(somaEspera / respondidos) : null,
+      taxaResposta: pedidos > 0 ? Math.round((respondidos / pedidos) * 1000) / 10 : null,
+      novasHoje,
+    };
+
     const dosCards = (v: (typeof visiveis)[number]) => v.card?.responsavelId === contexto.usuarioId;
     const contagens = {
       naoLidas: visiveis.filter((v) => v.conversa.naoLidas > 0).length,
@@ -223,10 +306,10 @@ export async function listarConversas(
       ultimaDirecao: conversa.ultimaDirecao,
       naoLidas: conversa.naoLidas,
       respondida: conversa.respondida,
-      card: card ? { id: card.id, etapaId: card.etapaId, valor: card.valor, responsavel: card.responsavel } : null,
+      card: card ? { id: card.id, etapaId: card.etapaId, valor: card.valor, responsavel: card.responsavel, cadencia: card.cadencia } : null,
     }));
 
-    return { conversas, contagens, resumo };
+    return { conversas, contagens, resumo, indicadores };
   });
 }
 

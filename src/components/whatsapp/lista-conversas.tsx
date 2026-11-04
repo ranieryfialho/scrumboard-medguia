@@ -3,7 +3,7 @@
 import { SeloEtapa } from '@/components/pipeline/pecas/selo-etapa';
 import { nomeDaEtapa } from '@/components/pipeline/detalhe/jornada';
 import { ItemEmBreve } from '@/components/pipeline/pecas/selo-em-breve';
-import { horarioCurto, iniciais, nomeDaConversa, type ConversaView } from './comum';
+import { formatarNumero, horarioCurto, iniciais, nomeDaConversa, type ConversaView } from './comum';
 
 export type AbaConversas = 'nao_lidas' | 'minhas' | 'todas';
 
@@ -55,7 +55,7 @@ export function ListaConversas({ conversas, contagens, aba, busca, selecionada, 
 
       <div className="flex-1 min-h-0 overflow-y-auto border-t border-surface-container">
         {conversas.length === 0 && <p className="px-space-md py-space-md font-body-md text-body-md text-text-secondary">Nenhuma conversa encontrada</p>}
-        <ul>
+        <ul className="min-w-0">
           {conversas.map((c) => {
             const nome = nomeDaConversa(c);
             const ativa = selecionada === c.chave;
@@ -65,7 +65,7 @@ export function ListaConversas({ conversas, contagens, aba, busca, selecionada, 
                   type="button"
                   onClick={() => onEscolher(c)}
                   aria-current={ativa ? 'true' : undefined}
-                  className={`w-full text-left px-space-md py-3 flex flex-col gap-1 border-l-4 ${ativa ? 'bg-info-surface border-primary' : 'border-transparent hover:bg-surface-subtle'}`}
+                  className={`w-full min-w-0 text-left px-space-md py-3 flex flex-col gap-1 border-l-4 ${ativa ? 'bg-info-surface border-primary' : 'border-transparent hover:bg-surface-subtle'}`}
                 >
                   <span className="flex items-center gap-3">
                     <span aria-hidden="true" className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center font-label-md text-label-md text-text-secondary shrink-0">
@@ -77,7 +77,7 @@ export function ListaConversas({ conversas, contagens, aba, busca, selecionada, 
                         <span className="font-body-sm text-body-sm text-text-muted shrink-0">{horarioCurto(c.ultimaEm)}</span>
                       </span>
                       <span className="flex items-center justify-between gap-2">
-                        <span className="font-body-sm text-body-sm text-text-secondary truncate">{c.ultimaMensagem}</span>
+                        <span className="font-label-sm text-label-sm text-text-muted truncate">{c.nome ? formatarNumero(c.numero) : (c.categoria ?? 'Conversa avulsa')}</span>
                         {c.naoLidas > 0 && (
                           <span aria-label={`${c.naoLidas} não lidas`} className="min-w-5 h-5 px-1 rounded-full bg-primary text-on-primary font-label-sm text-label-sm flex items-center justify-center shrink-0">
                             {c.naoLidas}
@@ -86,9 +86,15 @@ export function ListaConversas({ conversas, contagens, aba, busca, selecionada, 
                       </span>
                     </span>
                   </span>
+                  <span className="pl-[3.25rem] block max-w-full font-body-sm text-body-sm text-text-secondary truncate">{c.ultimaMensagem}</span>
                   {c.card && (
-                    <span className="pl-[3.25rem]">
+                    <span className="pl-[3.25rem] flex items-center gap-2 flex-wrap">
                       <SeloEtapa nome={nomeDaEtapa(c.card.etapaId)} />
+                      {c.card.cadencia && c.card.cadencia.total > 0 && (
+                        <span className="font-label-sm text-label-sm text-text-muted">
+                          Toque {c.card.cadencia.atual?.sequencia ?? c.card.cadencia.total}/{c.card.cadencia.total}
+                        </span>
+                      )}
                     </span>
                   )}
                 </button>

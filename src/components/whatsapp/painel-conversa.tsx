@@ -111,11 +111,19 @@ export function PainelConversa({ conversa, versao, onAtualizou }: PainelConversa
           </span>
           <div className="min-w-0">
             <h2 className="font-headline-sm text-headline-sm text-text-primary truncate">{nome}</h2>
-            <p className="font-body-sm text-body-sm text-text-muted">{formatarNumero(conversa.numero)}</p>
+            <p className="font-body-sm text-body-sm text-text-muted flex items-center gap-2">
+              {formatarNumero(conversa.numero)}
+              <span aria-hidden="true">·</span>
+              <span className="text-success-text flex items-center gap-1">
+                <span aria-hidden="true" className="w-1.5 h-1.5 rounded-full bg-success-text" />
+                Via Evolution API
+              </span>
+            </p>
           </div>
         </div>
         {conversa.card && (
-          <Link href={`/pipeline/${conversa.card.id}`} className="h-9 px-3 rounded-lg bg-surface-subtle text-text-primary font-label-md text-label-md flex items-center hover:bg-surface-container">
+          <Link href={`/pipeline/${conversa.card.id}`} className="h-9 px-3 rounded-lg border border-border-subtle text-primary font-label-md text-label-md flex items-center gap-1.5 hover:bg-surface-subtle shrink-0">
+            <span aria-hidden="true" className="material-symbols-outlined text-[16px]">view_kanban</span>
             Abrir card
           </Link>
         )}
@@ -148,8 +156,10 @@ export function PainelConversa({ conversa, versao, onAtualizou }: PainelConversa
         <div ref={fimRef} />
       </div>
 
-      <div className="p-space-md border-t border-border-subtle flex flex-col gap-space-sm shrink-0">
+      <div className="px-space-md py-2 border-t border-border-subtle shrink-0">
         <RespostasETemplates leadNome={nome} onEscolher={setTexto} />
+      </div>
+      <div className="p-space-md border-t border-border-subtle flex flex-col gap-space-sm shrink-0">
         <div className="flex items-center gap-2">
           {[
             ['Anexar arquivo', 'attach_file'],
@@ -163,7 +173,7 @@ export function PainelConversa({ conversa, versao, onAtualizou }: PainelConversa
             value={texto}
             onChange={(e) => setTexto(e.target.value)}
             onKeyDown={aoTeclar}
-            rows={2}
+            rows={1}
             placeholder={`Digite uma mensagem para ${nome} (Enter para enviar)`}
             aria-label="Mensagem"
             className="flex-1 resize-none rounded-xl border border-border-subtle bg-surface-subtle px-3 py-2 font-body-md text-body-md text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/30"
@@ -186,9 +196,15 @@ export function PainelConversa({ conversa, versao, onAtualizou }: PainelConversa
             {erroDeEnvio}
           </p>
         )}
-        <p className="font-body-sm text-[11px] text-text-muted text-right hidden md:block">
-          Pressione <strong>Enter</strong> para enviar e <strong>Shift + Enter</strong> para quebra de linha
-        </p>
+        <div className="hidden md:flex items-center justify-between gap-3 font-body-sm text-[11px] text-text-muted">
+          <span className="flex items-center gap-1">
+            <span aria-hidden="true" className="material-symbols-outlined text-[14px]">lock</span>
+            Mensagens enviadas pela Evolution API
+          </span>
+          <span>
+            Pressione <strong>Enter</strong> para enviar e <strong>Shift + Enter</strong> para quebra de linha
+          </span>
+        </div>
       </div>
     </section>
   );

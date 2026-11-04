@@ -16,13 +16,29 @@ export interface ConversaView {
     etapaId: number;
     valor: string | null;
     responsavel: { id: string; nome: string } | null;
+    cadencia?: CadenciaDaConversaView | null;
   } | null;
+}
+
+export interface CadenciaDaConversaView {
+  total: number;
+  feitos: number;
+  atual: { sequencia: number; dia: number; turno: 'manha' | 'tarde'; canal: 'telefone' | 'whatsapp'; tipo: 'ligacao' | 'mensagem' | 'breakup'; observacao: string | null } | null;
 }
 
 export interface RespostaConversasView {
   conversas: ConversaView[];
   contagens: { naoLidas: number; minhas: number; todas: number };
   resumo: { ativasHoje: number; naoLidas: number; mensagensHoje: { recebidas: number; enviadas: number } };
+  indicadores?: { tempoPrimeiraRespostaSeg: number | null; taxaResposta: number | null; novasHoje: number };
+}
+
+/** 160 → "2m 40s"; 45 → "45s"; 3700 → "1h 02m". */
+export function duracaoCurta(segundos: number): string {
+  if (segundos < 60) return `${segundos}s`;
+  const m = Math.floor(segundos / 60);
+  if (m < 60) return `${m}m ${String(segundos % 60).padStart(2, '0')}s`;
+  return `${Math.floor(m / 60)}h ${String(m % 60).padStart(2, '0')}m`;
 }
 
 /** "5511988880001" → "+55 (11) 98888-0001"; formatos fora do padrão BR voltam como "+<dígitos>". */
