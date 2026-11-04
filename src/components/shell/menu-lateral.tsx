@@ -72,7 +72,7 @@ export function MenuLateral({ papel, isSuperAdmin, modulos, gavetaAberta = false
               <span className="font-label-sm text-label-sm text-text-muted mt-0.5">MedGuia B2B</span>
             </div>
           </div>
-          <div className="flex-1 overflow-y-auto px-space-sm py-space-md space-y-space-lg">
+          <div className="flex-1 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden px-space-sm py-space-md space-y-space-lg">
             <nav className="space-y-space-md">
               {grupos.map((grupo) => (
                 <div key={grupo.titulo} className="space-y-1">
