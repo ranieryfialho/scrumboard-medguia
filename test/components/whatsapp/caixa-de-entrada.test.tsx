@@ -88,6 +88,7 @@ describe('T-190: CaixaDeEntrada', () => {
           conversas: lista,
           contagens: { naoLidas: vazio ? 0 : 2, minhas: vazio ? 0 : 1, todas: todas.length },
           resumo: { ativasHoje: vazio ? 0 : 3, naoLidas: vazio ? 0 : 3, mensagensHoje: { recebidas: 3, enviadas: 1 } },
+          indicadores: { tempoPrimeiraRespostaSeg: 160, taxaResposta: 96.2, novasHoje: 2 },
         });
       }
       if (url === '/api/whatsapp/status') return resposta(200, statusWhatsapp);
@@ -118,7 +119,7 @@ describe('T-190: CaixaDeEntrada', () => {
   test('abre com o título e o selo da conexão (conectada, desconectada ou não configurada) @spec:AC-499', async () => {
     render(<CaixaDeEntrada />);
     expect(await screen.findByRole('heading', { name: 'Central de Atendimento WhatsApp' })).toBeTruthy();
-    expect(await screen.findByText('Evolution API conectada (matriz)')).toBeTruthy();
+    expect(await screen.findByText('Evolution API Conectada (Instância matriz)')).toBeTruthy();
     expect(existsSync(join(__dirname, '..', '..', '..', 'src/app/(app)/whatsapp/page.tsx'))).toBe(true);
     cleanup();
 
@@ -218,13 +219,16 @@ describe('T-190: CaixaDeEntrada', () => {
     expect(JSON.parse(chamadas('/api/whatsapp/lidas', 'POST')[0][1].body)).toEqual({ todas: true });
   });
 
-  test('os indicadores são conversas ativas hoje e mensagens não lidas, sem tempo nem taxa de resposta @spec:AC-506', async () => {
+  test('os quatro indicadores: ativas hoje, não lidas, tempo da 1ª resposta e taxa de resposta, calculados no servidor @spec:AC-506', async () => {
     render(<CaixaDeEntrada />);
     await screen.findByText('Conversas ativas hoje');
+    expect(screen.getByText('+2 novas')).toBeTruthy();
     expect(screen.getByText('Mensagens não lidas')).toBeTruthy();
-    expect(screen.getByText('Aguardando resposta')).toBeTruthy();
-    expect(screen.queryByText(/Tempo/i)).toBeFalsy();
-    expect(screen.queryByText(/Taxa de resposta/i)).toBeFalsy();
+    expect(screen.getByText('Aguardando resposta imediata')).toBeTruthy();
+    expect(screen.getByText('Tempo 1ª resposta')).toBeTruthy();
+    expect(screen.getByText('2m 40s')).toBeTruthy();
+    expect(screen.getByText('Taxa de resposta')).toBeTruthy();
+    expect(screen.getByText('96,2%')).toBeTruthy();
   });
 
   test('o contexto mostra o card (valor, responsável, etapa, Abrir card) ou "Sem card no pipeline" @spec:AC-507', async () => {
@@ -234,9 +238,10 @@ describe('T-190: CaixaDeEntrada', () => {
     const contexto = await screen.findByRole('region', { name: 'Contexto do Pipeline' });
     expect(within(contexto).getByText(/6\.800/)).toBeTruthy();
     expect(within(contexto).getByText('Dra. Juliana Rocha')).toBeTruthy();
-    expect(within(contexto).getByText('No-show')).toBeTruthy();
+    expect(within(contexto).getByText(/No-show/)).toBeTruthy();
     expect(within(contexto).getByRole('link', { name: 'Abrir card' }).getAttribute('href')).toBe('/pipeline/op-1');
-    expect(screen.queryByText(/CNPJ|Régua de Cadência/i)).toBeFalsy();
+    expect(screen.queryByText(/CNPJ/i)).toBeFalsy();
+    expect(within(contexto).getByText('A cadência deste card ainda não foi iniciada.')).toBeTruthy();
 
     await u.click(screen.getByRole('button', { name: /\+55 \(11\) 98888-0001/ }));
     expect(await screen.findByText('Sem card no pipeline')).toBeTruthy();
