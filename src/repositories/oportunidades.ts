@@ -12,12 +12,13 @@
 // ANTES deste repositório. Este repositório só grava o que já foi validado
 // e traduz o conflito de lock otimista do Postgres (`ERRCODE = 'P0001'`) num
 // erro tipado; o código HTTP (409/422) é decisão da rota, não daqui.
-import { and, asc, eq, sql } from 'drizzle-orm';
+import { and, asc, eq, getTableColumns, sql } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
 import { leads, oportunidades } from '../db/schema';
 import type { ContextoTenant } from '../lib/auth/tenant';
 import { comTenant } from './contexto';
+import { ordemPadraoComMetaPrimeiro } from './prioridade-meta';
 
 export type Oportunidade = typeof oportunidades.$inferSelect;
 
@@ -133,10 +134,11 @@ export async function listarOportunidades(
     }
 
     const itens = await tx
-      .select()
+      .select(getTableColumns(oportunidades))
       .from(oportunidades)
+      .leftJoin(leads, eq(oportunidades.leadId, leads.id))
       .where(and(...condicoes))
-      .orderBy(asc(oportunidades.criadoEm), asc(oportunidades.id))
+      .orderBy(...ordemPadraoComMetaPrimeiro)
       .limit(limite)
       .offset(deslocamento);
 

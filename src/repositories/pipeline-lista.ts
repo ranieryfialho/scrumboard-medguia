@@ -19,6 +19,7 @@ import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { leads, motivosPerda, oportunidades, usuarios } from '../db/schema';
 import type { ContextoTenant } from '../lib/auth/tenant';
 import { comTenant } from './contexto';
+import { prioridadeMeta } from './prioridade-meta';
 
 export type TamanhoPagina = 10 | 25 | 50;
 
@@ -132,8 +133,10 @@ export function condicoesDaLista(contexto: ContextoTenant, filtro: FiltroLista):
 
 /** T-179: a ordenação da lista (coluna e direção), a mesma na tela e na exportação. */
 export function ordenacaoDaLista(filtro: FiltroLista) {
+  // Sem ordenação escolhida pelo usuário, vale a regra do funil: leads novos do Meta primeiro.
   const coluna = colunaOrdenacaoLista(filtro.ordenarPor);
   const direcao = filtro.ordem === 'asc' ? asc : desc;
+  if (filtro.ordenarPor === undefined && filtro.ordem === undefined) return [prioridadeMeta, direcao(coluna), asc(oportunidades.id)] as const;
   return [direcao(coluna), asc(oportunidades.id)] as const;
 }
 
