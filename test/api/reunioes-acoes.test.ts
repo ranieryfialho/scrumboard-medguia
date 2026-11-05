@@ -217,7 +217,8 @@ describe('T-185: ações da agenda', () => {
     expect((await daB.json()).codigo).toBe('REUNIAO_NAO_ENCONTRADA');
     expect((await noShow('nao-uuid')).status).toBe(404);
 
-    // ATENDENTE (mesma empresa) que não é o responsável do card
+    // ATENDENTE (mesma empresa) que não é o responsável do card. Agendar grava um evento com o autor, então ele precisa existir.
+    sql(`INSERT INTO usuarios (id, email, nome) VALUES ('eeeeeeee-1850-0000-0000-0000000000a1', 'atendente.agenda@teste.local', 'Atendente Agenda') ON CONFLICT DO NOTHING`);
     const atendente: ContextoTenant = {
       usuarioId: 'eeeeeeee-1850-0000-0000-0000000000a1',
       empresaId: amb.tenants.empresaA,

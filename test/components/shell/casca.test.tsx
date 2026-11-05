@@ -173,7 +173,8 @@ describe('AC-349: o menu esconde o que o papel não pode ver', () => {
     expect(screen.getByText('Comunicação')).toBeTruthy();
     expect(screen.queryByText('Análises')).toBeNull();
     expect(screen.queryByText('Administração')).toBeNull();
-    expect(container.querySelectorAll('a[data-path]')).toHaveLength(11);
+    // sem módulos liberados o atendente não tem Campanhas: são os 10 itens de Operação e Comunicação
+    expect(container.querySelectorAll('a[data-path]')).toHaveLength(10);
   });
 
   test('GERENTE vê também Análises e, em Administração, só Equipe e Motivos de Perda @spec:AC-349', () => {
