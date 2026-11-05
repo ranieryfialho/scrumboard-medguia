@@ -10,6 +10,7 @@ import Link from 'next/link';
 
 import { ItemEmBreve } from '@/components/pipeline/pecas/selo-em-breve';
 import { ROTULO_CANAL, ROTULO_TIPO, ROTULO_TURNO, type ToqueDaCadencia } from './tipos';
+import { rotuloSemResposta } from '@/components/tarefas/comum';
 import { ConfirmarSucesso } from '@/components/tarefas/confirmar-sucesso';
 
 interface ToqueDaVezProps {
@@ -69,9 +70,9 @@ export function ToqueDaVez({ cardId, toque, concluindo, mensagemDeErro, onConclu
             className="px-4 py-2 rounded-lg bg-surface-card text-text-primary font-label-md text-label-md font-semibold flex items-center gap-1.5 disabled:opacity-60"
           >
             <span aria-hidden="true" className="material-symbols-outlined text-[18px]">
-              phone_missed
+              {toque.canal === 'whatsapp' ? 'send' : 'phone_missed'}
             </span>
-            Não Atendeu
+            {rotuloSemResposta(toque.canal)}
           </button>
           <ItemEmBreve rotulo="Pediu Retorno Mais Tarde" icone="schedule" className="px-3 py-2 rounded-lg bg-surface-card/10" />
           <ItemEmBreve rotulo="Editar Script" icone="edit_note" className="px-3 py-2 rounded-lg bg-surface-card/10" />

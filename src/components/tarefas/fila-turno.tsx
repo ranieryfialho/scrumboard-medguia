@@ -28,6 +28,7 @@ import {
   type ItemDaFila,
   type ResultadoToque,
   type ResumoDoTurno,
+  rotuloSemResposta,
 } from './comum';
 import { DestaqueTarefa } from './destaque-tarefa';
 import { EsqueletoCarregando, EstadoErro } from './estados';
@@ -273,11 +274,12 @@ export function FilaTurno() {
                             <button
                               type="button"
                               disabled={enviando}
-                              aria-label={`Não atendeu: ${item.lead.nome}`}
+                              aria-label={`${rotuloSemResposta(item.atividade.canal)}: ${item.lead.nome}`}
                               onClick={() => concluir(item, 'sem_resposta')}
-                              className="w-8 h-8 rounded-lg text-danger-text hover:bg-danger-surface disabled:opacity-50 flex items-center justify-center"
+                              className="h-8 px-2 gap-1 rounded-lg text-danger-text hover:bg-danger-surface disabled:opacity-50 flex items-center justify-center"
                             >
-                              <span aria-hidden="true" className="material-symbols-outlined text-[20px]">phone_missed</span>
+                              <span aria-hidden="true" className="material-symbols-outlined text-[20px]">{item.atividade.canal === 'whatsapp' ? 'send' : 'phone_missed'}</span>
+                              <span className="text-xs font-semibold whitespace-nowrap">{rotuloSemResposta(item.atividade.canal)}</span>
                             </button>
                             <Link
                               href={`/pipeline/${item.oportunidade.id}`}

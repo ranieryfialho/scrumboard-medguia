@@ -268,11 +268,11 @@ describe('T-173: tela da cadência de 18 toques', () => {
       expect(within(screen.getByRole('heading', { name: 'Toque Atual' }).closest('section')!).getByText('Toque #4')).toBeTruthy();
     });
 
-    test('"Não Atendeu" conclui como "sem resposta" @spec:AC-434', async () => {
+    test('"Mensagem enviada"/"Não atendeu" conclui como "sem resposta" @spec:AC-434', async () => {
       const usuario = userEvent.setup();
       await abrirTela();
 
-      await usuario.click(screen.getByRole('button', { name: /Não Atendeu/ }));
+      await usuario.click(screen.getByRole('button', { name: /Mensagem enviada|Não atendeu/i }));
 
       await waitFor(() => expect(chamadas('POST', '/api/atividades/ativ-3/concluir')).toHaveLength(1));
       const corpo = JSON.parse((chamadas('POST', '/api/atividades/ativ-3/concluir')[0][1] as RequestInit).body as string);

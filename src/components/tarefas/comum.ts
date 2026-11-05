@@ -34,6 +34,11 @@ export interface ResumoDoTurno {
 
 export const TOTAL_TOQUES = 18;
 
+/** Rótulo do botão que conclui o toque sem resposta: no WhatsApp, enviar a mensagem já é fazer o toque; na ligação, é não ter sido atendido. */
+export function rotuloSemResposta(canal: Canal): string {
+  return canal === 'whatsapp' ? 'Mensagem enviada' : 'Não atendeu';
+}
+
 export const TIPO_LABEL: Record<Tipo, string> = { ligacao: 'Ligação', mensagem: 'Mensagem', breakup: 'Breakup' };
 export const CANAL_LABEL: Record<Canal, string> = { telefone: 'Telefone', whatsapp: 'WhatsApp' };
 
