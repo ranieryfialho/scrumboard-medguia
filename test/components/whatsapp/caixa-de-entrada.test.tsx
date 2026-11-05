@@ -170,7 +170,7 @@ describe('T-190: CaixaDeEntrada', () => {
     const u = usuario();
     render(<CaixaDeEntrada />);
     await u.click(await screen.findByRole('button', { name: /Dr\. Marcos Albuquerque/ }));
-    const painel = await screen.findByRole('region', { name: 'Conversa aberta' });
+    const painel = await screen.findByRole('region', { name: 'Conversa do WhatsApp' });
     expect(await within(painel).findByText('Boa tarde, doutor!')).toBeTruthy();
     expect(within(painel).getByText('+55 (11) 98765-4321')).toBeTruthy();
     expect(painel.querySelector('[data-direcao="enviada"]')).toBeTruthy();
@@ -186,8 +186,8 @@ describe('T-190: CaixaDeEntrada', () => {
     const u = usuario();
     render(<CaixaDeEntrada />);
     await u.click(await screen.findByRole('button', { name: /Dr\. Marcos Albuquerque/ }));
-    const campo = await screen.findByLabelText('Mensagem');
-    const enviar = screen.getByRole('button', { name: 'Enviar' }) as HTMLButtonElement;
+    const campo = await screen.findByLabelText('Mensagem para o lead');
+    const enviar = screen.getByRole('button', { name: 'Enviar mensagem' }) as HTMLButtonElement;
     expect(enviar.disabled).toBe(true);
 
     await u.type(campo, 'linha 1{Shift>}{Enter}{/Shift}linha 2');
@@ -206,7 +206,7 @@ describe('T-190: CaixaDeEntrada', () => {
 
     // conversa avulsa: vai pelo número
     await u.click(screen.getByRole('button', { name: /\+55 \(11\) 98888-0001/ }));
-    await u.type(await screen.findByLabelText('Mensagem'), 'oi{Enter}');
+    await u.type(await screen.findByLabelText('Mensagem para o lead'), 'oi{Enter}');
     await waitFor(() => expect(chamadas('/api/whatsapp/send', 'POST')).toHaveLength(3));
     expect(JSON.parse(chamadas('/api/whatsapp/send', 'POST')[2][1].body)).toEqual({ mensagem: 'oi', numero: '5511988880001' });
   });
@@ -263,14 +263,17 @@ describe('T-190: CaixaDeEntrada', () => {
     expect(chamadas('/api/whatsapp/conversas').length).toBeGreaterThan(meio);
   });
 
-  test('anexo, emoji, microfone e filtro de status aparecem "em breve" e as respostas rápidas são os templates @spec:AC-509', async () => {
+  test('anexo, emoji e microfone são reais (iguais aos do card) e o filtro de status segue "em breve" @spec:AC-509', async () => {
     const u = usuario();
     render(<CaixaDeEntrada />);
     await u.click(await screen.findByRole('button', { name: /Dr\. Marcos Albuquerque/ }));
-    await screen.findByLabelText('Mensagem');
-    for (const rotulo of ['Anexar arquivo', 'Emoji', 'Microfone']) {
-      expect(screen.getByRole('button', { name: `${rotulo} (em breve)` }).getAttribute('aria-disabled')).toBe('true');
+    await screen.findByLabelText('Mensagem para o lead');
+    for (const rotulo of ['Anexar arquivo', 'Emoji']) {
+      const botao = (await screen.findByRole('button', { name: rotulo })) as HTMLButtonElement;
+      await waitFor(() => expect(botao.disabled).toBe(false));
     }
+    expect(screen.getByLabelText('Arquivo para anexar')).toBeTruthy();
+    expect(screen.getByRole('button', { name: /Gravar áudio|Microfone/i })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Filtrar por status do pipeline (em breve)' }).getAttribute('aria-disabled')).toBe('true');
     expect(screen.getByText('Respostas rápidas:')).toBeTruthy();
   });
