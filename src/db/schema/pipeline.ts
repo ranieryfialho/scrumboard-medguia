@@ -184,6 +184,9 @@ export const cadenciaAtividades = pgTable(
     realizadaPor: uuid('realizada_por').references(() => usuarios.id, { onDelete: 'set null' }),
     observacao: text('observacao'),
     anexoId: uuid('anexo_id').references(() => anexos.id, { onDelete: 'set null' }),
+    // Migration 0035: toque de WhatsApp "aguardando resposta" — enquanto `aguardando_ate` está no futuro, sai das filas de atraso.
+    aguardandoDesde: timestamp('aguardando_desde', { withTimezone: true }),
+    aguardandoAte: timestamp('aguardando_ate', { withTimezone: true }),
   },
   (t) => [uniqueIndex('cadencia_atividades_oportunidade_sequencia_unica').on(t.oportunidadeId, t.sequencia)]
 );

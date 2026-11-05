@@ -9,9 +9,10 @@ interface DestaqueProps {
   item: ItemDaFila | null;
   enviando: boolean;
   onConcluir: (item: ItemDaFila, resultado: ResultadoToque) => void;
+  onAguardar?: (item: ItemDaFila) => void;
 }
 
-export function DestaqueTarefa({ item, enviando, onConcluir }: DestaqueProps) {
+export function DestaqueTarefa({ item, enviando, onConcluir, onAguardar }: DestaqueProps) {
   if (!item) {
     return (
       <section className="bg-surface-card rounded-2xl p-space-md shadow-sm">
@@ -55,6 +56,17 @@ export function DestaqueTarefa({ item, enviando, onConcluir }: DestaqueProps) {
           <span aria-hidden="true" className="material-symbols-outlined text-[20px]">check_circle</span>
           Concluir Toque com Sucesso
         </button>
+        {item.atividade.canal === 'whatsapp' && onAguardar && (
+          <button
+            type="button"
+            disabled={enviando}
+            onClick={() => onAguardar(item)}
+            className="h-11 px-5 rounded-xl bg-warning-surface text-warning-text font-label-lg text-label-lg font-semibold flex items-center justify-center gap-2 hover:opacity-90 disabled:opacity-50"
+          >
+            <span aria-hidden="true" className="material-symbols-outlined text-[20px]">hourglass_top</span>
+            {item.aguardandoAte ? 'Aguardando resposta (reiniciar prazo)' : 'Aguardando Resposta'}
+          </button>
+        )}
         <div className="flex gap-2">
           <button
             type="button"

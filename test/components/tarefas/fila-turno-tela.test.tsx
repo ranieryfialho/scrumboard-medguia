@@ -30,13 +30,14 @@ class FakeEventSource {
 }
 
 let contador = 0;
-function item(o: Partial<{ nome: string; seq: number; canal: 'telefone' | 'whatsapp'; atrasado: boolean; liberada: string; etapaId: number; responsavel: string | null }> = {}) {
+function item(o: Partial<{ nome: string; seq: number; canal: 'telefone' | 'whatsapp'; atrasado: boolean; liberada: string; etapaId: number; responsavel: string | null; aguardandoAte: string | null }> = {}) {
   contador += 1;
   return {
     atividade: { id: `at-${contador}`, sequencia: o.seq ?? 1, canal: o.canal ?? 'telefone', tipo: 'ligacao' },
     oportunidade: { id: `op-${contador}`, version: 3, etapaId: o.etapaId ?? 5, valor: '1000', responsavelId: 'u1' },
     lead: { id: `lead-${contador}`, nome: o.nome ?? `Lead ${contador}`, telefoneE164: null },
     atrasado: o.atrasado ?? false,
+    aguardandoAte: o.aguardandoAte ?? null,
     liberadaEm: o.liberada ?? '2026-06-11T12:00:00.000Z',
     responsavel: o.responsavel === null ? null : { id: 'u1', nome: o.responsavel ?? 'Ana Gerente' },
   };
@@ -81,6 +82,7 @@ describe('T-182: FilaTurno', () => {
       if (url === '/api/me') return resposta(200, { papel, isSuperAdmin: false });
       if (url === '/api/pipeline/responsaveis') return resposta(200, { responsaveis: [{ id: 'u1', nome: 'Ana Gerente' }, { id: 'u2', nome: 'Bia' }] });
       if (url.includes('/concluir') && init?.method === 'POST') return concluirResposta();
+      if (url.includes('/aguardar') && init?.method === 'POST') return resposta(200, { aguardandoAte: '2026-06-11T13:00:00.000Z' });
       return resposta(404, {});
     });
     globalThis.fetch = fetchFalso as unknown as typeof fetch;
@@ -144,6 +146,31 @@ describe('T-182: FilaTurno', () => {
       const corpos = fetchFalso.mock.calls.filter((c) => String(c[0]).includes('/concluir')).map((c) => JSON.parse(c[1].body).resultado);
       expect(corpos).toEqual(['conectou', 'sem_resposta']);
     });
+  });
+
+  test('toque de WhatsApp tem o botão "Aguardando resposta", que chama a API com a versão do card; ligação não tem @spec:AC-770', async () => {
+    fila = [item({ nome: 'Clínica Zap', canal: 'whatsapp', seq: 3 }), item({ nome: 'Clínica Fone', canal: 'telefone', seq: 1 })];
+    const usuario = userEvent.setup({ advanceTimers: () => undefined });
+    render(<FilaTurno />);
+    expect(await screen.findByRole('button', { name: 'Aguardando resposta: Clínica Zap' })).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'Aguardando resposta: Clínica Fone' })).toBeNull();
+    await usuario.click(screen.getByRole('button', { name: 'Aguardando resposta: Clínica Zap' }));
+    await waitFor(() => {
+      const chamada = fetchFalso.mock.calls.find((c) => String(c[0]).includes('/aguardar'));
+      expect(chamada).toBeTruthy();
+      expect(JSON.parse(chamada![1].body)).toEqual({ version: 3 });
+    });
+  });
+
+  test('toque aguardando mostra o prazo, não é atrasado e o destaque passa para o próximo toque @spec:AC-771', async () => {
+    fila = [
+      item({ nome: 'Clínica Espera', canal: 'whatsapp', seq: 3, aguardandoAte: '2026-06-11T14:00:00.000Z' }),
+      item({ nome: 'Clínica Próxima', canal: 'telefone', seq: 4 }),
+    ];
+    render(<FilaTurno />);
+    expect(await screen.findByText(/Aguardando até 11:00/)).toBeTruthy();
+    const destaque = await screen.findByRole('region', { name: 'Próxima tarefa em execução' });
+    expect(within(destaque).getByText('Clínica Próxima')).toBeTruthy();
   });
 
   test('quando a API recusa, a mensagem do motivo aparece e a fila é recarregada @spec:AC-465', async () => {

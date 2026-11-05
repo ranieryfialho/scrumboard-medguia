@@ -30,6 +30,7 @@ const MENSAGENS_DE_ERRO: Record<string, string> = {
   CADENCIA_ENCERRADA: 'A cadência deste card já foi encerrada.',
   CONFLITO_DE_VERSAO: 'Outra pessoa mexeu neste card antes de você. A tela foi atualizada, tente de novo.',
   SEM_PERMISSAO: 'Você não tem permissão para concluir este toque.',
+  TOQUE_NAO_ACEITA_AGUARDAR: 'Só toques de WhatsApp podem ficar aguardando resposta.',
 };
 
 function ConteudoCadencia({ cardId, onMudou }: { cardId: string; onMudou: () => void }) {
@@ -56,6 +57,32 @@ function ConteudoCadencia({ cardId, onMudou }: { cardId: string; onMudou: () => 
   useEffect(() => {
     void carregar();
   }, [carregar]);
+
+  async function aguardar() {
+    const vez = cadencia?.toqueDaVez;
+    if (!cadencia || !vez?.atividadeId) return;
+    setConcluindo(true);
+    setErroDeConclusao(null);
+    try {
+      const resposta = await fetch(`/api/atividades/${vez.atividadeId}/aguardar`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ version: cadencia.oportunidade.version }),
+      });
+      if (resposta.ok) {
+        await carregar();
+        onMudou();
+        return;
+      }
+      const corpo = (await resposta.json().catch(() => null)) as { codigo?: string } | null;
+      setErroDeConclusao(MENSAGENS_DE_ERRO[corpo?.codigo ?? ''] ?? 'Não foi possível marcar a espera. Tente de novo.');
+      if (corpo?.codigo === 'CONFLITO_DE_VERSAO') await carregar();
+    } catch {
+      setErroDeConclusao('Não foi possível marcar a espera. Tente de novo.');
+    } finally {
+      setConcluindo(false);
+    }
+  }
 
   async function concluir(resultado: 'conectou' | 'sem_resposta') {
     const vez = cadencia?.toqueDaVez;
@@ -144,6 +171,7 @@ function ConteudoCadencia({ cardId, onMudou }: { cardId: string; onMudou: () => 
                 concluindo={concluindo}
                 mensagemDeErro={erroDeConclusao}
                 onConcluir={concluir}
+                onAguardar={aguardar}
               />
             )}
             <MatrizToques toques={cadencia.toques} />

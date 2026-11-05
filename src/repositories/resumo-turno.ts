@@ -24,6 +24,8 @@ export interface ResumoTurno {
   cardsEmRisco: number;
   ticketMedio: number | null;
   maiorAtraso: { minutos: number; leadNome: string } | null;
+  /** Toques de WhatsApp "aguardando resposta" (prazo ainda vigente): não contam como atrasados. */
+  aguardandoResposta: number;
 }
 
 export async function resumoDoTurno(
@@ -71,6 +73,7 @@ export async function resumoDoTurno(
         valor: oportunidades.valor,
         leadNome: leads.nome,
         liberadaEm: sql<string>`to_char(${liberada} at time zone 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"')`,
+        aguardandoAte: cadenciaAtividades.aguardandoAte,
       })
       .from(cadenciaAtividades)
       .innerJoin(oportunidades, eq(cadenciaAtividades.oportunidadeId, oportunidades.id))
@@ -81,9 +84,15 @@ export async function resumoDoTurno(
     let atrasados = 0;
     const cardsEmRisco = new Map<string, number>();
     let maior: { minutos: number; leadNome: string } | null = null;
+    let aguardandoResposta = 0;
     for (const p of pendentes) {
       const liberada = new Date(p.liberadaEm).getTime();
-      if (liberada < corte.getTime()) {
+      const aguardando = p.aguardandoAte !== null && p.aguardandoAte.getTime() > agora.getTime();
+      if (aguardando) {
+        // A mensagem já saiu e o toque espera o lead (ou o prazo): não é atraso, mas ainda é trabalho do turno.
+        aguardandoResposta += 1;
+        if (liberada >= corte.getTime() && turno) pendentesTurno += 1;
+      } else if (liberada < corte.getTime()) {
         atrasados += 1;
         cardsEmRisco.set(p.oportunidadeId, p.valor === null ? 0 : Number(p.valor));
         const minutos = Math.floor((agora.getTime() - liberada) / 60_000);
@@ -105,6 +114,7 @@ export async function resumoDoTurno(
       cardsEmRisco: cardsEmRisco.size,
       ticketMedio: cardsEmRisco.size > 0 ? receitaSobRisco / cardsEmRisco.size : null,
       maiorAtraso: maior,
+      aguardandoResposta,
     };
   });
 }
