@@ -28,6 +28,7 @@ import {
 } from './comum';
 import { DialogoDeAcessos, DialogoDeAuditoria, DialogoDePoliticas, DialogoDeSessao, ROTULO_DA_ACAO, dataEHora, detalheDoEvento, type EventoDeAuditoria } from './equipe-dialogos';
 import { EsqueletoCarregando, EstadoErro, EstadoVazio } from './estados';
+import { ResponsavelPadrao } from './responsavel-padrao';
 
 const POR_PAGINA = 10;
 
@@ -192,6 +193,8 @@ export function Equipe() {
             <CartaoIndicador titulo="Inativos" valor={String(dados.resumo.inativos)} legenda="sem acesso" icone="person_off" cor="danger" />
             {dados.assentos?.limite && <CartaoIndicador titulo="Assentos" valor={`${dados.assentos.emUso} de ${dados.assentos.limite}`} legenda="assentos em uso" icone="event_seat" />}
           </div>
+
+          <ResponsavelPadrao />
 
           <section aria-label="Filtros" className="bg-surface-card rounded-2xl p-space-md shadow-sm flex items-center gap-2 flex-wrap shrink-0">
             <input

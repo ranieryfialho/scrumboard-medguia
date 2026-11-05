@@ -12,6 +12,7 @@ import { getDb } from '../../../../db/client';
 import { getAuth } from '../../../../lib/auth/instancia';
 import { ErroSessaoInvalida, resolverContextoTenant, type ContextoTenant } from '../../../../lib/auth/tenant';
 import { obterKpis } from '../../../../repositories/kpis';
+import { temModulo } from '../../../../lib/auth/exigir-modulo';
 
 export const dynamic = 'force-dynamic';
 
@@ -42,9 +43,9 @@ function parametroInvalido(mensagem: string) {
   return NextResponse.json({ codigo: 'PARAMETRO_INVALIDO', mensagem }, { status: 400 });
 }
 
-/** ASM-074: só MASTER, GERENTE e super admin veem os indicadores (AC-229). */
+/** ASM-074 (revista): veem os indicadores super admin, master e quem tem o módulo Indicadores (gerente por padrão; os demais só se liberarem). */
 function podeVerKpis(contexto: ContextoTenant): boolean {
-  return contexto.isSuperAdmin || contexto.papel === 'MASTER' || contexto.papel === 'GERENTE';
+  return temModulo(contexto, 'indicadores');
 }
 
 /** Data é uma data de calendário real (rejeita "2026-02-30", por exemplo), não só o formato. */

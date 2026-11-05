@@ -67,7 +67,7 @@ describe('T-214: ConvidarUsuario', () => {
     expect(within(previa).getByText('Pendente')).toBeTruthy();
     expect(within(previa).getByText('DM')).toBeTruthy();
     const matriz = screen.getByRole('region', { name: 'Matriz de Acessos' });
-    expect(within(matriz).getByText(/Indicadores \(exige GERENTE\)/)).toBeTruthy(); // bloqueado para o atendente
+    expect(within(matriz).getByText(/Equipe e Configurações \(exige GERENTE\)/)).toBeTruthy(); // bloqueado para o atendente (os de análise e Campanhas ele tem se liberarem)
     expect(within(matriz).getByText('Agenda de reuniões')).toBeTruthy();
     await u.click(screen.getByLabelText('MASTER'));
     expect(within(screen.getByRole('region', { name: 'Matriz de Acessos' })).getByText('Nada bloqueado.')).toBeTruthy();
@@ -132,7 +132,10 @@ describe('T-214: ConvidarUsuario', () => {
     await u.type(screen.getByLabelText('E-mail corporativo'), 'nova@clinica.com');
     await u.click(screen.getByLabelText('ATENDENTE'));
     expect((screen.getByLabelText('WhatsApp') as HTMLInputElement).checked).toBe(true);
-    expect((screen.getByLabelText('Indicadores') as HTMLInputElement).disabled).toBe(true);
+    expect((screen.getByLabelText('Equipe e Configurações') as HTMLInputElement).disabled).toBe(true);
+    // os de análise e Campanhas o atendente pode receber, mas por padrão vêm desmarcados
+    expect((screen.getByLabelText('Indicadores') as HTMLInputElement).disabled).toBe(false);
+    expect((screen.getByLabelText('Indicadores') as HTMLInputElement).checked).toBe(false);
     await u.click(screen.getByLabelText('WhatsApp'));
     await u.click(botao());
     await waitFor(() => expect(posts()).toHaveLength(1));

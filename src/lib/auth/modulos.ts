@@ -12,6 +12,8 @@ export interface Modulo {
   descricao: string;
   /** Os prefixos de página que o módulo libera (as APIs seguem as regras de papel, não as de módulo). */
   prefixos: string[];
+  /** As APIs que pertencem ao módulo: obedecem a ele (não ao papel). As demais APIs seguem as regras de papel. */
+  prefixosApi?: string[];
   /** Os itens do menu lateral (`menu-config.ts`) que o módulo libera. */
   itensMenu: string[];
   /** O menor papel que PODE ter o módulo (o teto): abaixo disso nem marcando. */
@@ -33,10 +35,10 @@ export const MODULOS: Modulo[] = [
     papelMinimo: 'ATENDENTE',
     padraoDesde: 'ATENDENTE',
   },
-  { id: 'campanhas', rotulo: 'Campanhas (mala direta)', descricao: 'Campanhas de e-mail. O atendente só tem se o master ou o gerente liberar.', prefixos: ['/campanhas'], itensMenu: ['campanhas'], papelMinimo: 'ATENDENTE', padraoDesde: 'GERENTE' },
-  { id: 'indicadores', rotulo: 'Indicadores', descricao: 'Governança e funil de vendas.', prefixos: ['/indicadores'], itensMenu: ['indicadores'], papelMinimo: 'GERENTE', padraoDesde: 'GERENTE' },
-  { id: 'relatorios', rotulo: 'Marketing e Tráfego', descricao: 'Relatório de origem dos leads e mídia.', prefixos: ['/relatorios'], itensMenu: ['relatorios'], papelMinimo: 'GERENTE', padraoDesde: 'GERENTE' },
-  { id: 'comercial', rotulo: 'Comercial e Vendas', descricao: 'Receita, ranking e motivos de perda.', prefixos: ['/relatorios-comerciais'], itensMenu: ['comercial'], papelMinimo: 'GERENTE', padraoDesde: 'GERENTE' },
+  { id: 'campanhas', rotulo: 'Campanhas (mala direta)', descricao: 'Campanhas de e-mail. O atendente só tem se o master ou o gerente liberar.', prefixos: ['/campanhas'], prefixosApi: ['/api/campanhas'], itensMenu: ['campanhas'], papelMinimo: 'ATENDENTE', padraoDesde: 'GERENTE' },
+  { id: 'indicadores', rotulo: 'Indicadores', descricao: 'Governança e funil de vendas. Quem não é gerente só tem se o master ou o gerente liberar.', prefixos: ['/indicadores'], prefixosApi: ['/api/relatorios/kpis', '/api/relatorios/funil', '/api/relatorios/alertas'], itensMenu: ['indicadores'], papelMinimo: 'ATENDENTE', padraoDesde: 'GERENTE' },
+  { id: 'relatorios', rotulo: 'Marketing e Tráfego', descricao: 'Relatório de origem dos leads e mídia. Quem não é gerente só tem se o master ou o gerente liberar.', prefixos: ['/relatorios'], prefixosApi: ['/api/relatorios/marketing'], itensMenu: ['relatorios'], papelMinimo: 'ATENDENTE', padraoDesde: 'GERENTE' },
+  { id: 'comercial', rotulo: 'Comercial e Vendas', descricao: 'Receita, ranking e motivos de perda. Quem não é gerente só tem se o master ou o gerente liberar.', prefixos: ['/relatorios-comerciais'], prefixosApi: ['/api/relatorios/comercial'], itensMenu: ['comercial'], papelMinimo: 'ATENDENTE', padraoDesde: 'GERENTE' },
   {
     id: 'administracao',
     rotulo: 'Equipe e Configurações',
@@ -77,11 +79,11 @@ export function modulosEfetivos(papel: PapelUsuario, isSuperAdmin: boolean, grav
   return new Set(teto.filter((id) => gravados.includes(id)));
 }
 
-/** O módulo dono de uma página (o prefixo mais específico vence); `undefined` para as telas que não são de módulo (login, sem-acesso...). */
+/** O módulo dono de uma página ou de uma API do módulo (o prefixo mais específico vence); `undefined` para as telas que não são de módulo (login, sem-acesso...). */
 export function moduloDaRota(pathname: string): Modulo | undefined {
   let achado: { modulo: Modulo; tamanho: number } | undefined;
   for (const modulo of MODULOS) {
-    for (const prefixo of modulo.prefixos) {
+    for (const prefixo of [...modulo.prefixos, ...(modulo.prefixosApi ?? [])]) {
       if ((pathname === prefixo || pathname.startsWith(`${prefixo}/`)) && (!achado || prefixo.length > achado.tamanho)) achado = { modulo, tamanho: prefixo.length };
     }
   }

@@ -74,12 +74,8 @@ const REGRAS_PAPEL: RegraPapel[] = [
   { prefixo: '/configuracoes/google', papelMinimo: 'GERENTE' },
   { prefixo: '/api/integracoes/google', papelMinimo: 'GERENTE' },
   { prefixo: '/api/investimento', papelMinimo: 'GERENTE' },
-  // Análises: GERENTE+ (mesmo mínimo já aplicado em /api/relatorios/kpis,
-  // ASM-074/AC-229).
-  { prefixo: '/indicadores', papelMinimo: 'GERENTE' },
-  { prefixo: '/relatorios-comerciais', papelMinimo: 'GERENTE' },
-  { prefixo: '/relatorios', papelMinimo: 'GERENTE' },
-  { prefixo: '/api/relatorios', papelMinimo: 'GERENTE' },
+  // Análises (Indicadores, Marketing e Comercial) e Campanhas: quem acessa é decidido pelos módulos liberados (`modulos.ts`), nas páginas e nas
+  // APIs do módulo; gerente e master têm por padrão, os demais só se alguém liberar.
   // fase4-admin: as rotas de administração seguem a mesma matriz das telas.
   { prefixo: '/api/equipe', papelMinimo: 'GERENTE' },
   { prefixo: '/api/configuracoes/motivos-perda', papelMinimo: 'GERENTE' },
@@ -106,12 +102,10 @@ function encontrarRegra(pathname: string): RegraPapel | undefined {
 /** AC-381/AC-349: decide se o papel autenticado pode acessar a rota (página ou API). */
 export function podeAcessarRota(contexto: ContextoAcesso, pathname: string): boolean {
   if (contexto.isSuperAdmin) return true;
-  // T-322: nas PÁGINAS, os módulos da pessoa também contam (as APIs seguem as regras de papel). Sem módulos gravados vale o padrão do
-  // papel, que pode ser menor que o teto (Campanhas é opcional para o atendente).
-  if (!pathname.startsWith('/api/')) {
-    const modulo = moduloDaRota(pathname);
-    if (modulo && !modulosEfetivos(contexto.papel, false, contexto.modulos).has(modulo.id)) return false;
-  }
+  // T-322: os módulos da pessoa contam nas páginas e nas APIs que pertencem a um módulo. Sem módulos gravados vale o padrão do papel, que
+  // pode ser menor que o teto (Campanhas, Indicadores, Marketing e Comercial são opcionais para quem não é gerente).
+  const modulo = moduloDaRota(pathname);
+  if (modulo && !modulosEfetivos(contexto.papel, false, contexto.modulos).has(modulo.id)) return false;
   const regra = encontrarRegra(pathname);
   if (!regra) return true;
   if (regra.somenteSuperAdmin) return false;
