@@ -8,8 +8,24 @@ on:
     branches:
       - main
 
+# Um push novo no mesmo PR cancela a rodada anterior (ela já está obsoleta) em vez de ficar na fila disputando as máquinas.
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+# As quatro etapas (qualidade, build e os testes em fatias) rodam AO MESMO TEMPO, cada uma na sua máquina. O `gates` no fim é o check
+# obrigatório da regra da `main` (nome fixo): só passa se todas passaram.
+#
+# Por que os testes são divididos em fatias: o Vitest roda os arquivos um depois do outro (`fileParallelism: false` em vitest.config.ts,
+# porque 146 arquivos sobem seu próprio Postgres em Docker e, em paralelo na mesma máquina, os containers brigam por recursos). Em série
+# eram ~30 min. Cada fatia abaixo continua em série, mas em máquina própria — sem a briga — e o `--shard` distribui os arquivos de
+# forma equilibrada (por hash do caminho).
 jobs:
-  gates:
+  qualidade:
+    name: qualidade (lint e tipos)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout do código
@@ -35,8 +51,29 @@ jobs:
           # heap default do Node no runner (~2GB) não é suficiente.
           NODE_OPTIONS: --max-old-space-size=4096
 
-      - name: Testes
-        run: npm test
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Cache do build do Next.js
+        uses: actions/cache@v4
+        with:
+          path: .next/cache
+          key: next-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-${{ hashFiles('src/**') }}
+          restore-keys: |
+            next-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-
 
       - name: Build
         run: npm run build
@@ -46,3 +83,44 @@ jobs:
           # Mesmo motivo do passo de Checagem de tipos: o `next build`
           # roda sua própria checagem de tipos internamente.
           NODE_OPTIONS: --max-old-space-size=4096
+
+  testes:
+    name: testes (fatia ${{ matrix.fatia }} de 8)
+    runs-on: ubuntu-latest
+    strategy:
+      # Uma fatia que falha não derruba as outras: assim uma rodada mostra TODAS as falhas de uma vez, em vez de uma por rodada.
+      fail-fast: false
+      matrix:
+        fatia: [1, 2, 3, 4, 5, 6, 7, 8]
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Testes (fatia ${{ matrix.fatia }} de 8)
+        run: npx vitest run --shard=${{ matrix.fatia }}/8
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
+
+  # Check obrigatório da regra da `main` (contexto "gates"): resume as etapas acima.
+  gates:
+    name: gates
+    if: always()
+    needs: [qualidade, build, testes]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Conferir o resultado das etapas
+        run: |
+          echo "qualidade: ${{ needs.qualidade.result }} | build: ${{ needs.build.result }} | testes: ${{ needs.testes.result }}"
+          if [ "${{ needs.qualidade.result }}" != "success" ] || [ "${{ needs.build.result }}" != "success" ] || [ "${{ needs.testes.result }}" != "success" ]; then
+            echo "Alguma etapa não passou."
+            exit 1
+          fi
