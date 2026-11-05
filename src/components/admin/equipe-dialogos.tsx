@@ -9,7 +9,7 @@ import { ItemEmBreve } from '@/components/pipeline/pecas/selo-em-breve';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { GRUPOS_MENU, menuParaPapel } from '@/components/shell/menu-config';
 import type { PapelUsuario } from '@/lib/auth/convites';
-import { MODULOS, modulosDoPapel, type ModuloId } from '@/lib/auth/modulos';
+import { MODULOS, modulosDoPapel, modulosPadraoDoPapel, type ModuloId } from '@/lib/auth/modulos';
 import { Button } from '@/components/ui/button';
 import { COR_DO_PAPEL, PAPEIS, mensagemDeErro, type ColaboradorView } from './comum';
 
@@ -149,10 +149,12 @@ export function DialogoDeAuditoria({ onFechar }: { onFechar: () => void }) {
 /** T-322: "Editar acessos" — os módulos liberados de uma pessoa (o papel continua sendo o teto). Salva por `PATCH /api/equipe/:id`. */
 export function DialogoDeAcessos({ colaborador, onFechar, onSalvo }: { colaborador: ColaboradorView; onFechar: () => void; onSalvo: (texto: string) => void }) {
   const teto = modulosDoPapel(colaborador.papel);
-  const [marcados, setMarcados] = useState<ModuloId[]>((colaborador.modulos as ModuloId[] | undefined) ?? teto);
+  const padrao = modulosPadraoDoPapel(colaborador.papel);
+  const [marcados, setMarcados] = useState<ModuloId[]>((colaborador.modulos as ModuloId[] | undefined) ?? padrao);
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
-  const completo = teto.every((id) => marcados.includes(id));
+  // Igual ao padrão do papel = voltar ao padrão (`null`); qualquer outra combinação fica gravada.
+  const completo = padrao.length === marcados.filter((id) => teto.includes(id)).length && padrao.every((id) => marcados.includes(id));
 
   async function salvar() {
     setSalvando(true);

@@ -376,6 +376,33 @@ describe('T-105: rotas /api/campanhas', () => {
     });
   });
 
+  describe('ASM-076 (revista): atendente com o módulo Campanhas liberado', () => {
+    test('com o módulo liberado o atendente cria campanha, lê o remetente e usa o e-mail de teste; sem ele, 403 @spec:AC-238', async () => {
+      const corpo = {
+        nome: 'Campanha do Atendente Liberado',
+        assunto: 'Assunto',
+        corpoHtml: '<p>corpo</p>',
+        origem: { tipo: 'planilha', contatos: [{ nome: 'Contato', email: 'contato.liberado@teste.com' }] },
+      };
+      const liberar = (modulos: string) =>
+        psql(`UPDATE empresas_usuarios SET modulos = ${modulos} WHERE usuario_id = (SELECT id FROM usuarios WHERE email = 'atendente.a@teste.com')`);
+
+      // padrão do atendente: sem Campanhas
+      expect((await postCriar(cookieAtendenteA, corpo)).status).toBe(403);
+
+      liberar("ARRAY['pipeline','campanhas']");
+      const criada = await postCriar(cookieAtendenteA, corpo);
+      expect(criada.status).toBe(201);
+
+      // um módulo marcado a mais que o teto do papel nunca vale: sem 'campanhas' marcado, volta a ser 403
+      liberar("ARRAY['pipeline']");
+      expect((await postCriar(cookieAtendenteA, { ...corpo, nome: 'Campanha sem módulo' })).status).toBe(403);
+
+      liberar('NULL');
+      expect((await postCriar(cookieAtendenteA, { ...corpo, nome: 'Campanha padrão' })).status).toBe(403);
+    });
+  });
+
   describe('AC-239: Play libera a fila para o motor', () => {
     test('POST .../iniciar move a campanha para PROCESSANDO e os destinatários RASCUNHO para PENDENTE @spec:AC-239', async () => {
       const criada = await criarCampanhaViaRota('Campanha Play Rota', [

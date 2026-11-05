@@ -224,11 +224,13 @@ describe('T-185: ações da agenda', () => {
       papel: 'ATENDENTE',
       isSuperAdmin: false,
     };
+    // Agendar é a passagem do SDR para o closer: o atendente agenda mesmo um card de outro responsável...
     const agendarAlheio = await agendarReuniao(amb.db, atendente, { oportunidadeId: CARD_ATENDENTE, agendadaPara: new Date(FUTURO), agora: AGORA });
-    expect(agendarAlheio).toEqual({ ok: false, codigo: 'OPORTUNIDADE_NAO_ENCONTRADA' });
+    expect(agendarAlheio.ok).toBe(true);
+    expect(etapaDe(CARD_ATENDENTE)).toBe(8);
+    // ...mas registrar o no-show de uma reunião de outra pessoa continua recusado.
     const noShowAlheio = await registrarNoShow(amb.db, atendente, R_ATENDENTE, AGORA);
     expect(noShowAlheio).toEqual({ ok: false, codigo: 'REUNIAO_NAO_ENCONTRADA' });
-    expect(etapaDe(CARD_ATENDENTE)).toBe(6);
   });
 
   test('cada mudança de etapa da agenda avisa só a empresa dela @spec:AC-495', async () => {

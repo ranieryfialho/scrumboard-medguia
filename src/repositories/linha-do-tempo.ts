@@ -98,7 +98,7 @@ function textoDoEvento(
     }
     case 'edicao_card': {
       // AC-737: o que mudou, com o valor de antes e o de depois (telefone, e-mail e valor entram como foram gravados).
-      const rotulos: Record<string, string> = { nome: 'Nome', email: 'E-mail', origem: 'Origem', telefone: 'Telefone', valor: 'Valor estimado',
+      const rotulos: Record<string, string> = { nome: 'Nome', email: 'E-mail', origem: 'Origem', telefone: 'Telefone', valor: 'Valor estimado', especialidade: 'Especialidade',
         previsao_fechamento: 'Previsão de fechamento',
         condicao_especial: 'Condição especial',
         plano: 'Plano',

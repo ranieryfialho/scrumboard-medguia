@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
   const contexto = await resolverContexto(request);
   if (!contexto) return NextResponse.json({ codigo: 'NAO_AUTENTICADO' }, { status: 401 });
 
-  const todos = contexto.isSuperAdmin || contexto.papel === 'MASTER' || contexto.papel === 'GERENTE';
-  const cards = await listarCardsParaAgendar(getDb(), contexto, todos ? undefined : contexto.usuarioId);
+  // Qualquer papel agenda para qualquer card em "Qualificado p/ reunião" (passagem do SDR para o closer).
+  const cards = await listarCardsParaAgendar(getDb(), contexto);
   return NextResponse.json({ cards });
 }

@@ -4,7 +4,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 
 import { getDb } from '../../../../db/client';
 import { dominioDoRemetente, verificarEntregabilidade } from '../../../../lib/email/entregabilidade';
-import { exigirGerente } from '../../../../lib/equipe/acesso';
+import { exigirAcessoACampanhas } from '../../../../lib/campanhas/acesso';
 import { lerConfiguracaoDeEmailPublica } from '../../../../repositories/email-config';
 
 export const dynamic = 'force-dynamic';
@@ -12,7 +12,7 @@ export const dynamic = 'force-dynamic';
 const REMETENTE_PADRAO = 'no-reply@medguia.cloud';
 
 export async function GET(request: NextRequest) {
-  const acesso = await exigirGerente(request);
+  const acesso = await exigirAcessoACampanhas(request);
   if ('resposta' in acesso) return acesso.resposta;
   const config = await lerConfiguracaoDeEmailPublica(getDb(), acesso.contexto);
   const remetente = config.remetente ?? process.env.RESEND_REMETENTE ?? REMETENTE_PADRAO;

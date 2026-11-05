@@ -138,7 +138,7 @@ export function NovaCampanha() {
   const contatosDaLista = useMemo(() => lerListaColada(lista), [lista]);
   useEffect(() => {
     let cancelado = false;
-    fetch('/api/configuracoes/email')
+    fetch('/api/campanhas/remetente')
       .then((r) => (r.ok ? r.json() : null))
       .then((c: { remetente?: string | null; responderPara?: string } | null) => {
         if (cancelado) return;

@@ -3,18 +3,24 @@
 import { describe, expect, test } from 'vitest';
 
 import { menuParaPapel } from '../../src/components/shell/menu-config';
-import { lerModulos, modulosDoPapel, modulosEfetivos, moduloDaRota, MODULOS, PERFIS_PRONTOS } from '../../src/lib/auth/modulos';
+import { lerModulos, modulosDoPapel, modulosEfetivos, modulosPadraoDoPapel, moduloDaRota, MODULOS, PERFIS_PRONTOS } from '../../src/lib/auth/modulos';
 import { podeAcessarRota } from '../../src/lib/auth/rotas';
 
 describe('T-322: módulos liberados', () => {
-  test('o papel define o teto: atendente alcança 4 módulos, gerente e master os 9 @spec:AC-771', () => {
-    expect(modulosDoPapel('ATENDENTE')).toEqual(['pipeline', 'tarefas', 'agenda', 'whatsapp']);
+  test('o papel define o teto: atendente alcança 5 módulos (Campanhas só se liberarem), gerente e master os 9 @spec:AC-771', () => {
+    expect(modulosDoPapel('ATENDENTE')).toEqual(['pipeline', 'tarefas', 'agenda', 'whatsapp', 'campanhas']);
+    // por padrão o atendente não tem Campanhas; gerente e master têm tudo
+    expect(modulosPadraoDoPapel('ATENDENTE')).toEqual(['pipeline', 'tarefas', 'agenda', 'whatsapp']);
+    expect(modulosPadraoDoPapel('GERENTE')).toHaveLength(MODULOS.length);
     expect(modulosDoPapel('GERENTE')).toHaveLength(MODULOS.length);
     expect(modulosDoPapel('MASTER')).toHaveLength(MODULOS.length);
   });
 
   test('sem módulos gravados vale o padrão do papel; gravados só restringem dentro do teto; master e super admin têm tudo @spec:AC-772', () => {
-    expect([...modulosEfetivos('ATENDENTE', false, null)]).toEqual(modulosDoPapel('ATENDENTE'));
+    expect([...modulosEfetivos('ATENDENTE', false, null)]).toEqual(modulosPadraoDoPapel('ATENDENTE'));
+    // o atendente passa a ter Campanhas quando o master ou o gerente marca; sem marcar, nunca
+    expect([...modulosEfetivos('ATENDENTE', false, ['pipeline', 'campanhas'])]).toEqual(['pipeline', 'campanhas']);
+    expect(modulosEfetivos('ATENDENTE', false, null).has('campanhas')).toBe(false);
     expect([...modulosEfetivos('GERENTE', false, ['pipeline'])]).toEqual(['pipeline']);
     // um módulo acima do papel nunca é concedido por estar marcado
     expect([...modulosEfetivos('ATENDENTE', false, ['pipeline', 'indicadores'])]).toEqual(['pipeline']);
@@ -61,8 +67,11 @@ describe('T-322: módulos liberados', () => {
     const itens = menuParaPapel('ATENDENTE', false, ['agenda']).flatMap((g) => g.itens.map((i) => i.id));
     expect(itens).toEqual(['agenda']);
     expect(menuParaPapel('ATENDENTE', false, ['agenda']).map((g) => g.titulo)).toEqual(['Operação']);
-    // sem módulos, o menu é o de sempre
+    // sem módulos, o menu é o do padrão do papel: o atendente não vê Campanhas, o gerente vê
     expect(menuParaPapel('ATENDENTE', false).flatMap((g) => g.itens).length).toBeGreaterThan(5);
+    expect(menuParaPapel('ATENDENTE', false).flatMap((g) => g.itens.map((i) => i.id))).not.toContain('campanhas');
+    expect(menuParaPapel('ATENDENTE', false, ['pipeline', 'campanhas']).flatMap((g) => g.itens.map((i) => i.id))).toContain('campanhas');
+    expect(menuParaPapel('GERENTE', false).flatMap((g) => g.itens.map((i) => i.id))).toContain('campanhas');
     // super admin ignora os módulos
     expect(menuParaPapel('MASTER', true, ['agenda']).flatMap((g) => g.itens).length).toBeGreaterThan(10);
   });
