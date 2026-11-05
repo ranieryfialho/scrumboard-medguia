@@ -106,8 +106,9 @@ function encontrarRegra(pathname: string): RegraPapel | undefined {
 /** AC-381/AC-349: decide se o papel autenticado pode acessar a rota (página ou API). */
 export function podeAcessarRota(contexto: ContextoAcesso, pathname: string): boolean {
   if (contexto.isSuperAdmin) return true;
-  // T-322: nas PÁGINAS, os módulos liberados da pessoa também contam (as APIs seguem só as regras de papel).
-  if (contexto.modulos && !pathname.startsWith('/api/')) {
+  // T-322: nas PÁGINAS, os módulos da pessoa também contam (as APIs seguem as regras de papel). Sem módulos gravados vale o padrão do
+  // papel, que pode ser menor que o teto (Campanhas é opcional para o atendente).
+  if (!pathname.startsWith('/api/')) {
     const modulo = moduloDaRota(pathname);
     if (modulo && !modulosEfetivos(contexto.papel, false, contexto.modulos).has(modulo.id)) return false;
   }
