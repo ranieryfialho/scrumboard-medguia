@@ -145,7 +145,16 @@ export async function getInstanceStatus(
   }
 }
 
-/** Cria a instância se ainda não existir. Ignora erro 409 (já existe). */
+/**
+ * A instância já existe? Conforme a versão da Evolution, criar uma instância repetida volta 409 ou, na v2, 403 com "This name ... is already
+ * in use". Nos dois casos está tudo certo: o que importa é que ela existe.
+ */
+export function instanciaJaExiste(status: number, corpo: string): boolean {
+  if (status === 409) return true;
+  return status === 403 && /already (in use|exists)/i.test(corpo);
+}
+
+/** Cria a instância se ainda não existir. Ignora "já existe" (409, ou 403 "already in use" da Evolution v2). */
 export async function createInstance(config: EvolutionConfig): Promise<void> {
   const res = await fetch(`${base(config)}/instance/create`, {
     method: 'POST',
@@ -157,9 +166,9 @@ export async function createInstance(config: EvolutionConfig): Promise<void> {
     }),
   });
 
-  // 409 = instância já existe, tudo bem
-  if (!res.ok && res.status !== 409) {
+  if (!res.ok) {
     const body = await res.text();
+    if (instanciaJaExiste(res.status, body)) return;
     throw new Error(`Erro ao criar instância: ${body}`);
   }
 }
