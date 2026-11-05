@@ -38,6 +38,13 @@ function semSessao() {
   return NextResponse.json({ codigo: 'NAO_AUTENTICADO' }, { status: 401 });
 }
 
+/** Um texto de `leads.dados` (jsonb livre): só string não vazia, senão `null`. */
+function textoDosDados(dados: unknown, chave: string): string | null {
+  if (!dados || typeof dados !== 'object') return null;
+  const valor = (dados as Record<string, unknown>)[chave];
+  return typeof valor === 'string' && valor.trim() !== '' ? valor.trim() : null;
+}
+
 /** AC-092/AC-093: detalhe do card, fail closed pra outro tenant. */
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const contexto = await resolverContexto(request);
@@ -52,7 +59,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   const db = getDb();
   const [lead, responsavelNome, motivoPerdaNome] = await comTenant(db, contexto, async (tx) => {
     const [lead] = await tx
-      .select({ nome: leads.nome, email: leads.email, origem: leads.origem, telefoneE164: leads.telefoneE164 })
+      .select({ nome: leads.nome, email: leads.email, origem: leads.origem, telefoneE164: leads.telefoneE164, dados: leads.dados })
       .from(leads)
       .where(and(eq(leads.id, oportunidade.leadId), eq(leads.empresaId, contexto.empresaId)))
       .limit(1);
@@ -78,6 +85,12 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     // Principais" do detalhe — nenhum consumidor anterior desta rota lia
     // esses campos, então são só acrescentados, sem quebrar o contrato.
     origem: lead?.origem ?? null,
+    // Dados do formulário/anúncio que vieram com o lead (`leads.dados`): o que o time precisa ver no card.
+    especialidade: textoDosDados(lead?.dados, 'especialidade'),
+    anuncio: textoDosDados(lead?.dados, 'anuncio'),
+    campanha: textoDosDados(lead?.dados, 'campanha'),
+    formulario: textoDosDados(lead?.dados, 'formulario'),
+    plataforma: textoDosDados(lead?.dados, 'plataforma'),
     email: lead?.email ?? null,
     // T-231 (fase5-acoes-rapidas, AC-645): telefone principal, para o link "Ligar Agora".
     telefoneE164: lead?.telefoneE164 ?? null,
@@ -102,7 +115,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   if (!corpo || typeof corpo !== 'object' || Array.isArray(corpo)) {
     return NextResponse.json({ codigo: 'CORPO_INVALIDO' }, { status: 400 });
   }
-  const { nome, email, origem, telefone, valor } = corpo as Record<string, unknown>;
+  const { nome, email, origem, telefone, valor, especialidade } = corpo as Record<string, unknown>;
 
   const oportunidade = await buscarOportunidadePorId(getDb(), contexto, id);
   if (!oportunidade) {
@@ -110,7 +123,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   }
 
   try {
-    const alteracoes = await editarCard(getDb(), contexto, id, { nome, email, origem, telefone, valor });
+    const alteracoes = await editarCard(getDb(), contexto, id, { nome, email, origem, telefone, valor, especialidade });
     return NextResponse.json({ alteracoes });
   } catch (erro) {
     if (erro instanceof ErroCampoInvalido) return NextResponse.json({ codigo: 'CAMPO_INVALIDO', campo: erro.campo }, { status: 400 });

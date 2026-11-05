@@ -16,6 +16,7 @@ import {
   type OrigemDestinatarios,
 } from '../../../repositories/campanhas';
 import { listarCampanhasComResumo, type FiltroStatusCampanha } from '../../../repositories/campanhas-resumo';
+import { acessoACampanhas } from '../../../lib/campanhas/acesso';
 
 export const dynamic = 'force-dynamic';
 
@@ -43,9 +44,9 @@ function parametroInvalido(mensagem: string) {
   return NextResponse.json({ codigo: 'PARAMETRO_INVALIDO', mensagem }, { status: 400 });
 }
 
-/** ASM-076: MASTER, GERENTE e super admin acessam campanhas; ATENDENTE não. */
+/** ASM-076 (revista): super admin, master e quem tem o módulo Campanhas liberado (gerente por padrão; atendente só se liberarem). */
 function podeAcessarCampanhas(contexto: ContextoTenant): boolean {
-  return contexto.isSuperAdmin || contexto.papel === 'MASTER' || contexto.papel === 'GERENTE';
+  return acessoACampanhas(contexto);
 }
 
 interface CamposCampanha {

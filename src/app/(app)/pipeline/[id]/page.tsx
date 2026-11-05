@@ -52,6 +52,11 @@ interface DetalheOportunidade {
   etapaId: number;
   leadNome: string;
   origem: string | null;
+  especialidade: string | null;
+  anuncio: string | null;
+  campanha: string | null;
+  formulario: string | null;
+  plataforma: string | null;
   email: string | null;
   telefoneE164: string | null;
   criadoEm: string;
@@ -89,6 +94,40 @@ function PipelineDetalheConteudo({ id }: { id: string }) {
   const dadosPedidosRef = useRef<DadoPreenchido>({});
   const [versaoLinhaDoTempo, setVersaoLinhaDoTempo] = useState(0);
   const [editando, setEditando] = useState(false);
+  // Gerente, master e super admin trocam o responsável do card; os demais só veem o nome.
+  const [responsaveis, setResponsaveis] = useState<{ id: string; nome: string }[]>([]);
+  useEffect(() => {
+    let cancelado = false;
+    fetch('/api/me')
+      .then((r) => (r.ok ? r.json() : null))
+      .then(async (u: { papel?: string; isSuperAdmin?: boolean } | null) => {
+        if (cancelado || !u || !(u.isSuperAdmin === true || u.papel === 'MASTER' || u.papel === 'GERENTE')) return;
+        const r = await fetch('/api/pipeline/responsaveis');
+        if (r.ok && !cancelado) setResponsaveis(((await r.json()) as { responsaveis: { id: string; nome: string }[] }).responsaveis);
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelado = true;
+    };
+  }, []);
+
+  /** Passa o card para outro responsável (mesma rota da reatribuição em lote, com um card só); devolve a mensagem de erro, se houver. */
+  async function reatribuir(responsavelId: string): Promise<string | null> {
+    try {
+      const resposta = await fetch('/api/oportunidades/lote/reatribuir', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ ids: [id], responsavelId }),
+      });
+      if (!resposta.ok) return 'Não foi possível trocar o responsável. Tente de novo.';
+      const novo = await fetch(`/api/oportunidades/${id}`);
+      if (novo.ok) setDados((await novo.json()) as DetalheOportunidade);
+      setVersaoLinhaDoTempo((versao) => versao + 1);
+      return null;
+    } catch {
+      return 'Não foi possível trocar o responsável. Tente de novo.';
+    }
+  }
 
   /** T-287 (AC-736): salva a edição, recarrega o card e o log da linha do tempo; devolve o erro do servidor ao modal. */
   async function salvarEdicao(valores: ValoresEdicaoCard): Promise<ResultadoEdicaoCard> {
@@ -101,6 +140,7 @@ function PipelineDetalheConteudo({ id }: { id: string }) {
           email: valores.email,
           origem: valores.origem,
           telefone: valores.telefone,
+          especialidade: valores.especialidade,
           valor: valores.valor.trim() === '' ? null : valores.valor,
         }),
       });
@@ -340,6 +380,14 @@ function PipelineDetalheConteudo({ id }: { id: string }) {
               proximaAcaoEm={dados.proximaAcaoEm}
               telefones={telefones}
               email={dados.email}
+              especialidade={dados.especialidade}
+              anuncio={dados.anuncio}
+              campanha={dados.campanha}
+              formulario={dados.formulario}
+              plataforma={dados.plataforma}
+              responsavelId={dados.responsavelId}
+              responsaveis={responsaveis}
+              onReatribuir={reatribuir}
               onEditar={() => setEditando(true)}
             />
             <BlocoFechamento cardId={dados.id} etapaId={dados.etapaId} versao={versaoLinhaDoTempo} />
@@ -360,6 +408,7 @@ function PipelineDetalheConteudo({ id }: { id: string }) {
             email: dados.email ?? '',
             origem: dados.origem ?? '',
             telefone: dados.telefoneE164 ?? '',
+            especialidade: dados.especialidade ?? '',
             valor: dados.valor ? String(Number(dados.valor)) : '',
           }}
           onFechar={() => setEditando(false)}

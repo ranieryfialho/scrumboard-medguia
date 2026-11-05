@@ -71,39 +71,42 @@ function findGateSteps(job) {
 }
 
 // US-001 — CI bloqueia código quebrado antes da main
-test('AC-001: Workflow de CI cobre os quatro gates na ordem certa @spec:AC-001', () => {
+test('AC-001: Workflow de CI cobre os quatro gates e o check "gates" só passa se todos passarem @spec:AC-001', () => {
   // Dado: o arquivo `.github/workflows/ci.yml`
   // Quando: ele é inspecionado
-  // Então: existe um job que executa, nessa ordem, lint → checagem de tipos
-  //        (tsc --noEmit) → testes → build, cada passo dependendo do
-  //        anterior ter passado (nenhum continue-on-error: true nos gates)
+  // Então: lint, checagem de tipos (tsc --noEmit), testes e build existem, em jobs que rodam em paralelo (o CI de ~30 min em série
+  //        virou ~7 min); lint vem antes dos tipos no mesmo job; nenhum passo tem continue-on-error: true; e o job `gates` (o check
+  //        obrigatório da regra da main) depende de TODOS os outros, então um gate vermelho nunca deixa o PR passar.
   assert.ok(ciWorkflow.jobs, 'workflow deve ter jobs definidos');
-  const jobs = Object.values(ciWorkflow.jobs);
-  assert.ok(jobs.length >= 1, 'deve existir pelo menos um job');
+  const jobs = ciWorkflow.jobs;
+  const todosOsPassos = Object.values(jobs).flatMap((job) => job.steps ?? []);
+  assert.ok(todosOsPassos.length >= 1, 'deve existir ao menos um passo');
 
-  const job = jobs[0];
-  assert.ok(Array.isArray(job.steps), 'job deve ter steps');
-
-  const [lintStep, typecheckStep, testStep, buildStep] = findGateSteps(job);
+  const [lintStep, typecheckStep, testStep, buildStep] = findGateSteps({ steps: todosOsPassos });
   assert.ok(lintStep, 'deve existir um step de lint');
   assert.ok(typecheckStep, 'deve existir um step de checagem de tipos (tsc --noEmit)');
   assert.ok(testStep, 'deve existir um step de testes');
   assert.ok(buildStep, 'deve existir um step de build');
 
-  const indices = [lintStep, typecheckStep, testStep, buildStep].map((step) => job.steps.indexOf(step));
-  assert.deepEqual(
-    indices,
-    [...indices].sort((a, b) => a - b),
-    'os gates devem aparecer nessa ordem: lint → typecheck → test → build'
-  );
+  const jobDe = (passo) => Object.values(jobs).find((job) => (job.steps ?? []).includes(passo));
+  assert.equal(jobDe(lintStep), jobDe(typecheckStep), 'lint e checagem de tipos ficam no mesmo job');
+  const passosDaQualidade = jobDe(lintStep).steps;
+  assert.ok(passosDaQualidade.indexOf(lintStep) < passosDaQualidade.indexOf(typecheckStep), 'lint vem antes da checagem de tipos');
 
-  for (const step of job.steps) {
-    assert.notEqual(
-      step['continue-on-error'],
-      true,
-      `step "${step.name ?? step.run}" não pode ter continue-on-error: true`
-    );
+  for (const [nome, job] of Object.entries(jobs)) {
+    assert.notEqual(job['continue-on-error'], true, `job "${nome}" não pode ter continue-on-error: true`);
+    for (const step of job.steps ?? []) {
+      assert.notEqual(step['continue-on-error'], true, `step "${step.name ?? step.run}" não pode ter continue-on-error: true`);
+    }
   }
+
+  const gates = jobs.gates;
+  assert.ok(gates, 'deve existir o job "gates" (o check obrigatório da regra da main)');
+  const dependencias = [].concat(gates.needs ?? []);
+  for (const nome of Object.keys(jobs).filter((n) => n !== 'gates')) {
+    assert.ok(dependencias.includes(nome), `"gates" deve depender do job "${nome}"`);
+  }
+  assert.equal(gates.if, 'always()', '"gates" roda sempre, para falhar (e não ficar "skipped") quando um job falha');
 });
 
 // US-001 — CI bloqueia código quebrado antes da main

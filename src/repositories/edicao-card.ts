@@ -6,6 +6,7 @@ import { and, eq, inArray, ne } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
 import { leads, oportunidadeEventos, oportunidades } from '../db/schema';
+import { normalizarEspecialidade } from '../domain/leads/especialidades';
 import { normalizarNumero, variantesNumero } from '../domain/whatsapp/numero';
 import type { ContextoTenant } from '../lib/auth/tenant';
 import { comTenant } from './contexto';
@@ -13,7 +14,7 @@ import { comTenant } from './contexto';
 export const TIPO_EVENTO_EDICAO_CARD = 'edicao_card';
 const ETAPA_PROPOSTA = 11;
 
-export type CampoEditavel = 'nome' | 'email' | 'origem' | 'telefone' | 'valor';
+export type CampoEditavel = 'nome' | 'email' | 'origem' | 'telefone' | 'valor' | 'especialidade';
 /** T-289: campos dos dados comerciais (`dados-comerciais.ts`) que entram no mesmo evento `edicao_card`. */
 export type CampoComercialRegistrado =
   | 'previsao_fechamento'
@@ -31,6 +32,8 @@ export interface DadosEdicaoCard {
   origem?: unknown;
   telefone?: unknown;
   valor?: unknown;
+  /** Fica em `leads.dados.especialidade`; as variações conhecidas viram o nome padrão (`normalizarEspecialidade`). */
+  especialidade?: unknown;
 }
 
 export interface Alteracao {
@@ -113,6 +116,12 @@ export async function editarCard(
     novoLead.telefoneE164 = numero;
   }
   const novoValor = dados.valor !== undefined ? valorEmReais(dados.valor) : undefined;
+  // Especialidade: vazia apaga; um nome conhecido vira o padrão; o resto fica como digitado.
+  let novaEspecialidade: string | null | undefined;
+  if (dados.especialidade !== undefined) {
+    const digitada = texto(dados.especialidade, 'especialidade', 100, false);
+    novaEspecialidade = digitada === null ? null : (normalizarEspecialidade(digitada) ?? digitada);
+  }
 
   return comTenant(db, contexto, async (tx) => {
     const [op] = await tx
@@ -122,12 +131,16 @@ export async function editarCard(
       .limit(1);
     if (!op) throw new ErroCardNaoEncontrado();
     const [lead] = await tx
-      .select({ nome: leads.nome, email: leads.email, origem: leads.origem, telefoneE164: leads.telefoneE164 })
+      .select({ nome: leads.nome, email: leads.email, origem: leads.origem, telefoneE164: leads.telefoneE164, dados: leads.dados })
       .from(leads)
       .where(and(eq(leads.id, op.leadId), eq(leads.empresaId, contexto.empresaId)))
       .limit(1);
 
     const alteracoes: Alteracao[] = [];
+    const dadosDoLead = (lead.dados && typeof lead.dados === 'object' ? lead.dados : {}) as Record<string, unknown>;
+    const especialidadeAtual = typeof dadosDoLead.especialidade === 'string' && dadosDoLead.especialidade.trim() !== '' ? dadosDoLead.especialidade.trim() : null;
+    const mudouEspecialidade = novaEspecialidade !== undefined && novaEspecialidade !== especialidadeAtual;
+    if (mudouEspecialidade) alteracoes.push({ campo: 'especialidade', de: especialidadeAtual, para: novaEspecialidade ?? null });
     const mudancasLead: Partial<typeof novoLead> = {};
     const rotulos = { nome: 'nome', email: 'email', origem: 'origem', telefoneE164: 'telefone' } as const;
     for (const chave of ['nome', 'email', 'origem', 'telefoneE164'] as const) {
@@ -177,6 +190,14 @@ export async function editarCard(
           ...(mudancasLead.telefoneE164 ? { telefoneE164: mudancasLead.telefoneE164 } : {}),
           atualizadoEm: new Date(),
         })
+        .where(and(eq(leads.id, op.leadId), eq(leads.empresaId, contexto.empresaId)));
+    }
+    if (mudouEspecialidade) {
+      const { especialidade: _antiga, ...resto } = dadosDoLead;
+      void _antiga;
+      await tx
+        .update(leads)
+        .set({ dados: novaEspecialidade ? { ...resto, especialidade: novaEspecialidade } : resto, atualizadoEm: new Date() })
         .where(and(eq(leads.id, op.leadId), eq(leads.empresaId, contexto.empresaId)));
     }
     if (mudouValor) {

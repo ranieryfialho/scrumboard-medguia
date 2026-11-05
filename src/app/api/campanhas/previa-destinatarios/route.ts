@@ -7,6 +7,7 @@ import { getDb } from '../../../../db/client';
 import { getAuth } from '../../../../lib/auth/instancia';
 import { ErroSessaoInvalida, resolverContextoTenant, type ContextoTenant } from '../../../../lib/auth/tenant';
 import { preverDestinatarios } from '../../../../repositories/campanhas-resumo';
+import { acessoACampanhas } from '../../../../lib/campanhas/acesso';
 
 export const dynamic = 'force-dynamic';
 
@@ -26,7 +27,7 @@ async function resolverContexto(request: NextRequest): Promise<ContextoTenant | 
 export async function GET(request: NextRequest) {
   const contexto = await resolverContexto(request);
   if (!contexto) return NextResponse.json({ codigo: 'NAO_AUTENTICADO' }, { status: 401 });
-  if (!(contexto.isSuperAdmin || contexto.papel === 'MASTER' || contexto.papel === 'GERENTE')) {
+  if (!acessoACampanhas(contexto)) {
     return NextResponse.json({ codigo: 'SEM_PERMISSAO' }, { status: 403 });
   }
 

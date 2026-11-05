@@ -7,6 +7,7 @@ import { getDb } from '../../../../../db/client';
 import { getAuth } from '../../../../../lib/auth/instancia';
 import { ErroSessaoInvalida, resolverContextoTenant, type ContextoTenant } from '../../../../../lib/auth/tenant';
 import { ErroCampanhaNaoEncontrada, ErroCampanhaNaoPausada, retomarCampanha } from '../../../../../repositories/campanhas';
+import { acessoACampanhas } from '../../../../../lib/campanhas/acesso';
 
 export const dynamic = 'force-dynamic';
 
@@ -36,9 +37,9 @@ function campanhaNaoEncontrada() {
   return NextResponse.json({ codigo: 'CAMPANHA_NAO_ENCONTRADA' }, { status: 404 });
 }
 
-/** ASM-076: MASTER, GERENTE e super admin acessam campanhas; ATENDENTE não. */
+/** ASM-076 (revista): super admin, master e quem tem o módulo Campanhas liberado (gerente por padrão; atendente só se liberarem). */
 function podeAcessarCampanhas(contexto: ContextoTenant): boolean {
-  return contexto.isSuperAdmin || contexto.papel === 'MASTER' || contexto.papel === 'GERENTE';
+  return acessoACampanhas(contexto);
 }
 
 /** AC-710: retoma a campanha pausada e devolve os destinatários PAUSADO à fila; fora de pausa, 422 `CAMPANHA_NAO_PAUSADA`. */
