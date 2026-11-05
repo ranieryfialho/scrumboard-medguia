@@ -43,7 +43,7 @@ pg_dumpall -U postgres | gzip > /root/backups/pg-master-pre-cutover_$(date +%F_%
 
 1. Se `crm_prod`, `crm_app` e `crm_migrator` ainda não existem, crie-os como no
    [`provisionar-staging.md`](provisionar-staging.md) (`infra/postgres/init/01-databases-and-roles.sql`).
-2. Aplique **todos** os `.sql` de `drizzle/` (de `0000` até a `0034`), **em ordem**, com `psql` como `crm_migrator`,
+2. Aplique **todos** os `.sql` de `drizzle/` (de `0000` até a `0035`), **em ordem**, com `psql` como `crm_migrator`,
    direto no `crm_prod`. **Não use `npm run db:migrate`:** o `_journal.json` só conhece
    4 das migrations (as demais são escritas à mão).
 
@@ -79,6 +79,7 @@ O que cada migration das fases 4 e 5 faz (todas **só acrescentam**; nenhuma apa
 | `0032_desconto_proposta` | o desconto concedido (%) nos dados da proposta do card, para o desconto médio do relatório comercial |
 | `0033_auditoria_equipe` | o registro de auditoria da equipe (convites, trocas de papel, desativações e reativações), que o botão Logs de Auditoria mostra |
 | `0034_modulos_do_colaborador` | os módulos liberados de cada colaborador (coluna `modulos` em `empresas_usuarios`; vazio = padrão do papel) |
+| `0035_cadencia_aguardando_resposta` | o estado "aguardando resposta" do toque de WhatsApp (`aguardando_desde` e `aguardando_ate` em `cadencia_atividades`; o toque continua pendente) |
 | `0024_envios_campanha_erro` | a coluna `erro` (motivo da falha) em `envios_campanha` e o índice dos envios pendentes, para o worker de e-mail |
 
 **Conferência do banco** (como `crm_migrator`; os números vêm do estado de 29/10, ajuste se
@@ -148,9 +149,12 @@ do Docker** ou pelo proxy:
 # WhatsApp em lote: A CADA MINUTO. Cada chamada trabalha até ~55 s, mandando uma mensagem
 # por vez com 15 a 45 s entre elas. Sem este agendador os lotes ficam parados na fila.
 * * * * *  curl -fsS -m 65 -X POST -H "Authorization: Bearer $CRON_SEGREDO" http://scrumboard-medguia:3000/api/cron/whatsapp-lote
+
+# toque de WhatsApp "aguardando resposta": A CADA MINUTO. Conclui como sem resposta os toques cujo prazo (2 h) venceu.
+* * * * *  curl -fsS -m 30 -X POST -H "Authorization: Bearer $CRON_SEGREDO" http://scrumboard-medguia:3000/api/cron/cadencia-aguardando
 ```
 
-- A cadência registra cada execução em `cron_execucoes` (job `cadencia-virada-dia`); o lote,
+- A cadência registra cada execução em `cron_execucoes` (job `cadencia-virada-dia`; o do aguardando resposta, `cadencia-aguardando`); o lote,
   em `cron_execucoes` com o job `whatsapp-lote`. Use essa tabela para saber se rodou.
 - Chamadas sobrepostas do lote são seguras (um envio nunca é pego duas vezes e o intervalo
   vale por `proximo_envio_em`).
