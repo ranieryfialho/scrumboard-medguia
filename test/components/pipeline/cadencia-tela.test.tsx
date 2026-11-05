@@ -46,6 +46,7 @@ function montarCadencia(
       realizadaPor: feito ? { id: 'u1', nome: feito.quem } : null,
       observacao: null,
       atrasado: false,
+      aguardandoAte: null,
     };
   });
   const conectou = concluidos.filter((c) => c.resultado === 'conectou').length;

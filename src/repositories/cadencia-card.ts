@@ -10,7 +10,7 @@ import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { cadenciaAtividades, usuarios } from '../db/schema';
 import { blocoDe, type Dia } from '../domain/cadencia/matriz';
 import type { ContextoTenant } from '../lib/auth/tenant';
-import { inicioDoTurnoDeReferencia } from './cadencia';
+import { aguardandoVigente, inicioDoTurnoDeReferencia } from './cadencia';
 import { comTenant } from './contexto';
 import { buscarOportunidadePorId } from './oportunidades';
 
@@ -32,8 +32,10 @@ export interface ToqueDoCard {
   realizadaEm: Date | null;
   realizadaPor: { id: string; nome: string } | null;
   observacao: string | null;
-  /** Pendente liberado antes do turno de referência (mesma regra da fila de atrasados). */
+  /** Pendente liberado antes do turno de referência (mesma regra da fila de atrasados). Aguardando resposta nunca é atrasado. */
   atrasado: boolean;
+  /** Toque de WhatsApp "aguardando resposta": o prazo (ISO) enquanto vale; `null` se não está aguardando. */
+  aguardandoAte: string | null;
 }
 
 export interface CadenciaDoCard {
@@ -105,12 +107,14 @@ export async function obterCadenciaDoCard(
         realizadaPor: null,
         observacao: null,
         atrasado: false,
+        aguardandoAte: null,
       };
     }
 
     // A posição do toque (dia, turno, canal e tipo) vem SEMPRE da matriz: a régua é
     // fixa, com 3 toques por turno. O banco só informa o estado de cada toque.
     const { atividade } = linha;
+    const aguardandoAte = aguardandoVigente(atividade, agora);
     const estado: EstadoToque =
       atividade.resultado === 'conectou' || atividade.resultado === 'sem_resposta'
         ? 'concluido'
@@ -136,7 +140,11 @@ export async function obterCadenciaDoCard(
           : null,
       observacao: atividade.observacao,
       atrasado:
-        atividade.resultado === 'pendente' && linha.liberadaEm !== null && new Date(linha.liberadaEm).getTime() < corte.getTime(),
+        aguardandoAte === null &&
+        atividade.resultado === 'pendente' &&
+        linha.liberadaEm !== null &&
+        new Date(linha.liberadaEm).getTime() < corte.getTime(),
+      aguardandoAte,
     };
   });
 

@@ -12,6 +12,8 @@ export interface ItemDaFila {
   oportunidade: { id: string; version: number; etapaId: number; valor: string | null; responsavelId: string | null };
   lead: { id: string; nome: string; telefoneE164: string | null };
   atrasado: boolean;
+  /** Toque de WhatsApp "aguardando resposta": o prazo (ISO) enquanto vale; `null` se não está aguardando. */
+  aguardandoAte?: string | null;
   liberadaEm: string | null;
   responsavel: { id: string; nome: string } | null;
 }
@@ -27,6 +29,7 @@ export interface ResumoDoTurno {
   cardsEmRisco: number;
   ticketMedio: number | null;
   maiorAtraso: { minutos: number; leadNome: string } | null;
+  aguardandoResposta?: number;
 }
 
 export const TOTAL_TOQUES = 18;
@@ -84,6 +87,8 @@ const MENSAGENS_ERRO: Record<string, string> = {
   BLOCO_ANTERIOR_PENDENTE: 'O bloco anterior deste card ainda não foi concluído. A fila foi recarregada.',
   CADENCIA_ENCERRADA: 'Esta cadência já foi encerrada, ou este toque não está mais pendente. A fila foi recarregada.',
   PAPEL_NAO_PERMITIDO: 'Você não tem permissão para concluir este toque.',
+  SEM_PERMISSAO: 'Você não tem permissão para mexer neste toque.',
+  TOQUE_NAO_ACEITA_AGUARDAR: 'Só toques de WhatsApp podem ficar aguardando resposta.',
 };
 const MENSAGEM_ERRO_PADRAO = 'Não foi possível concluir este toque. A fila foi recarregada.';
 
@@ -105,10 +110,27 @@ export async function concluirToque(
   }
 }
 
-/** Ordem da fila (AC-466): atrasados primeiro, depois pelo horário de liberação. */
+/** Marca o toque de WhatsApp como "aguardando resposta" (a mensagem saiu e o lead ainda não respondeu). */
+export async function aguardarRespostaToque(item: ItemDaFila): Promise<{ ok: true } | { ok: false; mensagem: string }> {
+  try {
+    const resposta = await fetch(`/api/atividades/${item.atividade.id}/aguardar`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ version: item.oportunidade.version }),
+    });
+    if (resposta.ok) return { ok: true };
+    const corpo = (await resposta.json().catch(() => ({}))) as { codigo?: string };
+    return { ok: false, mensagem: (corpo.codigo && MENSAGENS_ERRO[corpo.codigo]) ?? MENSAGEM_ERRO_PADRAO };
+  } catch {
+    return { ok: false, mensagem: MENSAGEM_ERRO_PADRAO };
+  }
+}
+
+/** Ordem da fila (AC-466): atrasados primeiro, depois pelo horário de liberação; quem aguarda resposta vai para o fim. */
 export function ordenarFila(itens: ItemDaFila[]): ItemDaFila[] {
   return [...itens].sort(
     (a, b) =>
+      Number(Boolean(a.aguardandoAte)) - Number(Boolean(b.aguardandoAte)) ||
       Number(b.atrasado) - Number(a.atrasado) ||
       (a.liberadaEm ?? '').localeCompare(b.liberadaEm ?? '') ||
       a.atividade.sequencia - b.atividade.sequencia

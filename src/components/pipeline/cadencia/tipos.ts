@@ -14,6 +14,8 @@ export interface ToqueDaCadencia {
   realizadaPor: { id: string; nome: string } | null;
   observacao: string | null;
   atrasado: boolean;
+  /** Toque de WhatsApp aguardando resposta: o prazo (ISO) enquanto vale; `null` se não está aguardando. */
+  aguardandoAte: string | null;
 }
 
 export type SituacaoDaRegua = 'nao_iniciada' | 'em_andamento' | 'atrasada' | 'encerrada';

@@ -16,9 +16,10 @@ interface ToqueDaVezProps {
   concluindo: boolean;
   mensagemDeErro: string | null;
   onConcluir: (resultado: 'conectou' | 'sem_resposta') => void;
+  onAguardar?: () => void;
 }
 
-export function ToqueDaVez({ cardId, toque, concluindo, mensagemDeErro, onConcluir }: ToqueDaVezProps) {
+export function ToqueDaVez({ cardId, toque, concluindo, mensagemDeErro, onConcluir, onAguardar }: ToqueDaVezProps) {
   return (
     <section
       aria-label="Toque da vez"
@@ -35,6 +36,11 @@ export function ToqueDaVez({ cardId, toque, concluindo, mensagemDeErro, onConclu
         {toque.atrasado && (
           <span className="w-fit px-2 py-0.5 rounded bg-danger-surface text-danger-text font-label-sm text-label-sm font-bold">
             Atrasado
+          </span>
+        )}
+        {toque.aguardandoAte && (
+          <span className="w-fit px-2 py-0.5 rounded bg-warning-surface text-warning-text font-label-sm text-label-sm font-bold">
+            Aguardando resposta até {new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Sao_Paulo', hour: '2-digit', minute: '2-digit' }).format(new Date(toque.aguardandoAte))}
           </span>
         )}
       </div>
@@ -64,6 +70,19 @@ export function ToqueDaVez({ cardId, toque, concluindo, mensagemDeErro, onConclu
             </span>
             Não Atendeu
           </button>
+          {toque.canal === 'whatsapp' && onAguardar && (
+            <button
+              type="button"
+              disabled={concluindo}
+              onClick={onAguardar}
+              className="px-4 py-2 rounded-lg bg-warning-surface text-warning-text font-label-md text-label-md font-semibold flex items-center gap-1.5 disabled:opacity-60"
+            >
+              <span aria-hidden="true" className="material-symbols-outlined text-[18px]">
+                hourglass_top
+              </span>
+              {toque.aguardandoAte ? 'Reiniciar espera' : 'Aguardando Resposta'}
+            </button>
+          )}
           <ItemEmBreve rotulo="Pediu Retorno Mais Tarde" icone="schedule" className="px-3 py-2 rounded-lg bg-surface-card/10" />
           <ItemEmBreve rotulo="Editar Script" icone="edit_note" className="px-3 py-2 rounded-lg bg-surface-card/10" />
         </div>

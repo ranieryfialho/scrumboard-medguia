@@ -20,6 +20,7 @@ import { useStreamOportunidades, type EventoStreamCliente } from '@/hooks/use-st
 import {
   CANAL_LABEL,
   TIPO_LABEL,
+  aguardarRespostaToque,
   concluirToque,
   horaLocal,
   iniciais,
@@ -115,6 +116,18 @@ export function FilaTurno() {
     setEnviando(false);
   }
 
+  async function aguardar(item: ItemDaFila) {
+    if (envioRef.current) return;
+    envioRef.current = true;
+    setEnviando(true);
+    setAviso(null);
+    const r = await aguardarRespostaToque(item);
+    if (!r.ok) setAviso(r.mensagem);
+    await carregar();
+    envioRef.current = false;
+    setEnviando(false);
+  }
+
   const fila = useMemo(() => ordenarFila(itens ?? []), [itens]);
   const filtrados = useMemo(() => {
     const termo = busca.trim().toLowerCase();
@@ -174,7 +187,7 @@ export function FilaTurno() {
               {aviso}
             </p>
           )}
-          <DestaqueTarefa item={fila[0] ?? null} enviando={enviando} onConcluir={concluir} />
+          <DestaqueTarefa item={fila.find((i) => !i.aguardandoAte) ?? fila[0] ?? null} enviando={enviando} onConcluir={concluir} onAguardar={aguardar} />
 
           <section className="bg-surface-card rounded-2xl shadow-sm overflow-hidden flex flex-col flex-1 min-h-0">
             <div className="p-space-md flex items-center justify-between flex-wrap gap-space-sm flex-shrink-0">
@@ -226,6 +239,11 @@ export function FilaTurno() {
                               Atrasado
                             </span>
                           )}
+                          {item.aguardandoAte && (
+                            <span className="ml-2 text-[10px] font-bold uppercase text-warning-text bg-warning-surface rounded-full px-2 py-0.5">
+                              Aguardando até {horaLocal(item.aguardandoAte)}
+                            </span>
+                          )}
                         </td>
                         <td className="px-space-md py-3">
                           <div className="flex items-center gap-3">
@@ -257,6 +275,18 @@ export function FilaTurno() {
                             >
                               <span aria-hidden="true" className="material-symbols-outlined text-[20px]">check_circle</span>
                             </button>
+                            {item.atividade.canal === 'whatsapp' && (
+                              <button
+                                type="button"
+                                disabled={enviando}
+                                aria-label={`Aguardando resposta: ${item.lead.nome}`}
+                                title="A mensagem foi enviada e o lead ainda não respondeu"
+                                onClick={() => aguardar(item)}
+                                className="w-8 h-8 rounded-lg text-warning-text hover:bg-warning-surface disabled:opacity-50 flex items-center justify-center"
+                              >
+                                <span aria-hidden="true" className="material-symbols-outlined text-[20px]">hourglass_top</span>
+                              </button>
+                            )}
                             <button
                               type="button"
                               disabled={enviando}

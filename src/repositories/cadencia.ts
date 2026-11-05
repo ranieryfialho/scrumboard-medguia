@@ -27,7 +27,7 @@ import { and, asc, eq, inArray, isNull, or, type SQL } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { sql } from 'drizzle-orm';
 
-import { cadenciaAtividades, empresas, leads, oportunidades, usuarios } from '../db/schema';
+import { cadenciaAtividades, empresas, leads, oportunidadeEventos, oportunidades, usuarios } from '../db/schema';
 import { podeLiberar } from '../domain/cadencia/feriados';
 import { dataLocalEmSaoPaulo, turnoVigente, type Turno } from '../domain/cadencia/turno';
 import type { ContextoTenant } from '../lib/auth/tenant';
@@ -230,6 +230,12 @@ export async function concluirAtividade(
   });
 }
 
+/** O prazo do "aguardando resposta" (ISO) se ainda vale em `agora`; senão `null` (nunca marcado ou já vencido). */
+export function aguardandoVigente(atividade: { aguardandoAte: Date | null; resultado: string }, agora: Date): string | null {
+  if (atividade.resultado !== 'pendente' || !atividade.aguardandoAte) return null;
+  return atividade.aguardandoAte.getTime() > agora.getTime() ? atividade.aguardandoAte.toISOString() : null;
+}
+
 function responsavelDe(id: string | null, nome: string | null): { id: string; nome: string } | null {
   return id && nome ? { id, nome } : null;
 }
@@ -263,6 +269,8 @@ export interface ItemFilaCadencia {
   liberadaEm: string | null;
   /** AC-469: responsável do card, ou `null` se não houver. */
   responsavel: { id: string; nome: string } | null;
+  /** Toque de WhatsApp "aguardando resposta": o prazo (ISO) enquanto ainda vale; `null` se não está aguardando. Aguardando nunca é atrasado. */
+  aguardandoAte: string | null;
 }
 
 /**
@@ -341,6 +349,7 @@ export async function listarFilaDoTurno(
         atrasado: false,
         liberadaEm: linha.liberadaEm,
         responsavel: responsavelDe(linha.oportunidade.responsavelId, linha.responsavelNome),
+        aguardandoAte: aguardandoVigente(linha.atividade, filtro.agora),
       }));
     });
   }
@@ -385,14 +394,19 @@ export async function listarFilaDoTurno(
       .where(and(...condicoes))
       .orderBy(asc(cadenciaAtividades.sequencia));
 
-    const itens = linhas.map((linha) => ({
-      atividade: linha.atividade,
-      oportunidade: linha.oportunidade,
-      lead: { id: linha.leadId, nome: linha.leadNome, telefoneE164: linha.leadTelefoneE164 },
-      atrasado: new Date(linha.liberadaEm).getTime() < corte.getTime(),
-      liberadaEm: linha.liberadaEm,
-      responsavel: responsavelDe(linha.oportunidade.responsavelId, linha.responsavelNome),
-    }));
+    const itens = linhas.map((linha) => {
+      const aguardandoAte = aguardandoVigente(linha.atividade, filtro.agora);
+      return {
+        atividade: linha.atividade,
+        oportunidade: linha.oportunidade,
+        lead: { id: linha.leadId, nome: linha.leadNome, telefoneE164: linha.leadTelefoneE164 },
+        // Aguardando resposta não é atraso: a mensagem já saiu e o toque só espera o lead (ou o prazo).
+        atrasado: aguardandoAte === null && new Date(linha.liberadaEm).getTime() < corte.getTime(),
+        liberadaEm: linha.liberadaEm,
+        responsavel: responsavelDe(linha.oportunidade.responsavelId, linha.responsavelNome),
+        aguardandoAte,
+      };
+    });
 
     // Atrasados primeiro (AC-213: a seção "Atrasadas" fica acima do turno
     // vigente); `sort` é estável, então a ordem por sequência de cada grupo
@@ -437,5 +451,141 @@ export async function virarDiaDeTodasAsEmpresas(
     resultados.push({ empresaId: empresa.id, oportunidadesAvancadas });
   }
 
+  return resultados;
+}
+
+
+// ---------------------------------------------------------------------------
+// "Aguardando resposta" (migration 0035)
+// ---------------------------------------------------------------------------
+
+/** Quanto tempo um toque de WhatsApp fica "aguardando resposta" antes de virar `sem_resposta` sozinho. */
+export const MINUTOS_AGUARDANDO_RESPOSTA = 120;
+
+/** O toque não é de WhatsApp: só mensagem enviada tem "aguardando resposta" (ligação atende ou não atende na hora). */
+export class ErroToqueNaoAceitaAguardar extends Error {
+  constructor() {
+    super('Só toques de WhatsApp podem ficar aguardando resposta.');
+    this.name = 'ErroToqueNaoAceitaAguardar';
+  }
+}
+
+export interface DadosMarcarAguardando {
+  /** `version` que o chamador acredita ser a atual do card (lock otimista). */
+  version: number;
+  atorId: string;
+  /** Relógio injetado (ASM-062). */
+  agora: Date;
+  /** Prazo em minutos; omitido, `MINUTOS_AGUARDANDO_RESPOSTA`. */
+  minutos?: number;
+}
+
+/**
+ * Marca o toque de WhatsApp como "aguardando resposta": a mensagem saiu e o lead ainda não respondeu. O toque continua `pendente` (a regra
+ * dos blocos não muda) e só ganha o prazo; vencido, `expirarAguardandosDaEmpresa` conclui o toque como `sem_resposta`. Remarcar reinicia o
+ * prazo. Mesmas recusas de `concluirAtividade` (versão, cadência encerrada, bloco), mais `ErroToqueNaoAceitaAguardar`.
+ */
+export async function marcarAguardandoResposta(
+  db: NodePgDatabase,
+  contexto: ContextoTenant,
+  atividadeId: string,
+  dados: DadosMarcarAguardando
+): Promise<AtividadeCadencia> {
+  return comTenant(db, contexto, async (tx) => {
+    const [linha] = await tx
+      .select({ atividade: cadenciaAtividades, oportunidade: oportunidades })
+      .from(cadenciaAtividades)
+      .innerJoin(oportunidades, eq(cadenciaAtividades.oportunidadeId, oportunidades.id))
+      .where(and(eq(cadenciaAtividades.id, atividadeId), eq(cadenciaAtividades.empresaId, contexto.empresaId)))
+      .for('update', { of: [cadenciaAtividades, oportunidades] })
+      .limit(1);
+    if (!linha) throw new ErroCadenciaEncerrada();
+    const { atividade, oportunidade } = linha;
+
+    if (oportunidade.version !== dados.version) throw new ErroConflitoDeVersao();
+    if (oportunidade.cadenciaEncerradaEm !== null || atividade.resultado !== 'pendente') throw new ErroCadenciaEncerrada();
+    if (atividade.canal !== 'whatsapp') throw new ErroToqueNaoAceitaAguardar();
+    if (atividade.dia !== oportunidade.cadenciaDia || atividade.turno !== oportunidade.cadenciaTurno) throw new ErroBlocoAnteriorPendente();
+
+    const ate = new Date(dados.agora.getTime() + (dados.minutos ?? MINUTOS_AGUARDANDO_RESPOSTA) * 60_000);
+    const [atualizada] = await tx
+      .update(cadenciaAtividades)
+      .set({ aguardandoDesde: dados.agora, aguardandoAte: ate })
+      .where(eq(cadenciaAtividades.id, atividadeId))
+      .returning();
+
+    await tx.insert(oportunidadeEventos).values({
+      empresaId: contexto.empresaId,
+      oportunidadeId: oportunidade.id,
+      tipo: 'aguardando_resposta',
+      atorId: dados.atorId,
+      atorTipo: 'usuario',
+      payload: { atividadeId, sequencia: atividade.sequencia, ate: ate.toISOString() },
+    });
+
+    return atualizada;
+  });
+}
+
+export interface ResultadoExpiracao {
+  empresaId: string;
+  /** Toques concluídos como `sem_resposta` porque o prazo venceu. */
+  expirados: number;
+  /** Toques que o banco recusou (card mexido por outra ação etc.) — ficam para o próximo ciclo. */
+  recusados: number;
+}
+
+/**
+ * Conclui como `sem_resposta` os toques "aguardando resposta" cujo prazo venceu (`aguardando_ate <= agora`), de uma empresa. Cada toque roda
+ * na própria transação, pelo mesmo `concluir_atividade_cadencia` do botão "Não atendeu" (então libera o bloco seguinte e esgota a cadência
+ * quando for o caso), com `ator_tipo = sistema`. Um toque que o banco recusa (conflito, bloco, cadência já encerrada) não derruba os outros.
+ */
+export async function expirarAguardandosDaEmpresa(db: NodePgDatabase, empresaId: string, agora: Date): Promise<ResultadoExpiracao> {
+  const vencidos = await comTenant(db, { empresaId }, async (tx) =>
+    tx
+      .select({ id: cadenciaAtividades.id, version: oportunidades.version })
+      .from(cadenciaAtividades)
+      .innerJoin(oportunidades, eq(cadenciaAtividades.oportunidadeId, oportunidades.id))
+      .where(
+        and(
+          eq(cadenciaAtividades.empresaId, empresaId),
+          eq(cadenciaAtividades.resultado, 'pendente'),
+          sql`"cadencia_atividades"."aguardando_ate" <= ${agora.toISOString()}::timestamptz`,
+          isNull(oportunidades.cadenciaEncerradaEm)
+        )
+      )
+      .orderBy(asc(cadenciaAtividades.aguardandoAte))
+  );
+
+  let expirados = 0;
+  let recusados = 0;
+  for (const toque of vencidos) {
+    try {
+      await comTenant(db, { empresaId }, async (tx) => {
+        await tx.execute(sql`
+          select concluir_atividade_cadencia(
+            ${toque.id}::uuid,
+            ${toque.version}::integer,
+            'sem_resposta'::cadencia_resultado,
+            null::uuid,
+            'sistema'::ator_tipo,
+            ${agora.toISOString()}::timestamptz,
+            ${JSON.stringify({ motivo: 'aguardando_resposta_expirou' })}::jsonb
+          )
+        `);
+      });
+      expirados += 1;
+    } catch {
+      recusados += 1;
+    }
+  }
+  return { empresaId, expirados, recusados };
+}
+
+/** Varre as empresas ativas e expira, em cada uma, os toques "aguardando resposta" vencidos (cron de minuto em minuto). */
+export async function expirarAguardandosDeTodasAsEmpresas(db: NodePgDatabase, agora: Date): Promise<ResultadoExpiracao[]> {
+  const empresasAtivas = await db.select({ id: empresas.id }).from(empresas).where(eq(empresas.ativo, true));
+  const resultados: ResultadoExpiracao[] = [];
+  for (const empresa of empresasAtivas) resultados.push(await expirarAguardandosDaEmpresa(db, empresa.id, agora));
   return resultados;
 }

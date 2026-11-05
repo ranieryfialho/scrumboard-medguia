@@ -45,6 +45,9 @@ function CartaoDoToque({ toque }: { toque: ToqueDaCadencia }) {
         {toque.atrasado && (
           <span className="px-2 py-0.5 rounded bg-danger-surface text-danger-text font-label-sm text-label-sm font-bold">Atrasado</span>
         )}
+        {toque.aguardandoAte && (
+          <span className="px-2 py-0.5 rounded bg-warning-surface text-warning-text font-label-sm text-label-sm font-bold">Aguardando resposta</span>
+        )}
       </div>
       {concluido && toque.realizadaEm && (
         <p className="font-body-sm text-body-sm text-text-secondary">
