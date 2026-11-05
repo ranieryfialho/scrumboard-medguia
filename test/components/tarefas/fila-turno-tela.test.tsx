@@ -142,7 +142,7 @@ describe('T-182: FilaTurno', () => {
       expect(chamada).toBeTruthy();
       expect(JSON.parse(chamada![1].body)).toEqual({ version: 3, resultado: 'conectou' });
     });
-    await usuario.click(screen.getByRole('button', { name: 'Não Atendeu' }));
+    await usuario.click(screen.getByRole('button', { name: 'Não atendeu' }));
     await waitFor(() => {
       const corpos = fetchFalso.mock.calls.filter((c) => String(c[0]).includes('/concluir')).map((c) => JSON.parse(c[1].body).resultado);
       expect(corpos).toEqual(['conectou', 'sem_resposta']);
@@ -161,8 +161,8 @@ describe('T-182: FilaTurno', () => {
     expect(screen.queryByRole('heading', { name: 'O lead respondeu?' })).toBeNull();
     expect(fetchFalso.mock.calls.some((c) => String(c[0]).includes('/concluir'))).toBe(false);
 
-    // "Não atendeu" segue direto, sem confirmação
-    await usuario.click(screen.getByRole('button', { name: 'Não atendeu: Clínica Zap' }));
+    // "Mensagem enviada" (WhatsApp) segue direto, sem confirmação
+    await usuario.click(screen.getByRole('button', { name: 'Mensagem enviada: Clínica Zap' }));
     await waitFor(() => expect(fetchFalso.mock.calls.some((c) => String(c[0]).includes('/concluir'))).toBe(true));
     expect(screen.queryByRole('heading', { name: 'O lead respondeu?' })).toBeNull();
   });

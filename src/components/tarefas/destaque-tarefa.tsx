@@ -3,7 +3,7 @@
 import Link from 'next/link';
 
 import { SeloEtapa } from '@/components/pipeline/pecas/selo-etapa';
-import { CANAL_LABEL, TIPO_LABEL, TOTAL_TOQUES, iniciais, nomeEtapa, type ItemDaFila, type ResultadoToque } from './comum';
+import { CANAL_LABEL, TIPO_LABEL, rotuloSemResposta, TOTAL_TOQUES, iniciais, nomeEtapa, type ItemDaFila, type ResultadoToque } from './comum';
 
 interface DestaqueProps {
   item: ItemDaFila | null;
@@ -62,8 +62,8 @@ export function DestaqueTarefa({ item, enviando, onConcluir }: DestaqueProps) {
             onClick={() => onConcluir(item, 'sem_resposta')}
             className="flex-1 h-11 px-4 rounded-xl bg-danger-surface text-danger-text font-label-md text-label-md font-semibold flex items-center justify-center gap-1.5 hover:opacity-90 disabled:opacity-50"
           >
-            <span aria-hidden="true" className="material-symbols-outlined text-[18px]">phone_missed</span>
-            Não Atendeu
+            <span aria-hidden="true" className="material-symbols-outlined text-[18px]">{item.atividade.canal === 'whatsapp' ? 'send' : 'phone_missed'}</span>
+            {rotuloSemResposta(item.atividade.canal)}
           </button>
           <Link
             href={`/pipeline/${item.oportunidade.id}`}
