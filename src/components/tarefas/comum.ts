@@ -110,22 +110,6 @@ export async function concluirToque(
   }
 }
 
-/** Marca o toque de WhatsApp como "aguardando resposta" (a mensagem saiu e o lead ainda não respondeu). */
-export async function aguardarRespostaToque(item: ItemDaFila): Promise<{ ok: true } | { ok: false; mensagem: string }> {
-  try {
-    const resposta = await fetch(`/api/atividades/${item.atividade.id}/aguardar`, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ version: item.oportunidade.version }),
-    });
-    if (resposta.ok) return { ok: true };
-    const corpo = (await resposta.json().catch(() => ({}))) as { codigo?: string };
-    return { ok: false, mensagem: (corpo.codigo && MENSAGENS_ERRO[corpo.codigo]) ?? MENSAGEM_ERRO_PADRAO };
-  } catch {
-    return { ok: false, mensagem: MENSAGEM_ERRO_PADRAO };
-  }
-}
-
 /** Ordem da fila (AC-466): atrasados primeiro, depois pelo horário de liberação; quem aguarda resposta vai para o fim. */
 export function ordenarFila(itens: ItemDaFila[]): ItemDaFila[] {
   return [...itens].sort(

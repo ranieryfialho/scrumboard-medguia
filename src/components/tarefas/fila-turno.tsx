@@ -20,7 +20,6 @@ import { useStreamOportunidades, type EventoStreamCliente } from '@/hooks/use-st
 import {
   CANAL_LABEL,
   TIPO_LABEL,
-  aguardarRespostaToque,
   concluirToque,
   horaLocal,
   iniciais,
@@ -33,6 +32,7 @@ import {
 import { DestaqueTarefa } from './destaque-tarefa';
 import { EsqueletoCarregando, EstadoErro } from './estados';
 import { IndicadoresTurno } from './indicadores-turno';
+import { ConfirmarSucesso } from './confirmar-sucesso';
 
 const POR_PAGINA = 10;
 
@@ -116,16 +116,11 @@ export function FilaTurno() {
     setEnviando(false);
   }
 
-  async function aguardar(item: ItemDaFila) {
-    if (envioRef.current) return;
-    envioRef.current = true;
-    setEnviando(true);
-    setAviso(null);
-    const r = await aguardarRespostaToque(item);
-    if (!r.ok) setAviso(r.mensagem);
-    await carregar();
-    envioRef.current = false;
-    setEnviando(false);
+  // "Sucesso" encerra a cadência e move o card: pede a confirmação antes. Os demais resultados vão direto.
+  const [confirmar, setConfirmar] = useState<ItemDaFila | null>(null);
+  function aoConcluir(item: ItemDaFila, resultado: ResultadoToque) {
+    if (resultado === 'conectou') setConfirmar(item);
+    else void concluir(item, resultado);
   }
 
   const fila = useMemo(() => ordenarFila(itens ?? []), [itens]);
@@ -187,7 +182,7 @@ export function FilaTurno() {
               {aviso}
             </p>
           )}
-          <DestaqueTarefa item={fila.find((i) => !i.aguardandoAte) ?? fila[0] ?? null} enviando={enviando} onConcluir={concluir} onAguardar={aguardar} />
+          <DestaqueTarefa item={fila.find((i) => !i.aguardandoAte) ?? fila[0] ?? null} enviando={enviando} onConcluir={aoConcluir} />
 
           <section className="bg-surface-card rounded-2xl shadow-sm overflow-hidden flex flex-col flex-1 min-h-0">
             <div className="p-space-md flex items-center justify-between flex-wrap gap-space-sm flex-shrink-0">
@@ -270,23 +265,11 @@ export function FilaTurno() {
                               type="button"
                               disabled={enviando}
                               aria-label={`Concluir com sucesso: ${item.lead.nome}`}
-                              onClick={() => concluir(item, 'conectou')}
+                              onClick={() => aoConcluir(item, 'conectou')}
                               className="w-8 h-8 rounded-lg text-success-text hover:bg-success-surface disabled:opacity-50 flex items-center justify-center"
                             >
                               <span aria-hidden="true" className="material-symbols-outlined text-[20px]">check_circle</span>
                             </button>
-                            {item.atividade.canal === 'whatsapp' && (
-                              <button
-                                type="button"
-                                disabled={enviando}
-                                aria-label={`Aguardando resposta: ${item.lead.nome}`}
-                                title="A mensagem foi enviada e o lead ainda não respondeu"
-                                onClick={() => aguardar(item)}
-                                className="w-8 h-8 rounded-lg text-warning-text hover:bg-warning-surface disabled:opacity-50 flex items-center justify-center"
-                              >
-                                <span aria-hidden="true" className="material-symbols-outlined text-[20px]">hourglass_top</span>
-                              </button>
-                            )}
                             <button
                               type="button"
                               disabled={enviando}
@@ -314,6 +297,18 @@ export function FilaTurno() {
             <Paginacao pagina={paginaAtual} porPagina={POR_PAGINA} total={filtrados.length} onMudarPagina={setPagina} rotuloItem="toques" />
           </section>
         </>
+      )}
+      {confirmar && (
+        <ConfirmarSucesso
+          nome={confirmar.lead.nome}
+          trabalhando={enviando}
+          onCancelar={() => setConfirmar(null)}
+          onConfirmar={() => {
+            const item = confirmar;
+            setConfirmar(null);
+            void concluir(item, 'conectou');
+          }}
+        />
       )}
     </div>
   );

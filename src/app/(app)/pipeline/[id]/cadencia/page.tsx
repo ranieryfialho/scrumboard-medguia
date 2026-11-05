@@ -58,32 +58,6 @@ function ConteudoCadencia({ cardId, onMudou }: { cardId: string; onMudou: () => 
     void carregar();
   }, [carregar]);
 
-  async function aguardar() {
-    const vez = cadencia?.toqueDaVez;
-    if (!cadencia || !vez?.atividadeId) return;
-    setConcluindo(true);
-    setErroDeConclusao(null);
-    try {
-      const resposta = await fetch(`/api/atividades/${vez.atividadeId}/aguardar`, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ version: cadencia.oportunidade.version }),
-      });
-      if (resposta.ok) {
-        await carregar();
-        onMudou();
-        return;
-      }
-      const corpo = (await resposta.json().catch(() => null)) as { codigo?: string } | null;
-      setErroDeConclusao(MENSAGENS_DE_ERRO[corpo?.codigo ?? ''] ?? 'Não foi possível marcar a espera. Tente de novo.');
-      if (corpo?.codigo === 'CONFLITO_DE_VERSAO') await carregar();
-    } catch {
-      setErroDeConclusao('Não foi possível marcar a espera. Tente de novo.');
-    } finally {
-      setConcluindo(false);
-    }
-  }
-
   async function concluir(resultado: 'conectou' | 'sem_resposta') {
     const vez = cadencia?.toqueDaVez;
     if (!cadencia || !vez?.atividadeId) return;
@@ -171,7 +145,6 @@ function ConteudoCadencia({ cardId, onMudou }: { cardId: string; onMudou: () => 
                 concluindo={concluindo}
                 mensagemDeErro={erroDeConclusao}
                 onConcluir={concluir}
-                onAguardar={aguardar}
               />
             )}
             <MatrizToques toques={cadencia.toques} />

@@ -32,6 +32,7 @@ import {
   type ResumoDoTurno,
 } from './comum';
 import { EsqueletoCarregando, EstadoErro, EstadoVazio } from './estados';
+import { ConfirmarSucesso } from './confirmar-sucesso';
 
 type AtrasoMinimo = 'todos' | '60' | '240';
 type Ordem = 'maior' | 'menor';
@@ -103,6 +104,9 @@ export function TarefasAtrasadas() {
     [carregar]
   );
   const { estadoConexao } = useStreamOportunidades({ aoReceberEvento, aoPolling: carregar });
+
+  // "Sucesso" encerra a cadência e move o card: pede a confirmação antes.
+  const [confirmar, setConfirmar] = useState<ItemDaFila | null>(null);
 
   async function concluir(item: ItemDaFila, resultado: ResultadoToque) {
     if (envioRef.current) return;
@@ -362,7 +366,7 @@ export function TarefasAtrasadas() {
                                 type="button"
                                 disabled={enviando}
                                 aria-label={`Concluir com sucesso: ${item.lead.nome}`}
-                                onClick={() => concluir(item, 'conectou')}
+                                onClick={() => setConfirmar(item)}
                                 className="w-8 h-8 rounded-lg text-success-text hover:bg-success-surface disabled:opacity-50 flex items-center justify-center"
                               >
                                 <span aria-hidden="true" className="material-symbols-outlined text-[20px]">check_circle</span>
@@ -412,6 +416,18 @@ export function TarefasAtrasadas() {
           erro={erroDoLote}
           onConfirmar={reatribuir}
           onFechar={() => setDialogoAberto(false)}
+        />
+      )}
+      {confirmar && (
+        <ConfirmarSucesso
+          nome={confirmar.lead.nome}
+          trabalhando={enviando}
+          onCancelar={() => setConfirmar(null)}
+          onConfirmar={() => {
+            const item = confirmar;
+            setConfirmar(null);
+            void concluir(item, 'conectou');
+          }}
         />
       )}
     </div>

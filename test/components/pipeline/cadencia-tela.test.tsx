@@ -256,6 +256,7 @@ describe('T-173: tela da cadência de 18 toques', () => {
 
       cadenciaDoServidor = montarCadencia([...DOIS_FEITOS, { resultado: 'conectou', quando: '2026-10-27T14:00:00.000Z', quem: 'Alana Prado' }]);
       await usuario.click(screen.getByRole('button', { name: /Registrar Sucesso/ }));
+      await usuario.click(await screen.findByRole('button', { name: 'Sim, o lead respondeu' }));
 
       await waitFor(() => expect(chamadas('POST', '/api/atividades/ativ-3/concluir')).toHaveLength(1));
       const corpo = JSON.parse((chamadas('POST', '/api/atividades/ativ-3/concluir')[0][1] as RequestInit).body as string);
@@ -289,6 +290,7 @@ describe('T-173: tela da cadência de 18 toques', () => {
 
       respostaDoConcluir = () => resposta(status, { codigo });
       await usuario.click(screen.getByRole('button', { name: /Registrar Sucesso/ }));
+      await usuario.click(await screen.findByRole('button', { name: 'Sim, o lead respondeu' }));
 
       expect((await screen.findByRole('alert')).textContent).toContain(trecho);
       expect(screen.getByRole('progressbar', { name: 'Progresso da cadência' }).getAttribute('aria-valuenow')).toBe('2');
