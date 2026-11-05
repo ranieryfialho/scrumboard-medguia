@@ -40,6 +40,9 @@ export function useTransicaoDoCard(card: CardParaTransicao | null, aoMover: (eta
   const [dadoFaltante, setDadoFaltante] = useState<DadoFaltantePendente | null>(null);
   // T-313: ir para "Contrato (Ganho)" primeiro pede os dados do fechamento (como no CRM antigo).
   const fechamentoRef = useRef<DadosFechamento | null>(null);
+  // Os dados que o modal já pediu (valor, próxima ação...) ficam guardados entre uma tentativa e outra: o servidor pede um por vez e cada
+  // reenvio precisa levar todos, senão o anterior se perde e o modal volta a pedi-lo (loop ao mover para Proposta).
+  const dadosPedidosRef = useRef<DadoPreenchido>({});
   const [pedirFechamento, setPedirFechamento] = useState(false);
 
   const etapaAtualId = card?.etapaId ?? null;
@@ -67,24 +70,26 @@ export function useTransicaoDoCard(card: CardParaTransicao | null, aoMover: (eta
   }, [etapaAtualId]);
 
   const enviarTransicao = useCallback(
-    async (etapaDestinoId: number, dadoExtra: DadoPreenchido = {}) => {
+    async (etapaDestinoId: number, dadoExtra?: DadoPreenchido) => {
       if (!card) return;
       if (etapaDestinoId === ETAPA_CONTRATO_GANHO && !fechamentoRef.current) {
         setPedirFechamento(true);
         return;
       }
+      dadosPedidosRef.current = dadoExtra ? { ...dadosPedidosRef.current, ...dadoExtra } : {};
       setEnviando(true);
       setMensagem(null);
       try {
         const resposta = await fetch(`/api/oportunidades/${card.id}/transicao`, {
           method: 'POST',
           headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ version: card.version, etapaDestinoId, ...dadoExtra, ...(etapaDestinoId === ETAPA_CONTRATO_GANHO && fechamentoRef.current ? { fechamento: fechamentoRef.current } : {}) }),
+          body: JSON.stringify({ version: card.version, etapaDestinoId, ...dadosPedidosRef.current, ...(etapaDestinoId === ETAPA_CONTRATO_GANHO && fechamentoRef.current ? { fechamento: fechamentoRef.current } : {}) }),
         });
         if (resposta.ok) {
           const movida = (await resposta.json()) as { etapaId: number; version: number };
           setDadoFaltante(null);
           fechamentoRef.current = null;
+          dadosPedidosRef.current = {};
           aoMover(movida.etapaId, movida.version);
           return;
         }
@@ -109,6 +114,7 @@ export function useTransicaoDoCard(card: CardParaTransicao | null, aoMover: (eta
     mensagem,
     dadoFaltante,
     cancelarDadoFaltante: () => {
+      dadosPedidosRef.current = {};
       setDadoFaltante(null);
       fechamentoRef.current = null;
     },

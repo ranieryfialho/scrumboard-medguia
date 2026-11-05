@@ -18,7 +18,7 @@ import { ResultadoLote } from "@/components/pipeline/lote/resultado-lote";
 import { MENSAGEM_DO_PEDIDO, type ResultadoDoLoteView } from "@/components/pipeline/lote/tipos";
 import { CardOportunidade, type CardBoard } from "./card-oportunidade";
 import { ColunaEtapa } from "./coluna-etapa";
-import { ModalDadoFaltante } from "./modal-dado-faltante";
+import { ModalDadoFaltante, type DadoPreenchido } from "./modal-dado-faltante";
 import { ModalFechamentoDoCard } from "./modal-fechamento";
 import type { DadosFechamento } from "@/domain/pipeline/fechamento";
 import { FiltrosFunil, type OpcaoResponsavelFunil, type ValorFiltrosFunil } from "./filtros-funil";
@@ -152,6 +152,9 @@ export function BoardKanban() {
   // T-313: mover para "Contrato (Ganho)" pede antes os dados do fechamento (como no CRM antigo).
   const [fechamentoPendente, setFechamentoPendente] = useState<{ oportunidadeId: string; version: number } | null>(null);
   const fechamentoRef = useRef<DadosFechamento | null>(null);
+  // Os dados que o modal já pediu (valor, próxima ação...) ficam guardados entre uma tentativa e outra: o servidor pede um por vez e cada
+  // reenvio precisa levar todos, senão o anterior se perde e o modal volta a pedi-lo (loop ao mover para Proposta).
+  const dadosPedidosRef = useRef<DadoPreenchido>({});
   const [oportunidadesAtrasadas, setOportunidadesAtrasadas] = useState<Set<string>>(new Set());
   const [proximasAcoes, setProximasAcoes] = useState<Map<string, string | null>>(new Map());
 
@@ -389,6 +392,7 @@ export function BoardKanban() {
         setMensagem(null);
         setDadoFaltante(null);
         fechamentoRef.current = null;
+        dadosPedidosRef.current = {};
         return;
       }
 
@@ -432,6 +436,7 @@ export function BoardKanban() {
       setFechamentoPendente({ oportunidadeId: card.id, version: card.version });
       return;
     }
+    dadosPedidosRef.current = {};
     enviarTransicao(card.id, { version: card.version, etapaDestinoId });
   };
 
@@ -583,15 +588,17 @@ export function BoardKanban() {
           onCancelar={() => {
             setDadoFaltante(null);
             fechamentoRef.current = null;
+            dadosPedidosRef.current = {};
           }}
-          onConfirmar={(dado) =>
-            enviarTransicao(dadoFaltante.oportunidadeId, {
+          onConfirmar={(dado) => {
+            dadosPedidosRef.current = { ...dadosPedidosRef.current, ...dado };
+            return enviarTransicao(dadoFaltante.oportunidadeId, {
               version: dadoFaltante.version,
               etapaDestinoId: dadoFaltante.etapaDestinoId,
-              ...dado,
+              ...dadosPedidosRef.current,
               ...(dadoFaltante.etapaDestinoId === 15 && fechamentoRef.current ? { fechamento: fechamentoRef.current } : {}),
-            })
-          }
+            });
+          }}
         />
       )}
 
