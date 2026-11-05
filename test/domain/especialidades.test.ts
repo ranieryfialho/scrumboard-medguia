@@ -32,11 +32,30 @@ describe('normalizarEspecialidade', () => {
     ['Nutrição', 'Nutrição'],
     ['Dor crônica', 'Medicina da Dor'],
     ['Vet', 'Veterinária'],
+    ['Médica de família', 'Medicina de Família e Comunidade'],
+    ['Medicina da família e da comunidade', 'Medicina de Família e Comunidade'],
+    ['Mfc', 'Medicina de Família e Comunidade'],
+    ['Saúde da familia', 'Medicina de Família e Comunidade'],
+    ['Medicina integrativa', 'Medicina Integrativa'],
+    ['Psiquiatria e medicina integrativa', 'Psiquiatria'],
+    ['medicina intensiva', 'Medicina Intensiva'],
+    ['Radiologista intervencionista', 'Radiologia'],
+    ['Ultrassonografista', 'Radiologia'],
+    ['Reumatologista', 'Reumatologia'],
+    ['Vascular', 'Cirurgia Vascular'],
+    ['Terapia Ocupacional', 'Terapia Ocupacional'],
+    ['Psicanalista', 'Psicologia'],
+    ['Psicofarmacologia', 'Psiquiatria'],
+    ['Prótese Dentária', 'Odontologia'],
+    ['Médica veterinária dermatologista', 'Veterinária'],
+    ['Médica clínica', 'Clínica Geral'],
+    ['Neurologia e geroatria', 'Neurologia'],
+    ['Sou fisioterapeuta', 'Fisioterapia'],
   ])('"%s" vira "%s"', (entrada, esperado) => {
     expect(normalizarEspecialidade(entrada)).toBe(esperado);
   });
 
-  test.each(['11976600177', 'Boa tarde', 'Dr. Aecio Aracati', '', null, undefined, 'x', '..', 'Eu faço tratamento que o ortopedista daqui de São Paulo vive me indicando muita coisa'])(
+  test.each(['11976600177', 'Boa tarde', 'Pedreiro', 'Não tenho', 'financiamento', 'Massage Therapist', 'Recem formado', 'Medico', 'Dr. Aecio Aracati', '', null, undefined, 'x', '..', 'Eu faço tratamento que o ortopedista daqui de São Paulo vive me indicando muita coisa'])(
     '"%s" não é especialidade reconhecível',
     (entrada) => {
       expect(normalizarEspecialidade(entrada as string | null | undefined)).toBeNull();
