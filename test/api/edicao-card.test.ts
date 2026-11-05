@@ -67,6 +67,29 @@ describe('T-287: PATCH /api/oportunidades/:id (editar o card)', () => {
     expect(evento).toBe('edicao_card|usuario|true');
   });
 
+  test('a especialidade fica em leads.dados: variação conhecida vira o nome padrão, o resto de dados é preservado e vazio a apaga @spec:AC-736', async () => {
+    sql(`UPDATE leads SET dados = '{"anuncio": "AD 06", "campanha": "Leads out"}'::jsonb WHERE id = '${amb.tenants.leadA}'`);
+
+    const r = await editar(cardA(), { especialidade: ' Fisioterapeuta ' });
+    expect(r.status).toBe(200);
+    expect((await r.json()).alteracoes).toEqual([{ campo: 'especialidade', de: null, para: 'Fisioterapia' }]);
+    expect(sql(`SELECT dados->>'especialidade' || '|' || (dados->>'anuncio') || '|' || (dados->>'campanha') FROM leads WHERE id = '${amb.tenants.leadA}'`)).toBe('Fisioterapia|AD 06|Leads out');
+
+    // O detalhe devolve a especialidade e os dados do anúncio.
+    const detalhe = await (
+      await rota.GET(new NextRequest(`http://localhost/api/oportunidades/${cardA()}`, { headers: { Cookie: atendente } }), { params: Promise.resolve({ id: cardA() }) })
+    ).json();
+    expect(detalhe).toMatchObject({ especialidade: 'Fisioterapia', anuncio: 'AD 06', campanha: 'Leads out', formulario: null });
+
+    // Texto que não é nome conhecido fica como foi digitado; repetir não grava nada.
+    expect((await (await editar(cardA(), { especialidade: 'Medicina Fetal' })).json()).alteracoes).toEqual([{ campo: 'especialidade', de: 'Fisioterapia', para: 'Medicina Fetal' }]);
+    expect((await (await editar(cardA(), { especialidade: 'Medicina Fetal' })).json()).alteracoes).toEqual([]);
+
+    // Vazio apaga só a especialidade.
+    expect((await (await editar(cardA(), { especialidade: '' })).json()).alteracoes).toEqual([{ campo: 'especialidade', de: 'Medicina Fetal', para: null }]);
+    expect(sql(`SELECT (dados ? 'especialidade') || '|' || (dados->>'anuncio') FROM leads WHERE id = '${amb.tenants.leadA}'`)).toBe('false|AD 06');
+  });
+
   test('só grava o que mudou: repetir a mesma edição não cria evento nem altera nada; vazio no e-mail e no valor limpa @spec:AC-737', async () => {
     const antes = sql(`SELECT count(*) FROM oportunidade_eventos WHERE oportunidade_id = '${cardA()}' AND tipo = 'edicao_card'`);
     const r = await editar(cardA(), { nome: 'Clínica Nova', telefone: '+55 11 98765-4321', valor: 2500.5 });

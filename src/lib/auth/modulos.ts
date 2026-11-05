@@ -14,14 +14,16 @@ export interface Modulo {
   prefixos: string[];
   /** Os itens do menu lateral (`menu-config.ts`) que o módulo libera. */
   itensMenu: string[];
-  /** O menor papel que alcança o módulo. */
+  /** O menor papel que PODE ter o módulo (o teto): abaixo disso nem marcando. */
   papelMinimo: PapelUsuario;
+  /** O menor papel que o tem POR PADRÃO (sem módulos gravados). Acima do papel mínimo, o módulo é opcional: só vale se for marcado. */
+  padraoDesde: PapelUsuario;
 }
 
 export const MODULOS: Modulo[] = [
-  { id: 'pipeline', rotulo: 'Funil, Lista e Arquivados', descricao: 'Pipeline de leads e os cards.', prefixos: ['/pipeline'], itensMenu: ['funil-pipeline', 'lista', 'arquivados'], papelMinimo: 'ATENDENTE' },
-  { id: 'tarefas', rotulo: 'Tarefas do Turno e Atrasadas', descricao: 'Fila de toques da cadência de 18 toques.', prefixos: ['/tarefas'], itensMenu: ['tarefas-do-turno', 'tarefas-atrasadas'], papelMinimo: 'ATENDENTE' },
-  { id: 'agenda', rotulo: 'Agenda de reuniões', descricao: 'Reuniões e Google Meet.', prefixos: ['/agenda'], itensMenu: ['agenda'], papelMinimo: 'ATENDENTE' },
+  { id: 'pipeline', rotulo: 'Funil, Lista e Arquivados', descricao: 'Pipeline de leads e os cards.', prefixos: ['/pipeline'], itensMenu: ['funil-pipeline', 'lista', 'arquivados'], papelMinimo: 'ATENDENTE', padraoDesde: 'ATENDENTE' },
+  { id: 'tarefas', rotulo: 'Tarefas do Turno e Atrasadas', descricao: 'Fila de toques da cadência de 18 toques.', prefixos: ['/tarefas'], itensMenu: ['tarefas-do-turno', 'tarefas-atrasadas'], papelMinimo: 'ATENDENTE', padraoDesde: 'ATENDENTE' },
+  { id: 'agenda', rotulo: 'Agenda de reuniões', descricao: 'Reuniões e Google Meet.', prefixos: ['/agenda'], itensMenu: ['agenda'], papelMinimo: 'ATENDENTE', padraoDesde: 'ATENDENTE' },
   {
     id: 'whatsapp',
     rotulo: 'WhatsApp',
@@ -29,11 +31,12 @@ export const MODULOS: Modulo[] = [
     prefixos: ['/whatsapp'],
     itensMenu: ['whatsapp-inbox', 'whatsapp-conexao', 'whatsapp-configuracao', 'whatsapp-templates', 'whatsapp-lote'],
     papelMinimo: 'ATENDENTE',
+    padraoDesde: 'ATENDENTE',
   },
-  { id: 'campanhas', rotulo: 'Campanhas (mala direta)', descricao: 'Campanhas de e-mail.', prefixos: ['/campanhas'], itensMenu: ['campanhas'], papelMinimo: 'GERENTE' },
-  { id: 'indicadores', rotulo: 'Indicadores', descricao: 'Governança e funil de vendas.', prefixos: ['/indicadores'], itensMenu: ['indicadores'], papelMinimo: 'GERENTE' },
-  { id: 'relatorios', rotulo: 'Marketing e Tráfego', descricao: 'Relatório de origem dos leads e mídia.', prefixos: ['/relatorios'], itensMenu: ['relatorios'], papelMinimo: 'GERENTE' },
-  { id: 'comercial', rotulo: 'Comercial e Vendas', descricao: 'Receita, ranking e motivos de perda.', prefixos: ['/relatorios-comerciais'], itensMenu: ['comercial'], papelMinimo: 'GERENTE' },
+  { id: 'campanhas', rotulo: 'Campanhas (mala direta)', descricao: 'Campanhas de e-mail. O atendente só tem se o master ou o gerente liberar.', prefixos: ['/campanhas'], itensMenu: ['campanhas'], papelMinimo: 'ATENDENTE', padraoDesde: 'GERENTE' },
+  { id: 'indicadores', rotulo: 'Indicadores', descricao: 'Governança e funil de vendas.', prefixos: ['/indicadores'], itensMenu: ['indicadores'], papelMinimo: 'GERENTE', padraoDesde: 'GERENTE' },
+  { id: 'relatorios', rotulo: 'Marketing e Tráfego', descricao: 'Relatório de origem dos leads e mídia.', prefixos: ['/relatorios'], itensMenu: ['relatorios'], papelMinimo: 'GERENTE', padraoDesde: 'GERENTE' },
+  { id: 'comercial', rotulo: 'Comercial e Vendas', descricao: 'Receita, ranking e motivos de perda.', prefixos: ['/relatorios-comerciais'], itensMenu: ['comercial'], papelMinimo: 'GERENTE', padraoDesde: 'GERENTE' },
   {
     id: 'administracao',
     rotulo: 'Equipe e Configurações',
@@ -41,6 +44,7 @@ export const MODULOS: Modulo[] = [
     prefixos: ['/equipe', '/configuracoes'],
     itensMenu: ['equipe', 'motivos-de-perda', 'metas', 'investimento-midia', 'email-empresa', 'google-meet'],
     papelMinimo: 'GERENTE',
+    padraoDesde: 'GERENTE',
   },
 ];
 
@@ -53,6 +57,11 @@ export function modulosDoPapel(papel: PapelUsuario): ModuloId[] {
   return ids(MODULOS.filter((m) => ORDEM[papel] >= ORDEM[m.papelMinimo]));
 }
 
+/** Os módulos que o papel tem POR PADRÃO, sem nada gravado (os opcionais, como Campanhas para atendente, ficam de fora). */
+export function modulosPadraoDoPapel(papel: PapelUsuario): ModuloId[] {
+  return ids(MODULOS.filter((m) => ORDEM[papel] >= ORDEM[m.padraoDesde]));
+}
+
 /** O papel pode ter módulos personalizados? MASTER sempre tem tudo. */
 export const aceitaModulosPersonalizados = (papel: PapelUsuario): boolean => papel !== 'MASTER';
 
@@ -62,7 +71,9 @@ export const aceitaModulosPersonalizados = (papel: PapelUsuario): boolean => pap
  */
 export function modulosEfetivos(papel: PapelUsuario, isSuperAdmin: boolean, gravados: readonly string[] | null | undefined): Set<ModuloId> {
   const teto = isSuperAdmin ? ids(MODULOS) : modulosDoPapel(papel);
-  if (isSuperAdmin || !aceitaModulosPersonalizados(papel) || !Array.isArray(gravados)) return new Set(teto);
+  if (isSuperAdmin || !aceitaModulosPersonalizados(papel)) return new Set(teto);
+  // Sem módulos gravados vale o padrão do papel (não o teto: o que é opcional só entra se alguém liberar).
+  if (!Array.isArray(gravados)) return new Set(modulosPadraoDoPapel(papel));
   return new Set(teto.filter((id) => gravados.includes(id)));
 }
 
@@ -96,6 +107,7 @@ export function lerModulos(entrada: unknown, papel: PapelUsuario): ModuloId[] | 
 /** Os perfis prontos do CRM antigo, traduzidos para papel + módulos. */
 export const PERFIS_PRONTOS: { id: string; rotulo: string; papel: PapelUsuario; modulos: ModuloId[] }[] = [
   { id: 'comercial', rotulo: 'Vendas / Comercial', papel: 'ATENDENTE', modulos: ['pipeline', 'tarefas', 'agenda', 'whatsapp'] },
+  { id: 'comercial-campanhas', rotulo: 'Vendas / Comercial + Campanhas', papel: 'ATENDENTE', modulos: ['pipeline', 'tarefas', 'agenda', 'whatsapp', 'campanhas'] },
   { id: 'marketing', rotulo: 'Gestor de Tráfego / MKT', papel: 'GERENTE', modulos: ['pipeline', 'relatorios', 'indicadores', 'campanhas'] },
   { id: 'admin', rotulo: 'CEO / Administrador', papel: 'MASTER', modulos: ids(MODULOS) },
 ];

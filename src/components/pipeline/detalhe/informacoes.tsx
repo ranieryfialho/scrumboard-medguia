@@ -23,6 +23,16 @@ interface InformacoesProps {
   proximaAcaoEm: string | null;
   telefones: TelefoneInformacao[];
   email: string | null;
+  /** Dados do formulário/anúncio que vieram com o lead (`leads.dados`); o que não existe não aparece. */
+  especialidade?: string | null;
+  anuncio?: string | null;
+  campanha?: string | null;
+  formulario?: string | null;
+  plataforma?: string | null;
+  /** Gerente/master/super admin trocam o responsável aqui; sem a lista, só mostra o nome. */
+  responsavelId?: string | null;
+  responsaveis?: { id: string; nome: string }[];
+  onReatribuir?: (responsavelId: string) => Promise<string | null>;
   /** T-287 (AC-736): abre o modal de edição do card; sem isso o botão "Editar" não aparece. */
   onEditar?: () => void;
 }
@@ -48,7 +58,16 @@ function haNDias(iso: string, agora: number): string {
 }
 
 /** AC-407: mostra valor estimado, origem, data de entrada, responsável, próxima ação, telefones e e-mail — nada além disso. */
-export function Informacoes({ valor, origem, criadoEm, responsavelNome, proximaAcaoEm, telefones, email, onEditar }: InformacoesProps) {
+export function Informacoes({ valor, origem, criadoEm, responsavelNome, proximaAcaoEm, telefones, email, especialidade, anuncio, campanha, formulario, plataforma, responsavelId, responsaveis, onReatribuir, onEditar }: InformacoesProps) {
+  const [trocando, setTrocando] = useState(false);
+  const [erroTroca, setErroTroca] = useState<string | null>(null);
+  async function trocarResponsavel(novoId: string) {
+    if (!onReatribuir || novoId === '' || novoId === responsavelId) return;
+    setTrocando(true);
+    setErroTroca(null);
+    setErroTroca(await onReatribuir(novoId));
+    setTrocando(false);
+  }
   const valorFormatado = formatarMoeda(valor);
   // "agora" fixado na montagem: ler `Date.now()` direto no render é impuro (react-hooks/purity).
   const [agora] = useState(() => Date.now());
@@ -104,6 +123,34 @@ export function Informacoes({ valor, origem, criadoEm, responsavelNome, proximaA
             {origem ?? '—'}
           </span>
         </div>
+        <div className="flex items-center justify-between gap-3">
+          <span className="text-text-secondary flex items-center gap-1.5">
+            <span aria-hidden="true" className="material-symbols-outlined text-[17px] text-text-muted">
+              stethoscope
+            </span>
+            Especialidade
+          </span>
+          <span className="font-label-md text-text-primary font-semibold text-right">{especialidade ?? '—'}</span>
+        </div>
+        {[
+          ['Anúncio', anuncio, 'ads_click'],
+          ['Campanha', campanha, 'campaign'],
+          ['Formulário', formulario, 'assignment'],
+          ['Plataforma', plataforma, 'devices'],
+        ].map(
+          ([rotulo, texto, icone]) =>
+            texto && (
+              <div key={rotulo} className="flex items-start justify-between gap-3">
+                <span className="text-text-secondary flex items-center gap-1.5 shrink-0">
+                  <span aria-hidden="true" className="material-symbols-outlined text-[17px] text-text-muted">
+                    {icone}
+                  </span>
+                  {rotulo}
+                </span>
+                <span className="font-label-md text-text-primary text-right break-words min-w-0">{texto}</span>
+              </div>
+            )
+        )}
         <div className="flex items-center justify-between">
           <span className="text-text-secondary flex items-center gap-1.5">
             <span aria-hidden="true" className="material-symbols-outlined text-[17px] text-text-muted">
@@ -119,7 +166,29 @@ export function Informacoes({ valor, origem, criadoEm, responsavelNome, proximaA
 
       <div className="pt-3 border-t border-border-subtle">
         <span className="font-label-sm text-text-muted block uppercase tracking-wider mb-2">Responsável Comercial</span>
-        <p className="font-label-lg text-text-primary font-semibold">{responsavelNome ?? 'Sem responsável'}</p>
+        {onReatribuir && responsaveis && responsaveis.length > 0 ? (
+          <select
+            aria-label="Responsável Comercial"
+            value={responsavelId ?? ''}
+            disabled={trocando}
+            onChange={(e) => void trocarResponsavel(e.target.value)}
+            className="w-full h-10 px-3 bg-surface-subtle rounded-xl font-label-lg text-label-lg text-text-primary font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-60"
+          >
+            {!responsavelId && <option value="">Sem responsável</option>}
+            {responsaveis.map((r) => (
+              <option key={r.id} value={r.id}>
+                {r.nome}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <p className="font-label-lg text-text-primary font-semibold">{responsavelNome ?? 'Sem responsável'}</p>
+        )}
+        {erroTroca && (
+          <p role="alert" className="mt-1 font-body-sm text-danger-text">
+            {erroTroca}
+          </p>
+        )}
       </div>
 
       <div

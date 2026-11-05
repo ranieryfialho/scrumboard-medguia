@@ -8,13 +8,13 @@ import { getDb } from '../../../../db/client';
 import { usuarios } from '../../../../db/schema';
 import { transporteResendDeCampanha } from '../../../../lib/email/campanha-envio';
 import { renderizarCorpoDeCampanha } from '../../../../lib/email/campanha-corpo';
-import { exigirGerente } from '../../../../lib/equipe/acesso';
+import { exigirAcessoACampanhas } from '../../../../lib/campanhas/acesso';
 import { lerConfiguracaoDeEmail } from '../../../../repositories/email-config';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
-  const acesso = await exigirGerente(request);
+  const acesso = await exigirAcessoACampanhas(request);
   if ('resposta' in acesso) return acesso.resposta;
   const { contexto } = acesso;
 

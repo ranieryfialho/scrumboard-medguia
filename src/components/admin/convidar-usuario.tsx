@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
 import { ItemEmBreve } from '@/components/pipeline/pecas/selo-em-breve';
-import { MODULOS, PERFIS_PRONTOS, aceitaModulosPersonalizados, modulosDoPapel, type ModuloId } from '@/lib/auth/modulos';
+import { MODULOS, PERFIS_PRONTOS, aceitaModulosPersonalizados, modulosDoPapel, modulosPadraoDoPapel, type ModuloId } from '@/lib/auth/modulos';
 import { COR_DO_PAPEL, PAPEIS, iniciais, mensagemDeErro, type Papel, type UsuarioLogado } from './comum';
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -63,7 +63,7 @@ export function ConvidarUsuario() {
 
   function escolherPapel(p: Papel) {
     setPapel(p);
-    setModulos(modulosDoPapel(p));
+    setModulos(modulosPadraoDoPapel(p));
   }
 
   function alternarModulo(id: ModuloId) {
@@ -75,7 +75,9 @@ export function ConvidarUsuario() {
   const papeisDisponiveis = souGerente ? (['ATENDENTE'] as Papel[]) : PAPEIS.slice().reverse();
   const emailOk = EMAIL.test(email.trim());
   const teto = papel === '' ? [] : modulosDoPapel(papel);
-  const personalizado = papel !== '' && aceitaModulosPersonalizados(papel) && modulos.length < teto.length;
+  const padrao = papel === '' ? [] : modulosPadraoDoPapel(papel);
+  const ehPadrao = padrao.length === modulos.length && padrao.every((m) => modulos.includes(m));
+  const personalizado = papel !== '' && aceitaModulosPersonalizados(papel) && !ehPadrao;
   const podeEnviar = nome.trim() !== '' && emailOk && papel !== '' && modulos.length > 0 && !enviando;
 
   async function enviar() {

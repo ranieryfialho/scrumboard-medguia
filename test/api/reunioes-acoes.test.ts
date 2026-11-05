@@ -217,18 +217,21 @@ describe('T-185: ações da agenda', () => {
     expect((await daB.json()).codigo).toBe('REUNIAO_NAO_ENCONTRADA');
     expect((await noShow('nao-uuid')).status).toBe(404);
 
-    // ATENDENTE (mesma empresa) que não é o responsável do card
+    // ATENDENTE (mesma empresa) que não é o responsável do card. Agendar grava um evento com o autor, então ele precisa existir.
+    sql(`INSERT INTO usuarios (id, email, nome) VALUES ('eeeeeeee-1850-0000-0000-0000000000a1', 'atendente.agenda@teste.local', 'Atendente Agenda') ON CONFLICT DO NOTHING`);
     const atendente: ContextoTenant = {
       usuarioId: 'eeeeeeee-1850-0000-0000-0000000000a1',
       empresaId: amb.tenants.empresaA,
       papel: 'ATENDENTE',
       isSuperAdmin: false,
     };
+    // Agendar é a passagem do SDR para o closer: o atendente agenda mesmo um card de outro responsável...
     const agendarAlheio = await agendarReuniao(amb.db, atendente, { oportunidadeId: CARD_ATENDENTE, agendadaPara: new Date(FUTURO), agora: AGORA });
-    expect(agendarAlheio).toEqual({ ok: false, codigo: 'OPORTUNIDADE_NAO_ENCONTRADA' });
+    expect(agendarAlheio.ok).toBe(true);
+    expect(etapaDe(CARD_ATENDENTE)).toBe(8);
+    // ...mas registrar o no-show de uma reunião de outra pessoa continua recusado.
     const noShowAlheio = await registrarNoShow(amb.db, atendente, R_ATENDENTE, AGORA);
     expect(noShowAlheio).toEqual({ ok: false, codigo: 'REUNIAO_NAO_ENCONTRADA' });
-    expect(etapaDe(CARD_ATENDENTE)).toBe(6);
   });
 
   test('cada mudança de etapa da agenda avisa só a empresa dela @spec:AC-495', async () => {

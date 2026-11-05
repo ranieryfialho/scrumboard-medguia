@@ -63,7 +63,9 @@ export async function agendarReuniao(
   entrada: { oportunidadeId: string; agendadaPara: Date; agora: Date }
 ): Promise<ResultadoAcao> {
   const card = await buscarOportunidadePorId(db, contexto, entrada.oportunidadeId);
-  if (!card || !podeAgirNoCard(contexto, card.responsavelId)) return { ok: false, codigo: 'OPORTUNIDADE_NAO_ENCONTRADA' };
+  // Agendar é a passagem do SDR para o closer: qualquer pessoa da empresa agenda um card em "Qualificado p/ reunião", mesmo que o responsável
+  // seja outra (o closer). Concluir, no-show, reagendar e cancelar continuam só do responsável (ou da gestão).
+  if (!card) return { ok: false, codigo: 'OPORTUNIDADE_NAO_ENCONTRADA' };
   if (entrada.agendadaPara.getTime() <= entrada.agora.getTime()) return { ok: false, codigo: 'DATA_NO_PASSADO' };
   if (card.etapaId !== ETAPA_QUALIFICADO_P_REUNIAO) return { ok: false, codigo: 'CARD_NAO_PODE_AGENDAR' };
 

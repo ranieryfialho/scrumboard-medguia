@@ -5,6 +5,7 @@
 // (`PATCH /api/oportunidades/:id`) é a página, que também mostra o erro do servidor aqui em `erro` (telefone repetido, valor
 // obrigatório na Proposta etc.).
 import { useState } from 'react';
+import { ESPECIALIDADES_PADRAO } from '@/domain/leads/especialidades';
 
 export interface ValoresEdicaoCard {
   nome: string;
@@ -12,6 +13,7 @@ export interface ValoresEdicaoCard {
   origem: string;
   telefone: string;
   valor: string;
+  especialidade: string;
 }
 
 export interface ResultadoEdicaoCard {
@@ -34,6 +36,7 @@ const CAMPOS: Array<{ chave: keyof ValoresEdicaoCard; rotulo: string; obrigatori
   { chave: 'telefone', rotulo: 'Telefone principal', obrigatorio: true, tipo: 'tel', dica: 'Com DDD. Ex.: (11) 98765-4321' },
   { chave: 'email', rotulo: 'E-mail', obrigatorio: false, tipo: 'email' },
   { chave: 'origem', rotulo: 'Origem', obrigatorio: true, tipo: 'text' },
+  { chave: 'especialidade', rotulo: 'Especialidade', obrigatorio: false, tipo: 'text', dica: 'Escolha da lista ou digite; variações conhecidas (ex.: Fisioterapeuta) viram o nome padrão' },
   { chave: 'valor', rotulo: 'Valor estimado (R$/mês)', obrigatorio: false, tipo: 'text', dica: 'Deixe vazio para tirar o valor' },
 ];
 
@@ -79,11 +82,17 @@ export function ModalEditarCard({ inicial, onFechar, onSalvar }: ModalEditarCard
               onChange={(e) => setValores((atual) => ({ ...atual, [campo.chave]: e.target.value }))}
               aria-invalid={erro?.campo === campo.chave}
               className={CLASSE_CAMPO}
+              list={campo.chave === 'especialidade' ? 'editar-card-especialidades' : undefined}
             />
             {campo.dica && <span className="font-body-sm text-text-muted text-[11px]">{campo.dica}</span>}
             {erro?.campo === campo.chave && <span className="font-body-sm text-danger-text">{erro.mensagem}</span>}
           </div>
         ))}
+        <datalist id="editar-card-especialidades">
+          {ESPECIALIDADES_PADRAO.map((nome) => (
+            <option key={nome} value={nome} />
+          ))}
+        </datalist>
         {erro && !erro.campo && <p className="font-body-sm text-danger-text">{erro.mensagem}</p>}
         <div className="flex justify-end gap-2 pt-2">
           <button

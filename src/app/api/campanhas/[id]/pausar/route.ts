@@ -7,6 +7,7 @@ import { getDb } from '../../../../../db/client';
 import { getAuth } from '../../../../../lib/auth/instancia';
 import { ErroSessaoInvalida, resolverContextoTenant, type ContextoTenant } from '../../../../../lib/auth/tenant';
 import { ErroCampanhaNaoEncontrada, ErroCampanhaNaoProcessando, pausarCampanha } from '../../../../../repositories/campanhas';
+import { acessoACampanhas } from '../../../../../lib/campanhas/acesso';
 
 export const dynamic = 'force-dynamic';
 
@@ -36,9 +37,9 @@ function campanhaNaoEncontrada() {
   return NextResponse.json({ codigo: 'CAMPANHA_NAO_ENCONTRADA' }, { status: 404 });
 }
 
-/** ASM-076: MASTER, GERENTE e super admin acessam campanhas; ATENDENTE não. */
+/** ASM-076 (revista): super admin, master e quem tem o módulo Campanhas liberado (gerente por padrão; atendente só se liberarem). */
 function podeAcessarCampanhas(contexto: ContextoTenant): boolean {
-  return contexto.isSuperAdmin || contexto.papel === 'MASTER' || contexto.papel === 'GERENTE';
+  return acessoACampanhas(contexto);
 }
 
 /** AC-709: pausa a campanha em andamento e os destinatários PENDENTE; fora de andamento, 422 `CAMPANHA_NAO_PROCESSANDO`. */
