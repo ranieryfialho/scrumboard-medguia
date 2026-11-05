@@ -66,3 +66,26 @@ describe('T-249: regras do lote', () => {
     expect(validarTemplate({ nome: 'Ok', corpo: 'Oi {{cidade}}' })).toMatchObject({ ok: false, campo: 'corpo' });
   });
 });
+
+describe('shortcodes completos do template', () => {
+  const agora = new Date('2026-11-05T15:00:00Z'); // 12h em Brasília
+
+  test('troca lead, card, reunião e empresa pelo contexto; primeiro nomes e saudação são derivados', () => {
+    const corpo = '{{saudacao}}, {{primeiro_nome}}! Reunião {{dia_semana_reuniao}} {{data_reuniao}} às {{hora_reuniao}}: {{link_meet}} — {{primeiro_nome_responsavel}} ({{empresa}}), {{valor}}, {{etapa}}, {{especialidade}}.';
+    const texto = renderizarTemplate(
+      corpo,
+      { nome: 'Maria Souza', responsavel: 'Juliana Rocha', empresa: 'MedGuia', link_meet: 'https://meet.google.com/abc', data_reuniao: '12/11/2026', hora_reuniao: '14:30', dia_semana_reuniao: 'quinta-feira', valor: 'R$ 6.800,00', etapa: 'Reunião Agendada', especialidade: 'Cardiologia' },
+      { agora }
+    );
+    expect(texto).toBe('Boa tarde, Maria! Reunião quinta-feira 12/11/2026 às 14:30: https://meet.google.com/abc — Juliana (MedGuia), R$ 6.800,00, Reunião Agendada, Cardiologia.');
+  });
+
+  test('variável sem dado sai vazia, ou fica visível com manterPendentes', () => {
+    expect(renderizarTemplate('Link: {{link_meet}}', { nome: 'Ana' }, { agora })).toBe('Link: ');
+    expect(renderizarTemplate('Link: {{link_meet}}', { nome: 'Ana' }, { agora, manterPendentes: true })).toBe('Link: {{link_meet}}');
+  });
+
+  test('o catálogo é aceito pela validação e variável fora dele continua recusada', () => {
+    expect(variaveisInvalidas('{{link_meet}} {{hora_reuniao}} {{saudacao}} {{cidade}}')).toEqual(['cidade']);
+  });
+});

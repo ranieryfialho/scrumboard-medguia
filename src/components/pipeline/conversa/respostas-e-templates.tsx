@@ -6,7 +6,7 @@
 // trocados pelos do lead, no campo da mensagem — nada é enviado até o usuário apertar enviar.
 import { useEffect, useRef, useState } from 'react';
 
-import { renderizarTemplate } from '@/lib/whatsapp/template';
+import { renderizarTemplate, type ContextoDoTemplate } from '@/lib/whatsapp/template';
 
 interface TemplateDaLista {
   id: string;
@@ -19,11 +19,14 @@ const RAPIDAS = 4;
 
 interface Props {
   leadNome: string;
+  /** Valores dos shortcodes do lead (Meet, reunião, responsável…); sem ele só o nome é trocado. */
+  contexto?: ContextoDoTemplate;
   /** Recebe o texto já preenchido para pôr no campo da mensagem. */
   onEscolher: (texto: string) => void;
 }
 
-export function RespostasETemplates({ leadNome, onEscolher }: Props) {
+export function RespostasETemplates({ leadNome, contexto, onEscolher }: Props) {
+  const preencher = (corpo: string) => renderizarTemplate(corpo, { ...contexto, nome: leadNome || contexto?.nome }, { manterPendentes: true });
   const [templates, setTemplates] = useState<TemplateDaLista[] | null>(null);
   const [aberto, setAberto] = useState(false);
   const raiz = useRef<HTMLDivElement | null>(null);
@@ -61,7 +64,7 @@ export function RespostasETemplates({ leadNome, onEscolher }: Props) {
 
   const escolher = (t: TemplateDaLista) => {
     setAberto(false);
-    onEscolher(renderizarTemplate(t.corpo, leadNome));
+    onEscolher(preencher(t.corpo));
   };
 
   const lista = templates ?? [];
@@ -74,7 +77,7 @@ export function RespostasETemplates({ leadNome, onEscolher }: Props) {
           key={t.id}
           type="button"
           onClick={() => escolher(t)}
-          title={renderizarTemplate(t.corpo, leadNome)}
+          title={preencher(t.corpo)}
           className="h-9 px-3 rounded-lg bg-surface-subtle hover:bg-surface-container font-label-md text-label-md text-text-primary flex items-center gap-1.5 max-w-[16rem]"
         >
           <span aria-hidden="true" className="material-symbols-outlined text-[16px] text-primary">
@@ -107,7 +110,7 @@ export function RespostasETemplates({ leadNome, onEscolher }: Props) {
               lista.map((t) => (
                 <button key={t.id} type="button" onClick={() => escolher(t)} className="w-full text-left px-3 py-2 hover:bg-surface-subtle flex flex-col gap-0.5">
                   <span className="font-label-md text-label-md text-text-primary font-semibold">{t.nome}</span>
-                  <span className="font-body-sm text-body-sm text-text-secondary line-clamp-2">{renderizarTemplate(t.corpo, leadNome)}</span>
+                  <span className="font-body-sm text-body-sm text-text-secondary line-clamp-2">{preencher(t.corpo)}</span>
                 </button>
               ))
             )}

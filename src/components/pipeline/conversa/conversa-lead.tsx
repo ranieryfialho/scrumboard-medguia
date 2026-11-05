@@ -9,7 +9,8 @@
 // `mensagem.recebida` do `/api/stream`. Itens sem backend (ligar, novo número,
 // busca, menu, anexar, templates, respostas rápidas) ficavam "em breve" (AC-444); em T-288 (AC-740/AC-741) viraram
 // reais; em T-290 (AC-744 a AC-747) entraram o áudio (gravar e ouvir) e o anexo de arquivos.
-import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
+import dynamic from 'next/dynamic';
 
 import { EVENTO_CONTADORES_MUDARAM } from '@/components/shell/use-contadores';
 import { EsqueletoCarregando, EstadoErro, EstadoVazio } from '@/components/pipeline/pecas/estados';
@@ -29,6 +30,12 @@ import { MenuOpcoes } from './menu-opcoes';
 import { GravadorAudio } from './gravador-audio';
 import { MidiaDaMensagem } from './midia-da-mensagem';
 import { RespostasETemplates } from './respostas-e-templates';
+import type { ContextoDoTemplate } from '@/lib/whatsapp/template';
+
+// Carrega o seletor só quando abre (a lib é pesada e depende do navegador).
+const SeletorEmoji = dynamic(() => import('emoji-picker-react'), { ssr: false });
+
+const ALTURA_MAXIMA_CAMPO = 240;
 
 /** Para a busca: minúsculas e sem acento, assim "clinica" acha "Clínica". */
 function semAcento(texto: string): string {
@@ -50,7 +57,7 @@ function tamanhoLegivel(bytes: number): string {
 }
 
 /** AC-442: escuta `mensagem.recebida` do stream e avisa só quando a mensagem é deste lead. */
-function useMensagemRecebida(leadId: string, aoChegar: () => void) {
+function useMensagemRecebida(leadId: string | null, aoChegar: () => void) {
   const aoChegarRef = useRef(aoChegar);
   useEffect(() => {
     aoChegarRef.current = aoChegar;
@@ -62,7 +69,8 @@ function useMensagemRecebida(leadId: string, aoChegar: () => void) {
     origem.addEventListener('mensagem.recebida', (evento) => {
       try {
         const dados = JSON.parse((evento as MessageEvent).data) as { leadId?: string | null };
-        if (dados.leadId === leadId) aoChegarRef.current();
+        // Conversa avulsa (sem lead) casa com eventos sem lead.
+        if ((dados.leadId ?? null) === leadId) aoChegarRef.current();
       } catch {
         // Evento malformado: ignora, a próxima abertura da conversa relê o histórico.
       }
@@ -72,12 +80,32 @@ function useMensagemRecebida(leadId: string, aoChegar: () => void) {
 }
 
 interface ConversaLeadProps {
-  leadId: string;
+  /** Lead da conversa; `null` na conversa avulsa (só pelo número). */
+  leadId: string | null;
+  /** Número da conversa avulsa (obrigatório quando não há `leadId`). */
+  numero?: string;
   /** Nome do lead, para preencher {{nome}} e {{primeiro_nome}} dos templates. */
   leadNome?: string;
+  /** Faixa extra no topo (ex.: nome e "Abrir card" da caixa do /whatsapp). */
+  cabecalho?: ReactNode;
+  /** Muda a cada releitura automática da caixa; relê as mensagens. */
+  versao?: number;
+  /** Chamado depois de enviar ou marcar como lida, para a lista de fora reler. */
+  onAtualizou?: () => void;
+  className?: string;
 }
 
-export function ConversaLead({ leadId, leadNome = '' }: ConversaLeadProps) {
+export function ConversaLead({ leadId, numero, leadNome = '', cabecalho, versao = 0, onAtualizou, className }: ConversaLeadProps) {
+  const alvo = useMemo(() => (leadId ? { leadId } : { numero: numero ?? '' }), [leadId, numero]);
+  const consulta = leadId ? `leadId=${leadId}` : `numero=${numero ?? ''}`;
+  const aoAtualizarRef = useRef(onAtualizou);
+  useEffect(() => {
+    aoAtualizarRef.current = onAtualizou;
+  }, [onAtualizou]);
+  const [contextoTemplate, setContextoTemplate] = useState<ContextoDoTemplate | undefined>(undefined);
+  const [emojiAberto, setEmojiAberto] = useState(false);
+  const campoRef = useRef<HTMLTextAreaElement | null>(null);
+  const emojiRaiz = useRef<HTMLDivElement | null>(null);
   const [mensagens, setMensagens] = useState<MensagemDaConversa[] | null>(null);
   const [telefones, setTelefones] = useState<TelefoneDoLead[]>([]);
   const [escolhido, setEscolhido] = useState(0);
@@ -101,18 +129,21 @@ export function ConversaLead({ leadId, leadNome = '' }: ConversaLeadProps) {
       const resposta = await fetch('/api/whatsapp/lidas', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ leadId }),
+        body: JSON.stringify(alvo),
       });
-      if (resposta.ok) window.dispatchEvent(new Event(EVENTO_CONTADORES_MUDARAM));
+      if (resposta.ok) {
+        window.dispatchEvent(new Event(EVENTO_CONTADORES_MUDARAM));
+        aoAtualizarRef.current?.();
+      }
     } catch {
       // Sem conectividade: as mensagens seguem não lidas até a próxima abertura.
     }
-  }, [leadId]);
+  }, [alvo]);
 
   const carregarMensagens = useCallback(async () => {
     setErro(false);
     try {
-      const resposta = await fetch(`/api/whatsapp/messages?leadId=${leadId}`);
+      const resposta = await fetch(`/api/whatsapp/messages?${consulta}`);
       if (!resposta.ok) throw new Error(`mensagens respondeu ${resposta.status}`);
       const corpo = (await resposta.json()) as { mensagens: MensagemDaConversa[] };
       setMensagens(corpo.mensagens);
@@ -121,13 +152,14 @@ export function ConversaLead({ leadId, leadNome = '' }: ConversaLeadProps) {
     } finally {
       setCarregando(false);
     }
-  }, [leadId]);
+  }, [consulta]);
 
   useEffect(() => {
     void carregarMensagens().then(() => marcarComoLidas());
-  }, [carregarMensagens, marcarComoLidas]);
+  }, [carregarMensagens, marcarComoLidas, versao]);
 
   const carregarTelefones = useCallback(async () => {
+    if (!leadId) return;
     try {
       const resposta = await fetch(`/api/leads/${leadId}/telefones`);
       const corpo = resposta.ok ? ((await resposta.json()) as { telefones?: TelefoneDoLead[] }) : null;
@@ -140,6 +172,21 @@ export function ConversaLead({ leadId, leadNome = '' }: ConversaLeadProps) {
   useEffect(() => {
     void carregarTelefones();
   }, [carregarTelefones]);
+
+  // Os valores dos shortcodes (Meet, reunião, responsável…) para preencher os templates; releitura da caixa relê.
+  useEffect(() => {
+    if (!leadId) return;
+    let cancelado = false;
+    fetch(`/api/whatsapp/template-contexto?leadId=${leadId}`)
+      .then((resposta) => (resposta.ok ? resposta.json() : null))
+      .then((corpo: { contexto?: ContextoDoTemplate } | null) => {
+        if (!cancelado && corpo?.contexto) setContextoTemplate(corpo.contexto);
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelado = true;
+    };
+  }, [leadId, versao]);
 
   useEffect(() => {
     let cancelado = false;
@@ -185,6 +232,43 @@ export function ConversaLead({ leadId, leadNome = '' }: ConversaLeadProps) {
 
   const podeEnviar = whatsappConectado(status) && !enviando;
 
+  // O campo começa com 3 linhas e cresce com o texto até o limite; depois rola.
+  useEffect(() => {
+    const campo = campoRef.current;
+    if (!campo) return;
+    campo.style.height = 'auto';
+    campo.style.height = `${Math.min(campo.scrollHeight, ALTURA_MAXIMA_CAMPO)}px`;
+    campo.style.overflowY = campo.scrollHeight > ALTURA_MAXIMA_CAMPO ? 'auto' : 'hidden';
+  }, [texto]);
+
+  useEffect(() => {
+    if (!emojiAberto) return;
+    const fora = (evento: MouseEvent) => {
+      if (emojiRaiz.current && !emojiRaiz.current.contains(evento.target as Node)) setEmojiAberto(false);
+    };
+    const esc = (evento: globalThis.KeyboardEvent) => {
+      if (evento.key === 'Escape') setEmojiAberto(false);
+    };
+    document.addEventListener('mousedown', fora);
+    document.addEventListener('keydown', esc);
+    return () => {
+      document.removeEventListener('mousedown', fora);
+      document.removeEventListener('keydown', esc);
+    };
+  }, [emojiAberto]);
+
+  /** Põe o emoji na posição do cursor do campo. */
+  function inserirEmoji(emoji: string) {
+    const campo = campoRef.current;
+    const inicio = campo?.selectionStart ?? texto.length;
+    const fim = campo?.selectionEnd ?? texto.length;
+    setTexto(texto.slice(0, inicio) + emoji + texto.slice(fim));
+    requestAnimationFrame(() => {
+      campo?.focus();
+      campo?.setSelectionRange(inicio + emoji.length, inicio + emoji.length);
+    });
+  }
+
   /** AC-744/AC-746: envia o áudio gravado ou o arquivo anexado (com o texto do campo como legenda) por `POST /api/whatsapp/send-midia`. */
   async function enviarMidia(arquivo: File, modo: 'audio' | 'arquivo') {
     if (!podeEnviar) return;
@@ -194,7 +278,8 @@ export function ConversaLead({ leadId, leadNome = '' }: ConversaLeadProps) {
       const formulario = new FormData();
       formulario.set('arquivo', arquivo);
       formulario.set('modo', modo);
-      formulario.set('leadId', leadId);
+      if (leadId) formulario.set('leadId', leadId);
+      else formulario.set('numero', numero ?? '');
       if (telefone?.id) formulario.set('telefoneId', telefone.id);
       if (modo === 'arquivo' && texto.trim()) formulario.set('legenda', texto.trim());
       const resposta = await fetch('/api/whatsapp/send-midia', { method: 'POST', body: formulario });
@@ -204,6 +289,7 @@ export function ConversaLead({ leadId, leadNome = '' }: ConversaLeadProps) {
           setTexto('');
         }
         await carregarMensagens();
+        aoAtualizarRef.current?.();
         return;
       }
       const corpo = (await resposta.json().catch(() => null)) as { codigo?: string } | null;
@@ -238,11 +324,12 @@ export function ConversaLead({ leadId, leadNome = '' }: ConversaLeadProps) {
       const resposta = await fetch('/api/whatsapp/send', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ mensagem, leadId, ...(telefone?.id ? { telefoneId: telefone.id } : {}) }),
+        body: JSON.stringify({ mensagem, ...alvo, ...(telefone?.id ? { telefoneId: telefone.id } : {}) }),
       });
       if (resposta.ok) {
         setTexto('');
         await carregarMensagens();
+        aoAtualizarRef.current?.();
         return;
       }
       const corpo = (await resposta.json().catch(() => null)) as { codigo?: string } | null;
@@ -262,10 +349,12 @@ export function ConversaLead({ leadId, leadNome = '' }: ConversaLeadProps) {
   }
 
   return (
-    <section aria-label="Conversa do WhatsApp" className="bg-surface-card rounded-2xl shadow-sm flex flex-col min-h-[32rem] lg:min-h-0 lg:flex-1">
-      <div className="p-space-md border-b border-border-subtle flex flex-col gap-space-sm">
+    <section aria-label="Conversa do WhatsApp" className={className ?? 'bg-surface-card rounded-2xl shadow-sm flex flex-col min-h-[32rem] lg:min-h-0 lg:flex-1'}>
+      {cabecalho}
+      <div className="p-space-md border-b border-border-subtle flex flex-col gap-space-sm shrink-0">
         <div className="flex flex-wrap items-center gap-space-sm">
-          <SeletorTelefone telefones={telefones} escolhido={escolhido} onEscolher={setEscolhido} />
+          {leadId && <SeletorTelefone telefones={telefones} escolhido={escolhido} onEscolher={setEscolhido} />}
+          {leadId && (
           <button
             type="button"
             onClick={() => setNovoNumeroAberto(true)}
@@ -276,6 +365,7 @@ export function ConversaLead({ leadId, leadNome = '' }: ConversaLeadProps) {
             </span>
             Novo Número
           </button>
+          )}
           <button
             type="button"
             aria-label="Buscar na conversa"
@@ -291,7 +381,7 @@ export function ConversaLead({ leadId, leadNome = '' }: ConversaLeadProps) {
             </span>
           </button>
           <MenuOpcoes
-            numero={telefone?.numero ?? null}
+            numero={telefone?.numero ?? numero ?? null}
             onAtualizar={() => void carregarMensagens()}
             onMarcarLidas={() => void marcarComoLidas()}
           />
@@ -317,7 +407,7 @@ export function ConversaLead({ leadId, leadNome = '' }: ConversaLeadProps) {
         <FaixaConexao status={status} />
       </div>
 
-      <div className="flex-1 overflow-y-auto p-space-md flex flex-col gap-space-sm bg-surface-subtle/40">
+      <div className="flex-1 min-h-0 overflow-y-auto p-space-md flex flex-col gap-space-sm bg-surface-subtle/40">
         {carregando && <EsqueletoCarregando />}
         {!carregando && erro && <EstadoErro onTentarDeNovo={carregarMensagens} />}
         {!carregando && !erro && visiveis.length === 0 && (
@@ -358,9 +448,9 @@ export function ConversaLead({ leadId, leadNome = '' }: ConversaLeadProps) {
         <div ref={fimRef} />
       </div>
 
-      <div className="p-space-md border-t border-border-subtle flex flex-col gap-space-sm">
+      <div className="p-space-md border-t border-border-subtle flex flex-col gap-space-sm shrink-0">
         <div className="flex flex-wrap items-center gap-2">
-          <RespostasETemplates leadNome={leadNome} onEscolher={(preenchido) => setTexto((atual) => (atual.trim() ? `${atual}\n${preenchido}` : preenchido))} />
+          <RespostasETemplates leadNome={leadNome} contexto={contextoTemplate} onEscolher={(preenchido) => setTexto((atual) => (atual.trim() ? `${atual}\n${preenchido}` : preenchido))} />
         </div>
         {anexo && (
           <div className="flex items-center gap-2 rounded-lg bg-surface-subtle px-3 py-2 font-body-md text-body-md text-text-primary" data-testid="anexo-escolhido">
@@ -399,7 +489,28 @@ export function ConversaLead({ leadId, leadNome = '' }: ConversaLeadProps) {
               attach_file
             </span>
           </button>
+          <div className="relative shrink-0" ref={emojiRaiz}>
+            <button
+              type="button"
+              onClick={() => setEmojiAberto((aberto) => !aberto)}
+              disabled={!whatsappConectado(status)}
+              aria-label="Emoji"
+              aria-expanded={emojiAberto}
+              title="Emoji"
+              className="h-12 w-12 rounded-xl bg-surface-subtle hover:bg-surface-container flex items-center justify-center text-text-primary disabled:opacity-50"
+            >
+              <span aria-hidden="true" className="material-symbols-outlined">
+                mood
+              </span>
+            </button>
+            {emojiAberto && (
+              <div className="absolute bottom-14 left-0 z-30">
+                <SeletorEmoji onEmojiClick={(dados) => inserirEmoji(dados.emoji)} lazyLoadEmojis width={320} height={380} searchPlaceholder="Buscar emoji" />
+              </div>
+            )}
+          </div>
           <textarea
+            ref={campoRef}
             value={texto}
             onChange={(evento) => setTexto(evento.target.value)}
             onKeyDown={aoTeclar}
@@ -407,7 +518,7 @@ export function ConversaLead({ leadId, leadNome = '' }: ConversaLeadProps) {
             rows={3}
             placeholder={anexo ? 'Legenda (opcional)…' : 'Digite uma mensagem...'}
             aria-label="Mensagem para o lead"
-            className="flex-1 min-h-[84px] resize-y rounded-xl border border-border-subtle bg-surface-card px-3 py-2 font-body-md text-body-md text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-60"
+            className="flex-1 min-h-[84px] resize-none rounded-xl border border-border-subtle bg-surface-card px-3 py-2 font-body-md text-body-md text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-60"
           />
           <button
             type="button"
@@ -441,7 +552,7 @@ export function ConversaLead({ leadId, leadNome = '' }: ConversaLeadProps) {
           Pressione <strong>Enter</strong> para enviar
         </p>
       </div>
-      {novoNumeroAberto && (
+      {novoNumeroAberto && leadId && (
         <ModalNovoNumero
           leadId={leadId}
           onFechar={() => setNovoNumeroAberto(false)}

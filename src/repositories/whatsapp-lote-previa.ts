@@ -7,6 +7,7 @@ import { leads, oportunidades } from '../db/schema';
 import type { ContextoTenant } from '../lib/auth/tenant';
 import { montarPrevia, type PreviaDoLote } from '../lib/whatsapp/lote-regras';
 import { comTenant } from './contexto';
+import { contextosDosLeads } from './whatsapp-template-contexto';
 
 export async function previaDoLote(db: NodePgDatabase, contexto: ContextoTenant, leadIds: string[], corpoDoTemplate: string): Promise<PreviaDoLote> {
   const encontrados = await comTenant(db, contexto, (tx) =>
@@ -15,10 +16,12 @@ export async function previaDoLote(db: NodePgDatabase, contexto: ContextoTenant,
       .from(leads)
       .where(inArray(leads.id, leadIds))
   );
+  const contextos = await contextosDosLeads(db, contexto, encontrados.map((l) => l.id));
   return montarPrevia(
     leadIds,
     encontrados.map((l) => ({ id: l.id, nome: l.nome, telefone: l.telefone, consentimento: l.consentimentoEm !== null })),
-    corpoDoTemplate
+    corpoDoTemplate,
+    contextos
   );
 }
 

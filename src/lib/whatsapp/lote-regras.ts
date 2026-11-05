@@ -1,7 +1,7 @@
 // T-245 (fase5-whatsapp-lote-base, AC-674/AC-675, ASM-243/ASM-245): as regras do lote de WhatsApp e a
 // prévia de quem receberia — funções puras, sem banco. Quem decide os dados é o repositório.
 import { variantesNumero } from '../../domain/whatsapp/numero';
-import { renderizarTemplate } from './template';
+import { renderizarTemplate, type ContextoDoTemplate } from './template';
 
 export const LIMITE_POR_DISPARO = 50;
 export const INTERVALO_MINIMO_SEGUNDOS = 15;
@@ -41,7 +41,7 @@ export interface PreviaDoLote {
  * AC-675: `ids` na ordem pedida; `leads` o que o banco achou na empresa. Um lead entra se tem telefone e
  * consentimento, o número não repete o de outro já aceito (qualquer grafia do nono dígito) e ainda cabe no limite.
  */
-export function montarPrevia(ids: string[], leads: LeadDoLote[], corpoDoTemplate: string): PreviaDoLote {
+export function montarPrevia(ids: string[], leads: LeadDoLote[], corpoDoTemplate: string, contextos: Map<string, ContextoDoTemplate> = new Map()): PreviaDoLote {
   const porId = new Map(leads.map((l) => [l.id, l]));
   const elegiveis: PreviaDoLote['elegiveis'] = [];
   const excluidos: PreviaDoLote['excluidos'] = [];
@@ -74,7 +74,7 @@ export function montarPrevia(ids: string[], leads: LeadDoLote[], corpoDoTemplate
       continue;
     }
     for (const v of variantesNumero(digitos)) numerosAceitos.add(v);
-    elegiveis.push({ leadId: id, nome: lead.nome, telefone: digitos, mensagem: renderizarTemplate(corpoDoTemplate, lead.nome) });
+    elegiveis.push({ leadId: id, nome: lead.nome, telefone: digitos, mensagem: renderizarTemplate(corpoDoTemplate, { ...contextos.get(id), nome: lead.nome }) });
   }
 
   return {

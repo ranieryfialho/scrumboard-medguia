@@ -530,6 +530,7 @@ export function NovaCampanha() {
           </section>
 
           <VariaveisDisponiveis
+            somente={['nome', 'primeiro_nome']}
             observacao="Escreva o shortcode no corpo e ele é trocado pelo nome de cada destinatário no envio. A prévia ao lado já mostra um nome de exemplo. Outras variáveis ficam como estão no e-mail."
             onInserir={bloqueada ? undefined : inserirVariavel}
           />
