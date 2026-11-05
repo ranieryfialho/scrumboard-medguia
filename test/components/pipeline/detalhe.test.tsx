@@ -12,7 +12,7 @@
 // prova é o que esta tela renderiza dentro dela.
 import { Suspense } from 'react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { act, cleanup, render, screen, waitFor, within } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import PipelineDetalhePage from '../../../src/app/(app)/pipeline/[id]/page';
@@ -337,6 +337,32 @@ describe('T-163: tela de detalhe do card', () => {
         const titulo = screen.getByRole('heading', { name: 'Clínica Vitalis' });
         expect(within(titulo.parentElement as HTMLElement).getByText('Proposta')).toBeTruthy();
       });
+    });
+
+    test('Proposta exige valor e próxima ação: o modal pede um de cada vez e a última chamada leva os dois, sem entrar em loop @spec:AC-410', async () => {
+      detalheAtual = detalhePadrao({ etapaId: 10 });
+      alcancaveisAtuais = [11];
+      filaTransicao.push(() => resposta(400, { codigo: 'VALOR_OBRIGATORIO' }));
+      filaTransicao.push(() => resposta(400, { codigo: 'PROXIMA_ACAO_OBRIGATORIA' }));
+
+      const usuario = userEvent.setup();
+      await renderDetalhe();
+      await usuario.selectOptions((await screen.findByLabelText('Mover de Etapa')) as HTMLSelectElement, '11');
+
+      expect(await screen.findByText('Informe o valor')).toBeTruthy();
+      await usuario.type(screen.getByLabelText('Valor'), '3000');
+      await usuario.click(screen.getByRole('button', { name: 'Confirmar' }));
+
+      expect(await screen.findByText('Informe a próxima ação')).toBeTruthy();
+      fireEvent.change(screen.getByLabelText('Próxima ação (data futura)'), { target: { value: '2030-01-15T10:30' } });
+      await usuario.click(screen.getByRole('button', { name: 'Confirmar' }));
+
+      await waitFor(() => expect(chamadasTransicao).toHaveLength(3));
+      // A terceira chamada precisa levar o valor da segunda junto com a data (antes o valor se perdia e o modal pedia tudo de novo).
+      expect(chamadasTransicao[2]).toEqual(expect.objectContaining({ etapaDestinoId: 11, valor: 3000 }));
+      expect(chamadasTransicao[2].proximaAcaoEm).toMatch(/^2030-01-15T/);
+      expect(screen.queryByText('Informe o valor')).toBeNull();
+      expect(screen.queryByText('Informe a próxima ação')).toBeNull();
     });
 
     test('"Perdido" exige motivo: abre o modal de motivo em vez de mover direto @spec:AC-410', async () => {

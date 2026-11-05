@@ -84,6 +84,9 @@ function PipelineDetalheConteudo({ id }: { id: string }) {
   // T-313: mover para "Contrato (Ganho)" pede antes os dados do fechamento (como no CRM antigo).
   const [pedirFechamento, setPedirFechamento] = useState(false);
   const fechamentoRef = useRef<DadosFechamento | null>(null);
+  // Os dados que o modal já pediu (valor, próxima ação...) ficam guardados entre uma tentativa e outra: o servidor pede um por vez e cada
+  // reenvio precisa levar todos, senão o anterior se perde e o modal volta a pedi-lo (loop ao mover para Proposta).
+  const dadosPedidosRef = useRef<DadoPreenchido>({});
   const [versaoLinhaDoTempo, setVersaoLinhaDoTempo] = useState(0);
   const [editando, setEditando] = useState(false);
 
@@ -207,19 +210,20 @@ function PipelineDetalheConteudo({ id }: { id: string }) {
   // AC-410: move de etapa / marca como ganho / perdido — mesma rota e o
   // mesmo modal de dado faltante que o board já usa (T-047/T-050).
   const enviarTransicao = useCallback(
-    async (etapaDestinoId: number, dadoExtra: DadoPreenchido = {}) => {
+    async (etapaDestinoId: number, dadoExtra?: DadoPreenchido) => {
       if (!dados) return;
       if (etapaDestinoId === ETAPA_CONTRATO_GANHO && !fechamentoRef.current) {
         setPedirFechamento(true);
         return;
       }
+      dadosPedidosRef.current = dadoExtra ? { ...dadosPedidosRef.current, ...dadoExtra } : {};
       setEnviando(true);
       setMensagem(null);
       try {
         const resposta = await fetch(`/api/oportunidades/${dados.id}/transicao`, {
           method: 'POST',
           headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ version: dados.version, etapaDestinoId, ...dadoExtra, ...(etapaDestinoId === ETAPA_CONTRATO_GANHO && fechamentoRef.current ? { fechamento: fechamentoRef.current } : {}) }),
+          body: JSON.stringify({ version: dados.version, etapaDestinoId, ...dadosPedidosRef.current, ...(etapaDestinoId === ETAPA_CONTRATO_GANHO && fechamentoRef.current ? { fechamento: fechamentoRef.current } : {}) }),
         });
 
         if (resposta.ok) {
@@ -227,6 +231,7 @@ function PipelineDetalheConteudo({ id }: { id: string }) {
           setDados((atual) => (atual ? { ...atual, etapaId: movida.etapaId, version: movida.version } : atual));
           setDadoFaltante(null);
           fechamentoRef.current = null;
+          dadosPedidosRef.current = {};
           setVersaoLinhaDoTempo((versao) => versao + 1);
           await carregarGrafo(movida.etapaId);
           return;
@@ -382,6 +387,7 @@ function PipelineDetalheConteudo({ id }: { id: string }) {
           onCancelar={() => {
             setDadoFaltante(null);
             fechamentoRef.current = null;
+            dadosPedidosRef.current = {};
           }}
           onConfirmar={(dado) => enviarTransicao(dadoFaltante.etapaDestinoId, dado)}
         />
