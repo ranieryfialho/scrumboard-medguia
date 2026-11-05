@@ -200,6 +200,7 @@ describe('T-183: TarefasAtrasadas', () => {
     const usuario = userEvent.setup({ advanceTimers: () => undefined });
     render(<TarefasAtrasadas />);
     await usuario.click(await screen.findByRole('button', { name: 'Concluir com sucesso: Cardio Vida' }));
+    await usuario.click(await screen.findByRole('button', { name: 'Sim, o lead respondeu' }));
     await usuario.click(screen.getByRole('button', { name: 'Não atendeu: Gastro Vita' }));
     await waitFor(() => {
       const corpos = fetchFalso.mock.calls.filter((c) => String(c[0]).includes('/concluir')).map((c) => JSON.parse(c[1].body));
