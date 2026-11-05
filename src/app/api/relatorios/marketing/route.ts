@@ -3,13 +3,14 @@
 import { NextResponse, type NextRequest } from 'next/server';
 
 import { getDb } from '../../../../db/client';
-import { exigirGerente, lerParametros } from '../../../../lib/relatorios/acesso';
+import { exigirModulo } from '../../../../lib/auth/exigir-modulo';
+import { lerParametros } from '../../../../lib/relatorios/acesso';
 import { obterMarketing } from '../../../../repositories/analises-marketing';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
-  const acesso = await exigirGerente(request);
+  const acesso = await exigirModulo(request, 'relatorios');
   if ('resposta' in acesso) return acesso.resposta;
   const leitura = lerParametros(request.nextUrl.searchParams);
   if (!leitura.ok) return leitura.resposta;

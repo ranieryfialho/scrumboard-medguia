@@ -74,7 +74,6 @@ export const GRUPOS_MENU: GrupoMenu[] = [
   },
   {
     titulo: 'Análises',
-    papelMinimo: 'GERENTE',
     itens: [
       { id: 'indicadores', rotulo: 'Indicadores', href: '/indicadores', icone: 'monitoring' },
       { id: 'relatorios', rotulo: 'Relatórios', href: '/relatorios', icone: 'description' },

@@ -7,8 +7,8 @@ import { lerModulos, modulosDoPapel, modulosEfetivos, modulosPadraoDoPapel, modu
 import { podeAcessarRota } from '../../src/lib/auth/rotas';
 
 describe('T-322: módulos liberados', () => {
-  test('o papel define o teto: atendente alcança 5 módulos (Campanhas só se liberarem), gerente e master os 9 @spec:AC-771', () => {
-    expect(modulosDoPapel('ATENDENTE')).toEqual(['pipeline', 'tarefas', 'agenda', 'whatsapp', 'campanhas']);
+  test('o teto: atendente alcança 8 módulos (os de análise e Campanhas só se liberarem; Equipe e Configurações é de gerente), gerente e master os 9 @spec:AC-771', () => {
+    expect(modulosDoPapel('ATENDENTE')).toEqual(['pipeline', 'tarefas', 'agenda', 'whatsapp', 'campanhas', 'indicadores', 'relatorios', 'comercial']);
     // por padrão o atendente não tem Campanhas; gerente e master têm tudo
     expect(modulosPadraoDoPapel('ATENDENTE')).toEqual(['pipeline', 'tarefas', 'agenda', 'whatsapp']);
     expect(modulosPadraoDoPapel('GERENTE')).toHaveLength(MODULOS.length);
@@ -22,8 +22,11 @@ describe('T-322: módulos liberados', () => {
     expect([...modulosEfetivos('ATENDENTE', false, ['pipeline', 'campanhas'])]).toEqual(['pipeline', 'campanhas']);
     expect(modulosEfetivos('ATENDENTE', false, null).has('campanhas')).toBe(false);
     expect([...modulosEfetivos('GERENTE', false, ['pipeline'])]).toEqual(['pipeline']);
-    // um módulo acima do papel nunca é concedido por estar marcado
-    expect([...modulosEfetivos('ATENDENTE', false, ['pipeline', 'indicadores'])]).toEqual(['pipeline']);
+    // um módulo acima do papel nunca é concedido por estar marcado (Equipe e Configurações é só de gerente e master)
+    expect([...modulosEfetivos('ATENDENTE', false, ['pipeline', 'administracao'])]).toEqual(['pipeline']);
+    // os de análise o atendente tem quando liberarem, e por padrão não tem
+    expect([...modulosEfetivos('ATENDENTE', false, ['pipeline', 'relatorios', 'comercial'])]).toEqual(['pipeline', 'relatorios', 'comercial']);
+    expect(modulosEfetivos('ATENDENTE', false, null).has('relatorios')).toBe(false);
     expect(modulosEfetivos('MASTER', false, ['pipeline']).size).toBe(MODULOS.length);
     expect(modulosEfetivos('ATENDENTE', true, ['pipeline']).size).toBe(MODULOS.length);
   });
@@ -42,7 +45,8 @@ describe('T-322: módulos liberados', () => {
   test('lerModulos aceita só ids do teto do papel, sem repetir e ao menos um; null volta ao padrão @spec:AC-774', () => {
     expect(lerModulos(null, 'ATENDENTE')).toBeNull();
     expect(lerModulos(['pipeline', 'agenda', 'pipeline'], 'ATENDENTE')).toEqual(['pipeline', 'agenda']);
-    expect(lerModulos(['indicadores'], 'ATENDENTE')).toBeUndefined();
+    expect(lerModulos(['administracao'], 'ATENDENTE')).toBeUndefined();
+    expect(lerModulos(['relatorios', 'comercial'], 'ATENDENTE')).toEqual(['relatorios', 'comercial']);
     expect(lerModulos(['inexistente'], 'GERENTE')).toBeUndefined();
     expect(lerModulos([], 'GERENTE')).toBeUndefined();
     expect(lerModulos('pipeline', 'GERENTE')).toBeUndefined();
@@ -80,6 +84,25 @@ describe('T-322: módulos liberados', () => {
     for (const perfil of PERFIS_PRONTOS) {
       const teto = modulosDoPapel(perfil.papel);
       expect(perfil.modulos.every((m) => teto.includes(m))).toBe(true);
+    }
+  });
+
+  test('o atendente com Marketing e Comercial liberados abre essas páginas e APIs, e só essas @spec:AC-773', () => {
+    const ana = { papel: 'ATENDENTE' as const, isSuperAdmin: false, modulos: ['pipeline', 'relatorios', 'comercial'] };
+    for (const rota of ['/relatorios', '/relatorios-comerciais', '/api/relatorios/marketing', '/api/relatorios/comercial']) {
+      expect(podeAcessarRota(ana, rota), rota).toBe(true);
+    }
+    // Indicadores e as APIs dele continuam fechados sem o módulo; Equipe e Configurações é de gerente
+    for (const rota of ['/indicadores', '/api/relatorios/kpis', '/api/relatorios/funil', '/api/relatorios/alertas', '/equipe', '/api/equipe']) {
+      expect(podeAcessarRota(ana, rota), rota).toBe(false);
+    }
+    const menu = menuParaPapel('ATENDENTE', false, ana.modulos);
+    expect(menu.find((g) => g.titulo === 'Análises')?.itens.map((i) => i.id)).toEqual(['relatorios', 'comercial']);
+    // sem módulos gravados o atendente continua sem Análises
+    expect(menuParaPapel('ATENDENTE', false).find((g) => g.titulo === 'Análises')).toBeUndefined();
+    // gerente e master seguem com tudo por padrão, inclusive as APIs dos módulos
+    for (const papel of ['GERENTE', 'MASTER'] as const) {
+      for (const rota of ['/indicadores', '/relatorios', '/api/relatorios/marketing', '/api/relatorios/kpis']) expect(podeAcessarRota({ papel, isSuperAdmin: false }, rota)).toBe(true);
     }
   });
 });
