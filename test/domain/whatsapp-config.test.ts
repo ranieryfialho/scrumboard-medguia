@@ -4,6 +4,7 @@ import { validarCorpoConfig } from '../../src/domain/whatsapp/config';
 import {
   buildConfig,
   createInstance,
+  instanciaJaExiste,
   getInstanceStatus,
   setWebhook,
 } from '../../src/lib/evolution-api';
@@ -161,5 +162,12 @@ describe('cliente Evolution — falha da Evolution', () => {
     config.apiKey = evolution.apiKey;
 
     await expect(createInstance(config)).resolves.toBeUndefined();
+  });
+
+  test('"já existe" vale para o 409 e para o 403 "already in use" da Evolution v2; outros erros não @spec:AC-186', () => {
+    expect(instanciaJaExiste(409, '')).toBe(true);
+    expect(instanciaJaExiste(403, '{"response":{"message":["This name \\"medguiacomercial\\" is already in use."]}}')).toBe(true);
+    expect(instanciaJaExiste(403, '{"message":"Forbidden"}')).toBe(false);
+    expect(instanciaJaExiste(500, 'already in use')).toBe(false);
   });
 });
