@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDraggable } from "@dnd-kit/core";
 import Link from "next/link";
 import { AlarmClock, ExternalLink } from "lucide-react";
 
+import { leadEhNovo } from "@/domain/pipeline/lead-novo";
 import { BotaoIniciarCadencia } from "./botao-iniciar-cadencia";
+
+const ETAPA_ENTRADA_DE_LEADS = 1;
 
 export interface CardBoard {
   id: string;
@@ -24,6 +27,8 @@ export interface CardBoard {
    * `tabela-lista.tsx`.
    */
   proximaAcaoEm?: string | null;
+  /** Quando o card nasceu (ISO) — ordena a Entrada de leads e liga o selo "Novo". */
+  criadoEm?: string;
 }
 
 interface CardOportunidadeProps {
@@ -55,6 +60,17 @@ function formatarProximaAcao(iso: string | null | undefined): string {
   return new Date(iso).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" });
 }
 
+/** Hora atual, renovada a cada minuto — o selo "Novo" some sozinho quando o prazo acaba. */
+function useAgora(ativo: boolean): Date {
+  const [agora, setAgora] = useState(() => new Date());
+  useEffect(() => {
+    if (!ativo) return;
+    const intervalo = setInterval(() => setAgora(new Date()), 60_000);
+    return () => clearInterval(intervalo);
+  }, [ativo]);
+  return agora;
+}
+
 export function CardOportunidade({ oportunidade, isOverlay, atrasado }: CardOportunidadeProps) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: oportunidade.id,
@@ -82,6 +98,10 @@ export function CardOportunidade({ oportunidade, isOverlay, atrasado }: CardOpor
   const etapaId = dadosCadencia?.etapaId ?? oportunidade.etapaId;
   const version = dadosCadencia?.version ?? oportunidade.version;
 
+  const naEntrada = oportunidade.etapaId === ETAPA_ENTRADA_DE_LEADS && !isOverlay;
+  const agora = useAgora(naEntrada);
+  const mostrarNovo = naEntrada && leadEhNovo(oportunidade.criadoEm, agora);
+
   const valorFormatado = formatarValor(oportunidade.valor);
   const style = transform
     ? { transform: `translate3d(${transform.x}px, ${transform.y}px, 0)` }
@@ -98,7 +118,21 @@ export function CardOportunidade({ oportunidade, isOverlay, atrasado }: CardOpor
       } ${isOverlay ? "shadow-lg rotate-2" : ""}`}
     >
       <div className="flex items-start justify-between gap-2">
-        <span className="font-headline-sm text-headline-sm text-text-primary leading-tight">{oportunidade.leadNome}</span>
+        <div className="flex items-center gap-2 min-w-0 flex-wrap">
+          <span className="font-headline-sm text-headline-sm text-text-primary leading-tight">{oportunidade.leadNome}</span>
+          {mostrarNovo && (
+            <span
+              data-testid="selo-novo"
+              className="font-label-sm text-[10px] uppercase font-bold text-success-text bg-success-surface px-1.5 py-0.5 rounded inline-flex items-center gap-1 shrink-0"
+            >
+              <span aria-hidden="true" className="relative flex size-2">
+                <span className="absolute inline-flex size-full rounded-full bg-success-text opacity-75 animate-ping" />
+                <span className="relative inline-flex size-2 rounded-full bg-success-text" />
+              </span>
+              Novo
+            </span>
+          )}
+        </div>
         <Link
           href={`/pipeline/${oportunidade.id}`}
           onClick={(evento) => evento.stopPropagation()}

@@ -106,6 +106,13 @@ async function buscarPaginas(
   return resultado;
 }
 
+/** Entrada de leads: o card mais novo sempre no topo. As demais colunas seguem a ordem que o servidor mandou. */
+function cardsDaEtapa(itens: CardBoard[], etapaId: number): CardBoard[] {
+  const cards = itens.filter((item) => item.etapaId === etapaId);
+  if (etapaId !== ETAPA_ENTRADA_DE_LEADS) return cards;
+  return [...cards].sort((a, b) => Date.parse(b.criadoEm ?? "") - Date.parse(a.criadoEm ?? "") || 0);
+}
+
 function filtroFunilAtivo(filtro: ValorFiltrosFunil): boolean {
   return filtro.busca.trim() !== "" || !!filtro.responsavelId || !!filtro.origem;
 }
@@ -568,7 +575,7 @@ export function BoardKanban() {
                 key={etapa.id}
                 etapaId={etapa.id}
                 nome={etapa.nome}
-                cards={itens.filter((item) => item.etapaId === etapa.id)}
+                cards={cardsDaEtapa(itens, etapa.id)}
                 podeReceberDrop={cardAtivo ? (alcancaveisDoAtivo?.has(etapa.id) ?? false) : true}
                 arrastando={cardAtivo !== null}
                 oportunidadesAtrasadas={oportunidadesAtrasadas}
