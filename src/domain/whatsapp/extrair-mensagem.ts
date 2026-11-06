@@ -4,6 +4,8 @@
 // webhook/route.ts) para fora da rota, sem Supabase, para ser reaproveitada
 // pelo repositório (T-068) e pela rota nova (T-069).
 
+import { eventoDeAtualizacao } from './extrair-status';
+
 interface EvolutionMessageKey {
   fromMe?: boolean;
   remoteJid?: string;
@@ -97,7 +99,8 @@ function extrairMidia(item: EvolutionMessageItem): MidiaExtraida | null {
  * sem número extraível.
  */
 export function extrairMensagens(payload: EvolutionWebhookPayload): MensagemExtraida[] {
-  if (!eventoDeMensagem(payload.event)) return [];
+  // `messages.update` é aviso de status (check/lida), não mensagem nova — quem trata é `extrair-status.ts`.
+  if (!eventoDeMensagem(payload.event) || eventoDeAtualizacao(payload.event)) return [];
 
   const dataItems: EvolutionMessageItem[] = Array.isArray(payload.data)
     ? payload.data

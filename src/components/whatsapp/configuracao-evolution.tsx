@@ -21,9 +21,10 @@ interface ConfigView {
 }
 
 const REGEX_INSTANCIA = /^[A-Za-z0-9_-]{1,64}$/;
-const ROTULO_DO_EVENTO: Record<string, string> = { MESSAGES_UPSERT: 'Essencial' };
+const ROTULO_DO_EVENTO: Record<string, string> = { MESSAGES_UPSERT: 'Essencial', MESSAGES_UPDATE: 'Checks' };
 const DESCRICAO_DO_EVENTO: Record<string, string> = {
   MESSAGES_UPSERT: 'Recebimento de novas mensagens em tempo real (texto, áudio, mídia e geolocalização).',
+  MESSAGES_UPDATE: 'Status das mensagens enviadas: enviada (✓), entregue (✓✓) e lida (✓✓ azul).',
 };
 
 const ERROS_DO_SALVAR: Record<string, string> = {

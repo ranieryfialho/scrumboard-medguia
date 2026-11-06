@@ -20,10 +20,10 @@ import {
   agruparPorDia,
   formatarHora,
   mensagemDoTelefone,
-  statusDaMensagem,
   type MensagemDaConversa,
   type TelefoneDoLead,
 } from './formatos';
+import { ChecksDaMensagem } from './checks-da-mensagem';
 import { SeletorTelefone } from './seletor-telefone';
 import { ModalNovoNumero } from './modal-novo-numero';
 import { MenuOpcoes } from './menu-opcoes';
@@ -56,7 +56,7 @@ function tamanhoLegivel(bytes: number): string {
   return bytes >= 1024 * 1024 ? `${(bytes / (1024 * 1024)).toFixed(1).replace('.', ',')} MB` : `${Math.max(1, Math.round(bytes / 1024))} KB`;
 }
 
-/** AC-442: escuta `mensagem.recebida` do stream e avisa só quando a mensagem é deste lead. */
+/** AC-442: escuta `mensagem.recebida` (e `mensagem.status`, os checks de entregue/lida) do stream e avisa só quando a mensagem é deste lead. */
 function useMensagemRecebida(leadId: string | null, aoChegar: () => void) {
   const aoChegarRef = useRef(aoChegar);
   useEffect(() => {
@@ -66,7 +66,7 @@ function useMensagemRecebida(leadId: string | null, aoChegar: () => void) {
   useEffect(() => {
     if (typeof EventSource === 'undefined') return;
     const origem = new EventSource('/api/stream');
-    origem.addEventListener('mensagem.recebida', (evento) => {
+    const aoEvento = (evento: Event) => {
       try {
         const dados = JSON.parse((evento as MessageEvent).data) as { leadId?: string | null };
         // Conversa avulsa (sem lead) casa com eventos sem lead.
@@ -74,7 +74,9 @@ function useMensagemRecebida(leadId: string | null, aoChegar: () => void) {
       } catch {
         // Evento malformado: ignora, a próxima abertura da conversa relê o histórico.
       }
-    });
+    };
+    origem.addEventListener('mensagem.recebida', aoEvento);
+    origem.addEventListener('mensagem.status', aoEvento);
     return () => origem.close();
   }, [leadId]);
 }
@@ -437,7 +439,7 @@ export function ConversaLead({ leadId, numero, leadNome = '', cabecalho, versao 
                       )}
                       <p className={`mt-1 text-right font-label-sm text-[11px] ${enviada ? 'opacity-80' : 'text-text-muted'}`}>
                         {formatarHora(mensagem.created_at)}
-                        {enviada ? ` · ${statusDaMensagem(mensagem.status)}` : ''}
+                        {enviada && <ChecksDaMensagem status={mensagem.status} />}
                       </p>
                     </div>
                   </div>

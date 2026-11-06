@@ -238,12 +238,55 @@ export async function registrarMensagemEnviada(
         numero: dados.numero,
         mensagem: dados.texto,
         direcao: 'enviada',
+        // Nasce com um check; "entregue" e "lida" chegam depois pelo webhook (`atualizarStatusDaMensagem`).
+        status: 'enviada',
         evolutionMessageId: dados.evolutionMessageId,
         ...colunasDaMidia(dados.midia),
       })
       .returning({ id: whatsappMensagens.id });
 
     return { mensagemId: inserida.id, leadId };
+  });
+}
+
+/** enviada (1 check) < entregue (2 checks) < lida (2 azuis). Valor desconhecido conta como "entregue" (o padrão antigo da coluna). */
+const POSICAO_DO_STATUS = sql`case lower(${whatsappMensagens.status}) when 'enviada' then 1 when 'lida' then 3 else 2 end`;
+const POSICAO_NOVA = { enviada: 1, entregue: 2, lida: 3 } as const;
+
+/**
+ * Avança o status de uma mensagem enviada (aviso `messages.update` da Evolution). Só sobe — os avisos chegam fora de ordem e um
+ * "entregue" atrasado nunca pode desfazer um "lida". Devolve se mudou algo; ao mudar, avisa a tela aberta (canal `oportunidade`,
+ * tipo `mensagem.status`) na mesma transação.
+ */
+export async function atualizarStatusDaMensagem(
+  db: NodePgDatabase,
+  contexto: Pick<ContextoTenant, 'empresaId'>,
+  dados: { evolutionMessageId: string; status: 'enviada' | 'entregue' | 'lida' }
+): Promise<boolean> {
+  return comTenant(db, contexto, async (tx) => {
+    const [atualizada] = await tx
+      .update(whatsappMensagens)
+      .set({ status: dados.status })
+      .where(
+        and(
+          eq(whatsappMensagens.empresaId, contexto.empresaId),
+          eq(whatsappMensagens.evolutionMessageId, dados.evolutionMessageId),
+          eq(whatsappMensagens.direcao, 'enviada'),
+          sql`${POSICAO_DO_STATUS} < ${POSICAO_NOVA[dados.status]}`
+        )
+      )
+      .returning({ id: whatsappMensagens.id, leadId: whatsappMensagens.leadId });
+    if (!atualizada) return false;
+
+    const aviso = JSON.stringify({
+      tipo: 'mensagem.status',
+      empresaId: contexto.empresaId,
+      leadId: atualizada.leadId,
+      mensagemId: atualizada.id,
+      status: dados.status,
+    });
+    await tx.execute(sql`select pg_notify('oportunidade', ${aviso})`);
+    return true;
   });
 }
 

@@ -43,6 +43,15 @@ export interface EventoMensagemRecebida {
   ocorridoEm: string;
 }
 
+/** Check/lida de uma mensagem que a empresa enviou (`messages.update` da Evolution) — a conversa aberta se atualiza sem recarregar. */
+export interface EventoMensagemStatus {
+  tipo: 'mensagem.status';
+  empresaId: string;
+  leadId: string | null;
+  mensagemId: string;
+  status: string;
+}
+
 export interface EventoCadenciaFilaAlterada {
   tipo: 'cadencia.fila_alterada';
   empresaId: string;
@@ -56,6 +65,7 @@ export interface EventoStreamReconectado {
 export type EventoBarramento =
   | EventoOportunidadeMovida
   | EventoMensagemRecebida
+  | EventoMensagemStatus
   | EventoCadenciaFilaAlterada
   | EventoStreamReconectado;
 
@@ -158,6 +168,16 @@ export function criarBarramento(opcoes: OpcoesBarramento): Barramento {
             leadId: payload.leadId == null ? null : String(payload.leadId),
             mensagemId: String(payload.mensagemId),
             ocorridoEm: String(payload.ocorridoEm),
+          });
+          return;
+        }
+        if (payload.tipo === 'mensagem.status') {
+          notificar(empresaId, {
+            tipo: 'mensagem.status',
+            empresaId,
+            leadId: payload.leadId == null ? null : String(payload.leadId),
+            mensagemId: String(payload.mensagemId),
+            status: String(payload.status),
           });
           return;
         }

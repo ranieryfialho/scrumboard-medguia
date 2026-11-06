@@ -175,9 +175,12 @@ describe('T-174: tela da conversa de WhatsApp do lead', () => {
       expect(within(conversa).getAllByText(/^\d{2}\/\d{2}\/\d{4}$/).length).toBe(1);
 
       const doEnviada = conversa.querySelector('[data-direcao="enviada"]') as HTMLElement;
-      expect(doEnviada.textContent).toMatch(/\d{2}:\d{2} · entregue/);
-      expect((conversa.querySelectorAll('[data-direcao="enviada"]')[1] as HTMLElement).textContent).toMatch(/· lida/);
-      expect(conversa.querySelector('[data-direcao="recebida"]')!.textContent).not.toMatch(/· (lida|entregue|enviada)/);
+      // Os checks do WhatsApp: entregue = dois checks, lida = dois checks azuis; só a mensagem enviada leva check.
+      expect(doEnviada.textContent).toMatch(/\d{2}:\d{2}\s*Entregue/);
+      expect(doEnviada.querySelector('[data-status="entregue"]')).not.toBeNull();
+      const dasEnviadas = conversa.querySelectorAll('[data-direcao="enviada"]');
+      expect((dasEnviadas[1] as HTMLElement).querySelector('[data-status="lida"]')).not.toBeNull();
+      expect(conversa.querySelector('[data-direcao="recebida"] [data-status]')).toBeNull();
     });
 
     test('a conversa abre rolada até a mensagem mais recente @spec:AC-437', async () => {
