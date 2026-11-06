@@ -8,14 +8,13 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { CartaoIndicador } from '@/components/pipeline/pecas/cartao-indicador';
-import { Paginacao } from '@/components/pipeline/pecas/paginacao';
+import { OPCOES_POR_PAGINA, Paginacao } from '@/components/pipeline/pecas/paginacao';
 import { ItemEmBreve } from '@/components/pipeline/pecas/selo-em-breve';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { mensagemDeErro, type UsuarioLogado } from './comum';
 import { EsqueletoCarregando, EstadoErro, EstadoVazio } from './estados';
 
-const POR_PAGINA = 10;
 
 interface Motivo {
   id: string;
@@ -38,6 +37,7 @@ export function MotivosPerda() {
   const [status, setStatus] = useState('');
   const [busca, setBusca] = useState('');
   const [pagina, setPagina] = useState(1);
+  const [porPagina, setPorPagina] = useState<number>(OPCOES_POR_PAGINA[0]);
   const [dados, setDados] = useState<Resposta | null>(null);
   const [erro, setErro] = useState(false);
   const [eu, setEu] = useState<UsuarioLogado | null>(null);
@@ -118,10 +118,10 @@ export function MotivosPerda() {
   }
 
   const podeCriar = eu?.isSuperAdmin === true || eu?.papel === 'MASTER' || eu?.papel === 'GERENTE';
-  const visiveis = dados?.motivos.slice((pagina - 1) * POR_PAGINA, pagina * POR_PAGINA) ?? [];
+  const visiveis = dados?.motivos.slice((pagina - 1) * porPagina, pagina * porPagina) ?? [];
 
   return (
-    <div className="p-space-md flex flex-col gap-space-md h-[calc(100dvh-4rem)] min-h-[30rem]">
+    <div className="p-space-md flex flex-col gap-space-md">
       <div className="flex items-start justify-between flex-wrap gap-space-md shrink-0">
         <div>
           <h1 className="font-headline-lg text-headline-lg text-text-primary tracking-tight">Motivos de Perda &amp; Churn Comercial</h1>
@@ -153,7 +153,7 @@ export function MotivosPerda() {
       {erro && <EstadoErro mensagem="Não foi possível carregar os motivos. Tente de novo." onTentarDeNovo={carregar} />}
       {!erro && !dados && <EsqueletoCarregando />}
       {dados && (
-        <div className="relative flex flex-col gap-space-md flex-1 min-h-0">
+        <div className="relative flex flex-col gap-space-md">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-space-md shrink-0">
             <CartaoIndicador titulo="Catálogo de motivos" valor={`${dados.totais.ativos} ativos`} legenda={`${dados.totais.sistemicos} sistêmicos · ${dados.totais.personalizados} personalizados`} icone="rule" />
             <CartaoIndicador titulo="Perdas no mês" valor={String(dados.resumo.perdasNoMes)} legenda="cards que foram para Perdido" icone="trending_down" cor="danger" />
@@ -204,8 +204,8 @@ export function MotivosPerda() {
               <EstadoVazio titulo="Nenhum motivo encontrado" proximoPasso="ajuste os filtros" icone="rule" />
             </section>
           ) : (
-            <section aria-label="Motivos" className="bg-surface-card rounded-2xl shadow-sm overflow-hidden flex flex-col flex-1 min-h-0">
-              <div className="overflow-auto flex-1 min-h-0">
+            <section aria-label="Motivos" className="bg-surface-card rounded-2xl shadow-sm overflow-hidden flex flex-col">
+              <div className="overflow-x-auto">
                 <table className="w-full text-left">
                   <thead className="bg-surface-subtle sticky top-0 z-10">
                     <tr className="font-label-sm text-table-header uppercase text-text-muted tracking-wider">
@@ -248,7 +248,18 @@ export function MotivosPerda() {
                   </tbody>
                 </table>
               </div>
-              <Paginacao pagina={pagina} porPagina={POR_PAGINA} total={dados.motivos.length} onMudarPagina={setPagina} rotuloItem="motivos" />
+              <Paginacao
+                pagina={pagina}
+                porPagina={porPagina}
+                total={dados.motivos.length}
+                onMudarPagina={setPagina}
+                rotuloItem="motivos"
+                opcoesPorPagina={OPCOES_POR_PAGINA}
+                onMudarPorPagina={(valor) => {
+                  setPorPagina(valor);
+                  setPagina(1);
+                }}
+              />
             </section>
           )}
 

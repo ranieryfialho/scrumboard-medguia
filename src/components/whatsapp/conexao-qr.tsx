@@ -164,7 +164,7 @@ export function ConexaoQr() {
 
   const bloco = 'bg-surface-card rounded-2xl shadow-sm';
   return (
-    <div className="p-space-md flex flex-col gap-space-md xl:h-[calc(100dvh-4rem)] xl:min-h-[42rem]">
+    <div className="p-space-md flex flex-col gap-space-md">
       <div className="flex items-start justify-between flex-wrap gap-space-md shrink-0">
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-space-md flex-wrap">
@@ -237,16 +237,23 @@ export function ConexaoQr() {
             <CartaoIndicador titulo="Instância pareada" valor={status.instance ?? '—'} legenda={conectado ? 'WhatsApp conectado' : 'Aguardando pareamento'} icone="smartphone" cor="warning" />
           </div>
 
-          <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] gap-space-md xl:flex-1 xl:min-h-0">
-            <section aria-label="Leitor de QR Code" className={`${bloco} p-space-md flex flex-col gap-space-md xl:min-h-0 xl:overflow-y-auto`}>
+          <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] gap-space-md xl:items-start">
+            <section aria-label="Leitor de QR Code" className={`${bloco} p-space-md flex flex-col gap-space-md`}>
               <div className="flex flex-col">
                 <span className="font-label-sm text-table-header uppercase text-text-muted tracking-wider">Pareamento Evolution</span>
                 <h2 className="font-headline-sm text-headline-sm text-text-primary">Leitor de QR Code para Sincronização</h2>
               </div>
               {conectado ? (
-                <p role="status" className="font-body-md text-body-md text-success-text bg-success-surface rounded-lg px-3 py-2">
-                  Conectado. A sessão do WhatsApp já está ativa.
-                </p>
+                // Já pareado: não há QR para mostrar, então o bloco encolhe para um aviso do tamanho do conteúdo.
+                <div role="status" className="flex items-center gap-3 rounded-xl bg-success-surface px-4 py-3">
+                  <span aria-hidden="true" className="material-symbols-outlined text-[28px] text-success-text">check_circle</span>
+                  <span className="flex flex-col">
+                    <span className="font-label-lg text-label-lg text-success-text font-semibold">Pareamento concluído</span>
+                    <span className="font-body-sm text-body-sm text-success-text/80">
+                      A sessão está ativa{status.instance ? ` na instância ${status.instance}` : ''}. Para parear outro aparelho, desconecte a sessão.
+                    </span>
+                  </span>
+                </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-space-md items-center rounded-2xl bg-surface-subtle p-space-md">
                   <div className="flex flex-col items-center justify-center gap-2 min-h-56">
@@ -317,7 +324,7 @@ export function ConexaoQr() {
               )}
             </section>
 
-            <div className="flex flex-col gap-space-md xl:min-h-0 xl:overflow-y-auto">
+            <div className="flex flex-col gap-space-md">
               <section aria-label="Instâncias" className={`${bloco} p-space-md flex flex-col gap-space-sm`}>
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex flex-col">

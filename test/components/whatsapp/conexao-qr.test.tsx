@@ -94,7 +94,7 @@ describe('T-192: ConexaoQr', () => {
     await act(async () => {
       await vi.advanceTimersByTimeAsync(3_000);
     });
-    await vi.waitFor(() => expect(screen.getByText(/Conectado\. A sessão do WhatsApp já está ativa/)).toBeTruthy());
+    await vi.waitFor(() => expect(screen.getByText(/A sessão está ativa na instância matriz/)).toBeTruthy());
     expect(screen.queryByAltText('QR Code WhatsApp')).toBeFalsy();
     const depois = chamadas('/api/whatsapp/status');
     await act(async () => {
@@ -112,7 +112,7 @@ describe('T-192: ConexaoQr', () => {
     };
     render(<ConexaoQr />);
     await u.click(await screen.findByRole('button', { name: 'Gerar Novo QR Code' }));
-    expect(await screen.findByText(/Conectado\. A sessão do WhatsApp já está ativa/)).toBeTruthy();
+    expect(await screen.findByText(/A sessão está ativa na instância matriz/)).toBeTruthy();
     expect(screen.queryByAltText('QR Code WhatsApp')).toBeFalsy();
   });
 

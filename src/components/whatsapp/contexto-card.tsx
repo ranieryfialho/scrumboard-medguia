@@ -1,7 +1,7 @@
-// T-190 (fase4-whatsapp, AC-507): "Contexto do Pipeline" da conversa aberta, em largura
-// total abaixo da lista e do chat (protótipo `16._whatsapp_caixa_de_entrada`): o card
-// (nome, valor, responsável, etapa) e a régua de cadência com o toque da vez. Só mostra
-// o que existe do card.
+// T-190 (fase4-whatsapp, AC-507): "Contexto do Pipeline" da conversa aberta. Em telas largas (xl) fica
+// numa coluna à direita do chat, com a mesma altura fixa da lista e da conversa (rola por dentro se
+// passar); em telas menores empilha abaixo. Mostra o card (nome, valor, responsável, etapa) e a régua
+// de cadência com o toque da vez. Só mostra o que existe do card.
 import Link from 'next/link';
 
 import { nomeDaEtapa } from '@/components/pipeline/detalhe/jornada';
@@ -16,7 +16,7 @@ export function ContextoCard({ conversa }: { conversa: ConversaView }) {
   const cadencia = card?.cadencia ?? null;
   const atual = cadencia?.atual ?? null;
   return (
-    <section aria-label="Contexto do Pipeline" className="bg-surface-card rounded-2xl shadow-sm overflow-hidden">
+    <section aria-label="Contexto do Pipeline" className="bg-surface-card rounded-2xl shadow-sm overflow-hidden xl:h-full xl:overflow-y-auto">
       <div className="p-space-md flex flex-col gap-space-md">
         <div className="flex items-center justify-between gap-2">
           <span className="font-label-sm text-table-header uppercase text-text-muted tracking-wider">Contexto do Pipeline</span>
@@ -35,7 +35,7 @@ export function ContextoCard({ conversa }: { conversa: ConversaView }) {
                 Abrir card
               </Link>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 gap-space-md">
               <div className="rounded-xl border border-border-subtle p-3">
                 <span className="font-label-sm text-label-sm text-text-muted uppercase">Valor estimado</span>
                 <p className="font-headline-sm text-headline-sm text-text-primary">

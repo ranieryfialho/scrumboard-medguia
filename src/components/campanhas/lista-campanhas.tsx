@@ -8,7 +8,7 @@ import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 
 import { CartaoIndicador } from '@/components/pipeline/pecas/cartao-indicador';
-import { Paginacao } from '@/components/pipeline/pecas/paginacao';
+import { OPCOES_POR_PAGINA, Paginacao } from '@/components/pipeline/pecas/paginacao';
 import { ItemEmBreve } from '@/components/pipeline/pecas/selo-em-breve';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -25,7 +25,6 @@ import {
 } from './comum';
 import { EsqueletoCarregando, EstadoErro, EstadoVazio } from './estados';
 
-const POR_PAGINA = 10;
 const INTERVALO_MS = 15_000;
 
 interface Resposta {
@@ -39,6 +38,7 @@ export function ListaCampanhas() {
   const [busca, setBusca] = useState('');
   const [dias, setDias] = useState('');
   const [pagina, setPagina] = useState(1);
+  const [porPagina, setPorPagina] = useState<number>(OPCOES_POR_PAGINA[0]);
   const [dados, setDados] = useState<Resposta | null>(null);
   const [erro, setErro] = useState(false);
   const [restrito, setRestrito] = useState(false);
@@ -47,7 +47,7 @@ export function ListaCampanhas() {
   const [erroExclusao, setErroExclusao] = useState<string | null>(null);
 
   const carregar = useCallback(async () => {
-    const q = new URLSearchParams({ pagina: String(pagina), porPagina: String(POR_PAGINA) });
+    const q = new URLSearchParams({ pagina: String(pagina), porPagina: String(porPagina) });
     if (status) q.set('status', status);
     if (busca.trim()) q.set('busca', busca.trim());
     if (dias) q.set('dias', dias);
@@ -63,7 +63,7 @@ export function ListaCampanhas() {
     } catch {
       setErro(true);
     }
-  }, [pagina, status, busca, dias]);
+  }, [pagina, porPagina, status, busca, dias]);
 
   useEffect(() => {
     void carregar();
@@ -134,7 +134,7 @@ export function ListaCampanhas() {
   const semFiltro = !status && !busca.trim() && !dias;
 
   return (
-    <div className="p-space-md flex flex-col gap-space-md h-[calc(100dvh-4rem)] min-h-[40rem]">
+    <div className="p-space-md flex flex-col gap-space-md">
       {cabecalho}
 
       {erro && <EstadoErro mensagem="Não foi possível carregar as campanhas. Tente de novo." onTentarDeNovo={carregar} />}
@@ -202,8 +202,8 @@ export function ListaCampanhas() {
               <p className="font-body-md text-body-md text-text-secondary">Nenhuma campanha encontrada</p>
             )
           ) : (
-            <section aria-label="Campanhas" className="bg-surface-card rounded-2xl shadow-sm overflow-hidden flex flex-col flex-1 min-h-0">
-              <div className="overflow-auto flex-1 min-h-0">
+            <section aria-label="Campanhas" className="bg-surface-card rounded-2xl shadow-sm overflow-hidden flex flex-col">
+              <div className="overflow-x-auto">
                 <table className="w-full text-left">
                   <thead className="bg-surface-subtle sticky top-0 z-10">
                     <tr className="font-label-sm text-table-header uppercase text-text-muted tracking-wider">
@@ -283,7 +283,18 @@ export function ListaCampanhas() {
                   </tbody>
                 </table>
               </div>
-              <Paginacao pagina={pagina} porPagina={POR_PAGINA} total={dados.total} onMudarPagina={setPagina} rotuloItem="campanhas" />
+              <Paginacao
+                pagina={pagina}
+                porPagina={porPagina}
+                total={dados.total}
+                onMudarPagina={setPagina}
+                rotuloItem="campanhas"
+                opcoesPorPagina={OPCOES_POR_PAGINA}
+                onMudarPorPagina={(valor) => {
+                  setPorPagina(valor);
+                  setPagina(1);
+                }}
+              />
             </section>
           )}
 

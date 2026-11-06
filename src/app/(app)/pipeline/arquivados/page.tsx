@@ -21,7 +21,7 @@ import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import { EsqueletoCarregando, EstadoErro, EstadoVazio } from '@/components/pipeline/pecas/estados';
-import { Paginacao } from '@/components/pipeline/pecas/paginacao';
+import { OPCOES_POR_PAGINA, Paginacao } from '@/components/pipeline/pecas/paginacao';
 import { CartaoIndicador } from '@/components/pipeline/pecas/cartao-indicador';
 import { ItemEmBreve } from '@/components/pipeline/pecas/selo-em-breve';
 import { BotaoExportar } from '@/components/pipeline/lote/botao-exportar';
@@ -34,8 +34,7 @@ import {
 } from '@/components/pipeline/filtros-arquivados';
 import { DistribuicaoMotivos, type MotivoDistribuicaoView } from '@/components/pipeline/distribuicao-motivos';
 
-type TamanhoPagina = 10 | 25 | 50;
-const TAMANHOS_PAGINA: readonly TamanhoPagina[] = [10, 25, 50];
+type TamanhoPagina = 10 | 20 | 50 | 100;
 
 type Aba = 'todos' | 'ganhos' | 'perdidos';
 
@@ -58,7 +57,7 @@ function tipoDaAba(aba: Aba): 'ganho' | 'perdido' | undefined {
 
 function normalizarPorPagina(valor: string | null): TamanhoPagina {
   const numero = Number(valor);
-  return numero === 10 || numero === 25 || numero === 50 ? numero : 10;
+  return numero === 10 || numero === 20 || numero === 50 || numero === 100 ? numero : 10;
 }
 
 interface RespostaArquivados {
@@ -283,8 +282,8 @@ function PipelineArquivadosConteudo() {
   }
 
   return (
-    // AC-735: altura da tela (menos o topo); só a tabela rola por dentro.
-    <div className="p-space-md flex flex-col gap-space-md h-[calc(100dvh-4rem)] min-h-[48rem]">
+    // Sem altura fixa: a página cresce com o conteúdo e rola inteira; o tamanho da lista vem do seletor "Itens por página".
+    <div className="p-space-md flex flex-col gap-space-md">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-space-md">
         <div>
           <h1 className="font-headline-lg text-headline-lg text-text-primary tracking-tight">
@@ -342,7 +341,7 @@ function PipelineArquivadosConteudo() {
         )}
       </div>
 
-      <div className="bg-surface-card rounded-2xl shadow-sm p-space-md flex flex-col gap-space-md flex-1 min-h-0">
+      <div className="bg-surface-card rounded-2xl shadow-sm p-space-md flex flex-col gap-space-md">
         <div className="flex items-center bg-surface-subtle p-1 rounded-xl self-start gap-1">
           {ABAS.map((item) => (
             <button
@@ -387,31 +386,16 @@ function PipelineArquivadosConteudo() {
           />
         )}
         {!carregando && !erro && dados && dados.total > 0 && (
-          <div className="flex-1 min-h-0 flex flex-col gap-space-md">
+          <div className="flex flex-col gap-space-md">
             <TabelaArquivados itens={dados.itens} podeReabrir={podeReabrir} onReaberto={aoReaberto} />
-            <div className="px-space-md py-2 flex items-center gap-1.5 flex-shrink-0">
-              <label htmlFor="pipeline-arquivados-exibir" className="font-body-sm text-body-sm text-text-muted">
-                Exibir:
-              </label>
-              <select
-                id="pipeline-arquivados-exibir"
-                value={dados.porPagina}
-                onChange={(evento) => mudarPorPagina(Number(evento.target.value) as TamanhoPagina)}
-                className="h-7 px-2 rounded bg-surface-subtle text-text-primary font-label-sm text-label-sm focus:outline-none"
-              >
-                {TAMANHOS_PAGINA.map((tamanho) => (
-                  <option key={tamanho} value={tamanho}>
-                    {tamanho} por página
-                  </option>
-                ))}
-              </select>
-            </div>
             <Paginacao
               pagina={dados.pagina}
               porPagina={dados.porPagina}
               total={dados.total}
               onMudarPagina={setPagina}
               rotuloItem="arquivados"
+              opcoesPorPagina={OPCOES_POR_PAGINA}
+              onMudarPorPagina={(valor) => mudarPorPagina(valor as TamanhoPagina)}
             />
           </div>
         )}

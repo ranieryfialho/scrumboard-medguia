@@ -196,12 +196,14 @@ describe('T-154: lista, arquivados e indicadores do pipeline', () => {
   });
 
   describe('AC-395: o servidor pagina a lista', () => {
-    test('porPagina fora de 10/25/50 vira 10 (função pura) @spec:AC-395', () => {
+    test('porPagina fora de 10/20/25/50/100 vira 10 (função pura) @spec:AC-395', () => {
       expect(normalizarPorPagina(undefined)).toBe(10);
       expect(normalizarPorPagina(7)).toBe(10);
       expect(normalizarPorPagina(10)).toBe(10);
       expect(normalizarPorPagina(25)).toBe(25);
       expect(normalizarPorPagina(50)).toBe(50);
+      expect(normalizarPorPagina(20)).toBe(20);
+      expect(normalizarPorPagina(100)).toBe(100);
     });
 
     test('25 cards ativos, página 2 de tamanho 10 traz os cards 11 a 20 e o total geral (25) @spec:AC-395', async () => {

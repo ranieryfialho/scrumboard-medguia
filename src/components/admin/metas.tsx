@@ -7,6 +7,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { CATALOGO_METAS, formatarAlvo, metaValida, type ChaveMeta, type UnidadeMeta } from '@/lib/metas/catalogo';
 import { EsqueletoCarregando, EstadoErro } from './estados';
+import { AvisoConfig, CabecalhoConfig, CLASSE_CAMPO, SecaoConfig } from './pecas-config';
 
 interface Detalhe {
   chave: ChaveMeta;
@@ -91,61 +92,71 @@ export function Metas() {
   }
 
   const areas = Array.from(new Set(CATALOGO_METAS.map((m) => m.area)));
+  const ICONE_DA_AREA: Record<string, string> = { Pipeline: 'filter_alt', Agenda: 'event', 'E-mail': 'mail', Comercial: 'payments' };
+  const definidas = detalhes?.length ?? 0;
 
   return (
-    <div className="flex flex-col gap-space-md">
-      <div>
-        <h1 className="font-headline-lg text-headline-lg text-text-primary">Metas</h1>
-        <p className="font-body-md text-body-md text-text-muted">Defina o resultado esperado de cada indicador. As telas mostram a meta e avisam quando ela é atingida.</p>
-      </div>
+    <div className="p-space-md flex flex-col gap-space-md">
+      <CabecalhoConfig
+        titulo="Metas"
+        descricao="Defina o resultado esperado de cada indicador. As telas mostram a meta e avisam quando ela é atingida."
+        acoes={
+          detalhes && (
+            <span className="h-10 px-4 rounded-xl bg-surface-card shadow-sm flex items-center gap-2 font-label-md text-label-md text-text-primary">
+              <span aria-hidden="true" className="material-symbols-outlined text-[19px] text-primary">flag</span>
+              {definidas} de {CATALOGO_METAS.length} metas definidas
+            </span>
+          )
+        }
+      />
 
       {erro && <EstadoErro mensagem="Não foi possível carregar as metas." onTentarDeNovo={() => void carregar()} />}
       {!erro && !detalhes && <EsqueletoCarregando />}
 
       {detalhes && (
         <>
-          {areas.map((area) => (
-            <section key={area} aria-label={area} className="bg-surface-card rounded-2xl p-space-md shadow-sm flex flex-col gap-space-sm">
-              <h2 className="font-headline-sm text-headline-sm text-text-primary">{area}</h2>
-              {CATALOGO_METAS.filter((m) => m.area === area).map((m) => {
-                const atual = detalhes.find((d) => d.chave === m.chave);
-                return (
-                  <div key={m.chave} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-t border-border-subtle pt-space-sm first:border-t-0 first:pt-0">
-                    <div className="flex flex-col">
-                      <label htmlFor={`meta-${m.chave}`} className="font-label-md text-label-md text-text-primary">
-                        {m.rotulo}
-                      </label>
-                      <span className="font-body-sm text-body-sm text-text-muted">{m.ajuda}</span>
-                      <span className="font-body-sm text-body-sm text-text-muted">
-                        {atual ? `${formatarAlvo(atual.valor, m.unidade)}${atual.atualizadoPorNome ? ` · ${atual.atualizadoPorNome}` : ''} · ${dataHora(atual.atualizadoEm)}` : 'Sem meta'}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {m.unidade === 'reais' && <span className="font-body-md text-body-md text-text-muted">R$</span>}
-                      <input
-                        id={`meta-${m.chave}`}
-                        inputMode="decimal"
-                        value={campos[m.chave] ?? ''}
-                        onChange={(e) => setCampos({ ...campos, [m.chave]: e.target.value })}
-                        placeholder="Sem meta"
-                        className="h-10 w-32 rounded-xl border border-border-subtle bg-surface-card px-3 text-right"
-                      />
-                      {m.unidade === 'porcentagem' && <span className="font-body-md text-body-md text-text-muted">%</span>}
-                    </div>
-                  </div>
-                );
-              })}
-            </section>
-          ))}
-          <div className="flex items-center gap-3 flex-wrap">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-space-md xl:items-start">
+            {areas.map((area) => (
+              <SecaoConfig key={area} nome={area} rotulo="Indicadores" titulo={area} icone={ICONE_DA_AREA[area] ?? 'flag'}>
+                <div className="flex flex-col">
+                  {CATALOGO_METAS.filter((m) => m.area === area).map((m) => {
+                    const atual = detalhes.find((d) => d.chave === m.chave);
+                    return (
+                      <div key={m.chave} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-border-subtle py-space-sm first:border-t-0 first:pt-0 last:pb-0">
+                        <div className="flex flex-col min-w-0">
+                          <label htmlFor={`meta-${m.chave}`} className="font-label-md text-label-md text-text-primary">
+                            {m.rotulo}
+                          </label>
+                          <span className="font-body-sm text-body-sm text-text-muted">{m.ajuda}</span>
+                          <span className="font-body-sm text-body-sm text-text-secondary mt-0.5">
+                            {atual ? `${formatarAlvo(atual.valor, m.unidade)}${atual.atualizadoPorNome ? ` · ${atual.atualizadoPorNome}` : ''} · ${dataHora(atual.atualizadoEm)}` : 'Sem meta'}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0">
+                          {m.unidade === 'reais' && <span className="font-label-md text-label-md text-text-muted">R$</span>}
+                          <input
+                            id={`meta-${m.chave}`}
+                            inputMode="decimal"
+                            value={campos[m.chave] ?? ''}
+                            onChange={(e) => setCampos({ ...campos, [m.chave]: e.target.value })}
+                            placeholder="Sem meta"
+                            className={`${CLASSE_CAMPO} w-36 text-right`}
+                          />
+                          {m.unidade === 'porcentagem' && <span className="font-label-md text-label-md text-text-muted">%</span>}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </SecaoConfig>
+            ))}
+          </div>
+          <div className="bg-surface-card rounded-2xl shadow-sm p-space-md flex items-center gap-3 flex-wrap">
             <Button type="button" disabled={trabalhando} onClick={() => void salvar()}>
               Salvar metas
             </Button>
-            {aviso && (
-              <span role={aviso.ok ? 'status' : 'alert'} className={`font-body-md text-body-md ${aviso.ok ? 'text-success-text' : 'text-danger-text'}`}>
-                {aviso.texto}
-              </span>
-            )}
+            <span className="font-body-sm text-body-sm text-text-muted">Campo em branco = sem meta para o indicador.</span>
+            {aviso && <AvisoConfig ok={aviso.ok}>{aviso.texto}</AvisoConfig>}
           </div>
         </>
       )}

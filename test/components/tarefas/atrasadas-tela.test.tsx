@@ -258,25 +258,17 @@ describe('T-183: TarefasAtrasadas', () => {
     expect(screen.queryByRole('link', { name: 'Cardio Vida' })).toBeFalsy();
   });
 
-  test('o quadro ocupa a altura da tela e só a tabela dos atrasados rola por dentro, com o cabeçalho fixo @spec:AC-762', async () => {
+  test('sem altura fixa: a página cresce com a lista e traz o seletor "Itens por página" (10, 20, 50, 100)', async () => {
     const { container } = render(<TarefasAtrasadas />);
     await screen.findByText('Fila de Resgate Imediato');
 
     const raiz = container.firstElementChild as HTMLElement;
-    expect(raiz.className).toContain('h-[calc(100dvh-4rem)]');
-    expect(raiz.className).toContain('min-h-[40rem]');
-    expect(raiz.className).toContain('flex-col');
+    expect(raiz.className).not.toContain('h-[calc(100dvh-4rem)]');
+    expect(raiz.className).not.toContain('min-h-[40rem]');
 
-    const secao = screen.getByText('Fila de Resgate Imediato').closest('section') as HTMLElement;
-    expect(secao.className).toContain('flex-1');
-    expect(secao.className).toContain('min-h-0');
-
-    const rolagem = secao.querySelector('.overflow-auto') as HTMLElement;
-    expect(rolagem.className).toContain('min-h-0');
-    expect(rolagem.className).toContain('relative');
-    expect(rolagem.textContent).toContain('Cardio Vida');
-    expect(within(rolagem).getAllByText('Cardio Vida').length).toBeGreaterThan(0);
-    expect(rolagem.contains(screen.getByRole('heading', { name: 'Fila de Resgate Imediato' }))).toBe(false);
-    expect((rolagem.querySelector('thead') as HTMLElement).className).toContain('sticky');
+    const seletor = screen.getByLabelText('Itens por página') as HTMLSelectElement;
+    expect(Array.from(seletor.options).map((o) => o.value)).toEqual(['10', '20', '50', '100']);
+    expect(seletor.value).toBe('10');
   });
+
 });

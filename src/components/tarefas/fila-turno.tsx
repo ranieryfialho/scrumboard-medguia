@@ -11,7 +11,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 
 import { AvisoTempoReal } from '@/components/pipeline/pecas/aviso-tempo-real';
-import { Paginacao } from '@/components/pipeline/pecas/paginacao';
+import { OPCOES_POR_PAGINA, Paginacao } from '@/components/pipeline/pecas/paginacao';
 import { SeloEtapa } from '@/components/pipeline/pecas/selo-etapa';
 import { ItemEmBreve } from '@/components/pipeline/pecas/selo-em-breve';
 import { podeLiberar } from '@/domain/cadencia/feriados';
@@ -35,8 +35,6 @@ import { EsqueletoCarregando, EstadoErro } from './estados';
 import { IndicadoresTurno } from './indicadores-turno';
 import { ConfirmarSucesso } from './confirmar-sucesso';
 
-const POR_PAGINA = 10;
-
 function seloDoTurno(agora: Date): string {
   const turno = podeLiberar(agora) ? turnoVigente(agora) : null;
   if (turno === 'manha') return 'Turno Manhã em andamento (08h00 – 12h00)';
@@ -53,6 +51,7 @@ export function FilaTurno() {
   const envioRef = useRef(false);
   const [busca, setBusca] = useState('');
   const [pagina, setPagina] = useState(1);
+  const [porPagina, setPorPagina] = useState<number>(OPCOES_POR_PAGINA[0]);
   const [responsavelId, setResponsavelId] = useState('');
   const [podeFiltrar, setPodeFiltrar] = useState(false);
   const [responsaveis, setResponsaveis] = useState<{ id: string; nome: string }[]>([]);
@@ -129,12 +128,12 @@ export function FilaTurno() {
     const termo = busca.trim().toLowerCase();
     return termo ? fila.filter((i) => i.lead.nome.toLowerCase().includes(termo)) : fila;
   }, [fila, busca]);
-  const paginaAtual = Math.min(pagina, Math.max(1, Math.ceil(filtrados.length / POR_PAGINA)));
-  const visiveis = filtrados.slice((paginaAtual - 1) * POR_PAGINA, paginaAtual * POR_PAGINA);
+  const paginaAtual = Math.min(pagina, Math.max(1, Math.ceil(filtrados.length / porPagina)));
+  const visiveis = filtrados.slice((paginaAtual - 1) * porPagina, paginaAtual * porPagina);
 
   return (
-    // AC-762: altura da tela (menos o topo); só a tabela da fila rola por dentro.
-    <div className="p-space-md flex flex-col gap-space-md h-[calc(100dvh-4rem)] min-h-[40rem]">
+    // Sem altura fixa: a página cresce com a fila e rola inteira; o tamanho vem do seletor "Itens por página".
+    <div className="p-space-md flex flex-col gap-space-md">
       <div className="flex items-start justify-between flex-wrap gap-space-md">
         <div>
           <h1 className="font-headline-lg text-headline-lg text-text-primary tracking-tight">Fila do Turno Operacional</h1>
@@ -185,7 +184,7 @@ export function FilaTurno() {
           )}
           <DestaqueTarefa item={fila.find((i) => !i.aguardandoAte) ?? fila[0] ?? null} enviando={enviando} onConcluir={aoConcluir} />
 
-          <section className="bg-surface-card rounded-2xl shadow-sm overflow-hidden flex flex-col flex-1 min-h-0">
+          <section className="bg-surface-card rounded-2xl shadow-sm overflow-hidden flex flex-col">
             <div className="p-space-md flex items-center justify-between flex-wrap gap-space-sm flex-shrink-0">
               <div className="flex items-center gap-3">
                 <h2 className="font-headline-sm text-headline-sm text-text-primary">Fila Ordenada do Turno</h2>
@@ -214,7 +213,7 @@ export function FilaTurno() {
                 <p className="px-space-md pb-space-md font-body-md text-body-md text-text-secondary">Nenhum toque pendente neste turno.</p>
               )
             ) : (
-              <div className="relative overflow-auto flex-1 min-h-0">
+              <div className="relative overflow-x-auto">
                 <table className="w-full text-left">
                   <thead className="bg-surface-subtle sticky top-0 z-10">
                     <tr className="font-label-sm text-table-header uppercase text-text-muted tracking-wider">
@@ -296,7 +295,18 @@ export function FilaTurno() {
                 </table>
               </div>
             )}
-            <Paginacao pagina={paginaAtual} porPagina={POR_PAGINA} total={filtrados.length} onMudarPagina={setPagina} rotuloItem="toques" />
+            <Paginacao
+              pagina={paginaAtual}
+              porPagina={porPagina}
+              total={filtrados.length}
+              onMudarPagina={setPagina}
+              rotuloItem="toques"
+              opcoesPorPagina={OPCOES_POR_PAGINA}
+              onMudarPorPagina={(valor) => {
+                setPorPagina(valor);
+                setPagina(1);
+              }}
+            />
           </section>
         </>
       )}
