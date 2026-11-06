@@ -174,6 +174,44 @@ export async function createInstance(config: EvolutionConfig): Promise<void> {
 }
 
 /**
+ * Reage (ou tira a reação, com `emoji` vazio) a uma mensagem. `fromMe` diz de quem é a mensagem reagida: `true` se foi a empresa que enviou.
+ * Devolve `true` quando a Evolution aceitou.
+ */
+export async function sendReaction(
+  config: EvolutionConfig,
+  mensagem: { remoteJid: string; fromMe: boolean; id: string },
+  emoji: string
+): Promise<boolean> {
+  try {
+    const res = await fetch(`${base(config)}/message/sendReaction/${config.instance}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', apikey: config.apiKey },
+      body: JSON.stringify({ key: { remoteJid: mensagem.remoteJid, fromMe: mensagem.fromMe, id: mensagem.id }, reaction: emoji }),
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
+/** URL (temporária) da foto de perfil do contato no WhatsApp; `null` quando não tem foto, está oculta pela privacidade ou a Evolution falhou. */
+export async function fetchProfilePictureUrl(config: EvolutionConfig, numero: string): Promise<string | null> {
+  try {
+    const res = await fetch(`${base(config)}/chat/fetchProfilePictureUrl/${config.instance}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', apikey: config.apiKey },
+      body: JSON.stringify({ number: numero }),
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!res.ok) return null;
+    const corpo = (await res.json().catch(() => null)) as { profilePictureUrl?: unknown } | null;
+    return typeof corpo?.profilePictureUrl === 'string' && corpo.profilePictureUrl !== '' ? corpo.profilePictureUrl : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Configura o webhook da instância para receber mensagens. Devolve `true`
  * quando a Evolution aceitou o registro e `false` caso contrário (recusa ou
  * indisponibilidade) — quem chama decide o que fazer com a falha (AC-185:

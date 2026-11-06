@@ -7,7 +7,8 @@
 import Link from 'next/link';
 
 import { ConversaLead } from '@/components/pipeline/conversa/conversa-lead';
-import { formatarNumero, iniciais, nomeDaConversa, type ConversaView } from './comum';
+import { AvatarContato } from './avatar-contato';
+import { formatarNumero, nomeDaConversa, type ConversaView } from './comum';
 
 interface PainelConversaProps {
   conversa: Pick<ConversaView, 'leadId' | 'numero' | 'nome' | 'naoLidas' | 'card'>;
@@ -22,9 +23,11 @@ export function PainelConversa({ conversa, versao, onAtualizou }: PainelConversa
   const cabecalho = (
     <div className="p-space-md border-b border-border-subtle flex items-center justify-between gap-3 shrink-0">
       <div className="flex items-center gap-3 min-w-0">
-        <span aria-hidden="true" className="w-11 h-11 rounded-full bg-surface-container flex items-center justify-center font-label-lg text-label-lg text-text-secondary">
-          {iniciais(nome)}
-        </span>
+        <AvatarContato
+          numero={conversa.numero}
+          nome={nome}
+          className="w-11 h-11 rounded-full bg-surface-container flex items-center justify-center font-label-lg text-label-lg text-text-secondary shrink-0"
+        />
         <div className="min-w-0">
           <h2 className="font-headline-sm text-headline-sm text-text-primary truncate">{nome}</h2>
           <p className="font-body-sm text-body-sm text-text-muted">{formatarNumero(conversa.numero)}</p>

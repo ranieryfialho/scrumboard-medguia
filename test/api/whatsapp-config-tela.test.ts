@@ -36,7 +36,7 @@ describe('T-193: configuração do WhatsApp para a tela', () => {
     expect(corpo).toHaveProperty('config');
     expect(corpo.servidor).toEqual({ urlBase: 'https://evolution.teste.local', chaveConfigurada: true });
     expect(corpo.webhookUrl).toBe(`https://crm.teste.local/api/whatsapp/webhook?empresa_id=${amb.tenants.empresaA}&secret=••••••••`);
-    expect(corpo.eventos).toEqual(['MESSAGES_UPSERT']);
+    expect(corpo.eventos).toEqual(['MESSAGES_UPSERT', 'MESSAGES_UPDATE']);
     expect(texto).not.toContain(segredo);
     expect(texto).not.toContain('chave-super-secreta');
     expect(JSON.stringify(corpo.config)).not.toContain(segredo);

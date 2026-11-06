@@ -33,6 +33,8 @@ interface MensagemTeste {
   created_at: string;
   numero: string;
   status: string;
+  reagivel?: boolean;
+  reacoes?: { autor: 'nos' | 'contato'; emoji: string }[];
 }
 
 const MENSAGENS: MensagemTeste[] = [
@@ -68,6 +70,7 @@ const fetchOriginal = globalThis.fetch;
 const eventSourceOriginal = (globalThis as { EventSource?: unknown }).EventSource;
 let fetchFalso: ReturnType<typeof vi.fn>;
 let mensagensDoServidor: MensagemTeste[];
+let respostaDaReacao: () => Promise<unknown>;
 let telefones: Array<{ id?: string; numero: string; rotulo?: string | null; principal: boolean }>;
 let statusDoWhatsapp: { state: string; instance: string | null };
 let notas: Array<{ id: string; texto: string; autorNome: string | null; ocorridoEm: string }>;
@@ -98,6 +101,7 @@ beforeEach(() => {
   notas = [{ id: 'n1', texto: 'Pediu reforço de segurança.', autorNome: 'Dra. Juliana', ocorridoEm: diaAs(0, 12) }];
   respostaDasMensagens = () => resposta(200, { mensagens: mensagensDoServidor });
   respostaDoEnvio = () => resposta(200, { id: 'novo' });
+  respostaDaReacao = () => resposta(200, { success: true });
   respostaDoEnvioDeMidia = () => resposta(200, { success: true });
   respostaDoNovoNumero = () => resposta(201, { id: 'tel-3', numero: '5511933332222', rotulo: 'Financeiro' });
   templatesDoServidor = [
@@ -132,6 +136,7 @@ beforeEach(() => {
     if (url === '/api/whatsapp/status') return resposta(200, statusDoWhatsapp);
     if (url === '/api/whatsapp/lidas' && metodo === 'POST') return resposta(200, { atualizadas: 1 });
     if (url === '/api/whatsapp/send' && metodo === 'POST') return respostaDoEnvio();
+    if (url === '/api/whatsapp/reacao' && metodo === 'POST') return respostaDaReacao();
     if (url === '/api/whatsapp/send-midia' && metodo === 'POST') return respostaDoEnvioDeMidia();
     if (url === '/api/whatsapp/templates') return resposta(200, { templates: templatesDoServidor, podeGerir: false });
     if (url === `/api/leads/${LEAD_ID}/telefones` && metodo === 'POST') return respostaDoNovoNumero();
@@ -175,9 +180,12 @@ describe('T-174: tela da conversa de WhatsApp do lead', () => {
       expect(within(conversa).getAllByText(/^\d{2}\/\d{2}\/\d{4}$/).length).toBe(1);
 
       const doEnviada = conversa.querySelector('[data-direcao="enviada"]') as HTMLElement;
-      expect(doEnviada.textContent).toMatch(/\d{2}:\d{2} · entregue/);
-      expect((conversa.querySelectorAll('[data-direcao="enviada"]')[1] as HTMLElement).textContent).toMatch(/· lida/);
-      expect(conversa.querySelector('[data-direcao="recebida"]')!.textContent).not.toMatch(/· (lida|entregue|enviada)/);
+      // Os checks do WhatsApp: entregue = dois checks, lida = dois checks azuis; só a mensagem enviada leva check.
+      expect(doEnviada.textContent).toMatch(/\d{2}:\d{2}\s*Entregue/);
+      expect(doEnviada.querySelector('[data-status="entregue"]')).not.toBeNull();
+      const dasEnviadas = conversa.querySelectorAll('[data-direcao="enviada"]');
+      expect((dasEnviadas[1] as HTMLElement).querySelector('[data-status="lida"]')).not.toBeNull();
+      expect(conversa.querySelector('[data-direcao="recebida"] [data-status]')).toBeNull();
     });
 
     test('a conversa abre rolada até a mensagem mais recente @spec:AC-437', async () => {
@@ -333,6 +341,109 @@ describe('T-174: tela da conversa de WhatsApp do lead', () => {
 
       cleanup();
       expect(origem.fechado).toBe(true);
+    });
+  });
+
+  describe('checks ao vivo: o status da mensagem enviada muda sem recarregar', () => {
+    test('mensagem.status deste lead relê a conversa, sobe o check e não marca nada como lido', async () => {
+      await abrirTela();
+      const origem = EventSourceFalso.instancias.find((i) => i.url === '/api/stream' && i.ouvintes.has('mensagem.status'))!;
+      expect(origem).toBeTruthy();
+      const conversa = screen.getByRole('region', { name: 'Conversa do WhatsApp' });
+      const primeiraEnviada = () => conversa.querySelector('[data-direcao="enviada"]') as HTMLElement;
+      expect(primeiraEnviada().querySelector('[data-status="entregue"]')).not.toBeNull();
+
+      const leiturasAntes = chamadas('GET', `/api/whatsapp/messages?leadId=${LEAD_ID}`).length;
+      const lidasAntes = chamadas('POST', '/api/whatsapp/lidas').length;
+      mensagensDoServidor = MENSAGENS.map((m) => (m.id === 'm1' ? { ...m, status: 'lida' } : m));
+      await act(async () => {
+        origem.disparar('mensagem.status', { empresaId: 'e1', leadId: LEAD_ID, mensagemId: 'm1', status: 'lida' });
+      });
+
+      await waitFor(() => expect(primeiraEnviada().querySelector('[data-status="lida"]')).not.toBeNull());
+      expect(chamadas('GET', `/api/whatsapp/messages?leadId=${LEAD_ID}`).length).toBeGreaterThan(leiturasAntes);
+      expect(chamadas('POST', '/api/whatsapp/lidas')).toHaveLength(lidasAntes);
+    });
+
+    test('status de mensagem de outro lead não relê esta conversa', async () => {
+      await abrirTela();
+      const origem = EventSourceFalso.instancias.find((i) => i.ouvintes.has('mensagem.status'))!;
+      const leiturasAntes = chamadas('GET', `/api/whatsapp/messages?leadId=${LEAD_ID}`).length;
+      await act(async () => {
+        origem.disparar('mensagem.status', { empresaId: 'e1', leadId: 'outro-lead', mensagemId: 'x', status: 'lida' });
+      });
+      expect(chamadas('GET', `/api/whatsapp/messages?leadId=${LEAD_ID}`)).toHaveLength(leiturasAntes);
+    });
+  });
+
+  describe('reações (emoji) às mensagens', () => {
+    const comReacao = (m: MensagemTeste) => ({ ...m, reagivel: true });
+
+    test('mostra o emoji embaixo do balão: o do cliente e o da empresa, sem aparecer onde não há reação', async () => {
+      mensagensDoServidor = MENSAGENS.map((m) =>
+        m.id === 'm1' ? { ...comReacao(m), reacoes: [{ autor: 'contato', emoji: '❤️' }] } : m.id === 'm2' ? { ...comReacao(m), reacoes: [{ autor: 'nos', emoji: '👍' }, { autor: 'contato', emoji: '😂' }] } : comReacao(m)
+      );
+      await abrirTela();
+      const conversa = screen.getByRole('region', { name: 'Conversa do WhatsApp' });
+
+      const chips = within(conversa).getAllByTestId('reacoes-da-mensagem');
+      expect(chips).toHaveLength(2);
+      expect(chips[0].textContent).toBe('❤️');
+      expect(chips[1].textContent).toBe('👍😂');
+    });
+
+    test('reagir: abre as reações rápidas, manda o emoji escolhido e relê a conversa', async () => {
+      mensagensDoServidor = MENSAGENS.map(comReacao);
+      await abrirTela();
+      const leiturasAntes = chamadas('GET', `/api/whatsapp/messages?leadId=${LEAD_ID}`).length;
+
+      fireEvent.click(screen.getAllByRole('button', { name: 'Reagir à mensagem' })[0]);
+      fireEvent.click(screen.getByRole('menuitem', { name: 'Reagir com 🙏' }));
+
+      await waitFor(() => expect(chamadas('POST', '/api/whatsapp/reacao')).toHaveLength(1));
+      expect(corpoDoPost('/api/whatsapp/reacao')).toEqual({ mensagemId: 'm1', emoji: '🙏' });
+      await waitFor(() => expect(chamadas('GET', `/api/whatsapp/messages?leadId=${LEAD_ID}`).length).toBeGreaterThan(leiturasAntes));
+    });
+
+    test('clicar na reação que já é sua tira a reação (manda emoji vazio)', async () => {
+      mensagensDoServidor = MENSAGENS.map((m) => (m.id === 'm1' ? { ...comReacao(m), reacoes: [{ autor: 'nos', emoji: '👍' }] } : comReacao(m)));
+      await abrirTela();
+
+      fireEvent.click(screen.getAllByRole('button', { name: 'Reagir à mensagem' })[0]);
+      fireEvent.click(screen.getByRole('menuitem', { name: 'Tirar a reação 👍' }));
+
+      await waitFor(() => expect(chamadas('POST', '/api/whatsapp/reacao')).toHaveLength(1));
+      expect(corpoDoPost('/api/whatsapp/reacao')).toEqual({ mensagemId: 'm1', emoji: '' });
+    });
+
+    test('mensagem sem id da Evolution não mostra o botão de reagir; falha mostra o aviso', async () => {
+      await abrirTela();
+      expect(screen.queryAllByRole('button', { name: 'Reagir à mensagem' })).toHaveLength(0);
+      cleanup();
+
+      mensagensDoServidor = MENSAGENS.map(comReacao);
+      respostaDaReacao = () => resposta(502, { codigo: 'FALHA_ENVIO' });
+      await abrirTela();
+      fireEvent.click(screen.getAllByRole('button', { name: 'Reagir à mensagem' })[0]);
+      fireEvent.click(screen.getByRole('menuitem', { name: 'Reagir com 👍' }));
+      expect(await screen.findByText('Não foi possível reagir à mensagem. Tente de novo.')).toBeTruthy();
+    });
+
+    test('mensagem.reacao deste lead relê a conversa sem marcar nada como lido', async () => {
+      await abrirTela();
+      const origem = EventSourceFalso.instancias.find((i) => i.ouvintes.has('mensagem.reacao'))!;
+      expect(origem).toBeTruthy();
+      const leiturasAntes = chamadas('GET', `/api/whatsapp/messages?leadId=${LEAD_ID}`).length;
+      const lidasAntes = chamadas('POST', '/api/whatsapp/lidas').length;
+
+      mensagensDoServidor = MENSAGENS.map((m) => (m.id === 'm1' ? { ...comReacao(m), reacoes: [{ autor: 'contato', emoji: '😮' }] } : m));
+      await act(async () => {
+        origem.disparar('mensagem.reacao', { empresaId: 'e1', leadId: LEAD_ID, mensagemId: 'm1' });
+      });
+
+      expect(await screen.findByText('😮')).toBeTruthy();
+      expect(chamadas('GET', `/api/whatsapp/messages?leadId=${LEAD_ID}`).length).toBeGreaterThan(leiturasAntes);
+      expect(chamadas('POST', '/api/whatsapp/lidas')).toHaveLength(lidasAntes);
     });
   });
 

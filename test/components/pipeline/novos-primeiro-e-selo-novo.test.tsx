@@ -95,6 +95,14 @@ describe("Entrada de leads: mais novo primeiro e selo Novo", () => {
     expect(posicao("Lead Do Meio")).toBeLessThan(posicao("Lead Antigo"));
   });
 
+  test("cada card do funil mostra a foto do WhatsApp do lead ao lado do nome", async () => {
+    render(<BoardKanban />);
+    await screen.findByText("Lead Recente");
+
+    const cardRecente = screen.getByText("Lead Recente").closest(".relative")!;
+    expect(cardRecente.querySelector('img[src="/api/whatsapp/foto?leadId=lead-b"]')).not.toBeNull();
+  });
+
   test("o selo Novo aparece só em quem chegou dentro das 12h de dia útil, e só na Entrada de leads", async () => {
     render(<BoardKanban />);
     await screen.findByText("Lead Recente");

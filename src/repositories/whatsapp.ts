@@ -10,7 +10,7 @@ import { timingSafeEqual } from 'node:crypto';
 import { and, desc, eq, inArray, isNull, or, sql } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
-import { empresaConfiguracoes, leadTelefones, leads, oportunidades, whatsappAvulsos, whatsappMensagens } from '../db/schema';
+import { empresaConfiguracoes, leadTelefones, leads, oportunidades, whatsappAvulsos, whatsappMensagens, whatsappReacoes } from '../db/schema';
 import { normalizarNumero, variantesNumero } from '../domain/whatsapp/numero';
 import type { ContextoTenant } from '../lib/auth/tenant';
 import { comTenant, type TransacaoTenant } from './contexto';
@@ -238,12 +238,55 @@ export async function registrarMensagemEnviada(
         numero: dados.numero,
         mensagem: dados.texto,
         direcao: 'enviada',
+        // Nasce com um check; "entregue" e "lida" chegam depois pelo webhook (`atualizarStatusDaMensagem`).
+        status: 'enviada',
         evolutionMessageId: dados.evolutionMessageId,
         ...colunasDaMidia(dados.midia),
       })
       .returning({ id: whatsappMensagens.id });
 
     return { mensagemId: inserida.id, leadId };
+  });
+}
+
+/** enviada (1 check) < entregue (2 checks) < lida (2 azuis). Valor desconhecido conta como "entregue" (o padrão antigo da coluna). */
+const POSICAO_DO_STATUS = sql`case lower(${whatsappMensagens.status}) when 'enviada' then 1 when 'lida' then 3 else 2 end`;
+const POSICAO_NOVA = { enviada: 1, entregue: 2, lida: 3 } as const;
+
+/**
+ * Avança o status de uma mensagem enviada (aviso `messages.update` da Evolution). Só sobe — os avisos chegam fora de ordem e um
+ * "entregue" atrasado nunca pode desfazer um "lida". Devolve se mudou algo; ao mudar, avisa a tela aberta (canal `oportunidade`,
+ * tipo `mensagem.status`) na mesma transação.
+ */
+export async function atualizarStatusDaMensagem(
+  db: NodePgDatabase,
+  contexto: Pick<ContextoTenant, 'empresaId'>,
+  dados: { evolutionMessageId: string; status: 'enviada' | 'entregue' | 'lida' }
+): Promise<boolean> {
+  return comTenant(db, contexto, async (tx) => {
+    const [atualizada] = await tx
+      .update(whatsappMensagens)
+      .set({ status: dados.status })
+      .where(
+        and(
+          eq(whatsappMensagens.empresaId, contexto.empresaId),
+          eq(whatsappMensagens.evolutionMessageId, dados.evolutionMessageId),
+          eq(whatsappMensagens.direcao, 'enviada'),
+          sql`${POSICAO_DO_STATUS} < ${POSICAO_NOVA[dados.status]}`
+        )
+      )
+      .returning({ id: whatsappMensagens.id, leadId: whatsappMensagens.leadId });
+    if (!atualizada) return false;
+
+    const aviso = JSON.stringify({
+      tipo: 'mensagem.status',
+      empresaId: contexto.empresaId,
+      leadId: atualizada.leadId,
+      mensagemId: atualizada.id,
+      status: dados.status,
+    });
+    await tx.execute(sql`select pg_notify('oportunidade', ${aviso})`);
+    return true;
   });
 }
 
@@ -257,6 +300,15 @@ export interface MensagemConversa {
   status: string;
   /** T-290: só vem quando a mensagem tem mídia (o arquivo se abre por `GET /api/whatsapp/midia/:id`). */
   midia?: { tipo: MidiaDaMensagem['tipo']; mimetype: string | null; nome: string | null };
+  /** Só dá para reagir a mensagem que tem o id da Evolution (as importadas do legado, sem ele, não reagem). */
+  reagivel: boolean;
+  /** Uma reação por pessoa: a da empresa (`nos`) e/ou a do cliente (`contato`). */
+  reacoes: ReacaoDaMensagem[];
+}
+
+export interface ReacaoDaMensagem {
+  autor: 'nos' | 'contato';
+  emoji: string;
 }
 
 function mapearParaHistoricoLegado(linha: {
@@ -269,6 +321,7 @@ function mapearParaHistoricoLegado(linha: {
   midiaTipo: string | null;
   midiaMimetype: string | null;
   midiaNome: string | null;
+  evolutionMessageId: string | null;
 }): MensagemConversa {
   return {
     id: linha.id,
@@ -277,6 +330,8 @@ function mapearParaHistoricoLegado(linha: {
     created_at: linha.criadoEm,
     numero: linha.numero,
     status: linha.status,
+    reagivel: linha.evolutionMessageId !== null,
+    reacoes: [],
     ...(linha.midiaTipo
       ? { midia: { tipo: linha.midiaTipo as MidiaDaMensagem['tipo'], mimetype: linha.midiaMimetype, nome: linha.midiaNome } }
       : {}),
@@ -293,9 +348,81 @@ const CAMPOS_HISTORICO = {
   midiaTipo: whatsappMensagens.midiaTipo,
   midiaMimetype: whatsappMensagens.midiaMimetype,
   midiaNome: whatsappMensagens.midiaNome,
+  evolutionMessageId: whatsappMensagens.evolutionMessageId,
 };
 
 const LIMITE_HISTORICO = 200;
+
+/** Junta, em uma consulta só, as reações das mensagens do histórico. */
+async function anexarReacoes(tx: TransacaoTenant, mensagens: MensagemConversa[]): Promise<MensagemConversa[]> {
+  if (mensagens.length === 0) return mensagens;
+  const linhas = await tx
+    .select({ mensagemId: whatsappReacoes.mensagemId, autor: whatsappReacoes.autor, emoji: whatsappReacoes.emoji })
+    .from(whatsappReacoes)
+    .where(inArray(whatsappReacoes.mensagemId, mensagens.map((m) => m.id)));
+  if (linhas.length === 0) return mensagens;
+
+  const porMensagem = new Map<string, ReacaoDaMensagem[]>();
+  for (const linha of linhas) {
+    const lista = porMensagem.get(linha.mensagemId) ?? [];
+    lista.push({ autor: linha.autor as ReacaoDaMensagem['autor'], emoji: linha.emoji });
+    porMensagem.set(linha.mensagemId, lista);
+  }
+  return mensagens.map((m) => ({ ...m, reacoes: porMensagem.get(m.id) ?? [] }));
+}
+
+/**
+ * Grava a reação de `autor` a uma mensagem (identificada pelo id da Evolution) — ou a apaga, se `emoji` vier vazio. Cada pessoa tem uma
+ * reação por mensagem: trocar o emoji substitui a anterior. Reação a mensagem que não está no CRM é ignorada (devolve `false`). Ao mudar,
+ * avisa a conversa aberta (canal `oportunidade`, tipo `mensagem.reacao`) na mesma transação.
+ */
+export async function registrarReacao(
+  db: NodePgDatabase,
+  contexto: Pick<ContextoTenant, 'empresaId'>,
+  dados: { evolutionMessageId: string; autor: 'nos' | 'contato'; emoji: string }
+): Promise<boolean> {
+  return comTenant(db, contexto, async (tx) => {
+    const [mensagem] = await tx
+      .select({ id: whatsappMensagens.id, leadId: whatsappMensagens.leadId })
+      .from(whatsappMensagens)
+      .where(and(eq(whatsappMensagens.empresaId, contexto.empresaId), eq(whatsappMensagens.evolutionMessageId, dados.evolutionMessageId)))
+      .limit(1);
+    if (!mensagem) return false;
+
+    if (dados.emoji === '') {
+      await tx.delete(whatsappReacoes).where(and(eq(whatsappReacoes.mensagemId, mensagem.id), eq(whatsappReacoes.autor, dados.autor)));
+    } else {
+      await tx
+        .insert(whatsappReacoes)
+        .values({ empresaId: contexto.empresaId, mensagemId: mensagem.id, autor: dados.autor, emoji: dados.emoji })
+        .onConflictDoUpdate({
+          target: [whatsappReacoes.mensagemId, whatsappReacoes.autor],
+          set: { emoji: dados.emoji, atualizadoEm: sql`now()` },
+        });
+    }
+
+    const aviso = JSON.stringify({ tipo: 'mensagem.reacao', empresaId: contexto.empresaId, leadId: mensagem.leadId, mensagemId: mensagem.id });
+    await tx.execute(sql`select pg_notify('oportunidade', ${aviso})`);
+    return true;
+  });
+}
+
+/** A mensagem para a qual a empresa quer reagir: número, de quem é e o id da Evolution. `null` se não existe neste tenant ou não tem id. */
+export async function buscarMensagemParaReacao(
+  db: NodePgDatabase,
+  contexto: Pick<ContextoTenant, 'empresaId'>,
+  mensagemId: string
+): Promise<{ id: string; numero: string; direcao: 'enviada' | 'recebida'; evolutionMessageId: string } | null> {
+  return comTenant(db, contexto, async (tx) => {
+    const [linha] = await tx
+      .select({ id: whatsappMensagens.id, numero: whatsappMensagens.numero, direcao: whatsappMensagens.direcao, evolutionMessageId: whatsappMensagens.evolutionMessageId })
+      .from(whatsappMensagens)
+      .where(and(eq(whatsappMensagens.id, mensagemId), eq(whatsappMensagens.empresaId, contexto.empresaId)))
+      .limit(1);
+    if (!linha || !linha.evolutionMessageId) return null;
+    return { ...linha, evolutionMessageId: linha.evolutionMessageId };
+  });
+}
 
 /**
  * Histórico de uma conversa por número — enviadas e recebidas, das duas
@@ -319,7 +446,7 @@ export async function buscarHistoricoPorNumero(
       .orderBy(desc(whatsappMensagens.criadoEm))
       .limit(LIMITE_HISTORICO);
 
-    return linhas.reverse().map(mapearParaHistoricoLegado);
+    return anexarReacoes(tx, linhas.reverse().map(mapearParaHistoricoLegado));
   });
 }
 
@@ -367,7 +494,7 @@ export async function buscarHistoricoPorLead(
       .orderBy(desc(whatsappMensagens.criadoEm))
       .limit(LIMITE_HISTORICO);
 
-    return linhas.reverse().map(mapearParaHistoricoLegado);
+    return anexarReacoes(tx, linhas.reverse().map(mapearParaHistoricoLegado));
   });
 }
 

@@ -14,7 +14,9 @@ import { NextResponse, type NextRequest } from 'next/server';
 
 import { getDb } from '../../../../db/client';
 import { extrairMensagens, type EvolutionWebhookPayload } from '../../../../domain/whatsapp/extrair-mensagem';
-import { registrarMensagemRecebida, verificarSegredoWebhook } from '../../../../repositories/whatsapp';
+import { eventoDeAtualizacao, extrairAtualizacoesDeStatus, type PayloadDeAtualizacao } from '../../../../domain/whatsapp/extrair-status';
+import { extrairReacoes, type PayloadComReacoes } from '../../../../domain/whatsapp/extrair-reacao';
+import { atualizarStatusDaMensagem, registrarMensagemRecebida, registrarReacao, verificarSegredoWebhook } from '../../../../repositories/whatsapp';
 
 export const dynamic = 'force-dynamic';
 
@@ -39,6 +41,27 @@ export async function POST(request: NextRequest) {
 
   const payload: EvolutionWebhookPayload | null = await request.json().catch(() => null);
   if (!payload || typeof payload !== 'object') return requisicaoInvalida();
+
+  // `messages.update`: os checks (entregue/lida) das mensagens que a empresa enviou.
+  if (eventoDeAtualizacao(payload.event)) {
+    try {
+      for (const atualizacao of extrairAtualizacoesDeStatus(payload as PayloadDeAtualizacao)) {
+        await atualizarStatusDaMensagem(db, { empresaId }, atualizacao);
+      }
+    } catch {
+      return NextResponse.json({ codigo: 'ERRO_INTERNO' }, { status: 500 });
+    }
+    return NextResponse.json({ ok: true });
+  }
+
+  // Reações (emoji) do contato — ou da empresa, pelo celular — a mensagens que já estão no CRM.
+  try {
+    for (const reacao of extrairReacoes(payload as PayloadComReacoes)) {
+      await registrarReacao(db, { empresaId }, reacao);
+    }
+  } catch {
+    return NextResponse.json({ codigo: 'ERRO_INTERNO' }, { status: 500 });
+  }
 
   const mensagens = extrairMensagens(payload);
 

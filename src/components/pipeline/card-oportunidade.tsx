@@ -5,6 +5,7 @@ import { useDraggable } from "@dnd-kit/core";
 import Link from "next/link";
 import { AlarmClock, ExternalLink } from "lucide-react";
 
+import { AvatarContato } from "@/components/whatsapp/avatar-contato";
 import { leadEhNovo } from "@/domain/pipeline/lead-novo";
 import { BotaoIniciarCadencia } from "./botao-iniciar-cadencia";
 
@@ -119,6 +120,13 @@ export function CardOportunidade({ oportunidade, isOverlay, atrasado }: CardOpor
     >
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-2 min-w-0 flex-wrap">
+          {!isOverlay && (
+            <AvatarContato
+              leadId={oportunidade.leadId}
+              nome={oportunidade.leadNome}
+              className="size-8 rounded-full bg-surface-container flex items-center justify-center font-label-sm text-[11px] text-text-secondary shrink-0"
+            />
+          )}
           <span className="font-headline-sm text-headline-sm text-text-primary leading-tight">{oportunidade.leadNome}</span>
           {mostrarNovo && (
             <span

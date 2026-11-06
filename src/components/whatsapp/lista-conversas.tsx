@@ -3,7 +3,8 @@
 import { SeloEtapa } from '@/components/pipeline/pecas/selo-etapa';
 import { nomeDaEtapa } from '@/components/pipeline/detalhe/jornada';
 import { ItemEmBreve } from '@/components/pipeline/pecas/selo-em-breve';
-import { formatarNumero, horarioCurto, iniciais, nomeDaConversa, type ConversaView } from './comum';
+import { AvatarContato } from './avatar-contato';
+import { formatarNumero, horarioCurto, nomeDaConversa, type ConversaView } from './comum';
 
 export type AbaConversas = 'nao_lidas' | 'minhas' | 'todas';
 
@@ -68,9 +69,11 @@ export function ListaConversas({ conversas, contagens, aba, busca, selecionada, 
                   className={`w-full min-w-0 text-left px-space-md py-3 flex flex-col gap-1 border-l-4 ${ativa ? 'bg-info-surface border-primary' : 'border-transparent hover:bg-surface-subtle'}`}
                 >
                   <span className="flex items-center gap-3">
-                    <span aria-hidden="true" className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center font-label-md text-label-md text-text-secondary shrink-0">
-                      {iniciais(nome)}
-                    </span>
+                    <AvatarContato
+                      numero={c.numero}
+                      nome={nome}
+                      className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center font-label-md text-label-md text-text-secondary shrink-0"
+                    />
                     <span className="flex-1 min-w-0 flex flex-col">
                       <span className="flex items-center justify-between gap-2">
                         <span className="font-label-lg text-label-lg text-text-primary truncate">{nome}</span>

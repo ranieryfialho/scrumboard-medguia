@@ -30,6 +30,24 @@ export const whatsappMensagens = pgTable('whatsapp_mensagens', {
   criadoEm: timestamp('criado_em', { withTimezone: true }).notNull().defaultNow(),
 });
 
+// Reações (emoji) às mensagens: uma por pessoa por mensagem — `autor` 'nos' (a empresa) ou 'contato'. Migration 0037.
+export const whatsappReacoes = pgTable(
+  'whatsapp_reacoes',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    empresaId: uuid('empresa_id')
+      .notNull()
+      .references(() => empresas.id, { onDelete: 'cascade' }),
+    mensagemId: uuid('mensagem_id')
+      .notNull()
+      .references(() => whatsappMensagens.id, { onDelete: 'cascade' }),
+    autor: text('autor').notNull(),
+    emoji: text('emoji').notNull(),
+    atualizadoEm: timestamp('atualizado_em', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex('whatsapp_reacoes_mensagem_autor_unico').on(t.mensagemId, t.autor)]
+);
+
 export const campanhas = pgTable('campanhas', {
   id: uuid('id').primaryKey().defaultRandom(),
   empresaId: uuid('empresa_id')

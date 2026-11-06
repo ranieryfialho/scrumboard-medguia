@@ -20,10 +20,11 @@ import {
   agruparPorDia,
   formatarHora,
   mensagemDoTelefone,
-  statusDaMensagem,
   type MensagemDaConversa,
   type TelefoneDoLead,
 } from './formatos';
+import { ChecksDaMensagem } from './checks-da-mensagem';
+import { BotaoReagir, ReacoesDaMensagem } from './reacoes-da-mensagem';
 import { SeletorTelefone } from './seletor-telefone';
 import { ModalNovoNumero } from './modal-novo-numero';
 import { MenuOpcoes } from './menu-opcoes';
@@ -56,27 +57,38 @@ function tamanhoLegivel(bytes: number): string {
   return bytes >= 1024 * 1024 ? `${(bytes / (1024 * 1024)).toFixed(1).replace('.', ',')} MB` : `${Math.max(1, Math.round(bytes / 1024))} KB`;
 }
 
-/** AC-442: escuta `mensagem.recebida` do stream e avisa só quando a mensagem é deste lead. */
-function useMensagemRecebida(leadId: string | null, aoChegar: () => void) {
+/** AC-442: escuta `mensagem.recebida` (e `mensagem.status`, os checks de entregue/lida) do stream e avisa só quando a mensagem é deste lead. */
+function useMensagemRecebida(leadId: string | null, aoChegar: () => void, aoMudarStatus: () => void) {
   const aoChegarRef = useRef(aoChegar);
+  const aoMudarStatusRef = useRef(aoMudarStatus);
   useEffect(() => {
     aoChegarRef.current = aoChegar;
-  }, [aoChegar]);
+    aoMudarStatusRef.current = aoMudarStatus;
+  }, [aoChegar, aoMudarStatus]);
 
   useEffect(() => {
     if (typeof EventSource === 'undefined') return;
     const origem = new EventSource('/api/stream');
-    origem.addEventListener('mensagem.recebida', (evento) => {
+    const aoEvento = (acao: { current: () => void }) => (evento: Event) => {
       try {
         const dados = JSON.parse((evento as MessageEvent).data) as { leadId?: string | null };
         // Conversa avulsa (sem lead) casa com eventos sem lead.
-        if ((dados.leadId ?? null) === leadId) aoChegarRef.current();
+        if ((dados.leadId ?? null) === leadId) acao.current();
       } catch {
         // Evento malformado: ignora, a próxima abertura da conversa relê o histórico.
       }
-    });
+    };
+    origem.addEventListener('mensagem.recebida', aoEvento(aoChegarRef));
+    // Check de entregue/lida e reação (emoji): só relê as mensagens (não marca nada como lido).
+    origem.addEventListener('mensagem.status', aoEvento(aoMudarStatusRef));
+    origem.addEventListener('mensagem.reacao', aoEvento(aoMudarStatusRef));
     return () => origem.close();
   }, [leadId]);
+}
+
+/** A reação da empresa nesta mensagem (para o botão saber se clicar de novo retira). */
+function minhaReacaoDa(mensagem: MensagemDaConversa): string | null {
+  return mensagem.reacoes?.find((r) => r.autor === 'nos')?.emoji ?? null;
 }
 
 interface ConversaLeadProps {
@@ -201,11 +213,33 @@ export function ConversaLead({ leadId, numero, leadNome = '', cabecalho, versao 
     };
   }, [leadId]);
 
+  // Reage (ou, com emoji vazio, retira a reação) — a Evolution manda ao cliente e o CRM relê a conversa.
+  const reagir = useCallback(
+    async (mensagemId: string, emoji: string) => {
+      try {
+        const resposta = await fetch('/api/whatsapp/reacao', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ mensagemId, emoji }),
+        });
+        if (!resposta.ok) throw new Error(`reacao respondeu ${resposta.status}`);
+        setErroDeEnvio(null);
+        await carregarMensagens();
+      } catch {
+        setErroDeEnvio('Não foi possível reagir à mensagem. Tente de novo.');
+      }
+    },
+    [carregarMensagens]
+  );
+
   useMensagemRecebida(
     leadId,
     useCallback(() => {
       void carregarMensagens().then(() => marcarComoLidas());
-    }, [carregarMensagens, marcarComoLidas])
+    }, [carregarMensagens, marcarComoLidas]),
+    useCallback(() => {
+      void carregarMensagens();
+    }, [carregarMensagens])
   );
 
   const telefone = telefones[escolhido] ?? null;
@@ -424,10 +458,14 @@ export function ConversaLead({ leadId, numero, leadNome = '', cabecalho, versao 
               {grupo.mensagens.map((mensagem) => {
                 const enviada = mensagem.direcao === 'enviada';
                 return (
-                  <div key={mensagem.id} className={`flex ${enviada ? 'justify-end' : 'justify-start'}`}>
+                  <div key={mensagem.id} className={`group flex items-center gap-1 ${enviada ? 'justify-end' : 'justify-start'}`}>
+                    {enviada && mensagem.reagivel && (
+                      <BotaoReagir minhaReacao={minhaReacaoDa(mensagem)} onReagir={(emoji) => void reagir(mensagem.id, emoji)} />
+                    )}
+                    <div className={`relative max-w-[80%] ${(mensagem.reacoes?.length ?? 0) > 0 ? 'mb-4' : ''}`}>
                     <div
                       data-direcao={mensagem.direcao}
-                      className={`max-w-[80%] rounded-2xl px-space-md py-space-sm shadow-sm ${
+                      className={`rounded-2xl px-space-md py-space-sm shadow-sm ${
                         enviada ? 'bg-primary text-on-primary' : 'bg-surface-card text-text-primary'
                       }`}
                     >
@@ -437,9 +475,14 @@ export function ConversaLead({ leadId, numero, leadNome = '', cabecalho, versao 
                       )}
                       <p className={`mt-1 text-right font-label-sm text-[11px] ${enviada ? 'opacity-80' : 'text-text-muted'}`}>
                         {formatarHora(mensagem.created_at)}
-                        {enviada ? ` · ${statusDaMensagem(mensagem.status)}` : ''}
+                        {enviada && <ChecksDaMensagem status={mensagem.status} />}
                       </p>
                     </div>
+                    <ReacoesDaMensagem reacoes={mensagem.reacoes ?? []} enviada={enviada} />
+                    </div>
+                    {!enviada && mensagem.reagivel && (
+                      <BotaoReagir minhaReacao={minhaReacaoDa(mensagem)} onReagir={(emoji) => void reagir(mensagem.id, emoji)} />
+                    )}
                   </div>
                 );
               })}
