@@ -1,0 +1,27 @@
+name: Deploy na VPS
+description: Copia deploy/deploy.sh para a VPS e roda por SSH (backup, migrations pendentes, troca da imagem, teste de saúde, rollback).
+inputs:
+  ambiente: { description: 'staging ou prod', required: true }
+  sha: { description: 'SHA completo da imagem', required: true }
+  host: { required: true }
+  usuario: { required: true }
+  chave: { required: true }
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        AMBIENTE: ${{ inputs.ambiente }}
+        SHA: ${{ inputs.sha }}
+        HOST: ${{ inputs.host }}
+        USUARIO: ${{ inputs.usuario }}
+        CHAVE: ${{ inputs.chave }}
+      run: |
+        set -euo pipefail
+        [[ "$SHA" =~ ^[0-9a-f]{40}$ ]] || { echo "SHA inválido: $SHA"; exit 1; }
+        install -m 700 -d ~/.ssh
+        printf '%s\n' "$CHAVE" > ~/.ssh/deploy_key && chmod 600 ~/.ssh/deploy_key
+        ssh-keyscan -T 10 "$HOST" >> ~/.ssh/known_hosts 2>/dev/null
+        SSH="ssh -i $HOME/.ssh/deploy_key -o BatchMode=yes -o ServerAliveInterval=30 $USUARIO@$HOST"
+        # O script vai pelo stdin: nada fica gravado na VPS e a versão executada é a do commit que está sendo implantado.
+        $SSH "bash -s -- '$AMBIENTE' '$SHA'" < deploy/deploy.sh
