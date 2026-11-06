@@ -25,10 +25,17 @@ describe('T-170: listagem da cadência do card (servidor)', () => {
   let rotaLista: typeof import('../../src/app/api/oportunidades/[id]/cadencia/route');
   let rotaIniciar: typeof import('../../src/app/api/oportunidades/[id]/cadencia/iniciar/route');
 
-  function get(cookie: string | null, cardId: string) {
+  async function get(cookie: string | null, cardId: string) {
     const headers = cookie ? { Cookie: cookie } : undefined;
     const request = new NextRequest(`http://localhost/api/oportunidades/${cardId}/cadencia`, { headers });
-    return rotaLista.GET(request, { params: Promise.resolve({ id: cardId }) });
+    // O relógio da rota também é fixado (manhã de um dia útil, 1 h depois do início do bloco): sem isto o resultado dependia da hora real em que o CI rodava.
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-06-10T10:00:00-03:00'));
+    try {
+      return await rotaLista.GET(request, { params: Promise.resolve({ id: cardId }) });
+    } finally {
+      vi.useRealTimers();
+    }
   }
 
   // AC-756: a rota passa o relógio real e o primeiro bloco acompanha o turno; estes testes esperam a manhã, então fixam um dia útil de manhã.
@@ -40,8 +47,8 @@ describe('T-170: listagem da cadência do card (servidor)', () => {
     } finally {
       vi.useRealTimers();
     }
-    // O toque nasce liberado na hora fixada (junho de 2026); a leitura da lista compara com o relógio real, então sem isto ele já seria "atrasado".
-    sql(`UPDATE "cadencia_atividades" SET "liberada_em" = now() WHERE "oportunidade_id" = '${cardId}'`);
+    // O toque nasce liberado na hora fixada (09h de 10/06/2026) e a leitura da lista usa o mesmo relógio fixo (10h): não está atrasado.
+    sql(`UPDATE "cadencia_atividades" SET "liberada_em" = '2026-06-10T09:00:00-03:00' WHERE "oportunidade_id" = '${cardId}'`);
   }
 
   async function iniciarAgora(cookie: string, cardId: string, version: number) {
@@ -134,7 +141,7 @@ describe('T-170: listagem da cadência do card (servidor)', () => {
 
   test('toque pendente liberado antes do turno de referência vira "atrasada" @spec:AC-431', async () => {
     sql(
-      `UPDATE "cadencia_atividades" SET "liberada_em" = now() - interval '3 days'
+      `UPDATE "cadencia_atividades" SET "liberada_em" = '2026-06-05T09:00:00-03:00'
        WHERE "oportunidade_id" = '${amb.tenants.oportunidadeA}' AND "sequencia" = 3;`
     );
 

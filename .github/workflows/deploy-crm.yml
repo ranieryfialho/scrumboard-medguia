@@ -1,0 +1,76 @@
+name: Deploy do CRM
+
+# Depois que o Release publica a imagem de um commit na main, o staging recebe a versão SOZINHO.
+# A produção NUNCA sobe sozinha: o clique é em Actions > Deploy do CRM > Run workflow > ambiente `producao`
+# (o plano do GitHub não oferece revisor obrigatório em repositório privado). O script recusa subir na produção uma versão
+# que não esteja rodando no staging, a não ser que se marque `ignorar_staging` (rollback).
+on:
+  workflow_run:
+    workflows: [Release]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: 'SHA completo (40 caracteres) da imagem já publicada no GHCR. Vazio = o último commit da main.'
+        required: false
+        type: string
+      ambiente:
+        description: 'Onde implantar'
+        required: true
+        default: staging
+        type: choice
+        options: [staging, producao]
+      ignorar_staging:
+        description: 'Só para produção: permite subir uma versão que NÃO está no staging (rollback para uma anterior)'
+        required: false
+        default: false
+        type: boolean
+
+# Um deploy por vez, e nunca cancelado no meio (cancelar deixaria a troca pela metade).
+concurrency:
+  group: deploy-crm
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  SHA: ${{ inputs.sha || github.event.workflow_run.head_sha || github.sha }}
+
+jobs:
+  staging:
+    # Automático após Release verde; manual só quando escolhido staging.
+    if: (github.event_name == 'workflow_dispatch' && inputs.ambiente == 'staging') || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
+    runs-on: ubuntu-latest
+    environment: staging
+    timeout-minutes: 20
+    steps:
+      - name: Checkout (script e ação de deploy da main; o SHA implantado vai como argumento)
+        uses: actions/checkout@v4
+      - name: Deploy no staging
+        uses: ./.github/actions/deploy-vps
+        with:
+          ambiente: staging
+          sha: ${{ env.SHA }}
+          host: ${{ secrets.VPS_HOST }}
+          usuario: ${{ secrets.VPS_USER }}
+          chave: ${{ secrets.VPS_SSH_KEY }}
+
+  producao:
+    if: github.event_name == 'workflow_dispatch' && inputs.ambiente == 'producao'
+    runs-on: ubuntu-latest
+    environment: producao
+    timeout-minutes: 20
+    steps:
+      - name: Checkout (script e ação de deploy da main; o SHA implantado vai como argumento)
+        uses: actions/checkout@v4
+      - name: Deploy na produção
+        uses: ./.github/actions/deploy-vps
+        with:
+          ambiente: prod
+          sha: ${{ env.SHA }}
+          ignorar_staging: ${{ inputs.ignorar_staging }}
+          host: ${{ secrets.VPS_HOST }}
+          usuario: ${{ secrets.VPS_USER }}
+          chave: ${{ secrets.VPS_SSH_KEY }}
