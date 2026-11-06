@@ -47,10 +47,10 @@ describe('T-087: GET /api/whatsapp/qrcode', () => {
   let cookieGerenteD: string;
   let cookieGerenteE: string;
 
-  function getQrcode(cookie: string | null, query = '') {
+  function getQrcode(cookie: string | null, query = '', cabecalhosExtras: Record<string, string> = {}) {
     const request = new NextRequest(`http://localhost/api/whatsapp/qrcode${query}`, {
       method: 'GET',
-      headers: { ...(cookie ? { Cookie: cookie } : {}) },
+      headers: { ...(cookie ? { Cookie: cookie } : {}), ...cabecalhosExtras },
     });
     return rota.GET(request);
   }
@@ -248,6 +248,16 @@ describe('T-087: GET /api/whatsapp/qrcode', () => {
     expect(corpoWebhook.webhook.url).toBe(
       `https://app.teste.com/api/whatsapp/webhook?empresa_id=${EMPRESA_A}&secret=${segredo}`
     );
+  });
+
+  test('o webhook leva o endereço pelo qual a pessoa acessa (o de cada ambiente), não o gravado na imagem no build', async () => {
+    // Atrás do proxy do staging: o navegador está em staging.exemplo.com, e NEXT_PUBLIC_APP_URL (gravada no build) é de outro ambiente.
+    await getQrcode(cookieGerenteA, '', { 'x-forwarded-host': 'staging.exemplo.com', 'x-forwarded-proto': 'https' });
+    const segredo = segredoGravado(EMPRESA_A);
+    const ultimaChamada = evolution.chamadasWebhook[evolution.chamadasWebhook.length - 1];
+    const corpoWebhook = ultimaChamada.corpo as { webhook: { url: string } };
+    expect(corpoWebhook.webhook.url).toBe(`https://staging.exemplo.com/api/whatsapp/webhook?empresa_id=${EMPRESA_A}&secret=${segredo}`);
+    expect(corpoWebhook.webhook.url).not.toContain('app.teste.com');
   });
 
   test('empresa sem segredo recebe um gerado pelo servidor (>=32 bytes), reaproveitado num pedido seguinte @spec:AC-182', async () => {

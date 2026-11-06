@@ -9,7 +9,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { getDb } from '../../../../db/client';
 import { validarCorpoConfig } from '../../../../domain/whatsapp/config';
 import { getAuth } from '../../../../lib/auth/instancia';
-import { EVENTOS_DO_WEBHOOK, urlDoWebhookMascarada } from '../../../../lib/whatsapp/webhook-url';
+import { appUrlDoWebhook, EVENTOS_DO_WEBHOOK, urlDoWebhookMascarada } from '../../../../lib/whatsapp/webhook-url';
 import { ErroSessaoInvalida, resolverContextoTenant, type ContextoTenant } from '../../../../lib/auth/tenant';
 import { ErroInstanciaEmUso, lerConfiguracao, salvarConfiguracao } from '../../../../repositories/whatsapp-config';
 
@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
   // T-193 (AC-524): além de `{ empresaId, config }`, o que a tela de configuração mostra —
   // a URL do servidor e se a chave existe (nunca a chave), a URL do webhook com o
   // segredo mascarado e os eventos que o CRM registra.
-  const appUrl = (process.env['APP_URL'] || process.env.NEXT_PUBLIC_APP_URL) || `https://${request.headers.get('host')}`;
+  const appUrl = appUrlDoWebhook(request.headers, request.nextUrl);
   return NextResponse.json({
     empresaId: contexto.empresaId,
     config,

@@ -21,6 +21,7 @@ import { getDb } from '../../../../db/client';
 import { getAuth } from '../../../../lib/auth/instancia';
 import { ErroSessaoInvalida, resolverContextoTenant, type ContextoTenant } from '../../../../lib/auth/tenant';
 import { buildConfig, createInstance, getInstanceStatus, getQRCode, setWebhook } from '../../../../lib/evolution-api';
+import { appUrlDoWebhook } from '../../../../lib/whatsapp/webhook-url';
 import { obterOuCriarSegredoWebhook } from '../../../../repositories/whatsapp-config';
 import { buscarNomeInstancia } from '../../../../repositories/whatsapp-instancia';
 
@@ -90,7 +91,7 @@ export async function GET(request: NextRequest) {
   }
 
   const segredo = await obterOuCriarSegredoWebhook(db, contexto);
-  const appUrl = (process.env['APP_URL'] || process.env.NEXT_PUBLIC_APP_URL) || `https://${request.headers.get('host')}`;
+  const appUrl = appUrlDoWebhook(request.headers, request.nextUrl);
   const webhookUrl = `${appUrl}/api/whatsapp/webhook?empresa_id=${contexto.empresaId}&secret=${segredo}`;
   const webhookRegistrado = await setWebhook(config, webhookUrl);
 
