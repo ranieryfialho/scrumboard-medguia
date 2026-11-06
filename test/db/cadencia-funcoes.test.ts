@@ -548,6 +548,52 @@ describe('T-089: funções SQL da cadência', () => {
     });
   });
 
+  describe('Perdido por qualquer caminho encerra a cadência (0038)', () => {
+    function moverParaPerdido(oportunidadeId: string) {
+      const version = versionAtual(oportunidadeId);
+      const motivoId = valor(`SELECT id FROM motivos_perda WHERE nome = 'Cadência esgotada'`);
+      return pg.psqlComo(
+        'crm_app',
+        `SET app.empresa_id = '${EMPRESA_A}';
+         SELECT mover_oportunidade('${oportunidadeId}', ${version}, ${ETAPA_PERDIDO}, '${USUARIO_A}', 'usuario', NULL, NULL, '${motivoId}')`
+      );
+    }
+
+    test('perder o card com toques pendentes preenche cadencia_encerrada_em e a virada de dia não o puxa de volta', () => {
+      const oportunidadeId = criarOportunidade(EMPRESA_A, LEAD_A, ETAPA_ENTRADA);
+      expect(iniciarCadencia(EMPRESA_A, oportunidadeId, USUARIO_A).status).toBe(0);
+      expect(estadoOportunidade(oportunidadeId).cadencia_encerrada_em).toBeNull();
+
+      expect(moverParaPerdido(oportunidadeId).status).toBe(0);
+
+      const estado = estadoOportunidade(oportunidadeId);
+      expect(estado.etapa_id).toBe(ETAPA_PERDIDO);
+      expect(estado.cadencia_encerrada_em).not.toBeNull();
+
+      // Os toques pendentes ficam registrados, mas o card sai da fila/virada (tudo filtra por cadencia_encerrada_em).
+      expect(virarDia(EMPRESA_A, DIA_UTIL).map((o) => o.id)).not.toContain(oportunidadeId);
+      expect(estadoOportunidade(oportunidadeId).etapa_id).toBe(ETAPA_PERDIDO);
+    });
+
+    test('card perdido sem toques também fica com a cadência encerrada, e reabrir não a reabre', () => {
+      const oportunidadeId = criarOportunidade(EMPRESA_A, LEAD_A, ETAPA_QUALIFICANDO);
+      expect(moverParaPerdido(oportunidadeId).status).toBe(0);
+      const encerradaEm = estadoOportunidade(oportunidadeId).cadencia_encerrada_em;
+      expect(encerradaEm).not.toBeNull();
+
+      const version = versionAtual(oportunidadeId);
+      const reaberto = pg.psqlComo(
+        'crm_app',
+        `SET app.empresa_id = '${EMPRESA_A}';
+         SELECT mover_oportunidade('${oportunidadeId}', ${version}, ${ETAPA_QUALIFICANDO}, '${USUARIO_A}', 'usuario', NULL)`
+      );
+      expect(reaberto.status).toBe(0);
+      const estado = estadoOportunidade(oportunidadeId);
+      expect(estado.etapa_id).toBe(ETAPA_QUALIFICANDO);
+      expect(estado.cadencia_encerrada_em).toBe(encerradaEm);
+    });
+  });
+
   describe('AC-203: cada empresa só vê e vira os próprios cards', () => {
     test('virar_dia_cadencia só avança e só retorna cards da empresa em app.empresa_id @spec:AC-203', () => {
       const cardA = criarOportunidade(EMPRESA_A, LEAD_A, ETAPA_ENTRADA);
