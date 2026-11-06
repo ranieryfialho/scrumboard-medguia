@@ -15,7 +15,8 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { getDb } from '../../../../db/client';
 import { extrairMensagens, type EvolutionWebhookPayload } from '../../../../domain/whatsapp/extrair-mensagem';
 import { eventoDeAtualizacao, extrairAtualizacoesDeStatus, type PayloadDeAtualizacao } from '../../../../domain/whatsapp/extrair-status';
-import { atualizarStatusDaMensagem, registrarMensagemRecebida, verificarSegredoWebhook } from '../../../../repositories/whatsapp';
+import { extrairReacoes, type PayloadComReacoes } from '../../../../domain/whatsapp/extrair-reacao';
+import { atualizarStatusDaMensagem, registrarMensagemRecebida, registrarReacao, verificarSegredoWebhook } from '../../../../repositories/whatsapp';
 
 export const dynamic = 'force-dynamic';
 
@@ -51,6 +52,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ codigo: 'ERRO_INTERNO' }, { status: 500 });
     }
     return NextResponse.json({ ok: true });
+  }
+
+  // Reações (emoji) do contato — ou da empresa, pelo celular — a mensagens que já estão no CRM.
+  try {
+    for (const reacao of extrairReacoes(payload as PayloadComReacoes)) {
+      await registrarReacao(db, { empresaId }, reacao);
+    }
+  } catch {
+    return NextResponse.json({ codigo: 'ERRO_INTERNO' }, { status: 500 });
   }
 
   const mensagens = extrairMensagens(payload);

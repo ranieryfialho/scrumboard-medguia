@@ -4,6 +4,7 @@
 // webhook/route.ts) para fora da rota, sem Supabase, para ser reaproveitada
 // pelo repositório (T-068) e pela rota nova (T-069).
 
+import { ehReacao } from './extrair-reacao';
 import { eventoDeAtualizacao } from './extrair-status';
 
 interface EvolutionMessageKey {
@@ -19,6 +20,7 @@ interface EvolutionMessageContent {
   imageMessage?: { caption?: string; mimetype?: string };
   videoMessage?: { caption?: string; mimetype?: string };
   documentMessage?: { caption?: string; mimetype?: string; fileName?: string };
+  reactionMessage?: unknown;
   audioMessage?: { mimetype?: string } | unknown;
   stickerMessage?: { mimetype?: string } | unknown;
 }
@@ -111,6 +113,8 @@ export function extrairMensagens(payload: EvolutionWebhookPayload): MensagemExtr
   const mensagens: MensagemExtraida[] = [];
   for (const item of dataItems) {
     if (item.key?.fromMe) continue;
+    // Reação não é mensagem nova (tratada em `extrair-reacao.ts`): sem isto entrava como uma "[mídia]" fantasma.
+    if (ehReacao(item)) continue;
 
     const numero = normalizarNumero(item);
     if (!numero) continue;

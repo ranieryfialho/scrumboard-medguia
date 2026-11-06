@@ -18,6 +18,10 @@ export interface MensagemDaConversa {
   numero: string;
   status: string;
   midia?: MidiaDaMensagemView;
+  /** Dá para reagir (a mensagem tem o id da Evolution). Ausente = não. */
+  reagivel?: boolean;
+  /** Uma reação por pessoa: a da empresa (`nos`) e/ou a do cliente (`contato`). */
+  reacoes?: { autor: 'nos' | 'contato'; emoji: string }[];
 }
 
 export interface TelefoneDoLead {

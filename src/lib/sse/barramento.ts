@@ -52,6 +52,14 @@ export interface EventoMensagemStatus {
   status: string;
 }
 
+/** Reação (emoji) posta ou retirada numa mensagem — a conversa aberta se atualiza sem recarregar. */
+export interface EventoMensagemReacao {
+  tipo: 'mensagem.reacao';
+  empresaId: string;
+  leadId: string | null;
+  mensagemId: string;
+}
+
 export interface EventoCadenciaFilaAlterada {
   tipo: 'cadencia.fila_alterada';
   empresaId: string;
@@ -66,6 +74,7 @@ export type EventoBarramento =
   | EventoOportunidadeMovida
   | EventoMensagemRecebida
   | EventoMensagemStatus
+  | EventoMensagemReacao
   | EventoCadenciaFilaAlterada
   | EventoStreamReconectado;
 
@@ -178,6 +187,15 @@ export function criarBarramento(opcoes: OpcoesBarramento): Barramento {
             leadId: payload.leadId == null ? null : String(payload.leadId),
             mensagemId: String(payload.mensagemId),
             status: String(payload.status),
+          });
+          return;
+        }
+        if (payload.tipo === 'mensagem.reacao') {
+          notificar(empresaId, {
+            tipo: 'mensagem.reacao',
+            empresaId,
+            leadId: payload.leadId == null ? null : String(payload.leadId),
+            mensagemId: String(payload.mensagemId),
           });
           return;
         }

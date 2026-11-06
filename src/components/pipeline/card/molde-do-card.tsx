@@ -108,6 +108,7 @@ export function MoldeDoCard({ cardId, aba, versaoDosContadores = 0, alturaFixa =
   return (
     <div className={alturaFixa ? 'flex flex-col w-full lg:h-[calc(100dvh-4rem)] lg:min-h-[40rem]' : 'flex flex-col w-full'}>
       <CabecalhoCard
+        leadId={card.leadId}
         leadNome={card.leadNome}
         etapaAtualNome={nomeDaEtapa(card.etapaId)}
         responsavelNome={card.responsavelNome}

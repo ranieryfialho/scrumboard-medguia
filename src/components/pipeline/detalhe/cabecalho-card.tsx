@@ -10,6 +10,7 @@ import type { ReactNode } from 'react';
 import Link from 'next/link';
 
 import { SeloEtapa } from '@/components/pipeline/pecas/selo-etapa';
+import { AvatarContato } from '@/components/whatsapp/avatar-contato';
 
 export interface EtapaOpcao {
   id: number;
@@ -18,6 +19,8 @@ export interface EtapaOpcao {
 
 interface CabecalhoCardProps {
   leadNome: string;
+  /** A foto do WhatsApp do lead aparece ao lado do nome; sem ele, só o nome (como antes). */
+  leadId?: string;
   etapaAtualNome: string;
   responsavelNome: string | null;
   etapasDestino: EtapaOpcao[];
@@ -31,6 +34,7 @@ interface CabecalhoCardProps {
 
 export function CabecalhoCard({
   leadNome,
+  leadId,
   etapaAtualNome,
   responsavelNome,
   etapasDestino,
@@ -54,13 +58,24 @@ export function CabecalhoCard({
               </span>
               Voltar ao funil
             </Link>
-            <div className="flex items-center gap-space-sm mt-1 flex-wrap">
-              <h1 className="font-headline-lg text-headline-lg text-text-primary">{leadNome}</h1>
-              <SeloEtapa nome={etapaAtualNome} />
+            <div className="flex items-center gap-space-md mt-1">
+              {leadId && (
+                <AvatarContato
+                  leadId={leadId}
+                  nome={leadNome}
+                  className="size-14 rounded-full bg-surface-container flex items-center justify-center font-headline-sm text-headline-sm text-text-secondary shrink-0"
+                />
+              )}
+              <div className="flex flex-col gap-1 min-w-0">
+                <div className="flex items-center gap-space-sm flex-wrap">
+                  <h1 className="font-headline-lg text-headline-lg text-text-primary">{leadNome}</h1>
+                  <SeloEtapa nome={etapaAtualNome} />
+                </div>
+                <p className="font-body-sm text-body-sm text-text-secondary">
+                  Responsável: {responsavelNome ?? 'Sem responsável'}
+                </p>
+              </div>
             </div>
-            <p className="font-body-sm text-body-sm text-text-secondary">
-              Responsável: {responsavelNome ?? 'Sem responsável'}
-            </p>
           </div>
 
           <div className="flex items-center flex-wrap gap-2">

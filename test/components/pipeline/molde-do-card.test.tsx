@@ -98,6 +98,19 @@ describe('T-171: molde do card', () => {
       expect(screen.queryByText(/em breve/i)).toBeNull();
     });
 
+    test('a foto do WhatsApp do lead aparece ao lado do nome, abaixo do "Voltar ao funil"', async () => {
+      renderizar('whatsapp');
+      const titulo = await screen.findByRole('heading', { name: 'Clínica Santa Luzia' });
+
+      const foto = document.querySelector('img[src="/api/whatsapp/foto?leadId=lead-1"]')!;
+      expect(foto).toBeTruthy();
+      // a foto e o nome ficam na mesma linha, depois do link de voltar
+      const linha = titulo.closest('.mt-1')!;
+      expect(linha.contains(foto)).toBe(true);
+      const voltar = screen.getByRole('link', { name: /Voltar ao funil/ });
+      expect(voltar.compareDocumentPosition(foto) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    });
+
     test('as abas mostram os toques feitos de 18 e o total de anexos @spec:AC-420', async () => {
       renderizar('cadencia');
       await screen.findByText('Conteúdo da aba de Clínica Santa Luzia');

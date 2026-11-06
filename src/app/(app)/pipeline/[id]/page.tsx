@@ -326,6 +326,7 @@ function PipelineDetalheConteudo({ id }: { id: string }) {
   return (
     <div className="flex flex-col w-full">
       <CabecalhoCard
+        leadId={dados.leadId}
         leadNome={dados.leadNome}
         etapaAtualNome={nomeDaEtapa(dados.etapaId)}
         responsavelNome={dados.responsavelNome}
