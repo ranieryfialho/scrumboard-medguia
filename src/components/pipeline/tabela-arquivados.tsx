@@ -38,7 +38,7 @@ function formatarDataFechamento(iso: string): string {
 
 export function TabelaArquivados({ itens, podeReabrir, onReaberto }: TabelaArquivadosProps) {
   return (
-    <div className="overflow-auto flex-1 min-h-0 rounded-xl shadow-xs">
+    <div className="overflow-x-auto rounded-xl shadow-xs">
       <table className="w-full text-left border-collapse">
         <thead className="sticky top-0 z-10">
           <tr className="bg-surface-subtle text-text-secondary font-table-header text-table-header uppercase tracking-wider h-11">

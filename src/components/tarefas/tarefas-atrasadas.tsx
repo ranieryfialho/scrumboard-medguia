@@ -15,6 +15,7 @@ import { ResultadoLote } from '@/components/pipeline/lote/resultado-lote';
 import { MENSAGEM_DO_PEDIDO, type ResultadoDoLoteView } from '@/components/pipeline/lote/tipos';
 import { ETAPAS_PIPELINE } from '@/components/pipeline/detalhe/jornada';
 import { ItemEmBreve } from '@/components/pipeline/pecas/selo-em-breve';
+import { OPCOES_POR_PAGINA, Paginacao } from '@/components/pipeline/pecas/paginacao';
 import { useStreamOportunidades, type EventoStreamCliente } from '@/hooks/use-stream-oportunidades';
 import { AvisoTempoReal } from '@/components/pipeline/pecas/aviso-tempo-real';
 import {
@@ -57,6 +58,8 @@ export function TarefasAtrasadas() {
   const [consultor, setConsultor] = useState('');
   const [etapa, setEtapa] = useState('');
   const [ordem, setOrdem] = useState<Ordem>('maior');
+  const [pagina, setPagina] = useState(1);
+  const [porPagina, setPorPagina] = useState<number>(OPCOES_POR_PAGINA[0]);
 
   const [selecionados, setSelecionados] = useState<Set<string>>(new Set());
   const [podeReatribuir, setPodeReatribuir] = useState(false);
@@ -127,7 +130,7 @@ export function TarefasAtrasadas() {
     return [...mapa.entries()];
   }, [itens]);
 
-  const visiveis = useMemo(() => {
+  const filtrados = useMemo(() => {
     const base = ordenarFila(itens ?? []).filter((i) => {
       const minutos = minutosDeAtraso(i.liberadaEm, agora);
       if (atraso !== 'todos' && minutos <= Number(atraso)) return false;
@@ -138,6 +141,17 @@ export function TarefasAtrasadas() {
     // `ordenarFila` já põe o maior atraso (liberado há mais tempo) primeiro.
     return ordem === 'maior' ? base : [...base].reverse();
   }, [itens, agora, atraso, consultor, etapa, ordem]);
+
+  // Mudou filtro, ordem ou tamanho da página: volta para a primeira.
+  useEffect(() => {
+    setPagina(1);
+  }, [atraso, consultor, etapa, ordem, porPagina]);
+
+  const paginaAtual = Math.min(pagina, Math.max(1, Math.ceil(filtrados.length / porPagina)));
+  const visiveis = useMemo(
+    () => filtrados.slice((paginaAtual - 1) * porPagina, paginaAtual * porPagina),
+    [filtrados, paginaAtual, porPagina]
+  );
 
   function limpar() {
     setAtraso('todos');
@@ -209,8 +223,8 @@ export function TarefasAtrasadas() {
   const total = itens?.length ?? 0;
 
   return (
-    // AC-762: altura da tela (menos o topo); só a tabela dos toques atrasados rola por dentro.
-    <div className="p-space-md flex flex-col gap-space-md h-[calc(100dvh-4rem)] min-h-[40rem]">
+    // Sem altura fixa: a página cresce com a lista e rola inteira; o tamanho vem do seletor "Itens por página".
+    <div className="p-space-md flex flex-col gap-space-md">
       <section className="bg-surface-card rounded-2xl p-space-md shadow-sm space-y-space-sm flex-shrink-0">
         <div className="flex items-start justify-between flex-wrap gap-space-md">
           <div>
@@ -292,11 +306,11 @@ export function TarefasAtrasadas() {
             </p>
           )}
 
-          <section className="bg-surface-card rounded-2xl shadow-sm overflow-hidden flex flex-col flex-1 min-h-0">
+          <section className="bg-surface-card rounded-2xl shadow-sm overflow-hidden flex flex-col">
             <div className="p-space-md flex items-center justify-between flex-wrap gap-space-sm flex-shrink-0">
               <div className="flex items-center gap-3">
                 <h2 className="font-headline-sm text-headline-sm text-text-primary">Fila de Resgate Imediato</h2>
-                <span className="font-body-sm text-body-sm text-text-muted">Exibindo {visiveis.length} contatos críticos</span>
+                <span className="font-body-sm text-body-sm text-text-muted">Exibindo {filtrados.length} contatos críticos</span>
               </div>
               <div className="flex items-center gap-2">
                 <ItemEmBreve rotulo="Alertar Consultores" icone="notifications_active" className="h-9 px-3 rounded-lg bg-surface-subtle" />
@@ -304,10 +318,10 @@ export function TarefasAtrasadas() {
               </div>
             </div>
 
-            {visiveis.length === 0 ? (
+            {filtrados.length === 0 ? (
               <EstadoVazio titulo="Nenhum toque atrasado" proximoPasso="Tudo em dia por aqui." icone="task_alt" />
             ) : (
-              <div className="relative overflow-auto flex-1 min-h-0">
+              <div className="relative overflow-x-auto">
                 <table className="w-full text-left">
                   <thead className="bg-surface-subtle sticky top-0 z-10">
                     <tr className="font-label-sm text-table-header uppercase text-text-muted tracking-wider">
@@ -390,6 +404,18 @@ export function TarefasAtrasadas() {
                   </tbody>
                 </table>
               </div>
+            )}
+
+            {filtrados.length > 0 && (
+              <Paginacao
+                pagina={paginaAtual}
+                porPagina={porPagina}
+                total={filtrados.length}
+                onMudarPagina={setPagina}
+                rotuloItem="toques"
+                opcoesPorPagina={OPCOES_POR_PAGINA}
+                onMudarPorPagina={setPorPagina}
+              />
             )}
 
             <div className="px-space-md py-3 flex items-center gap-2 flex-wrap font-body-sm text-body-sm text-text-muted flex-shrink-0">

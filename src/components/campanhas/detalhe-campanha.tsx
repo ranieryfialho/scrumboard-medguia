@@ -13,7 +13,7 @@ import { useMetas } from '@/lib/metas/usar-metas';
 import { useRouter } from 'next/navigation';
 
 import { CartaoIndicador } from '@/components/pipeline/pecas/cartao-indicador';
-import { Paginacao } from '@/components/pipeline/pecas/paginacao';
+import { OPCOES_POR_PAGINA, Paginacao } from '@/components/pipeline/pecas/paginacao';
 import { ItemEmBreve } from '@/components/pipeline/pecas/selo-em-breve';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -34,7 +34,6 @@ import {
 import { EsqueletoCarregando, EstadoErro, EstadoVazio } from './estados';
 import { PreviaEmail } from './previa-email';
 
-const POR_PAGINA = 20;
 const INTERVALO_MS = 15_000;
 
 interface DetalheView {
@@ -71,6 +70,7 @@ export function DetalheCampanha({ id }: { id: string }) {
   const [filtro, setFiltro] = useState<FiltroDestinatarios>('todos');
   const [busca, setBusca] = useState('');
   const [pagina, setPagina] = useState(1);
+  const [porPagina, setPorPagina] = useState<number>(OPCOES_POR_PAGINA[1]);
   const [confirmando, setConfirmando] = useState<'iniciar' | 'excluir' | null>(null);
   const [trabalhando, setTrabalhando] = useState(false);
   const [aviso, setAviso] = useState<{ ok: boolean; texto: string; atalhoDaChave?: boolean } | null>(null);
@@ -158,7 +158,7 @@ export function DetalheCampanha({ id }: { id: string }) {
   const podeIniciar = campanha.status === 'RASCUNHO' && total > 0;
 
   return (
-    <div className="p-space-md flex flex-col gap-space-md h-[calc(100dvh-4rem)] min-h-[40rem]">
+    <div className="p-space-md flex flex-col gap-space-md">
       <section className="bg-surface-card rounded-2xl p-space-md shadow-sm flex items-start justify-between flex-wrap gap-space-md shrink-0">
         <div className="flex flex-col gap-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
@@ -258,7 +258,7 @@ export function DetalheCampanha({ id }: { id: string }) {
         </section>
       )}
 
-      <section className="bg-surface-card rounded-2xl p-space-md shadow-sm flex flex-col gap-space-md flex-1 min-h-0">
+      <section className="bg-surface-card rounded-2xl p-space-md shadow-sm flex flex-col gap-space-md">
         <div role="tablist" aria-label="Seções da campanha" className="flex items-center gap-2 flex-wrap shrink-0">
           <button type="button" role="tab" aria-selected={aba === 'destinatarios'} onClick={() => setAba('destinatarios')} className={`h-9 px-3 rounded-lg font-label-md text-label-md ${aba === 'destinatarios' ? 'bg-primary text-on-primary font-semibold' : 'bg-surface-subtle text-text-secondary'}`}>
             Destinatários e Status Individual ({total})
@@ -271,7 +271,7 @@ export function DetalheCampanha({ id }: { id: string }) {
         </div>
 
         {aba === 'previa' ? (
-          <div className="flex-1 min-h-0 overflow-y-auto">
+          <div>
             <PreviaEmail assunto={campanha.assunto} corpoHtml={campanha.corpoHtml} largura="desktop" />
           </div>
         ) : (
@@ -312,7 +312,7 @@ export function DetalheCampanha({ id }: { id: string }) {
               <p className="font-body-md text-body-md text-text-secondary">Nenhum destinatário neste filtro</p>
             ) : (
               <>
-                <div className="overflow-auto flex-1 min-h-0">
+                <div className="overflow-x-auto">
                   <table className="w-full text-left">
                     <thead className="bg-surface-subtle sticky top-0 z-10">
                       <tr className="font-label-sm text-table-header uppercase text-text-muted tracking-wider">
@@ -323,7 +323,7 @@ export function DetalheCampanha({ id }: { id: string }) {
                       </tr>
                     </thead>
                     <tbody>
-                      {visiveis.slice((pagina - 1) * POR_PAGINA, pagina * POR_PAGINA).map((d) => (
+                      {visiveis.slice((pagina - 1) * porPagina, pagina * porPagina).map((d) => (
                         <tr key={d.id} className={`border-t border-surface-container ${d.status === 'ERRO' ? 'bg-danger-surface/30' : ''}`}>
                           <td className="px-space-md py-3">
                             <div className="flex items-center gap-3">
@@ -355,7 +355,18 @@ export function DetalheCampanha({ id }: { id: string }) {
                     </tbody>
                   </table>
                 </div>
-                <Paginacao pagina={pagina} porPagina={POR_PAGINA} total={visiveis.length} onMudarPagina={setPagina} rotuloItem="destinatários" />
+                <Paginacao
+                pagina={pagina}
+                porPagina={porPagina}
+                total={visiveis.length}
+                onMudarPagina={setPagina}
+                rotuloItem="destinatários"
+                opcoesPorPagina={OPCOES_POR_PAGINA}
+                onMudarPorPagina={(valor) => {
+                  setPorPagina(valor);
+                  setPagina(1);
+                }}
+              />
               </>
             )}
           </>

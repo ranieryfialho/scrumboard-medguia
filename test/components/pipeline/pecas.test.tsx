@@ -54,6 +54,24 @@ describe('T-158: Paginacao', () => {
     expect(onMudarPagina).toHaveBeenCalledWith(2);
   });
 
+  test('com opcoesPorPagina mostra o seletor "Itens por página" e avisa o novo tamanho; sem elas, não mostra', async () => {
+    const onMudarPorPagina = vi.fn();
+    const usuario = userEvent.setup();
+
+    const { rerender } = render(
+      <Paginacao pagina={1} porPagina={10} total={250} onMudarPagina={() => {}} opcoesPorPagina={[10, 20, 50, 100]} onMudarPorPagina={onMudarPorPagina} />
+    );
+    const seletor = screen.getByLabelText('Itens por página') as HTMLSelectElement;
+    expect(Array.from(seletor.options).map((o) => o.value)).toEqual(['10', '20', '50', '100']);
+    expect(seletor.value).toBe('10');
+
+    await usuario.selectOptions(seletor, '50');
+    expect(onMudarPorPagina).toHaveBeenCalledWith(50);
+
+    rerender(<Paginacao pagina={1} porPagina={10} total={250} onMudarPagina={() => {}} />);
+    expect(screen.queryByLabelText('Itens por página')).toBeNull();
+  });
+
   test('na primeira página, "Página anterior" fica desabilitado', () => {
     render(<Paginacao pagina={1} porPagina={10} total={25} onMudarPagina={() => {}} />);
 

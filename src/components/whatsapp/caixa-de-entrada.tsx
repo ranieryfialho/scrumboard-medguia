@@ -268,28 +268,29 @@ export function CaixaDeEntrada() {
           {dados.contagens.todas === 0 && !busca && !responsavelId ? (
             <EstadoVazio titulo="Nenhuma conversa ainda" proximoPasso="inicie uma em Nova Conversa Externa, ou espere o primeiro contato de um lead" icone="chat" />
           ) : (
-            <>
-              <div className="grid grid-cols-1 xl:grid-cols-[24rem_minmax(0,1fr)] gap-space-md xl:h-[36rem]">
-                <ListaConversas
-                  conversas={dados.conversas}
-                  contagens={dados.contagens}
-                  aba={aba}
-                  busca={busca}
-                  selecionada={aberta?.chave ?? null}
-                  onAba={setAba}
-                  onBusca={setBusca}
-                  onEscolher={setSelecionada}
-                />
-                {aberta ? (
-                  <PainelConversa key={aberta.chave} conversa={aberta} versao={versao} onAtualizou={carregar} />
-                ) : (
-                  <section className="bg-surface-card rounded-2xl p-space-md shadow-sm min-h-[20rem] xl:h-full flex items-center justify-center">
-                    <EstadoVazio titulo="Escolha uma conversa" proximoPasso="clique em uma conversa da lista para ver o histórico e responder" icone="chat" />
-                  </section>
-                )}
-              </div>
-              {aberta && <ContextoCard conversa={aberta} />}
-            </>
+            // Lista | conversa | contexto do pipeline lado a lado (xl), todos com a mesma altura fixa.
+            <div className="grid grid-cols-1 xl:grid-cols-[24rem_minmax(0,1fr)_21rem] gap-space-md xl:h-[36rem]">
+            <ListaConversas
+              conversas={dados.conversas}
+              contagens={dados.contagens}
+              aba={aba}
+              busca={busca}
+              selecionada={aberta?.chave ?? null}
+              onAba={setAba}
+              onBusca={setBusca}
+              onEscolher={setSelecionada}
+            />
+            {aberta ? (
+              <>
+                <PainelConversa key={aberta.chave} conversa={aberta} versao={versao} onAtualizou={carregar} />
+                <ContextoCard conversa={aberta} />
+              </>
+            ) : (
+              <section className="xl:col-span-2 bg-surface-card rounded-2xl p-space-md shadow-sm min-h-[20rem] xl:h-full flex items-center justify-center">
+                <EstadoVazio titulo="Escolha uma conversa" proximoPasso="clique em uma conversa da lista para ver o histórico e responder" icone="chat" />
+              </section>
+            )}
+            </div>
           )}
         </>
       )}

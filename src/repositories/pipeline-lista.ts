@@ -21,15 +21,15 @@ import type { ContextoTenant } from '../lib/auth/tenant';
 import { comTenant } from './contexto';
 import { prioridadeMeta } from './prioridade-meta';
 
-export type TamanhoPagina = 10 | 25 | 50;
+export type TamanhoPagina = 10 | 20 | 25 | 50 | 100;
 
 const ETAPA_PERDIDO = 14;
 const ETAPA_CONTRATO_GANHO = 15;
 const ETAPAS_TERMINAIS = [ETAPA_PERDIDO, ETAPA_CONTRATO_GANHO] as const;
 
-/** AC-395: tamanho de página fora de 10/25/50 vira 10 — defesa em profundidade; a rota (T-155) normaliza de novo antes de chamar aqui. */
+/** AC-395: tamanho de página fora de 10/20/25/50/100 vira 10 — defesa em profundidade; a rota (T-155) normaliza de novo antes de chamar aqui. */
 export function normalizarPorPagina(valor: number | undefined): TamanhoPagina {
-  if (valor === 10 || valor === 25 || valor === 50) return valor;
+  if (valor === 10 || valor === 20 || valor === 25 || valor === 50 || valor === 100) return valor;
   return 10;
 }
 
