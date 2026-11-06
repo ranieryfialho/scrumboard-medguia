@@ -339,6 +339,38 @@ describe('T-174: tela da conversa de WhatsApp do lead', () => {
     });
   });
 
+  describe('checks ao vivo: o status da mensagem enviada muda sem recarregar', () => {
+    test('mensagem.status deste lead relê a conversa, sobe o check e não marca nada como lido', async () => {
+      await abrirTela();
+      const origem = EventSourceFalso.instancias.find((i) => i.url === '/api/stream' && i.ouvintes.has('mensagem.status'))!;
+      expect(origem).toBeTruthy();
+      const conversa = screen.getByRole('region', { name: 'Conversa do WhatsApp' });
+      const primeiraEnviada = () => conversa.querySelector('[data-direcao="enviada"]') as HTMLElement;
+      expect(primeiraEnviada().querySelector('[data-status="entregue"]')).not.toBeNull();
+
+      const leiturasAntes = chamadas('GET', `/api/whatsapp/messages?leadId=${LEAD_ID}`).length;
+      const lidasAntes = chamadas('POST', '/api/whatsapp/lidas').length;
+      mensagensDoServidor = MENSAGENS.map((m) => (m.id === 'm1' ? { ...m, status: 'lida' } : m));
+      await act(async () => {
+        origem.disparar('mensagem.status', { empresaId: 'e1', leadId: LEAD_ID, mensagemId: 'm1', status: 'lida' });
+      });
+
+      await waitFor(() => expect(primeiraEnviada().querySelector('[data-status="lida"]')).not.toBeNull());
+      expect(chamadas('GET', `/api/whatsapp/messages?leadId=${LEAD_ID}`).length).toBeGreaterThan(leiturasAntes);
+      expect(chamadas('POST', '/api/whatsapp/lidas')).toHaveLength(lidasAntes);
+    });
+
+    test('status de mensagem de outro lead não relê esta conversa', async () => {
+      await abrirTela();
+      const origem = EventSourceFalso.instancias.find((i) => i.ouvintes.has('mensagem.status'))!;
+      const leiturasAntes = chamadas('GET', `/api/whatsapp/messages?leadId=${LEAD_ID}`).length;
+      await act(async () => {
+        origem.disparar('mensagem.status', { empresaId: 'e1', leadId: 'outro-lead', mensagemId: 'x', status: 'lida' });
+      });
+      expect(chamadas('GET', `/api/whatsapp/messages?leadId=${LEAD_ID}`)).toHaveLength(leiturasAntes);
+    });
+  });
+
   describe('AC-443: o painel lateral mostra a cadência e as anotações internas do card', () => {
     test('mostra o toque atual e o progresso da cadência, e os blocos de proposta e qualificação @spec:AC-443', async () => {
       await abrirTela();

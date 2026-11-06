@@ -57,26 +57,29 @@ function tamanhoLegivel(bytes: number): string {
 }
 
 /** AC-442: escuta `mensagem.recebida` (e `mensagem.status`, os checks de entregue/lida) do stream e avisa só quando a mensagem é deste lead. */
-function useMensagemRecebida(leadId: string | null, aoChegar: () => void) {
+function useMensagemRecebida(leadId: string | null, aoChegar: () => void, aoMudarStatus: () => void) {
   const aoChegarRef = useRef(aoChegar);
+  const aoMudarStatusRef = useRef(aoMudarStatus);
   useEffect(() => {
     aoChegarRef.current = aoChegar;
-  }, [aoChegar]);
+    aoMudarStatusRef.current = aoMudarStatus;
+  }, [aoChegar, aoMudarStatus]);
 
   useEffect(() => {
     if (typeof EventSource === 'undefined') return;
     const origem = new EventSource('/api/stream');
-    const aoEvento = (evento: Event) => {
+    const aoEvento = (acao: { current: () => void }) => (evento: Event) => {
       try {
         const dados = JSON.parse((evento as MessageEvent).data) as { leadId?: string | null };
         // Conversa avulsa (sem lead) casa com eventos sem lead.
-        if ((dados.leadId ?? null) === leadId) aoChegarRef.current();
+        if ((dados.leadId ?? null) === leadId) acao.current();
       } catch {
         // Evento malformado: ignora, a próxima abertura da conversa relê o histórico.
       }
     };
-    origem.addEventListener('mensagem.recebida', aoEvento);
-    origem.addEventListener('mensagem.status', aoEvento);
+    origem.addEventListener('mensagem.recebida', aoEvento(aoChegarRef));
+    // Check de entregue/lida: só relê as mensagens (não marca nada como lido).
+    origem.addEventListener('mensagem.status', aoEvento(aoMudarStatusRef));
     return () => origem.close();
   }, [leadId]);
 }
@@ -207,7 +210,10 @@ export function ConversaLead({ leadId, numero, leadNome = '', cabecalho, versao 
     leadId,
     useCallback(() => {
       void carregarMensagens().then(() => marcarComoLidas());
-    }, [carregarMensagens, marcarComoLidas])
+    }, [carregarMensagens, marcarComoLidas]),
+    useCallback(() => {
+      void carregarMensagens();
+    }, [carregarMensagens])
   );
 
   const telefone = telefones[escolhido] ?? null;
