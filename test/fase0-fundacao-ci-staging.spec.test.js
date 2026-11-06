@@ -325,7 +325,11 @@ describe('T-005 — integração com Postgres real (crm_prod/crm_staging, crm_ap
     const deadline = Date.now() + READY_TIMEOUT_MS;
     let ready = false;
     while (Date.now() < deadline) {
-      const isReady = runDocker(['exec', containerName, 'pg_isready', '-U', 'postgres']);
+      // A imagem sobe um servidor temporário para os init scripts e o desliga; só depois do "init process complete" o definitivo
+      // está de pé. Sem esperar isso, o teste conectava no temporário e caía em "database system is shutting down".
+      const logs = runDocker(['logs', containerName]);
+      const initTerminou = `${logs.stdout}${logs.stderr}`.includes('PostgreSQL init process complete');
+      const isReady = initTerminou ? runDocker(['exec', containerName, 'pg_isready', '-U', 'postgres']) : { status: 1 };
       if (isReady.status === 0) {
         const rolesExist = psqlAs('postgres', 'postgres', "SELECT count(*) FROM pg_roles WHERE rolname IN ('crm_app','crm_migrator')");
         if (rolesExist.status === 0 && rolesExist.stdout.trim() === '2') {
@@ -555,7 +559,11 @@ describe('T-007 — integração do backup-crm.sh contra um Postgres real', () =
     const deadline = Date.now() + READY_TIMEOUT_MS;
     let ready = false;
     while (Date.now() < deadline) {
-      const isReady = runDocker(['exec', containerName, 'pg_isready', '-U', 'postgres']);
+      // A imagem sobe um servidor temporário para os init scripts e o desliga; só depois do "init process complete" o definitivo
+      // está de pé. Sem esperar isso, o teste conectava no temporário e caía em "database system is shutting down".
+      const logs = runDocker(['logs', containerName]);
+      const initTerminou = `${logs.stdout}${logs.stderr}`.includes('PostgreSQL init process complete');
+      const isReady = initTerminou ? runDocker(['exec', containerName, 'pg_isready', '-U', 'postgres']) : { status: 1 };
       if (isReady.status === 0) {
         const dbExists = psqlAs('postgres', 'postgres', "SELECT count(*) FROM pg_database WHERE datname = 'crm_prod'");
         if (dbExists.status === 0 && dbExists.stdout.trim() === '1') {

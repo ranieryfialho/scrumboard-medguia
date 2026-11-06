@@ -128,10 +128,10 @@ describe('T-140: tokens de tema do protótipo (AC-345)', () => {
 describe('T-140: fontes e ícones do protótipo (AC-346)', () => {
   const layoutSrc = readFileSync(LAYOUT_PATH, 'utf8');
 
-  test('Plus Jakarta Sans e Inter são carregadas por next/font/google @spec:AC-346', () => {
-    expect(layoutSrc).toMatch(/from\s+["']next\/font\/google["']/);
-    expect(layoutSrc).toMatch(/Plus_Jakarta_Sans/);
-    expect(layoutSrc).toMatch(/\bInter\b/);
+  test('Plus Jakarta Sans e Inter são carregadas por next/font/local (arquivos no repositório) @spec:AC-346', () => {
+    expect(layoutSrc).toMatch(/from\s+["']next\/font\/local["']/);
+    expect(layoutSrc).toMatch(/plus-jakarta-sans-latin-wght-normal\.woff2/);
+    expect(layoutSrc).toMatch(/inter-latin-wght-normal\.woff2/);
     // As fontes precisam estar disponíveis em toda página: aplicadas no
     // elemento raiz do layout (via variável CSS), não só numa rota isolada.
     expect(layoutSrc).toMatch(/--font-plus-jakarta-sans/);

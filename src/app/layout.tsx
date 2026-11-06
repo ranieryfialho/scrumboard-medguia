@@ -1,19 +1,23 @@
 import type { Metadata } from "next";
-import { Inter, Plus_Jakarta_Sans } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
 // T-140 (fase4-design-system-shell-acesso, AC-346): Inter (texto) e
 // Plus Jakarta Sans (títulos) são as fontes do protótipo Stitch.
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+// Ficam no repositório (src/app/fonts, licença OFL) em vez de `next/font/google`: o build baixava as fontes da Google e o CI
+// quebrava sempre que essa rede falhava. São fontes variáveis (latin), então cobrem todos os pesos usados.
+const inter = localFont({
+  src: "./fonts/inter-latin-wght-normal.woff2",
+  weight: "100 900",
   variable: "--font-inter",
+  display: "swap",
 });
 
-const plusJakartaSans = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  weight: ["600", "700"],
+const plusJakartaSans = localFont({
+  src: "./fonts/plus-jakarta-sans-latin-wght-normal.woff2",
+  weight: "200 800",
   variable: "--font-plus-jakarta-sans",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
