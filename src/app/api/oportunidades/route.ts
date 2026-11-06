@@ -84,6 +84,8 @@ export interface CardBoard {
   responsavelNome: string | null;
   valor: string | null;
   version: number;
+  /** Quando o card nasceu — base da ordem (mais novo primeiro) e do selo "Novo" da Entrada de leads. */
+  criadoEm: string;
 }
 
 /** AC-075: enriquece a página de `listarOportunidades` com nome do lead e do responsável. */
@@ -122,6 +124,7 @@ async function enriquecerCards(
     responsavelNome: o.responsavelId ? (nomeDoResponsavel.get(o.responsavelId) ?? null) : null,
     valor: o.valor,
     version: o.version,
+    criadoEm: o.criadoEm.toISOString(),
   }));
 }
 
