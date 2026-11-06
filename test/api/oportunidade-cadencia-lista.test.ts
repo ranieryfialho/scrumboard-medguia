@@ -25,7 +25,7 @@ describe('T-170: listagem da cadência do card (servidor)', () => {
   let rotaLista: typeof import('../../src/app/api/oportunidades/[id]/cadencia/route');
   let rotaIniciar: typeof import('../../src/app/api/oportunidades/[id]/cadencia/iniciar/route');
 
-  function get(cookie: string | null, cardId: string) {
+  async function get(cookie: string | null, cardId: string) {
     const headers = cookie ? { Cookie: cookie } : undefined;
     const request = new NextRequest(`http://localhost/api/oportunidades/${cardId}/cadencia`, { headers });
     // O relógio da rota também é fixado (manhã de um dia útil, 1 h depois do início do bloco): sem isto o resultado dependia da hora real em que o CI rodava.
