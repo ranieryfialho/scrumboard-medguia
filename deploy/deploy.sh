@@ -21,7 +21,9 @@ case "$AMBIENTE" in
 esac
 
 log() { printf '%s [%s] %s\n' "$(date +%H:%M:%S)" "$AMBIENTE" "$*"; }
-psql_mig() { docker exec -i pg-master psql -U crm_migrator -d "$BANCO" -v ON_ERROR_STOP=1 -q "$@"; }
+# Sem `-i`: o docker não lê o stdin (que num loop `while read` é a lista de arquivos). psql_arq é a única que recebe um arquivo pelo stdin.
+psql_mig() { docker exec pg-master psql -U crm_migrator -d "$BANCO" -v ON_ERROR_STOP=1 -q "$@"; }
+psql_arq() { docker exec -i pg-master psql -U crm_migrator -d "$BANCO" -v ON_ERROR_STOP=1 -q; }
 # O IMAGE_TAG vai sempre inline: vence o .env e não depende de nada exportado em shell antigo.
 compose() { (cd "$DIR" && IMAGE_TAG="$1" docker compose -f "$COMPOSE" --env-file "$ENVF" "${@:2}"); }
 
@@ -68,7 +70,7 @@ done)
 if [ -z "$PENDENTES" ]; then log "migrations: nenhuma pendente"; else
   for f in $PENDENTES; do
     log "aplicando $f"
-    git -C "$REPO" show "$SHA:drizzle/$f" | psql_mig || { log "FALHOU em $f: a imagem NÃO foi trocada; o backup está em $ARQ"; exit 1; }
+    git -C "$REPO" show "$SHA:drizzle/$f" | psql_arq || { log "FALHOU em $f: a imagem NÃO foi trocada; o backup está em $ARQ"; exit 1; }
     psql_mig -c "insert into public.migracoes_aplicadas (arquivo) values ('$f')"
   done
 fi
@@ -82,7 +84,7 @@ saudavel() {
   docker exec "$APP" node -e "fetch('http://127.0.0.1:3000/login').then(r=>process.exit(r.status===200?0:1)).catch(()=>process.exit(1))" 2>/dev/null
 }
 for i in $(seq 1 24); do
-  if saudavel; then log "saudável (tentativa $i)"; docker ps --format '  {{.Names}}  {{.Image}}' | grep -E "crm-.*-${AMBIENTE}" || true; log "OK"; exit 0; fi
+  if saudavel; then log "saudável (tentativa $i)"; docker ps --format '  {{.Names}}  {{.Image}}' | grep -E "crm-.*-${AMBIENTE}" || true; log "DEPLOY_CONCLUIDO"; exit 0; fi
   sleep 5
 done
 

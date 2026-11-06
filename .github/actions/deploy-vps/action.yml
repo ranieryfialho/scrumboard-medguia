@@ -25,5 +25,9 @@ runs:
         printf '%s\n' "$CHAVE" > ~/.ssh/deploy_key && chmod 600 ~/.ssh/deploy_key
         ssh-keyscan -T 10 "$HOST" >> ~/.ssh/known_hosts 2>/dev/null
         SSH="ssh -i $HOME/.ssh/deploy_key -o BatchMode=yes -o ServerAliveInterval=30 $USUARIO@$HOST"
-        # O script vai pelo stdin: nada fica gravado na VPS e a versão executada é a do commit que está sendo implantado.
-        $SSH "bash -s -- '$AMBIENTE' '$SHA' '$IGNORAR'" < deploy/deploy.sh
+        # O script é copiado para a VPS e executado como ARQUIVO: se fosse lido pelo stdin do bash, qualquer comando que leia o stdin
+        # (docker exec -i, por exemplo) engoliria o resto do script e o deploy terminaria "com sucesso" pela metade.
+        $SSH "cat > /tmp/deploy-crm.sh && chmod 700 /tmp/deploy-crm.sh" < deploy/deploy.sh
+        $SSH "bash /tmp/deploy-crm.sh '$AMBIENTE' '$SHA' '$IGNORAR' < /dev/null" 2>&1 | tee /tmp/saida-deploy.txt
+        # Só vale se o script chegou ao fim: sem a marca, o deploy não terminou (mesmo que o ssh devolva 0).
+        grep -q 'DEPLOY_CONCLUIDO' /tmp/saida-deploy.txt || { echo '::error::o deploy não chegou ao fim (sem DEPLOY_CONCLUIDO)'; exit 1; }
