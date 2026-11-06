@@ -1,8 +1,9 @@
 name: Deploy do CRM
 
-# Depois que o Release publica a imagem de um commit na main, o staging recebe a versão SOZINHO. A produção só sobe depois do
-# clique de aprovação do environment `producao` (Settings > Environments > producao > Required reviewers).
-# Também dá para disparar à mão (Actions > Deploy do CRM > Run workflow) com um SHA qualquer: serve de rollback.
+# Depois que o Release publica a imagem de um commit na main, o staging recebe a versão SOZINHO.
+# A produção NUNCA sobe sozinha: o clique é em Actions > Deploy do CRM > Run workflow > ambiente `producao`
+# (o plano do GitHub não oferece revisor obrigatório em repositório privado). O script recusa subir na produção uma versão
+# que não esteja rodando no staging, a não ser que se marque `ignorar_staging` (rollback).
 on:
   workflow_run:
     workflows: [Release]
@@ -20,6 +21,11 @@ on:
         default: staging
         type: choice
         options: [staging, producao]
+      ignorar_staging:
+        description: 'Só para produção: permite subir uma versão que NÃO está no staging (rollback para uma anterior)'
+        required: false
+        default: false
+        type: boolean
 
 # Um deploy por vez, e nunca cancelado no meio (cancelar deixaria a troca pela metade).
 concurrency:
@@ -34,8 +40,8 @@ env:
 
 jobs:
   staging:
-    # Automático após Release verde; manual quando escolhido staging (ou produção, que passa por aqui primeiro).
-    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    # Automático após Release verde; manual só quando escolhido staging.
+    if: (github.event_name == 'workflow_dispatch' && inputs.ambiente == 'staging') || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
     environment: staging
     timeout-minutes: 20
@@ -52,10 +58,8 @@ jobs:
           chave: ${{ secrets.VPS_SSH_KEY }}
 
   producao:
-    needs: staging
-    if: github.event_name == 'workflow_run' || inputs.ambiente == 'producao'
+    if: github.event_name == 'workflow_dispatch' && inputs.ambiente == 'producao'
     runs-on: ubuntu-latest
-    # Este environment deve ter "Required reviewers": o job fica aguardando o seu clique em Review deployments > Approve.
     environment: producao
     timeout-minutes: 20
     steps:
@@ -66,6 +70,7 @@ jobs:
         with:
           ambiente: prod
           sha: ${{ env.SHA }}
+          ignorar_staging: ${{ inputs.ignorar_staging }}
           host: ${{ secrets.VPS_HOST }}
           usuario: ${{ secrets.VPS_USER }}
           chave: ${{ secrets.VPS_SSH_KEY }}

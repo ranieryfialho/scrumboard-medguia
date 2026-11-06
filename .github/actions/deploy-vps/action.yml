@@ -6,6 +6,7 @@ inputs:
   host: { required: true }
   usuario: { required: true }
   chave: { required: true }
+  ignorar_staging: { description: 'true = produção sem exigir a mesma versão no staging', required: false, default: 'false' }
 runs:
   using: composite
   steps:
@@ -16,6 +17,7 @@ runs:
         HOST: ${{ inputs.host }}
         USUARIO: ${{ inputs.usuario }}
         CHAVE: ${{ inputs.chave }}
+        IGNORAR: ${{ inputs.ignorar_staging }}
       run: |
         set -euo pipefail
         [[ "$SHA" =~ ^[0-9a-f]{40}$ ]] || { echo "SHA inválido: $SHA"; exit 1; }
@@ -24,4 +26,4 @@ runs:
         ssh-keyscan -T 10 "$HOST" >> ~/.ssh/known_hosts 2>/dev/null
         SSH="ssh -i $HOME/.ssh/deploy_key -o BatchMode=yes -o ServerAliveInterval=30 $USUARIO@$HOST"
         # O script vai pelo stdin: nada fica gravado na VPS e a versão executada é a do commit que está sendo implantado.
-        $SSH "bash -s -- '$AMBIENTE' '$SHA'" < deploy/deploy.sh
+        $SSH "bash -s -- '$AMBIENTE' '$SHA' '$IGNORAR'" < deploy/deploy.sh

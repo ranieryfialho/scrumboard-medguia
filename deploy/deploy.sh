@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Deploy do CRM na VPS (roda LÁ, chamado pelo workflow .github/workflows/deploy-crm.yml por SSH).
-# Uso: deploy.sh <staging|prod> <sha-completo-do-commit>
+# Uso: deploy.sh <staging|prod> <sha-completo-do-commit> [true]   (o 3º argumento 'true' dispensa, na produção, a conferência do staging)
 #
 # O que faz, em ordem (qualquer falha ANTES da troca da imagem aborta sem tocar no que está no ar):
 #   1. baixa a imagem nova (pull);  2. backup do banco (pg_dump -Fc);  3. aplica as migrations pendentes como crm_migrator;
@@ -10,6 +10,7 @@ set -euo pipefail
 
 AMBIENTE="${1:?uso: $0 <staging|prod> <sha>}"
 SHA="${2:?uso: $0 <staging|prod> <sha>}"
+IGNORAR_STAGING="${3:-false}"
 [[ "$SHA" =~ ^[0-9a-f]{40}$ ]] || { echo "SHA inválido (precisa ter os 40 caracteres): $SHA"; exit 1; }
 
 REPO=/root/crm-staging   # clone do repositório (as migrations vêm daqui, direto do commit, sem mexer na árvore de trabalho)
@@ -23,6 +24,15 @@ log() { printf '%s [%s] %s\n' "$(date +%H:%M:%S)" "$AMBIENTE" "$*"; }
 psql_mig() { docker exec -i pg-master psql -U crm_migrator -d "$BANCO" -v ON_ERROR_STOP=1 -q "$@"; }
 # O IMAGE_TAG vai sempre inline: vence o .env e não depende de nada exportado em shell antigo.
 compose() { (cd "$DIR" && IMAGE_TAG="$1" docker compose -f "$COMPOSE" --env-file "$ENVF" "${@:2}"); }
+
+# --- travas da produção: só sobe o que já está rodando no staging (a menos que se peça o contrário, no rollback)
+if [ "$AMBIENTE" = prod ] && [ "$IGNORAR_STAGING" != "true" ]; then
+  NO_STAGING=$(docker inspect crm-app-staging --format '{{.Config.Image}}' 2>/dev/null | sed 's/.*://' || true)
+  if [ "$NO_STAGING" != "$SHA" ]; then
+    log "RECUSADO: o staging roda '${NO_STAGING:0:9}', não ${SHA:0:9}. Suba no staging primeiro (ou marque 'ignorar_staging' para um rollback)."
+    exit 1
+  fi
+fi
 
 # --- 0. o commit existe no clone? (o staging também atualiza o compose do repositório)
 git -C "$REPO" fetch -q origin
