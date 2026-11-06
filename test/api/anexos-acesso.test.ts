@@ -53,7 +53,9 @@ describe('T-056: rotas de acesso a anexos', () => {
     const resposta = await emitir(anexoId, amb.cookieA);
 
     expect(resposta.status).toBe(302);
-    const destino = new URL(resposta.headers.get('location')!);
+    // Caminho relativo: não carrega o host interno do servidor (`0.0.0.0:3000` em produção), o navegador resolve no domínio de quem acessa.
+    expect(resposta.headers.get('location')).toMatch(/^\/api\/anexos\/arquivo\//);
+    const destino = new URL(resposta.headers.get('location')!, 'http://localhost');
     expect(destino.pathname).toBe(`/api/anexos/arquivo/${anexoId}`);
     expect(destino.searchParams.get('emp')).toBe(amb.tenants.empresaA);
     const exp = Number(destino.searchParams.get('exp'));

@@ -40,9 +40,9 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   if (!anexo) return NextResponse.json({ codigo: 'ANEXO_NAO_ENCONTRADO' }, { status: 404 });
 
   const { url } = assinarUrl(anexo.id, anexo.empresaId);
-  const resposta = NextResponse.redirect(new URL(url, request.url), 302);
-  resposta.headers.set('Cache-Control', 'no-store');
-  return resposta;
+  // Redireciona por caminho relativo: o navegador resolve no endereço que a pessoa está usando. `request.url` atrás do proxy vem com o host
+  // interno do servidor (`0.0.0.0:3000`), e um redirecionamento absoluto montado a partir dele mandava o navegador para um endereço inválido.
+  return new NextResponse(null, { status: 302, headers: { Location: url, 'Cache-Control': 'no-store' } });
 }
 
 const STATUS_DA_EXCLUSAO = { ANEXO_NAO_ENCONTRADO: 404, SEM_PERMISSAO: 403, ANEXO_E_EVIDENCIA: 409 } as const;
