@@ -1,8 +1,9 @@
 // @vitest-environment jsdom
 //
 // Entrada de leads: o card mais novo fica sempre no topo e ganha o selo "Novo"
-// (verde, pulsante) pelo prazo da regra de `lead-novo.ts`. Só a Entrada de leads
-// reordena e mostra o selo; as outras colunas seguem como o servidor mandou.
+// (pulsante) enquanto não houver interação; a cor esquenta com a espera (regra de
+// `lead-novo.ts`). Só a Entrada de leads reordena e mostra o selo; as outras
+// colunas seguem como o servidor mandou.
 // Só o relógio (`Date`) é falso — os timers reais seguem, senão o `waitFor` trava.
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { cleanup, render, screen } from "@testing-library/react";
@@ -64,7 +65,7 @@ describe("Entrada de leads: mais novo primeiro e selo Novo", () => {
         return resposta({
           // De propósito fora de ordem: o antigo vem antes do novo.
           itens: [
-            card("a", "Lead Antigo", horasAtras(30)),
+            card("a", "Lead Antigo", horasAtras(100)),
             card("b", "Lead Recente", horasAtras(1)),
             card("c", "Lead Do Meio", horasAtras(13)),
             card("d", "Lead Na Reunião", horasAtras(1), 8),
@@ -103,16 +104,16 @@ describe("Entrada de leads: mais novo primeiro e selo Novo", () => {
     expect(cardRecente.querySelector('img[src="/api/whatsapp/foto?leadId=lead-b"]')).not.toBeNull();
   });
 
-  test("o selo Novo aparece só em quem chegou dentro das 12h de dia útil, e só na Entrada de leads", async () => {
+  test("o selo Novo fica em todo lead da Entrada, com a cor da espera, e não aparece fora dela", async () => {
     render(<BoardKanban />);
     await screen.findByText("Lead Recente");
 
-    const comSelo = (nome: string) => screen.getByText(nome).closest(".relative")!.querySelector('[data-testid="selo-novo"]');
+    const selo = (nome: string) => screen.getByText(nome).closest(".relative")!.querySelector('[data-testid="selo-novo"]');
 
-    expect(comSelo("Lead Recente")).not.toBeNull();
-    expect(comSelo("Lead Recente")!.textContent).toContain("Novo");
-    expect(comSelo("Lead Do Meio")).toBeNull(); // 13h atrás: passou das 12h
-    expect(comSelo("Lead Antigo")).toBeNull();
-    expect(comSelo("Lead Na Reunião")).toBeNull(); // fora da Entrada de leads
+    expect(selo("Lead Recente")!.textContent).toContain("Novo");
+    expect(selo("Lead Recente")!.getAttribute("data-urgencia")).toBe("recente"); // 1h
+    expect(selo("Lead Do Meio")!.getAttribute("data-urgencia")).toBe("atencao"); // 13h
+    expect(selo("Lead Antigo")!.getAttribute("data-urgencia")).toBe("parado"); // dias úteis parado
+    expect(selo("Lead Na Reunião")).toBeNull(); // fora da Entrada de leads
   });
 });

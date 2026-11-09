@@ -18,6 +18,8 @@ export interface TemplateView {
   criadoEm: string;
   aprovadoEm: string | null;
   aprovadoPorNome: string | null;
+  /** Quem criou — só o autor (e o gestor) edita o template. */
+  criadoPorId: string | null;
 }
 
 export type ResultadoDoTemplate =
@@ -32,10 +34,11 @@ const colunas = {
   criadoEm: whatsappTemplates.criadoEm,
   aprovadoEm: whatsappTemplates.aprovadoEm,
   aprovadoPorNome: usuarios.nome,
+  criadoPorId: whatsappTemplates.criadoPor,
 };
 
-function comoView(l: { id: string; nome: string; corpo: string; status: string; criadoEm: Date; aprovadoEm: Date | null; aprovadoPorNome: string | null }): TemplateView {
-  return { id: l.id, nome: l.nome, corpo: l.corpo, status: l.status as StatusDoTemplate, criadoEm: l.criadoEm.toISOString(), aprovadoEm: l.aprovadoEm?.toISOString() ?? null, aprovadoPorNome: l.aprovadoPorNome };
+function comoView(l: { id: string; nome: string; corpo: string; status: string; criadoEm: Date; aprovadoEm: Date | null; aprovadoPorNome: string | null; criadoPorId: string | null }): TemplateView {
+  return { id: l.id, nome: l.nome, corpo: l.corpo, status: l.status as StatusDoTemplate, criadoEm: l.criadoEm.toISOString(), aprovadoEm: l.aprovadoEm?.toISOString() ?? null, aprovadoPorNome: l.aprovadoPorNome, criadoPorId: l.criadoPorId };
 }
 
 /** AC-672: o gestor vê todos os da empresa; quem só usa (`somenteAprovados`) vê os aprovados. */
@@ -58,7 +61,7 @@ export async function buscarTemplate(db: NodePgDatabase, contexto: ContextoTenan
   });
 }
 
-/** AC-670: nasce rascunho; nome repetido na empresa (sem diferenciar caixa) dá `TEMPLATE_JA_EXISTE`. */
+/** AC-670: quem cria já deixa o template aprovado e pronto para uso (sem etapa de aprovação); nome repetido na empresa (sem diferenciar caixa) dá `TEMPLATE_JA_EXISTE`. */
 export async function criarTemplate(db: NodePgDatabase, contexto: ContextoTenant, entrada: { nome: unknown; corpo: unknown }): Promise<ResultadoDoTemplate> {
   const v = validarTemplate(entrada);
   if (!v.ok) return { ok: false, codigo: 'PARAMETRO_INVALIDO', campo: v.campo, mensagem: v.mensagem };
@@ -66,7 +69,7 @@ export async function criarTemplate(db: NodePgDatabase, contexto: ContextoTenant
     const id = await comTenant(db, contexto, async (tx) => {
       const [criado] = await tx
         .insert(whatsappTemplates)
-        .values({ empresaId: contexto.empresaId, nome: v.nome, corpo: v.corpo, status: 'rascunho', criadoPor: contexto.usuarioId })
+        .values({ empresaId: contexto.empresaId, nome: v.nome, corpo: v.corpo, status: 'aprovado', criadoPor: contexto.usuarioId, aprovadoPor: contexto.usuarioId, aprovadoEm: sql`now()` })
         .returning({ id: whatsappTemplates.id });
       return criado.id;
     });
@@ -77,7 +80,7 @@ export async function criarTemplate(db: NodePgDatabase, contexto: ContextoTenant
 }
 
 /**
- * AC-671: `editar` (nome e/ou corpo — de um aprovado, volta a rascunho), `aprovar` (grava quem e quando) ou
+ * AC-671: `editar` (nome e/ou corpo — o template segue como está, sem voltar a rascunho), `aprovar` (grava quem e quando) ou
  * `arquivar`. Arquivado não edita nem aprova.
  */
 export async function alterarTemplate(
@@ -105,15 +108,7 @@ export async function alterarTemplate(
       }
       const v = validarTemplate({ nome: alteracao.nome ?? atual.nome, corpo: alteracao.corpo ?? atual.corpo });
       if (!v.ok) throw Object.assign(new Error('invalido'), { validacao: v });
-      const mudou = v.nome !== atual.nome || v.corpo !== atual.corpo;
-      await tx
-        .update(whatsappTemplates)
-        .set({
-          nome: v.nome,
-          corpo: v.corpo,
-          ...(mudou && atual.status === 'aprovado' ? { status: 'rascunho', aprovadoPor: null, aprovadoEm: null } : {}),
-          atualizadoEm: sql`now()`,
-        })
+      await tx.update(whatsappTemplates).set({ nome: v.nome, corpo: v.corpo, atualizadoEm: sql`now()` })
         .where(eq(whatsappTemplates.id, id));
     });
   } catch (erro) {

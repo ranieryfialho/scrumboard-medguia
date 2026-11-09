@@ -37,10 +37,10 @@ describe('T-249: templates de mensagem', () => {
     await amb?.parar();
   });
 
-  test('o gerente cria em rascunho; nome repetido, variável desconhecida, tamanho ruim e atendente são recusados @spec:AC-670', async () => {
+  test('quem cria (gerente ou atendente) já deixa o template aprovado; nome repetido, variável desconhecida e tamanho ruim são recusados @spec:AC-670', async () => {
     const r = await criar({ nome: '  Boas vindas ', corpo: 'Olá, {{primeiro_nome}}! Aqui é da clínica.' });
     expect(r.status).toBe(201);
-    expect(await r.json()).toMatchObject({ nome: 'Boas vindas', status: 'rascunho', aprovadoEm: null });
+    expect(await r.json()).toMatchObject({ nome: 'Boas vindas', status: 'aprovado' });
 
     const repetido = await criar({ nome: 'BOAS VINDAS', corpo: 'x' });
     expect(repetido.status).toBe(409);
@@ -57,19 +57,20 @@ describe('T-249: templates de mensagem', () => {
       expect(e.status, campo).toBe(400);
       expect((await e.json()).campo).toBe(campo);
     }
-    expect((await criar({ nome: 'Do atendente', corpo: 'x' }, atendente)).status).toBe(403);
+    const doAtendente = await criar({ nome: 'Do atendente', corpo: 'x' }, atendente);
+    expect(doAtendente.status).toBe(201);
+    expect(await doAtendente.json()).toMatchObject({ nome: 'Do atendente', status: 'aprovado' });
     expect((await criar({ nome: 'Sem sessão', corpo: 'x' }, null)).status).toBe(401);
   });
 
-  test('aprovar grava quem e quando; editar aprovado volta a rascunho; arquivado não edita nem aprova; outra empresa é 404 @spec:AC-671', async () => {
+  test('aprovar grava quem e quando; editar um aprovado não o tira de uso; arquivado não edita nem aprova; outra empresa é 404 @spec:AC-671', async () => {
     const { id } = await criado('Para aprovar');
     const aprovado = await (await alterar(id, { acao: 'aprovar' })).json();
     expect(aprovado).toMatchObject({ status: 'aprovado', aprovadoPorNome: expect.any(String) });
     expect(new Date(aprovado.aprovadoEm).getTime()).toBeGreaterThan(Date.now() - 60_000);
 
     const editado = await (await alterar(id, { corpo: 'Texto novo para {{nome}}' })).json();
-    expect(editado).toMatchObject({ status: 'rascunho', corpo: 'Texto novo para {{nome}}', aprovadoEm: null, aprovadoPorNome: null });
-    await alterar(id, { acao: 'aprovar' });
+    expect(editado).toMatchObject({ status: 'aprovado', corpo: 'Texto novo para {{nome}}', aprovadoPorNome: expect.any(String) });
     const igual = await (await alterar(id, { nome: 'Para aprovar' })).json(); // nada mudou: segue aprovado
     expect(igual.status).toBe('aprovado');
 
@@ -81,12 +82,32 @@ describe('T-249: templates de mensagem', () => {
     }
     expect((await alterar(id, { acao: 'aprovar' }, gerenteB)).status).toBe(404);
     expect((await alterar(id, { acao: 'aprovar' }, atendente)).status).toBe(403);
-    expect((await alterar(id, { acao: 'voar' })).status).toBe(400);
+        expect((await alterar(id, { acao: 'voar' })).status).toBe(400);
     expect((await alterar('nao-e-uuid', { acao: 'aprovar' })).status).toBe(404);
   });
 
-  test('o gerente vê todos da empresa; o atendente só os aprovados; ninguém vê os da outra @spec:AC-672', async () => {
-    const rascunho = await criado('Lista rascunho');
+  test('o atendente edita o template que ele criou, mas não o de outra pessoa; aprovar e arquivar seguem só do gestor @spec:AC-671', async () => {
+    const meu = await criado('Meu template', 'Oi, {{primeiro_nome}}!', atendente);
+    const doGerente = await criado('Template do gerente');
+
+    const editado = await alterar(meu.id, { nome: 'Meu template v2', corpo: 'Olá, {{primeiro_nome}}!' }, atendente);
+    expect(editado.status).toBe(200);
+    expect(await editado.json()).toMatchObject({ nome: 'Meu template v2', corpo: 'Olá, {{primeiro_nome}}!', status: 'aprovado' }); // segue em uso
+
+    expect((await alterar(doGerente.id, { corpo: 'invadido' }, atendente)).status).toBe(403);
+    expect((await alterar(meu.id, { acao: 'arquivar' }, atendente)).status).toBe(403);
+    expect((await alterar(meu.id, { acao: 'aprovar' }, atendente)).status).toBe(403);
+    expect((await alterar(meu.id, { corpo: 'Oi {{cidade}}' }, atendente)).status).toBe(400); // a validação vale igual
+    expect((await alterar(meu.id, { corpo: 'x' }, gerenteB)).status).toBe(404);
+
+    const doAtendente = await (await lista(atendente)).json();
+    const porNome = (n: string) => doAtendente.templates.find((t: { nome: string }) => t.nome === n);
+    expect(porNome('Meu template v2').podeEditar).toBe(true);
+    expect(porNome('Template do gerente').podeEditar).toBe(false);
+  });
+
+  test('o gerente vê todos da empresa; o atendente só os não arquivados; ninguém vê os da outra @spec:AC-672', async () => {
+    await criado('Lista do gerente');
     const ok = await criado('Lista aprovado');
     await alterar(ok.id, { acao: 'aprovar' });
     const arq = await criado('Lista arquivado');
@@ -94,14 +115,12 @@ describe('T-249: templates de mensagem', () => {
     const doGerente = await (await lista()).json();
     expect(doGerente.podeGerir).toBe(true);
     const nomes = (corpo: { templates: Array<{ nome: string }> }) => corpo.templates.map((t) => t.nome);
-    expect(nomes(doGerente)).toEqual(expect.arrayContaining(['Lista rascunho', 'Lista aprovado', 'Lista arquivado']));
+    expect(nomes(doGerente)).toEqual(expect.arrayContaining(['Lista do gerente', 'Lista aprovado', 'Lista arquivado']));
     const doAtendente = await (await lista(atendente)).json();
     expect(doAtendente.podeGerir).toBe(false);
-    expect(nomes(doAtendente)).toContain('Lista aprovado');
-    expect(nomes(doAtendente)).not.toContain('Lista rascunho');
-    expect(nomes(doAtendente)).not.toContain('Lista arquivado');
+    expect(nomes(doAtendente)).toEqual(expect.arrayContaining(['Lista aprovado', 'Lista do gerente']));
+        expect(nomes(doAtendente)).not.toContain('Lista arquivado');
     const daB = await (await lista(gerenteB)).json();
     expect(nomes(daB)).toEqual(['BOAS VINDAS']);
-    void rascunho;
   });
 });

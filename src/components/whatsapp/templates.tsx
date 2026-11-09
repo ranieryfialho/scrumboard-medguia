@@ -1,8 +1,8 @@
 'use client';
 
-// T-248 (fase5-whatsapp-lote-base, US-160, AC-673): tela de templates de mensagem do WhatsApp. Todos leem; gerente,
-// master e super admin criam, editam, aprovam e arquivam (a API decide: `podeGerir`). Só o template aprovado vale em
-// lote; editar um aprovado o devolve a rascunho. Os shortcodes vêm do catálogo único (`VARIAVEIS`).
+// T-248 (fase5-whatsapp-lote-base, US-160, AC-673): tela de templates de mensagem do WhatsApp. Todos leem e criam (o template já nasce
+// aprovado); gerente, master e super admin também aprovam e arquivam (a API decide: `podeGerir`); o atendente edita os que criou (`podeEditar`). Só o template aprovado vale em
+// lote; criar já deixa o template aprovado e editar não o tira de uso. Os shortcodes vêm do catálogo único (`VARIAVEIS`).
 // Layout lista + painel: a lista fica sempre à esquerda; à direita, o template escolhido (prévia e ações) ou o editor
 // (campos, shortcodes por grupo e prévia ao vivo) — nada obriga a rolar a página para achar um shortcode.
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -17,6 +17,8 @@ interface Template {
   corpo: string;
   status: 'rascunho' | 'aprovado' | 'arquivado';
   aprovadoPorNome: string | null;
+  /** O gestor edita qualquer um; o atendente, só os que criou. */
+  podeEditar: boolean;
 }
 
 type Filtro = 'todos' | Template['status'];
@@ -135,7 +137,7 @@ export function Templates() {
     const corpo = { nome: formulario.nome, corpo: formulario.corpo };
     const ok = formulario.id
       ? await enviar(`/api/whatsapp/templates/${formulario.id}`, 'PATCH', corpo, 'Template salvo')
-      : await enviar('/api/whatsapp/templates', 'POST', corpo, 'Template criado como rascunho');
+      : await enviar('/api/whatsapp/templates', 'POST', corpo, 'Template criado e pronto para uso');
     if (ok) setFormulario(null);
   }
 
@@ -166,14 +168,12 @@ export function Templates() {
         <div>
           <h1 className="font-headline-lg text-headline-lg text-text-primary">Templates de Mensagem</h1>
           <p className="font-body-md text-body-md text-text-secondary max-w-2xl">
-            Modelos de mensagem do WhatsApp. Só um template <strong>aprovado</strong> aparece nas conversas e pode ser usado em lote.
+            Modelos de mensagem do WhatsApp. Todo template criado aqui já aparece nas conversas e pode ser usado em lote.
           </p>
         </div>
-        {podeGerir && (
-          <Button type="button" onClick={() => abrirEditor({ id: null, nome: '', corpo: '' })}>
-            Novo template
-          </Button>
-        )}
+        <Button type="button" onClick={() => abrirEditor({ id: null, nome: '', corpo: '' })}>
+          Novo template
+        </Button>
       </div>
 
       {aviso && (
@@ -185,7 +185,7 @@ export function Templates() {
       {erro && <EstadoErro mensagem="Não foi possível carregar os templates." onTentarDeNovo={() => void carregar()} />}
       {!erro && !lista && <EsqueletoCarregando />}
       {lista && lista.length === 0 && !formulario && (
-        <EstadoVazio titulo="Nenhum template ainda" proximoPasso={podeGerir ? 'crie o primeiro em Novo template' : 'peça a um gerente para aprovar um template'} icone="article" />
+        <EstadoVazio titulo="Nenhum template ainda" proximoPasso="crie o primeiro em Novo template" icone="article" />
       )}
 
       {lista && (lista.length > 0 || formulario) && (
@@ -356,19 +356,21 @@ export function Templates() {
                   </div>
                   <Balao corpo={escolhido.corpo} />
                   {escolhido.status === 'aprovado' && escolhido.aprovadoPorNome && <p className="font-body-sm text-body-sm text-text-muted">Aprovado por {escolhido.aprovadoPorNome}</p>}
-                  {podeGerir && escolhido.status !== 'arquivado' && (
+                  {(podeGerir || escolhido.podeEditar) && escolhido.status !== 'arquivado' && (
                     <div className="flex items-center gap-2 flex-wrap">
                       <button type="button" disabled={trabalhando} onClick={() => abrirEditor({ id: escolhido.id, nome: escolhido.nome, corpo: escolhido.corpo })} aria-label={`Editar: ${escolhido.nome}`} className="h-9 px-3 rounded-lg bg-surface-subtle font-label-md text-label-md font-semibold text-text-primary">
                         Editar
                       </button>
-                      {escolhido.status === 'rascunho' && (
+                      {podeGerir && escolhido.status === 'rascunho' && (
                         <button type="button" disabled={trabalhando} onClick={() => void enviar(`/api/whatsapp/templates/${escolhido.id}`, 'PATCH', { acao: 'aprovar' }, 'Template aprovado')} aria-label={`Aprovar: ${escolhido.nome}`} className="h-9 px-3 rounded-lg bg-success-surface font-label-md text-label-md font-semibold text-success-text">
                           Aprovar
                         </button>
                       )}
+                      {podeGerir && (
                       <button type="button" disabled={trabalhando} onClick={() => void enviar(`/api/whatsapp/templates/${escolhido.id}`, 'PATCH', { acao: 'arquivar' }, 'Template arquivado')} aria-label={`Arquivar: ${escolhido.nome}`} className="h-9 px-3 rounded-lg bg-surface-subtle font-label-md text-label-md font-semibold text-text-primary">
                         Arquivar
                       </button>
+                      )}
                     </div>
                   )}
                 </>
@@ -376,7 +378,7 @@ export function Templates() {
 
               {!formulario && !escolhido && (
                 <div className="py-12">
-                  <EstadoVazio titulo="Escolha um template" proximoPasso={podeGerir ? 'clique em um da lista ou crie um em Novo template' : 'clique em um da lista para ver a prévia'} icone="article" />
+                  <EstadoVazio titulo="Escolha um template" proximoPasso="clique em um da lista ou crie um em Novo template" icone="article" />
                 </div>
               )}
             </div>
