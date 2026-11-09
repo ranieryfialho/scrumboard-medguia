@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 
 import { Templates } from '../../../src/components/whatsapp/templates';
 
-const T = (id: string, nome: string, status: string, corpo = 'Olá, {{primeiro_nome}}!', aprovadoPorNome: string | null = null) => ({ id, nome, corpo, status, aprovadoPorNome });
+const T = (id: string, nome: string, status: string, corpo = 'Olá, {{primeiro_nome}}!', aprovadoPorNome: string | null = null, podeEditar = true) => ({ id, nome, corpo, status, aprovadoPorNome, podeEditar });
 
 describe('T-249: tela de templates', () => {
   let podeGerir: boolean;
@@ -15,7 +15,7 @@ describe('T-249: tela de templates', () => {
 
   beforeEach(() => {
     podeGerir = true;
-    templates = [T('t1', 'Boas-vindas', 'aprovado', 'Olá, {{primeiro_nome}}!', 'Karol Mendes'), T('t2', 'Retorno', 'rascunho', 'Oi {{nome}}')];
+    templates = [T('t1', 'Boas-vindas', 'aprovado', 'Olá, {{primeiro_nome}}!', 'Karol Mendes', false), T('t2', 'Retorno', 'rascunho', 'Oi {{nome}}')];
     respostaDoPost = () => new Response(JSON.stringify({ id: 't3' }), { status: 201 });
     chamadas = [];
     vi.stubGlobal(
@@ -33,7 +33,7 @@ describe('T-249: tela de templates', () => {
     vi.unstubAllGlobals();
   });
 
-  test('lista com situação e prévia; o gestor vê as ações no painel, o atendente só lê @spec:AC-673', async () => {
+  test('lista com situação e prévia; o gestor vê as ações no painel, o atendente cria mas não edita nem aprova @spec:AC-673', async () => {
     const u = userEvent.setup();
     const { unmount } = render(<Templates />);
     const aprovado = await screen.findByRole('article', { name: 'Template Boas-vindas' });
@@ -55,8 +55,11 @@ describe('T-249: tela de templates', () => {
     podeGerir = false;
     render(<Templates />);
     await u.click(within(await screen.findByRole('article', { name: 'Template Boas-vindas' })).getByRole('button'));
-    expect(screen.queryByRole('button', { name: 'Novo template' })).toBeNull();
-    expect(screen.queryByRole('button', { name: /^(Editar|Aprovar|Arquivar):/ })).toBeNull();
+    expect(screen.getByRole('button', { name: 'Novo template' })).toBeTruthy(); // o atendente também cria
+    expect(screen.queryByRole('button', { name: /^(Editar|Aprovar|Arquivar):/ })).toBeNull(); // o de outra pessoa
+    await u.click(within(screen.getByRole('article', { name: 'Template Retorno' })).getByRole('button'));
+    expect(screen.getByRole('button', { name: 'Editar: Retorno' })).toBeTruthy(); // o que ele criou
+    expect(screen.queryByRole('button', { name: /^(Aprovar|Arquivar):/ })).toBeNull();
   });
 
   test('busca e filtro por situação restringem a lista @spec:AC-673', async () => {
@@ -87,7 +90,7 @@ describe('T-249: tela de templates', () => {
 
     respostaDoPost = () => new Response(JSON.stringify({ id: 't3' }), { status: 201 });
     await u.click(screen.getByRole('button', { name: 'Salvar template' }));
-    expect(await screen.findByText('Template criado como rascunho')).toBeTruthy();
+    expect(await screen.findByText('Template criado e pronto para uso')).toBeTruthy();
     const posts = chamadas.filter((c) => c.init?.method === 'POST');
     expect(JSON.parse(String(posts.at(-1)!.init!.body))).toEqual({ nome: 'Promoção', corpo: 'Oi {{primeiro_nome}}, temos novidades' });
   });
