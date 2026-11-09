@@ -6,7 +6,7 @@ import Link from "next/link";
 import { AlarmClock, ExternalLink } from "lucide-react";
 
 import { AvatarContato } from "@/components/whatsapp/avatar-contato";
-import { leadEhNovo } from "@/domain/pipeline/lead-novo";
+import { urgenciaDoLead, type UrgenciaDoLead } from "@/domain/pipeline/lead-novo";
 import { BotaoIniciarCadencia } from "./botao-iniciar-cadencia";
 
 const ETAPA_ENTRADA_DE_LEADS = 1;
@@ -61,7 +61,19 @@ function formatarProximaAcao(iso: string | null | undefined): string {
   return new Date(iso).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" });
 }
 
-/** Hora atual, renovada a cada minuto — o selo "Novo" some sozinho quando o prazo acaba. */
+const COR_SELO: Record<UrgenciaDoLead, { selo: string; ponto: string }> = {
+  recente: { selo: "text-success-text bg-success-surface", ponto: "bg-success-text" },
+  atencao: { selo: "text-warning-text bg-warning-surface", ponto: "bg-warning-text" },
+  parado: { selo: "text-danger-text bg-danger-surface", ponto: "bg-danger-text" },
+};
+
+const TITULO_SELO: Record<UrgenciaDoLead, string> = {
+  recente: "Lead novo, sem cadência iniciada",
+  atencao: "Lead esperando há mais de 4h sem cadência",
+  parado: "Lead parado há mais de 24h sem cadência — priorize",
+};
+
+/** Hora atual, renovada a cada minuto — a cor do selo "Novo" esquenta conforme o lead fica parado. */
 function useAgora(ativo: boolean): Date {
   const [agora, setAgora] = useState(() => new Date());
   useEffect(() => {
@@ -101,7 +113,7 @@ export function CardOportunidade({ oportunidade, isOverlay, atrasado }: CardOpor
 
   const naEntrada = oportunidade.etapaId === ETAPA_ENTRADA_DE_LEADS && !isOverlay;
   const agora = useAgora(naEntrada);
-  const mostrarNovo = naEntrada && leadEhNovo(oportunidade.criadoEm, agora);
+  const urgenciaNovo = naEntrada ? urgenciaDoLead(oportunidade.criadoEm, agora) : null;
 
   const valorFormatado = formatarValor(oportunidade.valor);
   const style = transform
@@ -128,14 +140,16 @@ export function CardOportunidade({ oportunidade, isOverlay, atrasado }: CardOpor
             />
           )}
           <span className="font-headline-sm text-headline-sm text-text-primary leading-tight">{oportunidade.leadNome}</span>
-          {mostrarNovo && (
+          {urgenciaNovo && (
             <span
               data-testid="selo-novo"
-              className="font-label-sm text-[10px] uppercase font-bold text-success-text bg-success-surface px-1.5 py-0.5 rounded inline-flex items-center gap-1 shrink-0"
+              data-urgencia={urgenciaNovo}
+              title={TITULO_SELO[urgenciaNovo]}
+              className={`font-label-sm text-[10px] uppercase font-bold px-1.5 py-0.5 rounded inline-flex items-center gap-1 shrink-0 ${COR_SELO[urgenciaNovo].selo}`}
             >
               <span aria-hidden="true" className="relative flex size-2">
-                <span className="absolute inline-flex size-full rounded-full bg-success-text opacity-75 animate-ping" />
-                <span className="relative inline-flex size-2 rounded-full bg-success-text" />
+                <span className={`absolute inline-flex size-full rounded-full opacity-75 animate-ping ${COR_SELO[urgenciaNovo].ponto}`} />
+                <span className={`relative inline-flex size-2 rounded-full ${COR_SELO[urgenciaNovo].ponto}`} />
               </span>
               Novo
             </span>
