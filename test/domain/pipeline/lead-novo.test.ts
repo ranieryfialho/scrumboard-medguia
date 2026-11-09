@@ -15,7 +15,7 @@ describe('selo Novo — urgência por espera', () => {
   it('não conta sábado e domingo na espera', () => {
     const sexta = new Date('2026-11-13T21:00:00Z'); // sexta 18h em Brasília
     const segunda = new Date('2026-11-16T12:00:00Z'); // segunda 09h
-    expect(esperaUtilMs(sexta, segunda)).toBeLessThan(10 * H);
+    expect(esperaUtilMs(sexta, segunda)).toBe(15 * H); // 6h da sexta + 9h da segunda
     expect(urgenciaDoLead(sexta, segunda)).toBe('atencao');
   });
 
