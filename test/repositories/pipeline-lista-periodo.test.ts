@@ -45,13 +45,22 @@ describe('fase6-periodo-personalizado: período na lista e nos arquivados', () =
     return id;
   }
 
+  // Os cards de teste precisam respeitar as regras do banco: Proposta exige valor e próxima ação futura, Perdido exige motivo.
   function criarCard(empresaId: string, nome: string, etapaId: number, criadoEm: string): string {
     const leadId = proximoUuid();
     executar(`INSERT INTO "leads" ("id", "empresa_id", "nome") VALUES ('${leadId}', '${empresaId}', '${nome}')`);
     const id = proximoUuid();
-    executar(
-      `INSERT INTO "oportunidades" ("id", "empresa_id", "lead_id", "etapa_id", "criado_em") VALUES ('${id}', '${empresaId}', '${leadId}', ${etapaId}, '${criadoEm}'::timestamptz)`
-    );
+    const colunas = ['id', 'empresa_id', 'lead_id', 'etapa_id', 'criado_em'];
+    const valores = [`'${id}'`, `'${empresaId}'`, `'${leadId}'`, String(etapaId), `'${criadoEm}'::timestamptz`];
+    if (etapaId === ETAPA_PROPOSTA) {
+      colunas.push('valor', 'proxima_acao_em');
+      valores.push('1000', `'2099-01-01T12:00:00Z'::timestamptz`);
+    }
+    if (etapaId === ETAPA_PERDIDO) {
+      colunas.push('motivo_perda_id');
+      valores.push(`(SELECT id FROM motivos_perda WHERE nome = 'Sem interesse')`);
+    }
+    executar(`INSERT INTO "oportunidades" (${colunas.map((c) => `"${c}"`).join(', ')}) VALUES (${valores.join(', ')})`);
     return id;
   }
 

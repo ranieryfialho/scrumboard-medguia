@@ -304,7 +304,7 @@ export function BoardKanban() {
       cancelado = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filtro.busca, filtro.responsavelId, filtro.origem]);
+  }, [filtro.busca, filtro.responsavelId, filtro.origem, filtro.periodo, filtro.campoData]);
 
   // T-065 (fase2c-sse, US-037): ref com o estado atual pra checar, no
   // momento em que o evento chega, se o card aparece no board — sem recriar
