@@ -10,6 +10,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { dataBr, diaEMes, inteiro, moeda, nomeDoArquivoCsv, periodoAnteriorDe, periodoDe, periodoPronto, porcentagem, type PeriodoEscolhido, type Preset } from './comum';
 import { EsqueletoCarregando, EstadoErro, EstadoVazio } from './estados';
 import { FiltroPeriodo } from './filtro-periodo';
+import { MotivosDosCaptadosBloco, type MotivosDosCaptadosView } from './motivos-captados';
 import { VelocidadeDoContatoBloco, type VelocidadeDoContato } from './velocidade-contato';
 import { Paginacao } from '@/components/pipeline/pecas/paginacao';
 import { GraficoLinhas } from './grafico-linhas';
@@ -31,6 +32,7 @@ export interface Dados {
   porDiaDaSemana?: number[];
   recuperacaoDeBase?: number;
   leadsDoPeriodo?: { id: string; oportunidadeId: string | null; nome: string; etapa: string | null; etapaId: number | null; especialidade: string | null; origem: string; anuncio: string | null; criadoEm: string; observacoes: string | null }[];
+  motivosDosCaptados?: MotivosDosCaptadosView;
   insights?: {
     diaDeMaisLeads: { dia: string; leads: number; agendadas: number } | null;
     melhorHora: number | null;
@@ -412,6 +414,8 @@ export function RelatorioMarketing() {
               </>
             )}
           </section>
+
+          {dados.motivosDosCaptados && <MotivosDosCaptadosBloco dados={dados.motivosDosCaptados} />}
 
           <section aria-label="Desempenho por Origem" className="bg-surface-card rounded-2xl shadow-sm overflow-hidden shrink-0">
             <div className="p-space-md flex items-center justify-between gap-2 flex-wrap">

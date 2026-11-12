@@ -90,6 +90,13 @@ export interface InsightsDeMarketing {
   noShow: { taxa: number | null; noShows: number; agendadas: number };
 }
 
+/** fase6-perdas-por-lead (AC-819): dos leads captados no período, quantos já estão perdidos e por quê. */
+export interface MotivosDosCaptados {
+  perdidos: number;
+  captados: number;
+  motivos: { motivo: string; quantidade: number; percentual: number }[];
+}
+
 export interface RespostaMarketing {
   resumo: { leads: number; conectados: number; reunioesRealizadas: number; contratos: number; conversaoFinal: number | null };
   /** AC-634/AC-637: `null` sem investimento cadastrado no período — a tela não mostra o bloco de custo. */
@@ -110,6 +117,8 @@ export interface RespostaMarketing {
   leadsDoPeriodo?: LeadDoPeriodo[];
   especialidades?: LinhaDeEspecialidade[];
   insights?: InsightsDeMarketing;
+  /** AC-819: os motivos de perda dos leads captados no período. */
+  motivosDosCaptados?: MotivosDosCaptados;
   /** T-320: as especialidades que existem nos leads, para o filtro. */
   especialidadesDisponiveis?: string[];
 }
@@ -219,6 +228,16 @@ export async function obterMarketing(
     const [{ desq }] = (
       await tx.execute<{ desq: number }>(sql`SELECT count(*) FILTER (WHERE ${etapaAtual} = ${ETAPA_PERDIDO})::int AS desq FROM leads l WHERE ${noPeriodo} ${filtroOrigem}`)
     ).rows;
+    // AC-819: o card mais recente de cada lead captado no período, se está em Perdido, e o motivo gravado nele.
+    const motivosBruto = await tx.execute<{ motivo: string; quantidade: number }>(sql`
+      SELECT coalesce(m.nome, 'Sem motivo informado') AS motivo, count(*)::int AS quantidade
+      FROM leads l
+      JOIN LATERAL (SELECT o.etapa_id, o.motivo_perda_id FROM oportunidades o WHERE o.lead_id = l.id ORDER BY o.criado_em DESC LIMIT 1) ult ON ult.etapa_id = ${ETAPA_PERDIDO}
+      LEFT JOIN motivos_perda m ON m.id = ult.motivo_perda_id
+      WHERE ${noPeriodo} ${filtroOrigem}
+      GROUP BY 1
+      ORDER BY 2 DESC, 1
+    `);
     const [{ antigos }] = (
       await tx.execute<{ antigos: number }>(sql`
         SELECT count(DISTINCT l.id)::int AS antigos
@@ -366,6 +385,14 @@ export async function obterMarketing(
         participacao: leads > 0 ? r.leads / leads : 0,
         ticketMedio: r.contratos > 0 ? Number(r.valor) / r.contratos : null,
       })),
+      motivosDosCaptados: (() => {
+        const perdidos = motivosBruto.rows.reduce((soma, r) => soma + r.quantidade, 0);
+        return {
+          perdidos,
+          captados: leads,
+          motivos: motivosBruto.rows.map((r) => ({ motivo: r.motivo, quantidade: r.quantidade, percentual: perdidos > 0 ? Math.round((r.quantidade / perdidos) * 1000) / 10 : 0 })),
+        };
+      })(),
       especialidadesDisponiveis: especialidadesExistentes.rows.map((r) => r.nome),
       insights: {
         diaDeMaisLeads: diaTop ? { dia: diaTop.dia, leads: diaTop.leads, agendadas: diaTop.agendadas } : null,

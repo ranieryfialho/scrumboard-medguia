@@ -12,6 +12,7 @@ import { useMetas } from '@/lib/metas/usar-metas';
 import { dataBr, diaEMes, iniciais, inteiro, moeda, nomeDoArquivoCsv, periodoAnteriorDe, periodoDe, periodoPronto, porcentagem, type PeriodoEscolhido, type Preset, type Responsavel } from './comum';
 import { EsqueletoCarregando, EstadoErro, EstadoVazio } from './estados';
 import { FiltroPeriodo } from './filtro-periodo';
+import { ListaLeadsPerdidos, type LeadPerdidoView } from './lista-leads-perdidos';
 import { GraficoLinhas } from './grafico-linhas';
 
 interface Linha {
@@ -41,6 +42,7 @@ interface Dados {
   ranking: Linha[];
   motivosPerda: { motivo: string; quantidade: number; percentual: number }[];
   totalPerdas: number;
+  leadsPerdidos?: LeadPerdidoView[];
   fechamentos?: Fechamentos;
   especialidadesDisponiveis?: string[];
   porEspecialidade?: { especialidade: string; contratos: number; valor: number; participacao: number }[];
@@ -160,6 +162,8 @@ export function RelatorioComercial() {
   const [periodo, setPeriodo] = useState<PeriodoEscolhido>(periodoPronto('mes'));
   const [responsavelId, setResponsavelId] = useState('');
   const [especialidade, setEspecialidade] = useState('');
+  // AC-817: o motivo clicado no bloco de motivos filtra a lista de leads perdidos.
+  const [motivoFiltro, setMotivoFiltro] = useState<string | null>(null);
   const [responsaveis, setResponsaveis] = useState<Responsavel[]>([]);
   const [ordem, setOrdem] = useState<Ordem>('valor');
   const [dados, setDados] = useState<Dados | null>(null);
@@ -192,6 +196,7 @@ export function RelatorioComercial() {
       const r = await fetch(`/api/relatorios/comercial?${q}`);
       if (!r.ok) throw new Error(`comercial respondeu ${r.status}`);
       setDados((await r.json()) as Dados);
+      setMotivoFiltro(null); // um período ou filtro novo começa com a lista completa
       setRecorteDosDados({ de, ate, responsavelId });
       setErro(false);
     } catch {
@@ -229,6 +234,13 @@ export function RelatorioComercial() {
   }, [dados]);
 
   // AC-573: os cinco primeiros em destaque, o resto em "Outros".
+  const motivosDeDestaque = useMemo(() => new Set((dados?.motivosPerda ?? []).slice(0, 5).map((m) => m.motivo)), [dados]);
+  const leadsFiltrados = useMemo(() => {
+    const todos = dados?.leadsPerdidos ?? [];
+    if (!motivoFiltro) return todos;
+    // "Outros" junta os motivos fora dos cinco primeiros: o filtro leva todos eles.
+    return motivoFiltro === 'Outros' && (dados?.motivosPerda.length ?? 0) > 5 ? todos.filter((l) => !motivosDeDestaque.has(l.motivo)) : todos.filter((l) => l.motivo === motivoFiltro);
+  }, [dados, motivoFiltro, motivosDeDestaque]);
   const motivos = useMemo(() => {
     const todos = dados?.motivosPerda ?? [];
     const destaque = todos.slice(0, 5);
@@ -569,18 +581,26 @@ export function RelatorioComercial() {
               {motivos.length === 0 && <p className="font-body-md text-body-md text-text-secondary">Nenhuma perda no período</p>}
               <ol className="flex flex-col gap-2">
                 {motivos.map((m, i) => (
-                  <li key={m.motivo} className="rounded-xl bg-surface-subtle p-3 flex flex-col gap-1">
-                    <div className="flex items-center justify-between gap-2 font-label-md text-label-md text-text-primary">
-                      <span>
-                        {i + 1}. {m.motivo}
+                  <li key={m.motivo}>
+                    <button
+                      type="button"
+                      aria-pressed={motivoFiltro === m.motivo}
+                      title="Filtrar a lista de leads perdidos por este motivo"
+                      onClick={() => setMotivoFiltro((atual) => (atual === m.motivo ? null : m.motivo))}
+                      className={`w-full text-left rounded-xl p-3 flex flex-col gap-1 transition-colors ${motivoFiltro === m.motivo ? 'bg-danger-surface ring-2 ring-danger-text/40' : 'bg-surface-subtle hover:bg-surface-container'}`}
+                    >
+                      <span className="flex items-center justify-between gap-2 font-label-md text-label-md text-text-primary">
+                        <span>
+                          {i + 1}. {m.motivo}
+                        </span>
+                        <span className="shrink-0">
+                          {inteiro(m.quantidade)} ({m.percentual.toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%)
+                        </span>
                       </span>
-                      <span className="shrink-0">
-                        {inteiro(m.quantidade)} ({m.percentual.toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%)
+                      <span aria-hidden="true" className="block h-1.5 rounded-full bg-surface-container overflow-hidden">
+                        <span className="block h-full bg-danger-text" style={{ width: `${m.percentual}%` }} />
                       </span>
-                    </div>
-                    <div aria-hidden="true" className="h-1.5 rounded-full bg-surface-container overflow-hidden">
-                      <div className="h-full bg-danger-text" style={{ width: `${m.percentual}%` }} />
-                    </div>
+                    </button>
                   </li>
                 ))}
               </ol>
@@ -594,6 +614,8 @@ export function RelatorioComercial() {
               )}
             </section>
           </div>
+
+          {dados.leadsPerdidos && <ListaLeadsPerdidos leads={leadsFiltrados} filtroMotivo={motivoFiltro} onLimparFiltro={() => setMotivoFiltro(null)} />}
 
           {dados.fechamentos && (
             <section aria-label="Fechamentos de Clientes" className="bg-surface-card rounded-2xl p-space-md shadow-sm flex flex-col gap-space-md shrink-0">
