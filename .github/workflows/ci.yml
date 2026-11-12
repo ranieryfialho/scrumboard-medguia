@@ -4,6 +4,8 @@ on:
   pull_request:
     branches:
       - main
+    # `ready_for_review`: o PR aberto como rascunho não gasta minutos; ao marcar "Ready for review" o CI roda.
+    types: [opened, synchronize, reopened, ready_for_review]
   push:
     branches:
       - main
@@ -16,6 +18,11 @@ concurrency:
 permissions:
   contents: read
 
+# Economia de minutos do Actions (repositório privado tem franquia mensal; uma rodada completa gasta ~40 min de máquina):
+#   - PR em rascunho não roda nada (abra como rascunho enquanto ajusta; "Ready for review" dispara o CI);
+#   - no push para a `main` (depois do merge) rodam só qualidade e build: as 8 fatias de teste já passaram no PR sobre o mesmo
+#     código, e o deploy do staging não espera o CI (o Release roda no mesmo push). `gates` aceita "pulado", nunca falha/cancelado.
+#
 # As quatro etapas (qualidade, build e os testes em fatias) rodam AO MESMO TEMPO, cada uma na sua máquina. O `gates` no fim é o check
 # obrigatório da regra da `main` (nome fixo): só passa se todas passaram.
 #
@@ -26,6 +33,7 @@ permissions:
 jobs:
   qualidade:
     name: qualidade (lint e tipos)
+    if: github.event_name != 'pull_request' || !github.event.pull_request.draft
     runs-on: ubuntu-latest
     steps:
       - name: Checkout do código
@@ -53,6 +61,7 @@ jobs:
 
   build:
     name: build
+    if: github.event_name != 'pull_request' || !github.event.pull_request.draft
     runs-on: ubuntu-latest
     steps:
       - name: Checkout do código
@@ -86,6 +95,8 @@ jobs:
 
   testes:
     name: testes (fatia ${{ matrix.fatia }} de 8)
+    # Só no PR pronto: no push para a `main` as fatias já passaram no PR (ver o comentário no topo).
+    if: github.event_name == 'pull_request' && !github.event.pull_request.draft
     runs-on: ubuntu-latest
     strategy:
       # Uma fatia que falha não derruba as outras: assim uma rodada mostra TODAS as falhas de uma vez, em vez de uma por rodada.
@@ -120,7 +131,10 @@ jobs:
       - name: Conferir o resultado das etapas
         run: |
           echo "qualidade: ${{ needs.qualidade.result }} | build: ${{ needs.build.result }} | testes: ${{ needs.testes.result }}"
-          if [ "${{ needs.qualidade.result }}" != "success" ] || [ "${{ needs.build.result }}" != "success" ] || [ "${{ needs.testes.result }}" != "success" ]; then
-            echo "Alguma etapa não passou."
-            exit 1
-          fi
+          # "pulado" vale (PR em rascunho; testes no push para a main); falha ou cancelamento derrubam.
+          for resultado in "${{ needs.qualidade.result }}" "${{ needs.build.result }}" "${{ needs.testes.result }}"; do
+            if [ "$resultado" = "failure" ] || [ "$resultado" = "cancelled" ]; then
+              echo "Alguma etapa não passou."
+              exit 1
+            fi
+          done
