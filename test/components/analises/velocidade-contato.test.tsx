@@ -67,7 +67,7 @@ describe('fase6-atendimento-lead: velocidade do 1º contato na tela', () => {
     expect(formatarEspera(45)).toBe('45 min');
     expect(formatarEspera(1181.8)).toBe('19 h 42 min');
     expect(formatarEspera(180)).toBe('3 h');
-    expect(formatarEspera(4500)).toBe('3 d 1 h');
+    expect(formatarEspera(4500)).toBe('3 d 3 h'); // 4.320 min (3 dias) + 180 min (3 h)
     expect(resumoDoExpediente({ ...HORARIO_PADRAO, sab: { atende: true, abre: '08:00', fecha: '13:00' } })).toBe('Seg a sex, 09:00–18:00 · Sáb, 08:00–13:00');
   });
 });
