@@ -71,6 +71,8 @@ export interface LeadDoPeriodo {
   anuncio: string | null;
   criadoEm: string;
   observacoes: string | null;
+  /** fase6-leads-da-velocidade (AC-829): o motivo gravado no card quando o lead está em Perdido; `null` nas demais etapas. */
+  motivoDaPerda: string | null;
 }
 
 export const LIMITE_DE_LEADS_NA_LISTA = 500;
@@ -278,12 +280,14 @@ export async function obterMarketing(
       SELECT extract(dow FROM l.criado_em AT TIME ZONE 'America/Sao_Paulo')::int AS dia, count(*)::int AS total
       FROM leads l WHERE ${noPeriodo} ${filtroOrigem} GROUP BY 1
     `);
-    const leadsBruto = await tx.execute<{ id: string; opp: string | null; nome: string; etapa_id: number | null; etapa: string | null; especialidade: string | null; origem: string; anuncio: string | null; criado: string; obs: string | null }>(sql`
+    const leadsBruto = await tx.execute<{ id: string; opp: string | null; nome: string; etapa_id: number | null; etapa: string | null; especialidade: string | null; origem: string; anuncio: string | null; criado: string; obs: string | null; motivo: string | null }>(sql`
       SELECT l.id, (SELECT o.id FROM oportunidades o WHERE o.lead_id = l.id ORDER BY o.criado_em DESC LIMIT 1)::text AS opp,
         l.nome, ${etapaAtual} AS etapa_id,
         (SELECT pe.nome FROM pipeline_etapas pe WHERE pe.id = ${etapaAtual}) AS etapa,
         nullif(btrim(l.dados ->> 'especialidade'), '') AS especialidade, ${origemDe} AS origem,
-        nullif(btrim(l.dados ->> 'anuncio'), '') AS anuncio, l.criado_em::text AS criado, nullif(btrim(l.dados ->> 'observacoes'), '') AS obs
+        nullif(btrim(l.dados ->> 'anuncio'), '') AS anuncio, l.criado_em::text AS criado, nullif(btrim(l.dados ->> 'observacoes'), '') AS obs,
+        (SELECT coalesce(m.nome, 'Sem motivo informado') FROM oportunidades o LEFT JOIN motivos_perda m ON m.id = o.motivo_perda_id
+          WHERE o.lead_id = l.id AND o.etapa_id = ${ETAPA_PERDIDO} AND o.etapa_id = ${etapaAtual} ORDER BY o.criado_em DESC LIMIT 1) AS motivo
       FROM leads l WHERE ${noPeriodo} ${filtroOrigem}
       ORDER BY l.criado_em DESC LIMIT ${LIMITE_DE_LEADS_NA_LISTA}
     `);
@@ -447,6 +451,7 @@ export async function obterMarketing(
         anuncio: r.anuncio,
         criadoEm: new Date(r.criado).toISOString(),
         observacoes: r.obs,
+        motivoDaPerda: r.motivo,
       })),
     };
   });

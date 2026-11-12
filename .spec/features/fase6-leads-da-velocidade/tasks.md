@@ -9,3 +9,8 @@
 ## T-352 — Lista de leads e filtro por faixa na tela [concluida]
 - Refs: US-196, AC-826, AC-827
 - Arquivos: src/components/analises/velocidade-contato.tsx, src/components/analises/leads-da-velocidade.tsx
+
+## T-353 — Motivo da perda na lista de leads do período [concluida]
+
+- Refs: US-197, AC-829
+- Arquivos: src/repositories/analises-marketing.ts, src/components/analises/relatorio-marketing.tsx

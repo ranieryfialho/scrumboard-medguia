@@ -31,7 +31,7 @@ export interface Dados {
   melhorCanal?: { origem: string; conversaoFinal: number | null } | null;
   porDiaDaSemana?: number[];
   recuperacaoDeBase?: number;
-  leadsDoPeriodo?: { id: string; oportunidadeId: string | null; nome: string; etapa: string | null; etapaId: number | null; especialidade: string | null; origem: string; anuncio: string | null; criadoEm: string; observacoes: string | null }[];
+  leadsDoPeriodo?: { id: string; oportunidadeId: string | null; nome: string; etapa: string | null; etapaId: number | null; especialidade: string | null; origem: string; anuncio: string | null; criadoEm: string; observacoes: string | null; motivoDaPerda?: string | null }[];
   motivosDosCaptados?: MotivosDosCaptadosView;
   insights?: {
     diaDeMaisLeads: { dia: string; leads: number; agendadas: number } | null;
@@ -189,8 +189,8 @@ export function RelatorioMarketing() {
   function exportarLeads() {
     baixarCsv(nomeDoArquivoCsv('leads-do-periodo', periodo), [
       ['Período', `${dataBr(de)} a ${dataBr(ate)}`],
-      ['Nome', 'Status', 'Especialidade', 'Origem', 'Anúncio', 'Data de entrada', 'Observações'],
-      ...leadsOrdenados.map((l) => [l.nome, l.etapa ?? '', l.especialidade ?? '', l.origem, l.anuncio ?? '', new Date(l.criadoEm).toLocaleString('pt-BR'), l.observacoes ?? '']),
+      ['Nome', 'Status', 'Motivo da perda', 'Especialidade', 'Origem', 'Anúncio', 'Data de entrada', 'Observações'],
+      ...leadsOrdenados.map((l) => [l.nome, l.etapa ?? '', l.motivoDaPerda ?? '', l.especialidade ?? '', l.origem, l.anuncio ?? '', new Date(l.criadoEm).toLocaleString('pt-BR'), l.observacoes ?? '']),
     ]);
   }
 
@@ -627,6 +627,9 @@ export function RelatorioMarketing() {
                           </td>
                           <td className="px-space-md py-3">
                             <span className={`px-2 py-0.5 rounded-full font-label-sm text-label-sm uppercase ${l.etapaId === 14 ? 'bg-danger-surface text-danger-text' : l.etapaId === 15 ? 'bg-success-surface text-success-text' : 'bg-warning-surface text-warning-text'}`}>{l.etapa ?? 'Sem card'}</span>
+                            {l.etapaId === 14 && l.motivoDaPerda && (
+                              <span className="block mt-1 font-body-sm text-body-sm text-text-muted max-w-[12rem]">Motivo: {l.motivoDaPerda}</span>
+                            )}
                           </td>
                           <td className="px-space-md py-3 text-text-secondary">{l.especialidade ?? '—'}</td>
                           <td className="px-space-md py-3">

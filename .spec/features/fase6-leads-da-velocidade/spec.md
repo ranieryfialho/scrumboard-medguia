@@ -31,6 +31,16 @@ Como gestor, quero ver a lista dos leads que entraram na conta da velocidade do 
 - **Quando** a análise de marketing é calculada
 - **Então** `velocidade.leads` traz só os leads que têm 1ª mensagem, com a espera corrida e a comercial de cada um, na mesma quantidade de `velocidade.corrido.n`, e o id do card do lead
 
+### US-197 — Ver o motivo da perda na lista de leads do período
+
+Como gestor, quero ver na lista nominal de leads do relatório de marketing o motivo de cada lead perdido, para entender por que perdemos sem abrir card por card.
+
+#### AC-829 — Lead em Perdido mostra o motivo; os demais não
+
+- **Dado** leads do período, alguns cujo card está em "Perdido" com motivo, outros em outras etapas
+- **Quando** o relatório de marketing é aberto (ou exportado em CSV)
+- **Então** abaixo do status "Perdido" aparece "Motivo: …" (ou "Sem motivo informado"), os leads em outras etapas não mostram motivo, e o CSV traz a coluna "Motivo da perda"
+
 ## Fora de escopo
 
 - Listar os leads que ainda não tiveram nenhuma mensagem enviada.

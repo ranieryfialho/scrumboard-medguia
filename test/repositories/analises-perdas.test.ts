@@ -190,4 +190,18 @@ describe('fase6-perdas-por-lead: perdas por lead', () => {
     const vazio = (await obterMarketing(db, contextoDe(criarEmpresa()), { ...FEVEREIRO, agora: AGORA })).motivosDosCaptados!;
     expect(vazio).toEqual({ perdidos: 0, captados: 0, motivos: [] });
   });
+
+  test('a lista de leads do período traz o motivo só de quem está em Perdido @spec:AC-829', async () => {
+    const empresa = criarEmpresa();
+    criarPerdido(empresa, criarLead(empresa, 'Perdido', '2026-02-05T10:00:00-03:00'), { motivo: 'Preço/orçamento', criadoEm: '2026-02-05T10:00:00-03:00' });
+    const ativo = criarLead(empresa, 'Ativo', '2026-02-06T10:00:00-03:00');
+    executar(`INSERT INTO "oportunidades" ("empresa_id", "lead_id", "etapa_id", "criado_em") VALUES ('${empresa}', '${ativo}', ${ETAPA_ENTRADA}, '2026-02-06T10:00:00-03:00'::timestamptz)`);
+    criarLead(empresa, 'Sem card', '2026-02-07T10:00:00-03:00');
+
+    const leads = (await obterMarketing(db, contextoDe(empresa), { ...FEVEREIRO, agora: AGORA })).leadsDoPeriodo!;
+    const motivo = (nome: string) => leads.find((l) => l.nome === nome)?.motivoDaPerda;
+    expect(motivo('Perdido')).toBe('Preço/orçamento');
+    expect(motivo('Ativo')).toBeNull();
+    expect(motivo('Sem card')).toBeNull();
+  });
 });
