@@ -11,6 +11,10 @@ services:
       - .env.staging
     environment:
       DATABASE_URL: postgres://crm_app:${CRM_APP_PASSWORD}@pg-master:5432/crm_staging
+    # Anexos (evidências, mídia e foto do WhatsApp) ficam em `/data/anexos`. Sem volume eles moravam na camada do container e SUMIAM a cada
+    # deploy (o container é recriado); a produção já usa um volume nomeado. Só o app grava aí (o worker não precisa).
+    volumes:
+      - anexos_staging:/data/anexos
     restart: unless-stopped
     deploy:
       resources:
@@ -44,6 +48,9 @@ services:
           memory: 500m
     networks:
       - wp-network
+
+volumes:
+  anexos_staging:
 
 networks:
   wp-network:
