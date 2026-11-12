@@ -12,9 +12,11 @@
 #   SHA           commit completo (40 caracteres) que esteja na main (padrão: o último da origin/main)
 #   --simular     só confere e mostra o que faria; não constrói, não publica e não conecta na VPS
 #   --sem-deploy  constrói e publica as imagens, mas não faz o deploy
+#   --pular-build não constrói nem publica: usa as imagens desse commit que já estão no GHCR (para repetir só o deploy)
 #
 # Antes da primeira vez:  gh auth refresh -h github.com -s write:packages
-# Variáveis:  VPS_HOST (obrigatória no deploy)  VPS_USER (padrão: root)
+# Variáveis:  VPS_HOST (obrigatória no deploy)  VPS_USER (padrão: root)  SSH_OPCOES (opcional, ex.: "-i ~/.ssh/minha_chave -p 2222")
+# O SSH pede a senha se a VPS usar senha (uma vez só: a conexão é reaproveitada pelos dois comandos).
 # Valores de build (NEXT_PUBLIC_*, EVOLUTION_*): lidos do .env.local. Eles ficam GRAVADOS na imagem e a mesma imagem vale para staging
 # e produção; por isso o script mostra os não secretos e pede confirmação antes de construir.
 set -euo pipefail
@@ -23,12 +25,14 @@ AMBIENTE=staging
 SHA=""
 SIMULAR=0
 SEM_DEPLOY=0
+PULAR_BUILD=0
 for argumento in "$@"; do
   case "$argumento" in
     staging|prod) AMBIENTE="$argumento" ;;
     --simular) SIMULAR=1 ;;
     --sem-deploy) SEM_DEPLOY=1 ;;
-    -h|--help) sed -n '2,22p' "$0"; exit 0 ;;
+    --pular-build) PULAR_BUILD=1 ;;
+    -h|--help) sed -n '2,24p' "$0"; exit 0 ;;
     *) if [[ "$argumento" =~ ^[0-9a-f]{40}$ ]]; then SHA="$argumento"; else echo "Argumento desconhecido: $argumento (use --help)"; exit 1; fi ;;
   esac
 done
@@ -74,10 +78,13 @@ echo "   EVOLUTION_API_URL          = https://$(servidor "$EVOLUTION_API_URL")"
 echo "   (as chaves não são mostradas; elas ficam gravadas na imagem, como no Release do GitHub)"
 if [ "$SIMULAR" = 0 ]; then
   read -r -p "   Estes são os valores usados nos secrets do GitHub para o CRM no ar? [s/N] " resposta
-  [[ "$resposta" =~ ^[sS]$ ]] || { echo "Cancelado."; exit 1; }
+  [[ "$resposta" =~ ^[sSyY]$ ]] || { echo "Cancelado."; exit 1; }
 fi
 
 passo "4/5 Construindo e publicando as imagens (a primeira vez demora; as camadas ficam em cache)"
+if [ "$PULAR_BUILD" = 1 ]; then
+  echo "   --pular-build: usando as imagens que já estão no GHCR."
+elif true; then
 if [ "$SIMULAR" = 0 ]; then gh auth token | docker login ghcr.io -u "$DONO" --password-stdin; else echo "   [simulação] docker login ghcr.io"; fi
 ARGS_DE_BUILD=(--build-arg NEXT_PUBLIC_SUPABASE_URL --build-arg NEXT_PUBLIC_SUPABASE_ANON_KEY --build-arg NEXT_PUBLIC_APP_URL --build-arg EVOLUTION_API_URL --build-arg EVOLUTION_API_KEY)
 if [ "$SIMULAR" = 0 ]; then
@@ -89,6 +96,7 @@ else
   echo "   [simulação] git archive $SHA | docker build (site)  -> $IMAGEM_SITE"
   echo "   [simulação] git archive $SHA | docker build --target worker -> $IMAGEM_WORKER"
   echo "   [simulação] docker push (as duas)"
+fi
 fi
 
 if [ "$SEM_DEPLOY" = 1 ]; then echo; echo "Imagens publicadas. (--sem-deploy: o deploy não foi feito)"; exit 0; fi
@@ -106,7 +114,11 @@ if [ "$SIMULAR" = 1 ]; then
   echo; echo "Simulação concluída: nada foi construído, publicado nem implantado."
   exit 0
 fi
-SSH=(ssh -o BatchMode=yes -o ServerAliveInterval=30 "$VPS_USER@$VPS_HOST")
+# Sem BatchMode: se a VPS usa senha, o ssh pergunta. ControlMaster reaproveita a conexão, então a senha é pedida uma vez só.
+CONEXAO="$(mktemp -u /tmp/release-local-ssh.XXXXXX)"
+# shellcheck disable=SC2206
+SSH=(ssh -o ControlMaster=auto -o "ControlPath=$CONEXAO" -o ControlPersist=120 -o ServerAliveInterval=30 ${SSH_OPCOES:-} "$VPS_USER@$VPS_HOST")
+trap '"${SSH[@]}" -O exit >/dev/null 2>&1 || true' EXIT
 # O script vai para a VPS e roda como ARQUIVO (como no workflow): se fosse lido pelo stdin do bash, um comando que lê o stdin
 # (docker exec -i, por exemplo) engoliria o resto e o deploy terminaria "com sucesso" pela metade.
 git show "$SHA:deploy/deploy.sh" | "${SSH[@]}" "cat > /tmp/deploy-crm.sh && chmod 700 /tmp/deploy-crm.sh"
