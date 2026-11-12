@@ -7,7 +7,9 @@ import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { dataLocalEmSaoPaulo } from '../domain/cadencia/turno';
 import type { ContextoTenant } from '../lib/auth/tenant';
 import { chaveDoCanal, investimentoDoPeriodo, razao } from '../lib/investimento/calculo';
+import { HORARIO_PADRAO, minutosCorridos, minutosUteis, resumirEsperas, type HorarioComercial, type ResumoDeEsperas } from '../domain/atendimento/horario-comercial';
 import { comTenant } from './contexto';
+import { lerHorarioNaTransacao } from './horario-atendimento';
 import { lerInvestimentoNoPeriodo } from './investimento';
 import { limitesDoPeriodo } from './kpis';
 
@@ -78,8 +80,12 @@ export interface InsightsDeMarketing {
   diaDeMaisLeads: { dia: string; leads: number; agendadas: number } | null;
   /** A hora do dia (0–23, São Paulo) em que mais leads chegam. */
   melhorHora: number | null;
-  /** Média de minutos entre o lead chegar e a 1ª mensagem enviada a ele pelo WhatsApp; `null` sem nenhuma. */
-  velocidadeMediaMinutos: number | null;
+  /**
+   * fase6-atendimento-lead: o tempo entre o lead chegar e a 1ª mensagem de WhatsApp enviada a ele pelo CRM, em relógio corrido e só
+   * dentro do horário comercial da empresa (AC-784/AC-785). Cada resumo traz média, mediana, quantos leads entraram na conta e as
+   * faixas de espera (AC-786). Lead sem mensagem enviada fica de fora da conta (AC-788).
+   */
+  velocidade: { corrido: ResumoDeEsperas; comercial: ResumoDeEsperas; horario: HorarioComercial; horarioPadrao: boolean };
   /** No-show ÷ reuniões agendadas, entre os leads do período. */
   noShow: { taxa: number | null; noShows: number; agendadas: number };
 }
@@ -264,14 +270,21 @@ export async function obterMarketing(
         FROM leads l WHERE ${noPeriodo} ${filtroOrigem} GROUP BY 1 ORDER BY count(*) DESC, 1 LIMIT 1
       `)
     ).rows;
-    const [velocidade] = (
-      await tx.execute<{ minutos: string | null }>(sql`
-        SELECT avg(extract(epoch FROM (p.primeira - l.criado_em)) / 60.0)::text AS minutos
-        FROM leads l
-        JOIN LATERAL (SELECT min(w.criado_em) AS primeira FROM whatsapp_mensagens w WHERE w.lead_id = l.id AND w.direcao = 'enviada' AND w.criado_em >= l.criado_em) p ON p.primeira IS NOT NULL
-        WHERE ${noPeriodo} ${filtroOrigem}
-      `)
-    ).rows;
+    // AC-788: só a 1ª mensagem enviada em ou depois da entrada conta; lead sem nenhuma fica fora (os migrados entram normalmente).
+    const esperas = await tx.execute<{ entrada: Date | string; primeira: Date | string }>(sql`
+      SELECT l.criado_em AS entrada, p.primeira
+      FROM leads l
+      JOIN LATERAL (SELECT min(w.criado_em) AS primeira FROM whatsapp_mensagens w WHERE w.lead_id = l.id AND w.direcao = 'enviada' AND w.criado_em >= l.criado_em) p ON p.primeira IS NOT NULL
+      WHERE ${noPeriodo} ${filtroOrigem}
+    `);
+    const expediente = await lerHorarioNaTransacao(tx, contexto.empresaId);
+    const paresDeEspera = esperas.rows.map((r) => [new Date(r.entrada), new Date(r.primeira)] as const);
+    const velocidade = {
+      corrido: resumirEsperas(paresDeEspera.map(([entrada, primeira]) => minutosCorridos(entrada, primeira))),
+      comercial: resumirEsperas(paresDeEspera.map(([entrada, primeira]) => minutosUteis(entrada, primeira, expediente.horario))),
+      horario: expediente.horario ?? HORARIO_PADRAO,
+      horarioPadrao: expediente.padrao,
+    };
     const [faltas] = (
       await tx.execute<{ agendadas: number; no_shows: number }>(sql`
         SELECT count(*) FILTER (WHERE ${chegou(ETAPA_AGENDADA)})::int AS agendadas, count(*) FILTER (WHERE ${chegou(ETAPA_NO_SHOW)})::int AS no_shows
@@ -357,7 +370,7 @@ export async function obterMarketing(
       insights: {
         diaDeMaisLeads: diaTop ? { dia: diaTop.dia, leads: diaTop.leads, agendadas: diaTop.agendadas } : null,
         melhorHora: horaTop ? horaTop.hora : null,
-        velocidadeMediaMinutos: velocidade?.minutos != null ? Math.round(Number(velocidade.minutos) * 10) / 10 : null,
+        velocidade,
         noShow: { taxa: faltas && faltas.agendadas > 0 ? faltas.no_shows / faltas.agendadas : null, noShows: faltas?.no_shows ?? 0, agendadas: faltas?.agendadas ?? 0 },
       },
       leadsDoPeriodo: leadsBruto.rows.map((r) => ({

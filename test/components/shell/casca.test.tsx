@@ -142,6 +142,7 @@ describe('AC-348: o menu traz os grupos e itens do protótipo', () => {
       'equipe',
       'motivos-de-perda',
       'metas',
+      'horario-atendimento',
       'investimento-midia',
       'email-empresa',
       'google-meet',

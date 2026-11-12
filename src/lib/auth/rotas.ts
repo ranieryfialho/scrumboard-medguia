@@ -65,6 +65,8 @@ const REGRAS_PAPEL: RegraPapel[] = [
   { prefixo: '/configuracoes/motivos-perda', papelMinimo: 'GERENTE' },
   // fase5-metas: a tela de metas é de gestão; a leitura (`GET /api/metas`) é de qualquer sessão.
   { prefixo: '/configuracoes/metas', papelMinimo: 'GERENTE' },
+  // fase6-atendimento-lead: o horário de atendimento é de gestão; a leitura (`GET /api/configuracoes/horario-atendimento`) é de qualquer sessão.
+  { prefixo: '/configuracoes/horario-atendimento', papelMinimo: 'GERENTE' },
   // fase5-investimento-midia: dado financeiro, tela e API só de gestão (ASM-220).
   { prefixo: '/configuracoes/investimento', papelMinimo: 'GERENTE' },
   // fase5-email-config (ASM-258): a chave do Resend da empresa é de gestão — tela e API.
