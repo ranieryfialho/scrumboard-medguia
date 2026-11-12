@@ -123,6 +123,7 @@ trap '"${SSH[@]}" -O exit >/dev/null 2>&1 || true' EXIT
 # (docker exec -i, por exemplo) engoliria o resto e o deploy terminaria "com sucesso" pela metade.
 git show "$SHA:deploy/deploy.sh" | "${SSH[@]}" "cat > /tmp/deploy-crm.sh && chmod 700 /tmp/deploy-crm.sh"
 SAIDA="$(mktemp)"
-"${SSH[@]}" "bash /tmp/deploy-crm.sh '$AMBIENTE' '$SHA' 'false' < /dev/null" 2>&1 | tee "$SAIDA"
+# A saída completa vai para $SAIDA; na tela ficam de fora as linhas de progresso do download das camadas.
+"${SSH[@]}" "bash /tmp/deploy-crm.sh '$AMBIENTE' '$SHA' 'false' < /dev/null" 2>&1 | tee "$SAIDA" | grep -vE '^ [0-9a-f]{12} (Extracting|Downloading|Pulling fs layer|Waiting|Verifying Checksum|Download complete|Pull complete|Already exists)'
 grep -q 'DEPLOY_CONCLUIDO' "$SAIDA" || { echo "O deploy não chegou ao fim (sem DEPLOY_CONCLUIDO)."; exit 1; }
 echo; echo "Pronto: $SHA no $AMBIENTE."
