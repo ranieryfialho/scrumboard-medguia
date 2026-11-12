@@ -126,7 +126,7 @@ describe('T-126: ETLs do Supabase e da LP aplicam a planilha de decisões comum,
         leadLegado(empresaMedguia.id, { id: 'sb:301', situacao: 'Em contato' }),
       ]);
       dados.linhasDecisao = [
-        linhaDecisao({ idOrigem: 'sb:301', etapa: 'Follow de longo prazo', proximaAcao: '10/11/2026 14:00' }),
+        linhaDecisao({ idOrigem: 'sb:301', etapa: 'Follow de longo prazo', proximaAcao: '10/11/2030 14:00' }),
       ];
 
       const relatorio = await executarMigracaoSupabase(db, contexto, dados, AGORA);
@@ -139,7 +139,7 @@ describe('T-126: ETLs do Supabase e da LP aplicam a planilha de decisões comum,
       expect(novoLead).toBeDefined();
       const [card] = await db.select().from(oportunidades).where(eq(oportunidades.leadId, novoLead.id));
       expect(card.etapaId).toBe(ETAPA_FOLLOW_DE_LONGO_PRAZO);
-      expect(card.proximaAcaoEm?.toISOString()).toBe('2026-11-10T17:00:00.000Z');
+      expect(card.proximaAcaoEm?.toISOString()).toBe('2030-11-10T17:00:00.000Z');
     });
 
     test('o relatório do Supabase mostra decisões aplicadas, ignoradas e recusadas, e a conta fecha (@spec:AC-317)', async () => {
@@ -194,7 +194,7 @@ describe('T-126: ETLs do Supabase e da LP aplicam a planilha de decisões comum,
         cadastroLp({ id: 402, name: 'Dra. Ignorada', status: 'Aguardando Ativação' }),
       ];
       const decisoesCsv = [
-        linhaDecisao({ idOrigem: '401', etapa: 'Teste (Trial)', proximaAcao: '10/11/2026 14:00' }),
+        linhaDecisao({ idOrigem: '401', etapa: 'Teste (Trial)', proximaAcao: '10/11/2030 14:00' }),
         linhaDecisao({ idOrigem: '402', ignorar: 'sim' }),
       ];
 
@@ -216,7 +216,7 @@ describe('T-126: ETLs do Supabase e da LP aplicam a planilha de decisões comum,
       expect(novoLead).toBeDefined();
       const [card] = await db.select().from(oportunidades).where(eq(oportunidades.leadId, novoLead.id));
       expect(card.etapaId).toBe(ETAPA_TESTE_TRIAL);
-      expect(card.proximaAcaoEm?.toISOString()).toBe('2026-11-10T17:00:00.000Z');
+      expect(card.proximaAcaoEm?.toISOString()).toBe('2030-11-10T17:00:00.000Z');
 
       const leadIgnorado = await db.select().from(leads).where(eq(leads.idExterno, '402'));
       expect(leadIgnorado).toHaveLength(0);
@@ -230,7 +230,7 @@ describe('T-126: ETLs do Supabase e da LP aplicam a planilha de decisões comum,
         cadastroLp({ id: 503, status: 'Recontato' }), // decisão recusada (sem próxima ação)
       ];
       const decisoesCsv = [
-        linhaDecisao({ idOrigem: '501', etapa: 'Teste (Trial)', proximaAcao: '10/11/2026 14:00' }),
+        linhaDecisao({ idOrigem: '501', etapa: 'Teste (Trial)', proximaAcao: '10/11/2030 14:00' }),
         linhaDecisao({ idOrigem: '502', ignorar: 'sim' }),
         linhaDecisao({ idOrigem: '503', etapa: 'Follow de longo prazo' }),
         linhaDecisao({ idOrigem: 'lp:fantasma', etapa: 'Teste (Trial)' }),

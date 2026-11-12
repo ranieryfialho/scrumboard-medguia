@@ -163,7 +163,7 @@ describe('T-125: ETL do Sheets aplica as decisões, contra Postgres real', () =>
     const contexto: ContextoExecucao = { origem: 'sheets-dec-310', simulacao: false };
     const abas: AbaParaLer[] = [aba([linha({ id: 'l:303', status: 'Recontato' })])];
     const decisoes: LinhaDecisaoBruta[] = [
-      linhaDecisao({ idOrigem: 'l:303', etapa: 'Follow de longo prazo', proximaAcao: '10/11/2026 14:00' }),
+      linhaDecisao({ idOrigem: 'l:303', etapa: 'Follow de longo prazo', proximaAcao: '10/11/2030 14:00' }),
     ];
 
     const relatorio = await executarMigracaoSheets(db, contexto, empresaMedguia.id, abas, agendaVazia(), decisoes, AGORA);
@@ -172,7 +172,7 @@ describe('T-125: ETL do Sheets aplica as decisões, contra Postgres real', () =>
     const [novoLead] = await db.select().from(leads).where(eq(leads.idExterno, 'l:303'));
     const [card] = await db.select().from(oportunidades).where(eq(oportunidades.leadId, novoLead.id));
     expect(card.etapaId).toBe(ETAPA_FOLLOW_DE_LONGO_PRAZO);
-    expect(card.proximaAcaoEm?.toISOString()).toBe('2026-11-10T17:00:00.000Z');
+    expect(card.proximaAcaoEm?.toISOString()).toBe('2030-11-10T17:00:00.000Z');
   });
 
   test('"ignorar" tira o lead da fila sem criar nada, e não volta a aparecer numa execução seguinte (@spec:AC-311)', async () => {

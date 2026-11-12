@@ -103,6 +103,19 @@ export function extrairDadosFormulario(
   return dados;
 }
 
+/**
+ * Data em que o lead realmente entrou (coluna `created_time` da planilha, a
+ * mesma que a automação do gestor de tráfego preenche), em UTC. Sem ela — ou
+ * com valor inválido — devolve `undefined` e o banco grava a data da migração
+ * (`now()`), como antes. É esta data, e não a da migração, que os relatórios
+ * usam para o período do lead (`oportunidades.criado_em`).
+ */
+export function dataEntradaDoLead(lead: Pick<LeadBruto, 'camposExtras'>): Date | undefined {
+  const bruta = campo(lead.camposExtras, 'created_time', 'created time', 'data de criacao');
+  const iso = normalizarData(bruta);
+  return iso ? new Date(iso) : undefined;
+}
+
 function dadosSemVazios(dados: DadosFormularioLead): Record<string, string> | null {
   const entradas = Object.entries(dados).filter(
     (par): par is [string, string] => typeof par[1] === 'string' && par[1].trim() !== ''
@@ -203,11 +216,13 @@ async function criarLeadECard(
 
   const telefoneE164 = normalizarTelefone(lead.telefone) ?? null;
   const dadosFormulario = dadosSemVazios(extrairDadosFormulario(lead, decisaoStatus));
+  const dataEntrada = dataEntradaDoLead(lead);
 
   const [novoLead] = await tx
     .insert(leads)
     .values({
       empresaId,
+      criadoEm: dataEntrada,
       nome: lead.nome,
       email: lead.email || null,
       origem: obterOrigemComercial(origem) ?? null,
@@ -222,6 +237,7 @@ async function criarLeadECard(
     .values({
       empresaId,
       leadId: novoLead.id,
+      criadoEm: dataEntrada,
       etapaId,
       motivoPerdaId: motivoPerdaId ?? null,
       proximaAcaoEm: proximaAcaoEm ?? null,
