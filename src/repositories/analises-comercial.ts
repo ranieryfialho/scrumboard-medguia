@@ -78,6 +78,18 @@ export interface ResumoDeFechamentos {
   origens: ContagemDeFechamento[];
 }
 
+/** fase6-perdas-por-lead (AC-816): uma perda do período, com o lead, o responsável, o motivo e em que etapa ele estava. */
+export interface LeadPerdido {
+  oportunidadeId: string;
+  lead: string;
+  responsavel: string | null;
+  motivo: string;
+  etapaOrigem: string | null;
+  origem: string | null;
+  /** Instante da perda (ISO 8601). */
+  perdidoEm: string;
+}
+
 export interface RespostaComercial {
   resumo: {
     mrrNovo: number;
@@ -91,6 +103,8 @@ export interface RespostaComercial {
   ranking: LinhaDoRanking[];
   motivosPerda: { motivo: string; quantidade: number; percentual: number }[];
   totalPerdas: number;
+  /** AC-816: as mesmas perdas do bloco de motivos (uma por card), da mais recente para a mais antiga. */
+  leadsPerdidos: LeadPerdido[];
   fechamentos?: ResumoDeFechamentos;
   /** T-320: as especialidades que existem nos leads, para o filtro. */
   especialidadesDisponiveis?: string[];
@@ -111,6 +125,11 @@ type Evento = {
   especialidade: string | null;
   origem_lead: string | null;
   desconto: string | null;
+  // fase6-perdas-por-lead: o que a lista "Leads perdidos" mostra de cada perda.
+  lead_nome: string;
+  etapa_origem: string | null;
+  responsavel_nome: string | null;
+  ocorrido: Date | string;
 };
 
 const media = (valores: number[]): number | null => (valores.length ? valores.reduce((a, b) => a + b, 0) / valores.length : null);
@@ -142,10 +161,13 @@ export async function obterComercial(
           ORDER BY p.ocorrido_em LIMIT 1) AS dias_proposta,
         nullif(btrim(ld.dados ->> 'especialidade'), '') AS especialidade,
         ld.origem AS origem_lead,
-        oc.desconto_percentual::text AS desconto
+        oc.desconto_percentual::text AS desconto,
+        ld.nome AS lead_nome, pe.nome AS etapa_origem, u.nome AS responsavel_nome, e.ocorrido_em AS ocorrido
       FROM oportunidade_eventos e
       JOIN oportunidades o ON o.id = e.oportunidade_id
       JOIN leads ld ON ld.id = o.lead_id
+      LEFT JOIN usuarios u ON u.id = o.responsavel_id
+      LEFT JOIN pipeline_etapas pe ON pe.id = e.etapa_origem_id
       LEFT JOIN oportunidade_comercial oc ON oc.oportunidade_id = o.id
       LEFT JOIN motivos_perda m ON m.id = o.motivo_perda_id
       WHERE e.tipo = 'transicao_etapa'
@@ -288,6 +310,17 @@ export async function obterComercial(
         .map(([motivo, quantidade]) => ({ motivo, quantidade, percentual: perdas.length ? Math.round((quantidade / perdas.length) * 1000) / 10 : 0 }))
         .sort((a, b) => b.quantidade - a.quantidade || a.motivo.localeCompare(b.motivo)),
       totalPerdas: perdas.length,
+      leadsPerdidos: perdas
+        .map((e) => ({
+          oportunidadeId: e.oportunidade_id,
+          lead: e.lead_nome,
+          responsavel: e.responsavel_nome,
+          motivo: e.motivo ?? SEM_MOTIVO,
+          etapaOrigem: e.etapa_origem,
+          origem: e.origem_lead,
+          perdidoEm: new Date(e.ocorrido).toISOString(),
+        }))
+        .sort((a, b) => b.perdidoEm.localeCompare(a.perdidoEm)),
       fechamentos,
       porEspecialidade,
       insights,

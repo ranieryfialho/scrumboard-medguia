@@ -18,6 +18,7 @@ import {
   ErroValorObrigatorioNaProposta,
 } from '../../../../repositories/edicao-card';
 import { buscarOportunidadePorId } from '../../../../repositories/oportunidades';
+import { lerPerdaDoCard } from '../../../../repositories/perda-do-card';
 
 export const dynamic = 'force-dynamic';
 
@@ -57,7 +58,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   }
 
   const db = getDb();
-  const [lead, responsavelNome, motivoPerdaNome] = await comTenant(db, contexto, async (tx) => {
+  const [lead, responsavelNome, motivoPerdaNome, perda] = await comTenant(db, contexto, async (tx) => {
     const [lead] = await tx
       .select({ nome: leads.nome, email: leads.email, origem: leads.origem, telefoneE164: leads.telefoneE164, dados: leads.dados })
       .from(leads)
@@ -72,7 +73,10 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       ? await tx.select({ nome: motivosPerda.nome }).from(motivosPerda).where(eq(motivosPerda.id, oportunidade.motivoPerdaId)).limit(1)
       : [];
 
-    return [lead ?? null, responsavel?.nome ?? null, motivo?.nome ?? null] as const;
+    // fase6-perdas-por-lead (AC-813/AC-814): o bloco "Perda" só existe para card que está em Perdido agora (reaberto não tem).
+    const perda = await lerPerdaDoCard(tx, contexto.empresaId, oportunidade, motivo?.nome ?? null);
+
+    return [lead ?? null, responsavel?.nome ?? null, motivo?.nome ?? null, perda] as const;
   });
 
   return NextResponse.json({
@@ -100,6 +104,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     valor: oportunidade.valor,
     motivoPerdaId: oportunidade.motivoPerdaId,
     motivoPerdaNome,
+    // fase6-perdas-por-lead: motivo, etapa em que estava, quando e se foi automática; `null` fora de "Perdido".
+    perda,
     proximaAcaoEm: oportunidade.proximaAcaoEm,
     version: oportunidade.version,
   });
