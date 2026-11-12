@@ -136,11 +136,11 @@ describe('T-180: botão "Exportar CSV" da lista e dos arquivados', () => {
       await screen.findByRole('button', { name: 'Exportar CSV' });
 
       await usuario.click(screen.getByRole('button', { name: /^Período/ }));
+      await usuario.selectOptions(screen.getByLabelText('Data do período'), 'movimentacao'); // o painel fecha ao aplicar: a data se escolhe antes
       await usuario.click(screen.getByRole('button', { name: 'Personalizado' }));
       fireEvent.change(screen.getByLabelText('De'), { target: { value: '2026-02-01' } });
       fireEvent.change(screen.getByLabelText('Até'), { target: { value: '2026-02-28' } });
       await usuario.click(screen.getByRole('button', { name: 'Aplicar' }));
-      await usuario.selectOptions(screen.getByLabelText('Data do período'), 'movimentacao');
 
       await usuario.click(screen.getByRole('button', { name: 'Exportar CSV' }));
       await waitFor(() => expect(chamadasDeExportacao('lista')).toHaveLength(1));

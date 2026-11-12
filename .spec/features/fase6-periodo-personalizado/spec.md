@@ -36,8 +36,8 @@ Como gestor, quero informar a data inicial e a final de um relatório, para anal
 #### AC-803 — Exportações e títulos usam o intervalo escolhido
 
 - **Dado** um período personalizado aplicado
-- **Quando** a pessoa baixa um CSV ou lê o rótulo do período na tela
-- **Então** o nome e o conteúdo refletem as datas escolhidas (formato `dd/mm/aaaa`), nunca o rótulo de um período pronto
+- **Quando** a pessoa baixa um CSV ou olha o filtro na tela
+- **Então** o nome e o conteúdo do arquivo refletem as datas escolhidas (nome com `aaaa-mm-dd`, linha "Período" com `dd/mm/aaaa`), nunca o rótulo de um período pronto, e a tela mostra as datas escolhidas nos campos De e Até
 
 ### US-195 — Filtrar o pipeline por período
 

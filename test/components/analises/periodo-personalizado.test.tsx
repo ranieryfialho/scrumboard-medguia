@@ -128,7 +128,8 @@ describe('fase6-periodo-personalizado: filtro de período', () => {
       await u.click(screen.getByRole('button', { name: 'Personalizado' }));
       preencher('2026-02-10', '2026-02-19');
       await u.click(screen.getByRole('button', { name: 'Aplicar' }));
-      await waitFor(() => expect(screen.getAllByText('10/02/2026 a 19/02/2026').length).toBeGreaterThan(0));
+      await waitFor(() => expect(urls().some((url) => url.includes('de=2026-02-10&ate=2026-02-19'))).toBe(true));
+      expect((screen.getByLabelText('De') as HTMLInputElement).value).toBe('2026-02-10'); // a tela mostra as datas escolhidas nos campos
 
       await u.click(screen.getByRole('button', { name: /Exportar Relatório \(CSV\)/ }));
       expect(baixados[0].nome).toBe('relatorio-marketing_2026-02-10_a_2026-02-19.csv');

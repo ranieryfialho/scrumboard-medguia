@@ -246,10 +246,12 @@ export function RelatorioMarketing() {
 
       <section aria-label="Filtros" className="bg-surface-card rounded-2xl p-space-md shadow-sm flex items-center gap-space-sm flex-wrap shrink-0">
         <FiltroPeriodo valor={periodo} presets={PRESETS} onMudar={setPeriodo} />
-        <span className="font-body-sm text-body-sm text-text-muted flex items-center gap-1">
-          <span aria-hidden="true" className="material-symbols-outlined text-[16px]">calendar_today</span>
-          {de.split('-').reverse().join('/')} a {ate.split('-').reverse().join('/')}
-        </span>
+        {periodo.tipo === 'preset' && (
+          <span className="font-body-sm text-body-sm text-text-muted flex items-center gap-1">
+            <span aria-hidden="true" className="material-symbols-outlined text-[16px]">calendar_today</span>
+            {de.split('-').reverse().join('/')} a {ate.split('-').reverse().join('/')}
+          </span>
+        )}
         <select aria-label="Origem" value={origem} onChange={(e) => setOrigem(e.target.value)} className="h-10 px-3 rounded-xl bg-surface-subtle font-label-md text-label-md">
           <option value="">Todos os canais de aquisição</option>
           {(dados?.origens ?? []).map((o) => (
