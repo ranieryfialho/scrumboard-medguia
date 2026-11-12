@@ -37,6 +37,7 @@ import {
   type ValorFiltrosLista,
 } from '@/components/pipeline/filtros-lista';
 import { parametrosDoPeriodoPipeline } from '@/components/pipeline/filtro-periodo-pipeline';
+import { lerFiltroDeQualificacao } from '@/domain/qualificacao/qualificacao';
 import { TabelaLista, type ItemTabelaLista } from '@/components/pipeline/tabela-lista';
 
 type TamanhoPagina = 10 | 25 | 50;
@@ -71,6 +72,7 @@ function construirQuery(filtro: ValorFiltrosLista, pagina: number, porPagina: nu
   if (filtro.etapaId !== undefined) parametros.set('etapaId', String(filtro.etapaId));
   if (filtro.responsavelId) parametros.set('responsavelId', filtro.responsavelId);
   if (filtro.origem) parametros.set('origem', filtro.origem);
+  if (filtro.qualificacao) parametros.set('qualificacao', filtro.qualificacao);
   if (filtro.ordenarPor) parametros.set('ordenarPor', filtro.ordenarPor);
   if (filtro.ordem) parametros.set('ordem', filtro.ordem);
   // AC-822: o período (e qual data ele filtra) vai no pedido da lista e, por `consultaDaExportacao`, na exportação.
@@ -89,6 +91,7 @@ function PipelineListaConteudo() {
     etapaId: searchParamsIniciais.get('etapaId') ? Number(searchParamsIniciais.get('etapaId')) : undefined,
     responsavelId: searchParamsIniciais.get('responsavelId') ?? undefined,
     origem: searchParamsIniciais.get('origem') ?? undefined,
+    qualificacao: lerFiltroDeQualificacao(searchParamsIniciais.get('qualificacao')),
     ordenarPor: normalizarOrdenarPor(searchParamsIniciais.get('ordenarPor')),
     ordem: normalizarOrdem(searchParamsIniciais.get('ordem')),
   }));

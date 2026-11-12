@@ -38,6 +38,7 @@ import { ModalEditarCard, type ResultadoEdicaoCard, type ValoresEdicaoCard } fro
 import { RegistroRapido } from '@/components/pipeline/detalhe/registro-rapido';
 import { AbasDoCard } from '@/components/pipeline/card/abas-do-card';
 import { useContadoresDoCard } from '@/components/pipeline/card/use-contadores-do-card';
+import { useQualificacaoDoCard } from '@/components/pipeline/card/use-qualificacao-do-card';
 
 const ETAPA_PERDIDO = 14;
 const ETAPA_CONTRATO_GANHO = 15;
@@ -172,6 +173,7 @@ function PipelineDetalheConteudo({ id }: { id: string }) {
 
   // T-171 (AC-420): contadores das abas (toques de 18 e anexos); falha só omite o número.
   const contagens = useContadoresDoCard(dados ? id : null);
+  const qualificacao = useQualificacaoDoCard(dados ? id : null);
 
   const [cadenciaIniciada, setCadenciaIniciada] = useState(false);
   const [erroCadencia, setErroCadencia] = useState<string | null>(null);
@@ -333,6 +335,7 @@ function PipelineDetalheConteudo({ id }: { id: string }) {
         leadNome={dados.leadNome}
         etapaAtualNome={nomeDaEtapa(dados.etapaId)}
         responsavelNome={dados.responsavelNome}
+        qualificacao={qualificacao}
         etapasDestino={etapasDestino}
         podeMarcarGanho={podeMarcarGanho}
         podeMarcarPerdido={podeMarcarPerdido}

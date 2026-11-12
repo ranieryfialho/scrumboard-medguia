@@ -1,4 +1,4 @@
-// Teste de T-175 (fase4-card-abas, US-111): as quatro abas do card existem.
+// Teste de T-175 (fase4-card-abas, US-111): as abas do card existem.
 // Lição da PR #37: o teste da época só conferia o `href` dos links, e as rotas
 // de cadência, conversa e anexos nem existiam (as abas levavam a um 404).
 // Aqui, para cada aba da barra do card, o `href` que ela gera tem que ter o
@@ -19,8 +19,8 @@ function paginaDaRota(href: string): string {
 }
 
 describe('T-175: as abas do card não levam a 404', () => {
-  test('a barra tem as quatro abas: resumo, cadência, whatsapp e anexos @spec:AC-419', () => {
-    expect(ABAS_DO_CARD.map((aba) => aba.chave)).toEqual(['resumo', 'cadencia', 'whatsapp', 'anexos']);
+  test('a barra tem as cinco abas: resumo, cadência, whatsapp, qualificação e anexos @spec:AC-419', () => {
+    expect(ABAS_DO_CARD.map((aba) => aba.chave)).toEqual(['resumo', 'cadencia', 'whatsapp', 'qualificacao', 'anexos']);
   });
 
   test.each(ABAS_DO_CARD.map((aba) => [aba.rotulo, aba.segmento] as const))(

@@ -8,12 +8,14 @@
 import { and, desc, asc, eq, sql } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
-import { auditoriaExportacoes, leads, motivosPerda, oportunidades, usuarios } from '../db/schema';
+import { auditoriaExportacoes, leads, motivosPerda, oportunidadeQualificacao, oportunidades, usuarios } from '../db/schema';
 import type { ContextoTenant } from '../lib/auth/tenant';
 import { comTenant } from './contexto';
 import {
+  colunasDaQualificacao,
   condicoesDaLista,
   condicoesDosArquivados,
+  juncaoDaQualificacao,
   expressaoDataFechamento,
   mapearItemArquivado,
   mapearItemLista,
@@ -45,14 +47,16 @@ export async function exportarLista(
       .select({ total: sql<number>`count(*)::int` })
       .from(oportunidades)
       .innerJoin(leads, eq(oportunidades.leadId, leads.id))
+      .leftJoin(oportunidadeQualificacao, juncaoDaQualificacao)
       .where(and(...condicoes));
     if (total > limite) return { excedeu: true as const, total };
 
     const linhas = await tx
-      .select({ oportunidade: oportunidades, lead: leads, responsavel: usuarios })
+      .select({ oportunidade: oportunidades, lead: leads, responsavel: usuarios, qualificacao: colunasDaQualificacao })
       .from(oportunidades)
       .innerJoin(leads, eq(oportunidades.leadId, leads.id))
       .leftJoin(usuarios, eq(oportunidades.responsavelId, usuarios.id))
+      .leftJoin(oportunidadeQualificacao, juncaoDaQualificacao)
       .where(and(...condicoes))
       .orderBy(...ordenacaoDaLista(filtro));
 

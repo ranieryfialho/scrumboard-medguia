@@ -8,6 +8,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 
 import { getDb } from '../../../../../db/client';
 import { lerPeriodoDaConsulta } from '../../../../../domain/pipeline/periodo';
+import { lerFiltroDeQualificacao } from '../../../../../domain/qualificacao/qualificacao';
 import { pipelineEtapas } from '../../../../../db/schema';
 import { getAuth } from '../../../../../lib/auth/instancia';
 import { ErroSessaoInvalida, resolverContextoTenant, type ContextoTenant } from '../../../../../lib/auth/tenant';
@@ -51,6 +52,7 @@ function lerFiltro(searchParams: URLSearchParams): FiltroExportarLista {
     responsavelId: searchParams.get('responsavelId') ?? undefined,
     origem: searchParams.get('origem') ?? undefined,
     busca: searchParams.get('busca') ?? undefined,
+    qualificacao: lerFiltroDeQualificacao(searchParams.get('qualificacao')),
     ordenarPor: ORDENACOES.includes(ordenarPorParam as OrdenacaoLista) ? (ordenarPorParam as OrdenacaoLista) : undefined,
     ordem: DIRECOES.includes(ordemParam as DirecaoOrdenacao) ? (ordemParam as DirecaoOrdenacao) : undefined,
   };

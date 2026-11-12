@@ -10,6 +10,8 @@ import type { ReactNode } from 'react';
 import Link from 'next/link';
 
 import { SeloEtapa } from '@/components/pipeline/pecas/selo-etapa';
+import { SeloQualificacao } from '@/components/pipeline/pecas/selo-qualificacao';
+import type { FaixaDeQualificacao } from '@/domain/qualificacao/qualificacao';
 import { AvatarContato } from '@/components/whatsapp/avatar-contato';
 
 export interface EtapaOpcao {
@@ -28,6 +30,8 @@ interface CabecalhoCardProps {
   podeMarcarPerdido: boolean;
   enviando: boolean;
   onEscolherDestino: (etapaDestinoId: number) => void;
+  /** fase6-qualificacao-comercial (AC-836): faixa e nota ao lado da etapa; `null`/ausente = card não avaliado, sem selo. */
+  qualificacao?: { faixa: FaixaDeQualificacao | null; score: number } | null;
   /** T-171: itens extras nas ações (ex.: "Mover Etapa" em breve nas abas que não movem card). */
   acoesExtras?: ReactNode;
 }
@@ -42,6 +46,7 @@ export function CabecalhoCard({
   podeMarcarPerdido,
   enviando,
   onEscolherDestino,
+  qualificacao,
   acoesExtras,
 }: CabecalhoCardProps) {
   return (
@@ -70,6 +75,7 @@ export function CabecalhoCard({
                 <div className="flex items-center gap-space-sm flex-wrap">
                   <h1 className="font-headline-lg text-headline-lg text-text-primary">{leadNome}</h1>
                   <SeloEtapa nome={etapaAtualNome} />
+                  {qualificacao?.faixa && <SeloQualificacao grande faixa={qualificacao.faixa} score={qualificacao.score} />}
                 </div>
                 <p className="font-body-sm text-body-sm text-text-secondary">
                   Responsável: {responsavelNome ?? 'Sem responsável'}

@@ -13,11 +13,12 @@
 // evento (ex.: card migrado do legado, sem histórico), cai para
 // `atualizado_em` — exportada para `pipeline-indicadores.ts` reaproveitar a
 // mesma regra sem duplicá-la.
-import { and, asc, desc, eq, ilike, inArray, notInArray, or, sql, type SQL } from 'drizzle-orm';
+import { and, asc, desc, eq, ilike, inArray, isNull, notInArray, or, sql, type SQL } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
-import { leads, motivosPerda, oportunidades, usuarios } from '../db/schema';
+import { leads, motivosPerda, oportunidadeQualificacao, oportunidades, usuarios } from '../db/schema';
 import type { CampoDataPeriodo } from '../domain/pipeline/periodo';
+import type { FaixaDeQualificacao, FiltroDeQualificacao } from '../domain/qualificacao/qualificacao';
 import type { ContextoTenant } from '../lib/auth/tenant';
 import { comTenant } from './contexto';
 import { prioridadeMeta } from './prioridade-meta';
@@ -110,6 +111,8 @@ export interface ItemLista {
   criadoEm: Date;
   lead: ItemLead;
   responsavel: ItemResponsavel | null;
+  /** fase6-qualificacao-comercial (AC-835): a faixa e a nota da qualificação; `null` quando o card não foi avaliado. */
+  qualificacao: { faixa: FaixaDeQualificacao; score: number } | null;
 }
 
 export interface FiltroLista {
@@ -122,6 +125,8 @@ export interface FiltroLista {
   /** Fim do período (`YYYY-MM-DD`, inclusivo). */
   ate?: string;
   data?: CampoDataPeriodo;
+  /** AC-835: só os cards desta faixa de qualificação (`nenhuma` = não avaliados). */
+  qualificacao?: FiltroDeQualificacao;
   ordenarPor?: OrdenacaoLista;
   ordem?: DirecaoOrdenacao;
   /** 1-based (AC-395). Default: 1. */
@@ -146,6 +151,8 @@ export function condicoesDaLista(contexto: ContextoTenant, filtro: FiltroLista):
   if (filtro.origem !== undefined) condicoes.push(eq(leads.origem, filtro.origem));
   const busca = condicaoBusca(filtro.busca);
   if (busca) condicoes.push(busca);
+  if (filtro.qualificacao === 'nenhuma') condicoes.push(isNull(oportunidadeQualificacao.faixa));
+  else if (filtro.qualificacao !== undefined) condicoes.push(eq(oportunidadeQualificacao.faixa, filtro.qualificacao));
   condicoes.push(...condicoesDoPeriodo(filtro.data === 'movimentacao' ? expressaoUltimaMovimentacao : sql`${oportunidades.criadoEm}`, filtro.de, filtro.ate));
   return condicoes;
 }
@@ -163,7 +170,12 @@ type LinhaDaLista = {
   oportunidade: typeof oportunidades.$inferSelect;
   lead: typeof leads.$inferSelect;
   responsavel: typeof usuarios.$inferSelect | null;
+  qualificacao?: { faixa: string | null; score: number | null } | null;
 };
+
+/** AC-835: o `leftJoin` da qualificação, o mesmo na contagem, na página e na exportação (o filtro por faixa precisa dele). */
+export const juncaoDaQualificacao = eq(oportunidadeQualificacao.oportunidadeId, oportunidades.id);
+export const colunasDaQualificacao = { faixa: oportunidadeQualificacao.faixa, score: oportunidadeQualificacao.score };
 
 /** T-179: uma linha da consulta da lista → `ItemLista` (usado na tela e na exportação). */
 export function mapearItemLista(linha: LinhaDaLista): ItemLista {
@@ -181,6 +193,7 @@ export function mapearItemLista(linha: LinhaDaLista): ItemLista {
       origem: linha.lead.origem,
     },
     responsavel: linha.responsavel ? { id: linha.responsavel.id, nome: linha.responsavel.nome } : null,
+    qualificacao: linha.qualificacao?.faixa ? { faixa: linha.qualificacao.faixa as FaixaDeQualificacao, score: linha.qualificacao.score ?? 0 } : null,
   };
 }
 
@@ -206,13 +219,15 @@ export async function listarLista(
       .select({ total: sql<number>`count(*)::int` })
       .from(oportunidades)
       .innerJoin(leads, eq(oportunidades.leadId, leads.id))
+      .leftJoin(oportunidadeQualificacao, juncaoDaQualificacao)
       .where(and(...condicoes));
 
     const linhas = await tx
-      .select({ oportunidade: oportunidades, lead: leads, responsavel: usuarios })
+      .select({ oportunidade: oportunidades, lead: leads, responsavel: usuarios, qualificacao: colunasDaQualificacao })
       .from(oportunidades)
       .innerJoin(leads, eq(oportunidades.leadId, leads.id))
       .leftJoin(usuarios, eq(oportunidades.responsavelId, usuarios.id))
+      .leftJoin(oportunidadeQualificacao, juncaoDaQualificacao)
       .where(and(...condicoes))
       .orderBy(...ordenacaoDaLista(filtro))
       .limit(porPagina)

@@ -17,7 +17,9 @@ import { leads, pipelineEtapas, pipelineTransicoes, usuarios } from '../../../db
 import { getAuth } from '../../../lib/auth/instancia';
 import { ErroSessaoInvalida, resolverContextoTenant, type ContextoTenant } from '../../../lib/auth/tenant';
 import { papelPodeTransicionar } from '../../../domain/pipeline/papel';
+import type { FaixaDeQualificacao } from '../../../domain/qualificacao/qualificacao';
 import { comTenant } from '../../../repositories/contexto';
+import { lerResumosDeQualificacao } from '../../../repositories/qualificacao';
 import { criarOportunidade, ErroLeadNaoEncontrado, listarOportunidades } from '../../../repositories/oportunidades';
 import {
   criarLeadComOportunidade,
@@ -86,6 +88,8 @@ export interface CardBoard {
   version: number;
   /** Quando o card nasceu — base da ordem (mais novo primeiro) e do selo "Novo" da Entrada de leads. */
   criadoEm: string;
+  /** fase6-qualificacao-comercial (AC-834): faixa e nota da qualificação; `null` quando o card não foi avaliado. */
+  qualificacao: { faixa: FaixaDeQualificacao; score: number } | null;
 }
 
 /** AC-075: enriquece a página de `listarOportunidades` com nome do lead e do responsável. */
@@ -98,6 +102,7 @@ async function enriquecerCards(
   const leadIds = [...new Set(itens.map((o) => o.leadId))];
   const responsavelIds = [...new Set(itens.map((o) => o.responsavelId).filter((id): id is string => id !== null))];
 
+  const qualificacoes = await lerResumosDeQualificacao(getDb(), contexto, itens.map((o) => o.id));
   const [leadsEncontrados, responsaveisEncontrados] = await comTenant(getDb(), contexto, async (tx) => {
     const leadsEncontrados = await tx
       .select({ id: leads.id, nome: leads.nome })
@@ -125,6 +130,7 @@ async function enriquecerCards(
     valor: o.valor,
     version: o.version,
     criadoEm: o.criadoEm.toISOString(),
+    qualificacao: qualificacoes.get(o.id) ?? null,
   }));
 }
 
