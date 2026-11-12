@@ -1,6 +1,6 @@
 // fase6-atendimento-lead (US-181): o bloco "Velocidade do 1º contato" do relatório de marketing e a formatação dos tempos.
 import { afterEach, describe, expect, test } from 'vitest';
-import { cleanup, render, screen, within } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 
 import { DICA_DA_MEDIA, DICA_DA_MEDIANA, VelocidadeDoContatoBloco, formatarEspera, resumoDoExpediente, type VelocidadeDoContato } from '../../../src/components/analises/velocidade-contato';
 import { HORARIO_PADRAO, resumirEsperas } from '../../../src/domain/atendimento/horario-comercial';
@@ -69,5 +69,47 @@ describe('fase6-atendimento-lead: velocidade do 1º contato na tela', () => {
     expect(formatarEspera(180)).toBe('3 h');
     expect(formatarEspera(4500)).toBe('3 d 3 h'); // 4.320 min (3 dias) + 180 min (3 h)
     expect(resumoDoExpediente({ ...HORARIO_PADRAO, sab: { atende: true, abre: '08:00', fecha: '13:00' } })).toBe('Seg a sex, 09:00–18:00 · Sáb, 08:00–13:00');
+  });
+
+  const lead = (nome: string, corrido: number, comercial: number, opp: string | null = 'opp-1') => ({
+    oportunidadeId: opp,
+    lead: nome,
+    responsavel: 'Ana',
+    entrada: '2026-02-10T13:00:00.000Z',
+    primeiroContato: '2026-02-10T14:00:00.000Z',
+    esperaCorrida: corrido,
+    esperaComercial: comercial,
+  });
+
+  test('lista os leads do tempo de resposta, com link para o card e o total igual ao N @spec:AC-826', () => {
+    const leads = [lead('Demorado', 3000, 600, 'opp-9'), lead('Rápido', 20, 20, null)];
+    render(<VelocidadeDoContatoBloco velocidade={{ ...velocidade([3000, 20], [600, 20]), leads }} />);
+
+    const lista = screen.getByRole('region', { name: 'Leads do tempo de resposta' });
+    const linhas = within(lista).getAllByRole('row').slice(1);
+    expect(linhas).toHaveLength(2);
+    expect(within(linhas[0]).getByRole('link', { name: 'Demorado' }).getAttribute('href')).toBe('/pipeline/opp-9');
+    expect(within(linhas[0]).getByText('2 d 2 h')).toBeTruthy(); // 3000 min corridos
+    expect(within(linhas[0]).getByText('10 h')).toBeTruthy(); // 600 min comerciais
+    expect(within(linhas[1]).queryByRole('link')).toBeNull(); // sem card, sem link
+    expect(screen.getAllByText('2 leads').length).toBeGreaterThan(0);
+  });
+
+  test('clicar numa faixa filtra a lista pelo critério daquele lado e Limpar volta à lista completa @spec:AC-827', () => {
+    // Demorado: 3000 min no relógio (mais de 24 h) mas 30 min no comercial (até 1 h); Rápido: 20 / 20
+    const leads = [lead('Demorado', 3000, 30), lead('Rápido', 20, 20)];
+    render(<VelocidadeDoContatoBloco velocidade={{ ...velocidade([3000, 20], [30, 20]), leads }} />);
+    const nomes = () => within(screen.getByRole('region', { name: 'Leads do tempo de resposta' })).queryAllByRole('link').map((a) => a.textContent);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Relógio corrido: Mais de 24 h' }));
+    expect(nomes()).toEqual(['Demorado']);
+    expect(screen.getByText('Mais de 24 h · relógio corrido')).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Horário comercial: Até 1 h' })); // as duas esperas comerciais são até 1 h
+    expect(nomes()).toEqual(['Demorado', 'Rápido']);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Limpar' }));
+    expect(nomes()).toEqual(['Demorado', 'Rápido']);
+    expect(screen.queryByText(/relógio corrido$/)).toBeNull();
   });
 });

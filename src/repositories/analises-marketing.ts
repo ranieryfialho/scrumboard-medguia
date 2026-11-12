@@ -22,6 +22,18 @@ const SEM_ORIGEM = 'Sem origem';
 
 export type Agrupamento = 'dia' | 'semana' | 'mes';
 
+/** Um lead da conta da velocidade do 1º contato (AC-826/AC-828). Datas em ISO; esperas em minutos. */
+export interface LeadDaVelocidade {
+  /** Card do lead (a oportunidade mais recente); `null` se o lead ainda não virou card. */
+  oportunidadeId: string | null;
+  lead: string;
+  responsavel: string | null;
+  entrada: string;
+  primeiroContato: string;
+  esperaCorrida: number;
+  esperaComercial: number;
+}
+
 export interface LinhaDeOrigem {
   origem: string;
   leads: number;
@@ -85,7 +97,14 @@ export interface InsightsDeMarketing {
    * dentro do horário comercial da empresa (AC-784/AC-785). Cada resumo traz média, mediana, quantos leads entraram na conta e as
    * faixas de espera (AC-786). Lead sem mensagem enviada fica de fora da conta (AC-788).
    */
-  velocidade: { corrido: ResumoDeEsperas; comercial: ResumoDeEsperas; horario: HorarioComercial; horarioPadrao: boolean };
+  velocidade: {
+    corrido: ResumoDeEsperas;
+    comercial: ResumoDeEsperas;
+    horario: HorarioComercial;
+    horarioPadrao: boolean;
+    /** fase6-leads-da-velocidade (AC-828): os leads que entraram na conta, do que esperou mais ao que esperou menos. */
+    leads: LeadDaVelocidade[];
+  };
   /** No-show ÷ reuniões agendadas, entre os leads do período. */
   noShow: { taxa: number | null; noShows: number; agendadas: number };
 }
@@ -290,19 +309,36 @@ export async function obterMarketing(
       `)
     ).rows;
     // AC-788: só a 1ª mensagem enviada em ou depois da entrada conta; lead sem nenhuma fica fora (os migrados entram normalmente).
-    const esperas = await tx.execute<{ entrada: Date | string; primeira: Date | string }>(sql`
-      SELECT l.criado_em AS entrada, p.primeira
+    const esperas = await tx.execute<{ lead: string; opp: string | null; responsavel: string | null; entrada: Date | string; primeira: Date | string }>(sql`
+      SELECT l.nome AS lead, l.criado_em AS entrada, p.primeira,
+        (SELECT o.id FROM oportunidades o WHERE o.lead_id = l.id ORDER BY o.criado_em DESC LIMIT 1)::text AS opp,
+        (SELECT u.nome FROM oportunidades o JOIN usuarios u ON u.id = o.responsavel_id WHERE o.lead_id = l.id ORDER BY o.criado_em DESC LIMIT 1) AS responsavel
       FROM leads l
       JOIN LATERAL (SELECT min(w.criado_em) AS primeira FROM whatsapp_mensagens w WHERE w.lead_id = l.id AND w.direcao = 'enviada' AND w.criado_em >= l.criado_em) p ON p.primeira IS NOT NULL
       WHERE ${noPeriodo} ${filtroOrigem}
     `);
     const expediente = await lerHorarioNaTransacao(tx, contexto.empresaId);
-    const paresDeEspera = esperas.rows.map((r) => [new Date(r.entrada), new Date(r.primeira)] as const);
+    const leadsDaVelocidade: LeadDaVelocidade[] = esperas.rows
+      .map((r) => {
+        const entrada = new Date(r.entrada);
+        const primeira = new Date(r.primeira);
+        return {
+          oportunidadeId: r.opp,
+          lead: r.lead,
+          responsavel: r.responsavel,
+          entrada: entrada.toISOString(),
+          primeiroContato: primeira.toISOString(),
+          esperaCorrida: minutosCorridos(entrada, primeira),
+          esperaComercial: minutosUteis(entrada, primeira, expediente.horario),
+        };
+      })
+      .sort((a, b) => b.esperaCorrida - a.esperaCorrida);
     const velocidade = {
-      corrido: resumirEsperas(paresDeEspera.map(([entrada, primeira]) => minutosCorridos(entrada, primeira))),
-      comercial: resumirEsperas(paresDeEspera.map(([entrada, primeira]) => minutosUteis(entrada, primeira, expediente.horario))),
+      corrido: resumirEsperas(leadsDaVelocidade.map((l) => l.esperaCorrida)),
+      comercial: resumirEsperas(leadsDaVelocidade.map((l) => l.esperaComercial)),
       horario: expediente.horario ?? HORARIO_PADRAO,
       horarioPadrao: expediente.padrao,
+      leads: leadsDaVelocidade,
     };
     const [faltas] = (
       await tx.execute<{ agendadas: number; no_shows: number }>(sql`
