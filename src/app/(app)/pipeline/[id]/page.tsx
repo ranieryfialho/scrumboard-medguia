@@ -29,6 +29,7 @@ import { CabecalhoCard, type EtapaOpcao } from '@/components/pipeline/detalhe/ca
 import { Jornada, nomeDaEtapa } from '@/components/pipeline/detalhe/jornada';
 import { ConsentimentoWhatsapp } from '@/components/pipeline/detalhe/consentimento-whatsapp';
 import { BlocoFechamento } from '@/components/pipeline/detalhe/bloco-fechamento';
+import { BlocoQualificacao } from '@/components/pipeline/detalhe/bloco-qualificacao';
 import { BlocoPerda, type PerdaDoCardView } from '@/components/pipeline/detalhe/bloco-perda';
 import { Informacoes, type TelefoneInformacao } from '@/components/pipeline/detalhe/informacoes';
 import { ModalFechamentoDoCard } from '@/components/pipeline/modal-fechamento';
@@ -394,6 +395,7 @@ function PipelineDetalheConteudo({ id }: { id: string }) {
               onReatribuir={reatribuir}
               onEditar={() => setEditando(true)}
             />
+            <BlocoQualificacao oportunidadeId={dados.id} />
             <BlocoPerda perda={dados.perda} responsavelNome={dados.responsavelNome} />
             <BlocoFechamento cardId={dados.id} etapaId={dados.etapaId} versao={versaoLinhaDoTempo} />
             <ConsentimentoWhatsapp leadId={dados.leadId} />

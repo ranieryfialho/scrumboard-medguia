@@ -8,6 +8,8 @@ import { AlarmClock, ExternalLink } from "lucide-react";
 import { AvatarContato } from "@/components/whatsapp/avatar-contato";
 import { urgenciaDoLead, type UrgenciaDoLead } from "@/domain/pipeline/lead-novo";
 import { BotaoIniciarCadencia } from "./botao-iniciar-cadencia";
+import { SeloQualificacao } from "./pecas/selo-qualificacao";
+import type { FaixaDeQualificacao } from "../../domain/qualificacao/qualificacao";
 
 const ETAPA_ENTRADA_DE_LEADS = 1;
 
@@ -30,6 +32,8 @@ export interface CardBoard {
   proximaAcaoEm?: string | null;
   /** Quando o card nasceu (ISO) — ordena a Entrada de leads e liga o selo "Novo". */
   criadoEm?: string;
+  /** fase6-qualificacao-comercial (AC-834): faixa e nota; ausente/`null` = sem selo. */
+  qualificacao?: { faixa: FaixaDeQualificacao; score: number } | null;
 }
 
 interface CardOportunidadeProps {
@@ -140,6 +144,7 @@ export function CardOportunidade({ oportunidade, isOverlay, atrasado }: CardOpor
             />
           )}
           <span className="font-headline-sm text-headline-sm text-text-primary leading-tight">{oportunidade.leadNome}</span>
+          {oportunidade.qualificacao && <SeloQualificacao compacto faixa={oportunidade.qualificacao.faixa} score={oportunidade.qualificacao.score} />}
           {urgenciaNovo && (
             <span
               data-testid="selo-novo"

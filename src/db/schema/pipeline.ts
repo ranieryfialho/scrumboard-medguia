@@ -8,6 +8,7 @@ import {
   pgEnum,
   primaryKey,
   pgTable,
+  smallint,
   text,
   timestamp,
   uniqueIndex,
@@ -231,6 +232,28 @@ export const oportunidadeComercial = pgTable('oportunidade_comercial', {
   termoLgpdValidado: boolean('termo_lgpd_validado').notNull().default(false),
   /** T-318: desconto concedido na proposta, em % (migration 0032). */
   descontoPercentual: numeric('desconto_percentual', { precision: 5, scale: 2 }),
+  atualizadoEm: timestamp('atualizado_em', { withTimezone: true }).notNull().defaultNow(),
+  atualizadoPor: uuid('atualizado_por').references(() => usuarios.id, { onDelete: 'set null' }),
+});
+
+/** fase6-qualificacao-comercial (US-198): a qualificação do card (migration 0039); uma linha por oportunidade, nota e faixa calculadas pelo servidor. */
+export const oportunidadeQualificacao = pgTable('oportunidade_qualificacao', {
+  oportunidadeId: uuid('oportunidade_id')
+    .primaryKey()
+    .references(() => oportunidades.id, { onDelete: 'cascade' }),
+  empresaId: uuid('empresa_id')
+    .notNull()
+    .references(() => empresas.id, { onDelete: 'cascade' }),
+  dor: smallint('dor'),
+  complexidade: smallint('complexidade'),
+  decisao: smallint('decisao'),
+  gatilho: smallint('gatilho'),
+  abertura: smallint('abertura'),
+  aderencia: smallint('aderencia'),
+  bloqueios: text('bloqueios').array().notNull().default(sql`'{}'::text[]`),
+  estagio: text('estagio'),
+  score: smallint('score').notNull(),
+  faixa: text('faixa'),
   atualizadoEm: timestamp('atualizado_em', { withTimezone: true }).notNull().defaultNow(),
   atualizadoPor: uuid('atualizado_por').references(() => usuarios.id, { onDelete: 'set null' }),
 });

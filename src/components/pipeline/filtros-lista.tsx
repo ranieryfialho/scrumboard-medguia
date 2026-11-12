@@ -10,6 +10,7 @@
 // (decisão do usuário, 26/10 — sem lista oficial), vindos da tela.
 import type { PeriodoEscolhido } from '../analises/comum';
 import type { CampoDataPeriodo } from '../../domain/pipeline/periodo';
+import { lerFiltroDeQualificacao, ROTULO_CURTO_DA_FAIXA, type FiltroDeQualificacao } from '../../domain/qualificacao/qualificacao';
 import { FiltroPeriodoPipeline } from './filtro-periodo-pipeline';
 
 export const ETAPAS_LISTA: { id: number; nome: string }[] = [
@@ -40,6 +41,8 @@ export interface ValorFiltrosLista {
   etapaId?: number;
   responsavelId?: string;
   origem?: string;
+  /** fase6-qualificacao-comercial (AC-835): só uma faixa de qualificação (`nenhuma` = não avaliados). */
+  qualificacao?: FiltroDeQualificacao;
   ordenarPor?: OrdenacaoLista;
   ordem?: DirecaoOrdenacao;
   /** fase6-periodo-personalizado (AC-822): sem período, a lista mostra todos os cards. */
@@ -155,6 +158,23 @@ export function FiltrosLista({ valor, responsaveis, origens, onMudar, onLimpar }
               {origem}
             </option>
           ))}
+        </select>
+        <SetaSeletor />
+        </div>
+        <div className="relative">
+        <select
+          aria-label="Qualificação"
+          value={valor.qualificacao ?? ''}
+          onChange={(evento) => onMudar({ qualificacao: lerFiltroDeQualificacao(evento.target.value) })}
+          className={CLASSE_SELETOR}
+        >
+          <option value="">Todas as qualificações</option>
+          {(['A', 'B', 'C', 'baixo', 'revisao'] as const).map((faixa) => (
+            <option key={faixa} value={faixa}>
+              {ROTULO_CURTO_DA_FAIXA[faixa]}
+            </option>
+          ))}
+          <option value="nenhuma">Sem avaliação</option>
         </select>
         <SetaSeletor />
         </div>

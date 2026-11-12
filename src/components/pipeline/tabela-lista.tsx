@@ -10,6 +10,8 @@ import type { ReactNode } from 'react';
 import Link from 'next/link';
 
 import { SeloEtapa } from './pecas/selo-etapa';
+import { SeloQualificacao } from './pecas/selo-qualificacao';
+import type { FaixaDeQualificacao } from '../../domain/qualificacao/qualificacao';
 import { nomeDaEtapaLista } from './filtros-lista';
 
 export interface ItemTabelaLista {
@@ -24,6 +26,8 @@ export interface ItemTabelaLista {
     telefoneE164: string | null;
   };
   responsavel: { id: string; nome: string } | null;
+  /** fase6-qualificacao-comercial (AC-835): `null`/ausente = card não avaliado. */
+  qualificacao?: { faixa: FaixaDeQualificacao; score: number } | null;
 }
 
 interface TabelaListaProps {
@@ -69,6 +73,7 @@ export function TabelaLista({ itens, selecionados, onAlternarSelecao, onAlternar
               <th className="px-4 py-2 min-w-[220px]">Lead</th>
               <th className="px-4 py-2 min-w-[170px]">Etapa Atual</th>
               <th className="px-4 py-2 min-w-[160px]">Responsável</th>
+              <th className="px-4 py-2 min-w-[130px]">Qualificação</th>
               <th className="px-4 py-2 min-w-[120px] text-right">Valor Estimado</th>
               <th className="px-4 py-2 min-w-[180px]">Próxima Ação</th>
             </tr>
@@ -100,6 +105,9 @@ export function TabelaLista({ itens, selecionados, onAlternarSelecao, onAlternar
                   </td>
                   <td className="px-4 py-2 text-text-secondary font-label-md text-label-md">
                     {item.responsavel?.nome ?? 'Sem responsável'}
+                  </td>
+                  <td className="px-4 py-2">
+                    {item.qualificacao ? <SeloQualificacao faixa={item.qualificacao.faixa} score={item.qualificacao.score} /> : <span className="text-text-muted">—</span>}
                   </td>
                   <td className="px-4 py-2 text-right">
                     {valorFormatado ? (
