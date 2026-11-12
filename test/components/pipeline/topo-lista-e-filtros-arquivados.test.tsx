@@ -4,7 +4,7 @@
 // de filtros dos arquivados (AC-418). `next/navigation` mockado e fetch falso,
 // mesmo molde de test/components/pipeline/lista.test.tsx.
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { cleanup, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 let paramsIniciais = new URLSearchParams();
@@ -158,6 +158,29 @@ describe('T-167: topo da lista e filtros dos arquivados', () => {
     });
   });
 
+  describe('AC-822: a lista filtra por período e escolhe a data', () => {
+    test('o período e a data escolhida viram parâmetros do pedido, e a lista volta à página 1 @spec:AC-822', async () => {
+      const usuario = userEvent.setup();
+      render(<PipelineListaPage />);
+      await screen.findByText('20 leads');
+
+      await usuario.click(screen.getByRole('button', { name: /^Período/ }));
+      await usuario.click(screen.getByRole('button', { name: 'Personalizado' }));
+      fireEvent.change(screen.getByLabelText('De'), { target: { value: '2026-02-01' } });
+      fireEvent.change(screen.getByLabelText('Até'), { target: { value: '2026-02-28' } });
+      await usuario.click(screen.getByRole('button', { name: 'Aplicar' }));
+      await usuario.selectOptions(screen.getByLabelText('Data do período'), 'movimentacao');
+
+      await waitFor(() => {
+        const ultimas = urlsChamadas('/api/oportunidades/lista').filter((u) => u.searchParams.get('data') === 'movimentacao');
+        const ultima = ultimas[ultimas.length - 1];
+        expect(ultima.searchParams.get('de')).toBe('2026-02-01');
+        expect(ultima.searchParams.get('ate')).toBe('2026-02-28');
+        expect(ultima.searchParams.get('pagina')).toBe('1');
+      });
+    });
+  });
+
   describe('AC-418: a tela de arquivados oferece os filtros que a API já aplica', () => {
     test('busca, motivo, consultor e data viram parâmetros do pedido ao servidor e voltam à página 1 @spec:AC-418', async () => {
       const usuario = userEvent.setup();
@@ -167,7 +190,12 @@ describe('T-167: topo da lista e filtros dos arquivados', () => {
       await usuario.type(screen.getByLabelText('Buscar nos arquivados'), 'Beta');
       await usuario.selectOptions(screen.getByLabelText('Motivo de perda'), 'mot-1');
       await usuario.selectOptions(screen.getByLabelText('Consultor'), 'resp-9');
-      await usuario.type(screen.getByLabelText('Fechados desde'), '2026-10-01');
+      // AC-823: o antigo "Fechados desde" virou o período completo (De/Até + qual data).
+      await usuario.click(screen.getByRole('button', { name: /^Período/ }));
+      await usuario.click(screen.getByRole('button', { name: 'Personalizado' }));
+      fireEvent.change(screen.getByLabelText('De'), { target: { value: '2026-10-01' } });
+      fireEvent.change(screen.getByLabelText('Até'), { target: { value: '2026-10-31' } });
+      await usuario.click(screen.getByRole('button', { name: 'Aplicar' }));
 
       await waitFor(() => {
         const ultimas = urlsChamadas('/api/oportunidades/arquivados').filter((u) => u.searchParams.has('busca'));
@@ -176,6 +204,8 @@ describe('T-167: topo da lista e filtros dos arquivados', () => {
         expect(ultima.searchParams.get('motivoPerdaId')).toBe('mot-1');
         expect(ultima.searchParams.get('responsavelId')).toBe('resp-9');
         expect(ultima.searchParams.get('de')).toBe('2026-10-01');
+        expect(ultima.searchParams.get('ate')).toBe('2026-10-31');
+        expect(ultima.searchParams.get('data')).toBe('entrada');
         expect(ultima.searchParams.get('pagina')).toBe('1');
       });
     });

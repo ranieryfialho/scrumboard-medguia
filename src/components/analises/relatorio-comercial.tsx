@@ -9,7 +9,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { descreverMeta, ehMesInteiro } from '@/lib/metas/catalogo';
 import { useMetas } from '@/lib/metas/usar-metas';
-import { diaEMes, iniciais, inteiro, moeda, periodoAnterior, periodoDoPreset, porcentagem, type Preset, type Responsavel } from './comum';
+import { dataBr, diaEMes, iniciais, inteiro, moeda, nomeDoArquivoCsv, periodoAnteriorDe, periodoDe, periodoPronto, porcentagem, type PeriodoEscolhido, type Preset, type Responsavel } from './comum';
 import { EsqueletoCarregando, EstadoErro, EstadoVazio } from './estados';
 import { FiltroPeriodo } from './filtro-periodo';
 import { GraficoLinhas } from './grafico-linhas';
@@ -157,7 +157,7 @@ function baixarCsv(nome: string, linhas: (string | number)[][]) {
 
 export function RelatorioComercial() {
   const metas = useMetas();
-  const [preset, setPreset] = useState<Preset>('mes');
+  const [periodo, setPeriodo] = useState<PeriodoEscolhido>(periodoPronto('mes'));
   const [responsavelId, setResponsavelId] = useState('');
   const [especialidade, setEspecialidade] = useState('');
   const [responsaveis, setResponsaveis] = useState<Responsavel[]>([]);
@@ -170,7 +170,7 @@ export function RelatorioComercial() {
   const [recorteDosDados, setRecorteDosDados] = useState<{ de: string; ate: string; responsavelId: string } | null>(null);
 
   const carregar = useCallback(async () => {
-    const { de, ate } = periodoDoPreset(preset);
+    const { de, ate } = periodoDe(periodo);
     const q = new URLSearchParams({ de, ate });
     if (responsavelId) q.set('responsavelId', responsavelId);
     if (especialidade) q.set('especialidade', especialidade);
@@ -178,7 +178,7 @@ export function RelatorioComercial() {
     // escolhido para a última chamada ao servidor ser sempre a do período que está na tela.
     void (async () => {
       try {
-        const ant = periodoAnterior(preset);
+        const ant = periodoAnteriorDe(periodo);
         const qAnt = new URLSearchParams({ de: ant.de, ate: ant.ate });
         if (responsavelId) qAnt.set('responsavelId', responsavelId);
         if (especialidade) qAnt.set('especialidade', especialidade);
@@ -197,7 +197,7 @@ export function RelatorioComercial() {
     } catch {
       setErro(true);
     }
-  }, [preset, responsavelId, especialidade]);
+  }, [periodo, responsavelId, especialidade]);
 
   useEffect(() => {
     void carregar();
@@ -248,7 +248,9 @@ export function RelatorioComercial() {
 
   function exportar() {
     if (!dados) return;
-    baixarCsv('relatorio-comercial.csv', [
+    const { de, ate } = periodoDe(periodo);
+    baixarCsv(nomeDoArquivoCsv('relatorio-comercial', periodo), [
+      ['Período', `${dataBr(de)} a ${dataBr(ate)}`],
       ['Responsável', 'SQLs', 'Demos (reuniões realizadas)', 'Propostas', 'Contratos', 'Win rate (%)', 'Ciclo médio (dias)', 'Ticket médio (R$)', 'Valor fechado (R$)'],
       ...ranking.map((l) => [
         l.nome ?? 'Sem responsável',
@@ -291,7 +293,7 @@ export function RelatorioComercial() {
       </div>
 
       <section aria-label="Filtros" className="bg-surface-card rounded-2xl p-space-md shadow-sm flex items-center gap-space-sm flex-wrap shrink-0">
-        <FiltroPeriodo valor={preset} presets={PRESETS} onMudar={setPreset} />
+        <FiltroPeriodo valor={periodo} presets={PRESETS} onMudar={setPeriodo} />
         <select aria-label="Responsável" value={responsavelId} onChange={(e) => setResponsavelId(e.target.value)} className="h-10 px-3 rounded-xl bg-surface-subtle font-label-md text-label-md">
           <option value="">Todos os Closers e SDRs</option>
           {responsaveis.map((r) => (

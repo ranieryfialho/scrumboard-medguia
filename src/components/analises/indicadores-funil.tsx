@@ -10,9 +10,10 @@
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 
-import { iniciais, inteiro, moeda, periodoAnterior, porcentagem, type Preset, type Responsavel, periodoDoPreset } from './comum';
+import { dataBr, iniciais, inteiro, moeda, nomeDoArquivoCsv, periodoAnteriorDe, periodoDe, periodoPronto, porcentagem, type PeriodoEscolhido, type Preset, type Responsavel } from './comum';
 import { EsqueletoCarregando, EstadoErro, EstadoVazio } from './estados';
 import { FiltroPeriodo } from './filtro-periodo';
+import { ehMesInteiro } from '@/lib/metas/catalogo';
 
 export interface Indicador {
   valor: number | null;
@@ -108,7 +109,7 @@ function Delta({ atual, anterior, inverso }: { atual: number | null; anterior: n
 }
 
 export function IndicadoresFunil() {
-  const [preset, setPreset] = useState<Preset>('mes');
+  const [periodo, setPeriodo] = useState<PeriodoEscolhido>(periodoPronto('mes'));
   const [responsavelId, setResponsavelId] = useState('');
   const [responsaveis, setResponsaveis] = useState<Responsavel[]>([]);
   const [kpis, setKpis] = useState<Kpis | null>(null);
@@ -119,8 +120,8 @@ export function IndicadoresFunil() {
   const [erro, setErro] = useState(false);
 
   const carregar = useCallback(async () => {
-    const { de, ate } = periodoDoPreset(preset);
-    const ant = periodoAnterior(preset);
+    const { de, ate } = periodoDe(periodo);
+    const ant = periodoAnteriorDe(periodo);
     const q = new URLSearchParams({ de, ate });
     if (responsavelId) q.set('responsavelId', responsavelId);
     const qAnt = new URLSearchParams({ de: ant.de, ate: ant.ate });
@@ -147,7 +148,7 @@ export function IndicadoresFunil() {
     } catch {
       setErro(true);
     }
-  }, [preset, responsavelId]);
+  }, [periodo, responsavelId]);
 
   useEffect(() => {
     void carregar();
@@ -174,14 +175,16 @@ export function IndicadoresFunil() {
     return { total: itens.length, atingidas: itens.filter(Boolean).length };
   })();
   // A meta de receita é mensal: no trimestre vale três meses; em períodos que não são meses a comparação não se aplica.
-  const mesesDaMeta = preset === 'mes' ? 1 : preset === 'trimestre' ? 3 : null;
+  const intervalo = periodoDe(periodo);
+  const mesesDaMeta = periodo.tipo === 'preset' ? (periodo.preset === 'mes' ? 1 : periodo.preset === 'trimestre' ? 3 : null) : ehMesInteiro(intervalo.de, intervalo.ate) ? 1 : null;
   const metaDeReceita = metas.receita_mensal !== undefined && mesesDaMeta !== null ? metas.receita_mensal * mesesDaMeta : null;
   const andamentoDaReceita = metaDeReceita ? Math.min(receitaTotal / metaDeReceita, 1) : null;
-  const rotuloDoPeriodo = preset === 'mes' ? 'do mês' : preset === 'trimestre' ? 'do trimestre' : 'do período';
+  const rotuloDoPeriodo = mesesDaMeta === 1 ? 'do mês' : mesesDaMeta === 3 ? 'do trimestre' : 'do período';
 
   function exportar() {
     if (!funil) return;
-    baixarCsv('desempenho-por-responsavel.csv', [
+    baixarCsv(nomeDoArquivoCsv('desempenho-por-responsavel', periodo), [
+      ['Período', `${dataBr(intervalo.de)} a ${dataBr(intervalo.ate)}`],
       ['Responsável', 'Papel', 'Cards atendidos', 'Régua 18 toques (%)', 'Demos agendadas', 'No-show (%)', 'Propostas', 'Contratos', 'Win rate (%)', 'Receita ganha (R$)'],
       ...ordenados.map((d) => [
         d.nome ?? 'Sem responsável',
@@ -208,7 +211,7 @@ export function IndicadoresFunil() {
           </p>
         </div>
         <div className="flex items-center gap-space-sm flex-wrap">
-          <FiltroPeriodo valor={preset} presets={PRESETS} onMudar={setPreset} />
+          <FiltroPeriodo valor={periodo} presets={PRESETS} onMudar={setPeriodo} />
           <select aria-label="Responsável" value={responsavelId} onChange={(e) => setResponsavelId(e.target.value)} className="h-10 px-3 rounded-xl bg-surface-card shadow-sm font-label-md text-label-md">
             <option value="">Todos os Responsáveis</option>
             {responsaveis.map((r) => (
@@ -222,7 +225,7 @@ export function IndicadoresFunil() {
             Atualizar Métricas
           </button>
           <Link
-            href={`/indicadores/executivo?periodo=${preset}${responsavelId ? `&responsavelId=${responsavelId}` : ''}`}
+            href={`/indicadores/executivo?${periodo.tipo === 'preset' ? `periodo=${periodo.preset}` : `de=${periodo.de}&ate=${periodo.ate}`}${responsavelId ? `&responsavelId=${responsavelId}` : ''}`}
             target="_blank"
             className="h-10 px-4 rounded-xl bg-primary text-on-primary font-label-md text-label-md font-semibold shadow-md flex items-center gap-2"
           >

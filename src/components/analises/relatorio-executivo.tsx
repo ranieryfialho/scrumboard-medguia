@@ -6,7 +6,7 @@
 // relatório aparece (a casca some).
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import {
   CARTOES,
@@ -18,7 +18,7 @@ import {
   type Kpis,
   type MetasView,
 } from './indicadores-funil';
-import { diaEMes, inteiro, moeda, periodoAnterior, periodoDoPreset, porcentagem, ROTULO_DO_PRESET, type Preset } from './comum';
+import { diaEMes, inteiro, moeda, periodoAnteriorDe, periodoDe, periodoPronto, porcentagem, ROTULO_DO_PRESET, validarIntervalo, type PeriodoEscolhido, type Preset } from './comum';
 import { EsqueletoCarregando, EstadoErro } from './estados';
 
 const PRESETS: Preset[] = ['hoje', '7dias', '30dias', 'mes', 'trimestre'];
@@ -32,7 +32,13 @@ const dataCompleta = (iso: string) => iso.split('-').reverse().join('/');
 export function RelatorioExecutivo() {
   const parametros = useSearchParams();
   const bruto = parametros.get('periodo') as Preset | null;
-  const preset: Preset = bruto && PRESETS.includes(bruto) ? bruto : 'mes';
+  const deParametro = parametros.get('de') ?? '';
+  const ateParametro = parametros.get('ate') ?? '';
+  // fase6-periodo-personalizado: o link do painel de indicadores leva `de`/`ate` quando o período é personalizado.
+  const periodo = useMemo<PeriodoEscolhido>(
+    () => (deParametro && ateParametro && validarIntervalo(deParametro, ateParametro) === null ? { tipo: 'personalizado', de: deParametro, ate: ateParametro } : periodoPronto(bruto && PRESETS.includes(bruto) ? bruto : 'mes')),
+    [bruto, deParametro, ateParametro]
+  );
   const responsavelId = parametros.get('responsavelId') ?? '';
 
   const [kpis, setKpis] = useState<Kpis | null>(null);
@@ -46,8 +52,8 @@ export function RelatorioExecutivo() {
 
   useEffect(() => {
     let cancelado = false;
-    const { de, ate } = periodoDoPreset(preset);
-    const ant = periodoAnterior(preset);
+    const { de, ate } = periodoDe(periodo);
+    const ant = periodoAnteriorDe(periodo);
     const q = new URLSearchParams({ de, ate });
     const qAnt = new URLSearchParams({ de: ant.de, ate: ant.ate });
     if (responsavelId) {
@@ -86,11 +92,11 @@ export function RelatorioExecutivo() {
     return () => {
       cancelado = true;
     };
-  }, [preset, responsavelId]);
+  }, [periodo, responsavelId]);
 
-  const { de, ate } = periodoDoPreset(preset);
+  const { de, ate } = periodoDe(periodo);
   const receita = funil ? funil.porResponsavel.reduce((soma, d) => soma + d.receitaGanha, 0) : 0;
-  const meses = preset === 'mes' ? 1 : preset === 'trimestre' ? 3 : null;
+  const meses = periodo.tipo === 'preset' ? (periodo.preset === 'mes' ? 1 : periodo.preset === 'trimestre' ? 3 : null) : null;
   const metaDeReceita = metas.receita_mensal !== undefined && meses !== null ? metas.receita_mensal * meses : null;
   const variacao = (atual: number | null, anterior: number | null | undefined) => {
     if (atual === null || anterior === null || anterior === undefined) return '—';
@@ -123,7 +129,7 @@ export function RelatorioExecutivo() {
               <p className="font-label-sm text-label-sm text-text-muted uppercase tracking-wider">MedCRM · Relatório Executivo</p>
               <h1 className="font-headline-lg text-headline-lg text-text-primary">Governança Comercial &amp; Funil de Vendas</h1>
               <p className="font-body-md text-body-md text-text-secondary">
-                Período: {dataCompleta(de)} a {dataCompleta(ate)} ({ROTULO_DO_PRESET[preset]}) · {nomeDoResponsavel ?? (responsavelId ? 'Responsável filtrado' : 'Todos os responsáveis')}
+                Período: {dataCompleta(de)} a {dataCompleta(ate)} ({periodo.tipo === 'preset' ? ROTULO_DO_PRESET[periodo.preset] : 'Personalizado'}) · {nomeDoResponsavel ?? (responsavelId ? 'Responsável filtrado' : 'Todos os responsáveis')}
               </p>
             </div>
             <p className="font-body-sm text-body-sm text-text-muted text-right shrink-0">
@@ -272,7 +278,7 @@ export function RelatorioExecutivo() {
           )}
 
           <footer className="border-t border-surface-container pt-2 font-body-sm text-body-sm text-text-muted">
-            Os indicadores usam os cards criados no período (coorte) e os eventos de cada card; a variação compara com o período imediatamente anterior ({diaEMes(periodoAnterior(preset).de)} a {diaEMes(periodoAnterior(preset).ate)}).
+            Os indicadores usam os cards criados no período (coorte) e os eventos de cada card; a variação compara com o período imediatamente anterior ({diaEMes(periodoAnteriorDe(periodo).de)} a {diaEMes(periodoAnteriorDe(periodo).ate)}).
           </footer>
         </article>
       )}

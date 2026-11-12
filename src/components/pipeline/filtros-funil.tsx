@@ -3,16 +3,23 @@
 // T-160 (fase4-pipeline-telas, US-106, AC-390): filtros do funil — busca de
 // texto, responsável e origem. Mesmo molde de `FiltrosLista`
 // (`filtros-lista.tsx`, T-161), sem etapa (o Kanban já segmenta por etapa,
-// AC-387) nem ordenação (não pedida pela AC-390). "Período" e "Visões
-// salvas" do protótipo (`6._pipeline_funil_pipeline/code.html`) não têm
-// critério de aceite nem API — ficam "em breve" (regra geral herdada da
-// feature anterior: o que não tem backend entra visível e marcado).
-import { ItemEmBreve } from './pecas/selo-em-breve';
+// AC-387) nem ordenação (não pedida pela AC-390). "Visões salvas" do protótipo
+// (`6._pipeline_funil_pipeline/code.html`) não tem critério de aceite nem API (regra
+// geral herdada da feature anterior: o que não tem backend entra visível e marcado).
+// fase6-periodo-personalizado (AC-820): o "Período" deixou de ser "em breve" e filtra
+// de verdade, pela entrada do lead ou pela última movimentação.
+import type { PeriodoEscolhido } from '../analises/comum';
+import type { CampoDataPeriodo } from '../../domain/pipeline/periodo';
+import { FiltroPeriodoPipeline } from './filtro-periodo-pipeline';
 
 export interface ValorFiltrosFunil {
   busca: string;
   responsavelId?: string;
   origem?: string;
+  /** AC-820: sem período, o quadro mostra todos os cards. */
+  periodo?: PeriodoEscolhido;
+  /** AC-820: a data que o período filtra (padrão: a entrada do lead). */
+  campoData?: CampoDataPeriodo;
 }
 
 export interface OpcaoResponsavelFunil {
@@ -95,10 +102,9 @@ export function FiltrosFunil({ valor, responsaveis, origens, onMudar, onLimpar }
       >
         Limpar
       </button>
-      <ItemEmBreve
-        rotulo="Período"
-        icone="calendar_today"
-        className="h-10 px-3 rounded-xl bg-surface-card shadow-sm"
+      <FiltroPeriodoPipeline
+        valor={{ periodo: valor.periodo, data: valor.campoData ?? 'entrada' }}
+        onMudar={(proximo) => onMudar({ periodo: proximo.periodo, campoData: proximo.data })}
       />
     </div>
   );

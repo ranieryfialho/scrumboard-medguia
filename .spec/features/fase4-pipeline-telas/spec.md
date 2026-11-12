@@ -86,8 +86,8 @@ relance.
 #### AC-393 — Itens do funil sem backend aparecem como "em breve"
 
 - **Dado** o funil renderizado
-- **Quando** o usuário olha as ações do protótipo sem backend (busca global, seletor de visões salvas; o "Iniciar Cadência em Massa" funciona, AC-759)
-- **Então** elas aparecem visíveis, marcadas "em breve", e não disparam nenhuma ação
+- **Quando** o usuário olha as ações do protótipo sem backend (busca global, seletor de visões salvas; o "Iniciar Cadência em Massa" funciona, AC-759; o "Período" também funciona desde a fase 6, AC-820)
+- **Então** elas aparecem visíveis, marcadas "em breve", e não disparam nenhuma ação; o "Período" já não aparece como "em breve" (filtra de verdade, AC-820)
 
 #### AC-733 — Cada coluna do funil rola sozinha
 
@@ -203,7 +203,7 @@ para entender por que ganhamos e perdemos.
 #### AC-418 — A tela de arquivados oferece os filtros que a API já aplica
 
 - **Dado** a tela de arquivados
-- **Quando** o usuário digita na busca, escolhe um motivo de perda, um consultor ou uma data de fechamento, ou usa "Limpar"
+- **Quando** o usuário digita na busca, escolhe um motivo de perda, um consultor ou um período (De/Até, AC-823; antes era só "fechados desde" uma data), ou usa "Limpar"
 - **Então** a tela pede ao servidor só os cards que atendem a todos os filtros (volta à página 1), mostra "Nenhum card arquivado com estes filtros" quando nada casa, e "Limpar" devolve a lista completa
 
 #### AC-403 — Os indicadores dos arquivados vêm dos dados reais

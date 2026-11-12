@@ -83,3 +83,53 @@ export function periodoAnterior(preset: Preset, agora: Date = new Date()): { de:
   const novoAte = somarDias(de, -1);
   return { de: somarDias(novoAte, -(dias - 1)), ate: novoAte };
 }
+
+// fase6-periodo-personalizado (US-190): o período de uma tela é um dos cinco prontos OU um intervalo escolhido pela pessoa.
+export type PeriodoEscolhido = { tipo: 'preset'; preset: Preset } | { tipo: 'personalizado'; de: string; ate: string };
+
+export const MAXIMO_DIAS_DO_PERIODO = 366;
+
+export function periodoPronto(preset: Preset): PeriodoEscolhido {
+  return { tipo: 'preset', preset };
+}
+
+const FORMATO_DATA = /^\d{4}-\d{2}-\d{2}$/;
+
+/** AC-802: a mensagem de erro de um intervalo (`YYYY-MM-DD`, inclusivos), ou `null` quando vale. */
+export function validarIntervalo(de: string, ate: string): string | null {
+  if (!FORMATO_DATA.test(de) || !FORMATO_DATA.test(ate)) return 'Informe as duas datas';
+  if (ate < de) return 'A data final não pode ser anterior à inicial';
+  const dias = Math.round((Date.parse(ate) - Date.parse(de)) / 86_400_000) + 1;
+  if (dias > MAXIMO_DIAS_DO_PERIODO) return `O intervalo máximo é de ${MAXIMO_DIAS_DO_PERIODO} dias`;
+  return null;
+}
+
+/** `de`/`ate` (`YYYY-MM-DD`, inclusivos) do período escolhido. */
+export function periodoDe(periodo: PeriodoEscolhido, agora: Date = new Date()): { de: string; ate: string } {
+  return periodo.tipo === 'preset' ? periodoDoPreset(periodo.preset, agora) : { de: periodo.de, ate: periodo.ate };
+}
+
+/** AC-801: o período imediatamente anterior, para a comparação. No personalizado, o mesmo número de dias logo antes de `de`. */
+export function periodoAnteriorDe(periodo: PeriodoEscolhido, agora: Date = new Date()): { de: string; ate: string } {
+  if (periodo.tipo === 'preset') return periodoAnterior(periodo.preset, agora);
+  const dias = Math.round((Date.parse(periodo.ate) - Date.parse(periodo.de)) / 86_400_000) + 1;
+  const novoAte = somarDias(periodo.de, -1);
+  return { de: somarDias(novoAte, -(dias - 1)), ate: novoAte };
+}
+
+/** "2026-02-10" → "10/02/2026". */
+export function dataBr(iso: string): string {
+  const [a, m, d] = iso.split('-');
+  return `${d}/${m}/${a}`;
+}
+
+/** AC-803: o rótulo do período para títulos e arquivos — o nome do pronto, ou "10/02/2026 a 19/02/2026". */
+export function rotuloDoPeriodo(periodo: PeriodoEscolhido): string {
+  return periodo.tipo === 'preset' ? ROTULO_DO_PRESET[periodo.preset] : `${dataBr(periodo.de)} a ${dataBr(periodo.ate)}`;
+}
+
+/** AC-803: o nome do arquivo baixado leva as datas do período (`relatorio-marketing_2026-02-10_a_2026-02-19.csv`). */
+export function nomeDoArquivoCsv(base: string, periodo: PeriodoEscolhido, agora: Date = new Date()): string {
+  const { de, ate } = periodoDe(periodo, agora);
+  return `${base}_${de}_a_${ate}.csv`;
+}

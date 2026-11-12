@@ -32,6 +32,9 @@ import {
   type OpcaoFiltroArquivados,
   type ValorFiltrosArquivados,
 } from '@/components/pipeline/filtros-arquivados';
+import { parametrosDoPeriodoPipeline } from '@/components/pipeline/filtro-periodo-pipeline';
+import { periodoDe, periodoPronto, type PeriodoEscolhido } from '@/components/analises/comum';
+import type { CampoDataPeriodo } from '@/domain/pipeline/periodo';
 import { DistribuicaoMotivos, type MotivoDistribuicaoView } from '@/components/pipeline/distribuicao-motivos';
 
 type TamanhoPagina = 10 | 20 | 50 | 100;
@@ -97,8 +100,28 @@ function construirQuery(
   if (filtro?.busca) parametros.set('busca', filtro.busca);
   if (filtro?.motivoPerdaId) parametros.set('motivoPerdaId', filtro.motivoPerdaId);
   if (filtro?.responsavelId) parametros.set('responsavelId', filtro.responsavelId);
-  if (filtro?.de) parametros.set('de', filtro.de);
+  // AC-823: o período (De/Até + qual data) no lugar do antigo "a partir de".
+  if (filtro) {
+    for (const [chave, valor] of Object.entries(parametrosDoPeriodoPipeline({ periodo: filtro.periodo, data: filtro.campoData ?? 'entrada' }))) {
+      parametros.set(chave, valor);
+    }
+  }
   return parametros.toString();
+}
+
+/**
+ * AC-823: o período que veio na URL. Um link antigo só com `de` valia como "fechados desde essa data": continua assim (até hoje,
+ * pela data de fechamento) — só quando a URL traz `data` é que vale a escolha explícita.
+ */
+function periodoDaUrl(parametros: URLSearchParams): { periodo?: PeriodoEscolhido; campoData?: CampoDataPeriodo } {
+  const de = parametros.get('de');
+  if (!de) return {};
+  const ate = parametros.get('ate') ?? periodoDe(periodoPronto('hoje')).ate;
+  const data = parametros.get('data');
+  return {
+    periodo: { tipo: 'personalizado', de, ate },
+    campoData: data === 'entrada' || data === 'movimentacao' ? data : 'movimentacao',
+  };
 }
 
 function formatarMoeda(valor: string): string {
@@ -127,7 +150,7 @@ function PipelineArquivadosConteudo() {
     busca: searchParamsIniciais.get('busca') ?? '',
     motivoPerdaId: searchParamsIniciais.get('motivoPerdaId') ?? undefined,
     responsavelId: searchParamsIniciais.get('responsavelId') ?? undefined,
-    de: searchParamsIniciais.get('de') ?? undefined,
+    ...periodoDaUrl(searchParamsIniciais),
   }));
   const [opcoesFiltro, setOpcoesFiltro] = useState<{ motivos: OpcaoFiltroArquivados[]; responsaveis: OpcaoFiltroArquivados[] }>({
     motivos: [],

@@ -8,6 +8,10 @@
 // de etapa do banco; só as 1 a 13 (14/15 são os arquivados, fora daqui —
 // AC-398). ASM-137: a origem oferece os valores que já existem na empresa
 // (decisão do usuário, 26/10 — sem lista oficial), vindos da tela.
+import type { PeriodoEscolhido } from '../analises/comum';
+import type { CampoDataPeriodo } from '../../domain/pipeline/periodo';
+import { FiltroPeriodoPipeline } from './filtro-periodo-pipeline';
+
 export const ETAPAS_LISTA: { id: number; nome: string }[] = [
   { id: 1, nome: 'Entrada de leads' },
   { id: 2, nome: '1º dia de contato' },
@@ -38,6 +42,10 @@ export interface ValorFiltrosLista {
   origem?: string;
   ordenarPor?: OrdenacaoLista;
   ordem?: DirecaoOrdenacao;
+  /** fase6-periodo-personalizado (AC-822): sem período, a lista mostra todos os cards. */
+  periodo?: PeriodoEscolhido;
+  /** AC-822: a data que o período filtra (padrão: a entrada do lead). */
+  campoData?: CampoDataPeriodo;
 }
 
 export interface OpcaoResponsavel {
@@ -169,6 +177,10 @@ export function FiltrosLista({ valor, responsaveis, origens, onMudar, onLimpar }
         </select>
         <SetaSeletor />
         </div>
+        <FiltroPeriodoPipeline
+          valor={{ periodo: valor.periodo, data: valor.campoData ?? 'entrada' }}
+          onMudar={(proximo) => onMudar({ periodo: proximo.periodo, campoData: proximo.data })}
+        />
         <button
           type="button"
           onClick={onLimpar}

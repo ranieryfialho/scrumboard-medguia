@@ -7,6 +7,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 
 import { getDb } from '../../../../../db/client';
+import { lerPeriodoDaConsulta } from '../../../../../domain/pipeline/periodo';
 import { pipelineEtapas } from '../../../../../db/schema';
 import { getAuth } from '../../../../../lib/auth/instancia';
 import { ErroSessaoInvalida, resolverContextoTenant, type ContextoTenant } from '../../../../../lib/auth/tenant';
@@ -65,7 +66,10 @@ export async function GET(request: NextRequest) {
   }
 
   const db = getDb();
-  const filtro = lerFiltro(request.nextUrl.searchParams);
+  // fase6-periodo-personalizado (AC-824): período inválido é recusado antes de consultar.
+  const periodo = lerPeriodoDaConsulta(request.nextUrl.searchParams);
+  if (!periodo.ok) return NextResponse.json({ codigo: 'PERIODO_INVALIDO' }, { status: 400 });
+  const filtro = { ...lerFiltro(request.nextUrl.searchParams), ...periodo.periodo };
   const resultado = await exportarLista(db, contexto, filtro);
 
   if (resultado.excedeu) {

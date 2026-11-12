@@ -5,7 +5,7 @@
 // entrega como download, some para ATENDENTE e mostra o andamento e os motivos de
 // recusa. Fetch falso; o arquivo em si tem prova nos testes do servidor (T-179).
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { cleanup, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 let paramsIniciais = new URLSearchParams();
@@ -126,6 +126,28 @@ describe('T-180: botão "Exportar CSV" da lista e dos arquivados', () => {
       await waitFor(() => expect(downloads).toEqual(['pipeline-lista-2026-10-27.csv']));
       expect(criarEndereco).toHaveBeenCalledTimes(1);
       expect(revogarEndereco).toHaveBeenCalledWith('blob:csv');
+    });
+  });
+
+  describe('AC-822: a exportação da lista leva o período escolhido', () => {
+    test('a exportação traz de/ate/data iguais aos da tela @spec:AC-822', async () => {
+      const usuario = userEvent.setup();
+      render(<PipelineListaPage />);
+      await screen.findByRole('button', { name: 'Exportar CSV' });
+
+      await usuario.click(screen.getByRole('button', { name: /^Período/ }));
+      await usuario.click(screen.getByRole('button', { name: 'Personalizado' }));
+      fireEvent.change(screen.getByLabelText('De'), { target: { value: '2026-02-01' } });
+      fireEvent.change(screen.getByLabelText('Até'), { target: { value: '2026-02-28' } });
+      await usuario.click(screen.getByRole('button', { name: 'Aplicar' }));
+      await usuario.selectOptions(screen.getByLabelText('Data do período'), 'movimentacao');
+
+      await usuario.click(screen.getByRole('button', { name: 'Exportar CSV' }));
+      await waitFor(() => expect(chamadasDeExportacao('lista')).toHaveLength(1));
+      const parametros = chamadasDeExportacao('lista')[0].searchParams;
+      expect(parametros.get('de')).toBe('2026-02-01');
+      expect(parametros.get('ate')).toBe('2026-02-28');
+      expect(parametros.get('data')).toBe('movimentacao');
     });
   });
 
