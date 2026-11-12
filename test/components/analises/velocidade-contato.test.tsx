@@ -2,7 +2,7 @@
 import { afterEach, describe, expect, test } from 'vitest';
 import { cleanup, render, screen, within } from '@testing-library/react';
 
-import { VelocidadeDoContatoBloco, formatarEspera, resumoDoExpediente, type VelocidadeDoContato } from '../../../src/components/analises/velocidade-contato';
+import { DICA_DA_MEDIA, DICA_DA_MEDIANA, VelocidadeDoContatoBloco, formatarEspera, resumoDoExpediente, type VelocidadeDoContato } from '../../../src/components/analises/velocidade-contato';
 import { HORARIO_PADRAO, resumirEsperas } from '../../../src/domain/atendimento/horario-comercial';
 
 afterEach(cleanup);
@@ -27,6 +27,20 @@ describe('fase6-atendimento-lead: velocidade do 1º contato na tela', () => {
     const comercial = screen.getByRole('article', { name: 'Horário comercial' });
     expect(within(comercial).getByText('3 leads')).toBeTruthy();
     expect(within(comercial).getByText('6 h 40 min')).toBeTruthy(); // mediana: 400 min
+  });
+
+  test('a mediana e a média têm um balão que explica como ler cada uma @spec:AC-804', () => {
+    render(<VelocidadeDoContatoBloco velocidade={velocidade([60, 3000, 1500], [30, 600, 400])} />);
+    const corrido = screen.getByRole('article', { name: 'Relógio corrido' });
+
+    const mediana = within(corrido).getByText('mediana').closest('[aria-describedby]') as HTMLElement;
+    expect(within(corrido).getByRole('tooltip', { name: DICA_DA_MEDIANA })).toBeTruthy();
+    expect(document.getElementById(mediana.getAttribute('aria-describedby')!)?.textContent).toContain('Metade dos leads esperou menos que isso');
+
+    const media = within(corrido).getByText('média').closest('[aria-describedby]') as HTMLElement;
+    expect(document.getElementById(media.getAttribute('aria-describedby')!)?.textContent).toBe(DICA_DA_MEDIA);
+    expect(DICA_DA_MEDIA).toContain('Casos muito longos puxam a média para cima');
+    expect(mediana.getAttribute('tabindex')).toBe('0'); // alcançável pelo teclado
   });
 
   test('sem nenhum lead com mensagem enviada mostra "Sem contatos" nos dois lados @spec:AC-804', () => {

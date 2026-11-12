@@ -4,6 +4,7 @@
 // entrada do lead até a 1ª mensagem de WhatsApp enviada pelo CRM, em relógio corrido e só em horário comercial. Cada lado mostra
 // mediana, média, quantos leads entraram na conta e as faixas de espera. Cores neutras: o número sozinho não diz se é bom ou ruim.
 import Link from 'next/link';
+import { useId } from 'react';
 
 import { type DiaDaSemana, type HorarioComercial, type ResumoDeEsperas } from '@/domain/atendimento/horario-comercial';
 import { inteiro, porcentagem } from './comum';
@@ -46,6 +47,31 @@ export function resumoDoExpediente(horario: HorarioComercial): string {
   return grupos.map((g) => `${g.de === g.ate ? NOME_CURTO[g.de] : `${NOME_CURTO[g.de]} a ${NOME_CURTO[g.ate].toLowerCase()}`}, ${g.abre}–${g.fecha}`).join(' · ');
 }
 
+export const DICA_DA_MEDIANA =
+  'O valor do meio: se você ordenar as esperas da menor para a maior, é a que fica no centro. Metade dos leads esperou menos que isso e metade esperou mais. É o melhor retrato do atendimento típico, porque casos muito longos quase não mexem nela.';
+export const DICA_DA_MEDIA =
+  'A soma de todas as esperas dividida pelo número de leads. Casos muito longos puxam a média para cima: se ela for bem maior que a mediana, há um grupo de leads esperando muito mais que os demais (veja as faixas abaixo).';
+
+/** Rótulo com um balão de explicação: abre ao passar o mouse e ao focar pelo teclado. */
+function Dica({ rotulo, texto }: { rotulo: string; texto: string }) {
+  const id = useId();
+  return (
+    <span className="group relative inline-flex w-fit items-center gap-1 rounded outline-none focus-visible:ring-2 focus-visible:ring-primary/40" tabIndex={0} aria-describedby={id}>
+      <span>{rotulo}</span>
+      <span aria-hidden="true" className="material-symbols-outlined text-[14px]">
+        info
+      </span>
+      <span
+        id={id}
+        role="tooltip"
+        className="pointer-events-none absolute left-0 bottom-full z-30 mb-2 hidden w-64 rounded-lg border border-border-subtle bg-surface-card px-3 py-2 font-body-sm text-body-sm text-text-primary normal-case shadow-lg group-hover:block group-focus:block"
+      >
+        {texto}
+      </span>
+    </span>
+  );
+}
+
 const FAIXAS: { chave: keyof ResumoDeEsperas['faixas']; rotulo: string }[] = [
   { chave: 'ate1h', rotulo: 'Até 1 h' },
   { chave: 'de1a4h', rotulo: '1 a 4 h' },
@@ -67,11 +93,15 @@ function Lado({ titulo, ajuda, resumo }: { titulo: string; ajuda: string; resumo
           <div className="flex items-end justify-between gap-3 flex-wrap">
             <div className="flex flex-col">
               <span className="font-headline-sm text-headline-sm text-text-primary">{formatarEspera(resumo.mediana ?? 0)}</span>
-              <span className="font-body-sm text-body-sm text-text-muted">mediana</span>
+              <span className="font-body-sm text-body-sm text-text-muted">
+                <Dica rotulo="mediana" texto={DICA_DA_MEDIANA} />
+              </span>
             </div>
             <div className="flex flex-col">
               <span className="font-label-lg text-label-lg text-text-primary">{formatarEspera(resumo.media ?? 0)}</span>
-              <span className="font-body-sm text-body-sm text-text-muted">média</span>
+              <span className="font-body-sm text-body-sm text-text-muted">
+                <Dica rotulo="média" texto={DICA_DA_MEDIA} />
+              </span>
             </div>
             <span className="px-2.5 py-1 rounded-full bg-surface-card font-label-sm text-label-sm text-text-secondary">
               {inteiro(resumo.n)} {resumo.n === 1 ? 'lead' : 'leads'}
