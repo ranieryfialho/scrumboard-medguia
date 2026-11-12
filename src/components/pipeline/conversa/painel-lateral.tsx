@@ -1,10 +1,10 @@
 'use client';
 
 // T-174 (fase4-card-abas, US-114, AC-443): a coluna da direita da conversa —
-// "Cadência Comercial" (toque da vez e progresso, de `GET .../cadencia`) e
 // "Notas Internas" (as anotações do card, de `GET .../linha-do-tempo?tipo=anotacao`,
-// e o campo que grava uma nova por `POST .../anotacoes`). "Dados da Proposta" e
-// "Qualificação Técnica" (T-289, AC-742/AC-743) ficam entre os dois, com edição própria.
+// e o campo que grava uma nova por `POST .../anotacoes`), no topo para ficar sempre à vista ao conversar,
+// e depois "Cadência Comercial" (toque da vez e progresso, de `GET .../cadencia`). "Dados da Proposta" e
+// "Qualificação Técnica" (T-289, AC-742/AC-743) vêm em seguida, com edição própria.
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 
@@ -80,34 +80,6 @@ export function PainelLateral({ cardId, valor = null }: { cardId: string; valor?
 
   return (
     <aside aria-label="Painel do card" className="flex flex-col gap-space-md">
-      <section className="bg-surface-card rounded-2xl p-space-md shadow-sm flex flex-col gap-2">
-        <h3 className="font-headline-sm text-headline-sm text-text-primary">Cadência Comercial</h3>
-        {cadencia && cadencia.iniciada ? (
-          <>
-            <p className="font-body-md text-body-md text-text-secondary">
-              Toque atual:{' '}
-              <strong className="text-text-primary">
-                {vez ? `#${vez.sequencia} · Dia ${vez.dia}, ${ROTULO_TURNO[vez.turno]} (${ROTULO_CANAL[vez.canal]})` : 'nenhum liberado'}
-              </strong>
-            </p>
-            <p className="font-body-sm text-body-sm text-text-secondary">
-              Progresso: {cadencia.concluidos} de {cadencia.total} toques
-            </p>
-            <div className="w-full bg-surface-container h-2 rounded-full overflow-hidden" aria-hidden="true">
-              <div className="bg-primary h-full" style={{ width: `${Math.round((cadencia.concluidos / cadencia.total) * 100)}%` }} />
-            </div>
-            <Link href={`/pipeline/${cardId}/cadencia`} className="font-label-md text-label-md text-primary hover:underline w-fit">
-              Ver a cadência completa
-            </Link>
-          </>
-        ) : (
-          <p className="font-body-sm text-body-sm text-text-muted">A cadência deste card ainda não foi iniciada.</p>
-        )}
-      </section>
-
-      <DadosDaProposta cardId={cardId} valor={valor} />
-      <QualificacaoTecnica cardId={cardId} />
-
       <section className="bg-surface-card rounded-2xl p-space-md shadow-sm flex flex-col gap-space-sm">
         <div className="flex items-center justify-between">
           <h3 className="font-headline-sm text-headline-sm text-text-primary">Notas Internas</h3>
@@ -168,6 +140,34 @@ export function PainelLateral({ cardId, valor = null }: { cardId: string; valor?
           </p>
         )}
       </section>
+
+      <section className="bg-surface-card rounded-2xl p-space-md shadow-sm flex flex-col gap-2">
+        <h3 className="font-headline-sm text-headline-sm text-text-primary">Cadência Comercial</h3>
+        {cadencia && cadencia.iniciada ? (
+          <>
+            <p className="font-body-md text-body-md text-text-secondary">
+              Toque atual:{' '}
+              <strong className="text-text-primary">
+                {vez ? `#${vez.sequencia} · Dia ${vez.dia}, ${ROTULO_TURNO[vez.turno]} (${ROTULO_CANAL[vez.canal]})` : 'nenhum liberado'}
+              </strong>
+            </p>
+            <p className="font-body-sm text-body-sm text-text-secondary">
+              Progresso: {cadencia.concluidos} de {cadencia.total} toques
+            </p>
+            <div className="w-full bg-surface-container h-2 rounded-full overflow-hidden" aria-hidden="true">
+              <div className="bg-primary h-full" style={{ width: `${Math.round((cadencia.concluidos / cadencia.total) * 100)}%` }} />
+            </div>
+            <Link href={`/pipeline/${cardId}/cadencia`} className="font-label-md text-label-md text-primary hover:underline w-fit">
+              Ver a cadência completa
+            </Link>
+          </>
+        ) : (
+          <p className="font-body-sm text-body-sm text-text-muted">A cadência deste card ainda não foi iniciada.</p>
+        )}
+      </section>
+
+      <DadosDaProposta cardId={cardId} valor={valor} />
+      <QualificacaoTecnica cardId={cardId} />
     </aside>
   );
 }
