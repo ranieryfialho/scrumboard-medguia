@@ -19,7 +19,7 @@ Como gestor, quero informar a data inicial e a final de um relatório, para anal
 
 - **Dado** qualquer uma das três telas de análises aberta num período pronto
 - **Quando** a pessoa clica em "Personalizado"
-- **Então** aparecem os campos "De" e "Até" (datas), já preenchidos com o período que estava na tela, e os botões prontos continuam disponíveis; escolher um botão pronto de novo esconde os campos
+- **Então** abre um painel com os campos "De" e "Até" (datas), já preenchidos com o período que estava na tela, sem mudar a altura da barra de filtros, e os botões prontos continuam disponíveis; escolher um botão pronto de novo fecha o painel, e clicar fora ou apertar Esc também
 
 #### AC-801 — O relatório mostra o intervalo escolhido e compara com o anterior de mesmo tamanho
 
@@ -37,7 +37,7 @@ Como gestor, quero informar a data inicial e a final de um relatório, para anal
 
 - **Dado** um período personalizado aplicado
 - **Quando** a pessoa baixa um CSV ou olha o filtro na tela
-- **Então** o nome e o conteúdo do arquivo refletem as datas escolhidas (nome com `aaaa-mm-dd`, linha "Período" com `dd/mm/aaaa`), nunca o rótulo de um período pronto, e a tela mostra as datas escolhidas nos campos De e Até
+- **Então** o nome e o conteúdo do arquivo refletem as datas escolhidas (nome com `aaaa-mm-dd`, linha "Período" com `dd/mm/aaaa`), nunca o rótulo de um período pronto, e a tela mostra as datas escolhidas no próprio botão "Personalizado" (ex.: "10/02/2026 – 19/02/2026")
 
 ### US-195 — Filtrar o pipeline por período
 
