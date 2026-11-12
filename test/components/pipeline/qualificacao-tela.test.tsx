@@ -8,6 +8,7 @@ import { BlocoQualificacao } from '../../../src/components/pipeline/detalhe/bloc
 import { BoardKanban } from '../../../src/components/pipeline/board-kanban';
 import { FiltrosLista } from '../../../src/components/pipeline/filtros-lista';
 import { TabelaLista, type ItemTabelaLista } from '../../../src/components/pipeline/tabela-lista';
+import { MoldeDoCard } from '../../../src/components/pipeline/card/molde-do-card';
 import { RESPOSTAS_VAZIAS } from '../../../src/domain/qualificacao/qualificacao';
 
 const json = (corpo: unknown, status = 200) => Promise.resolve({ ok: status < 400, status, json: () => Promise.resolve(corpo) });
@@ -170,5 +171,71 @@ describe('fase6-qualificacao-comercial: lista', () => {
     expect(aoMudar).toHaveBeenLastCalledWith({ qualificacao: 'nenhuma' });
     fireEvent.change(seletor, { target: { value: '' } });
     expect(aoMudar).toHaveBeenLastCalledWith({ qualificacao: undefined });
+  });
+});
+
+describe('fase6-qualificacao-comercial: aba e cabeçalho do card', () => {
+  const fetchOriginal = globalThis.fetch;
+  const CARD_ID = 'cccccccc-0000-0000-0000-0000000000c9';
+  let qualificacao: { faixa: string | null; score: number } | null;
+  let leituras: number;
+
+  beforeEach(() => {
+    leituras = 0;
+    globalThis.fetch = vi.fn((url: string) => {
+      if (url === `/api/oportunidades/${CARD_ID}`) return json({ id: CARD_ID, leadId: 'l1', etapaId: 5, leadNome: 'Clínica Alfa', responsavelNome: 'Ana', version: 1 });
+      if (url === `/api/oportunidades/${CARD_ID}/qualificacao`) {
+        leituras += 1;
+        return qualificacao ? json(qualificacao) : json({}, 404);
+      }
+      return json({}, 404);
+    }) as unknown as typeof fetch;
+  });
+  afterEach(() => {
+    cleanup();
+    globalThis.fetch = fetchOriginal;
+  });
+
+  const abrir = (versao = 0) => (
+    <MoldeDoCard cardId={CARD_ID} aba="qualificacao" versaoDaQualificacao={versao}>
+      {() => <p>Conteúdo</p>}
+    </MoldeDoCard>
+  );
+
+  test('a barra tem a aba Qualificação, que leva a /qualificacao, entre WhatsApp e Anexos @spec:AC-832', async () => {
+    qualificacao = null;
+    render(abrir());
+    const barra = await screen.findByRole('navigation', { name: 'Abas do card' });
+    const abas = [...barra.children];
+    expect(abas).toHaveLength(5);
+    ['Resumo', 'Cadência', 'WhatsApp', 'Qualificação', 'Anexos & Evidências'].forEach((rotulo, i) => expect(abas[i].textContent).toContain(rotulo));
+    expect(abas[3].getAttribute('aria-current')).toBe('page'); // Qualificação é a aba aberta
+    expect(within(barra).getByRole('link', { name: /Resumo/ }).getAttribute('href')).toBe(`/pipeline/${CARD_ID}`);
+  });
+
+  test('o cabeçalho mostra a faixa e a nota ao lado da etapa; card não avaliado não mostra selo @spec:AC-836', async () => {
+    qualificacao = { faixa: 'A', score: 85 };
+    const { unmount } = render(abrir());
+    const selo = await screen.findByTestId('selo-qualificacao');
+    expect(selo.textContent).toContain('Faixa A');
+    expect(selo.textContent).toContain('85');
+    expect(selo.parentElement?.textContent).toContain('Qualificando'); // fica no mesmo grupo do selo da etapa
+    unmount();
+
+    qualificacao = { faixa: null, score: 0 }; // avaliação ainda "não iniciada"
+    render(abrir());
+    await screen.findByText('Clínica Alfa');
+    await waitFor(() => expect(leituras).toBeGreaterThan(1));
+    expect(screen.queryByTestId('selo-qualificacao')).toBeNull();
+  });
+
+  test('ao salvar a qualificação (nova versão), a nota do cabeçalho é buscada de novo @spec:AC-836', async () => {
+    qualificacao = { faixa: 'C', score: 45 };
+    const { rerender } = render(abrir(0));
+    expect((await screen.findByTestId('selo-qualificacao')).textContent).toContain('45');
+
+    qualificacao = { faixa: 'A', score: 90 };
+    rerender(abrir(1));
+    await waitFor(() => expect(screen.getByTestId('selo-qualificacao').textContent).toContain('90'));
   });
 });

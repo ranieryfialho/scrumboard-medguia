@@ -14,9 +14,11 @@ interface Props {
   score?: number | null;
   /** Compacto (funil): só "A · 85". Padrão (lista): "Faixa A · 85". */
   compacto?: boolean;
+  /** Cabeçalho do card: maior e arredondado, ao lado do selo da etapa. */
+  grande?: boolean;
 }
 
-export function SeloQualificacao({ faixa, score, compacto }: Props) {
+export function SeloQualificacao({ faixa, score, compacto, grande }: Props) {
   if (!faixa) return null;
   const nome = compacto && (faixa === 'A' || faixa === 'B' || faixa === 'C') ? faixa : ROTULO_CURTO_DA_FAIXA[faixa];
   return (
@@ -24,7 +26,7 @@ export function SeloQualificacao({ faixa, score, compacto }: Props) {
       data-testid="selo-qualificacao"
       data-faixa={faixa}
       title={`Qualificação: ${ROTULO_CURTO_DA_FAIXA[faixa]}${score !== null && score !== undefined ? ` (${score}/100)` : ''}`}
-      className={`font-label-sm text-[10px] uppercase font-bold px-1.5 py-0.5 rounded inline-flex items-center gap-1 shrink-0 ${COR_DA_FAIXA[faixa]}`}
+      className={`font-label-sm font-bold inline-flex items-center gap-1 shrink-0 ${grande ? 'text-label-sm px-2.5 py-1 rounded-full' : 'text-[10px] uppercase px-1.5 py-0.5 rounded'} ${COR_DA_FAIXA[faixa]}`}
     >
       {nome}
       {score !== null && score !== undefined && <span className="font-semibold">· {score}</span>}

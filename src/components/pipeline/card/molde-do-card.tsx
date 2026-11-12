@@ -16,6 +16,7 @@ import { ModalDadoFaltante } from '@/components/pipeline/modal-dado-faltante';
 import { ModalFechamentoDoCard } from '@/components/pipeline/modal-fechamento';
 import { AbasDoCard, type AbaDoCard } from './abas-do-card';
 import { useContadoresDoCard } from './use-contadores-do-card';
+import { useQualificacaoDoCard } from './use-qualificacao-do-card';
 import { useTransicaoDoCard } from './use-transicao-do-card';
 
 export interface CardDoMolde {
@@ -34,17 +35,20 @@ interface MoldeDoCardProps {
   aba: Exclude<AbaDoCard, 'resumo'>;
   /** Mudar este número refaz a busca dos contadores (ex.: depois de enviar um anexo). */
   versaoDosContadores?: number;
+  /** Mudar este número refaz a busca da nota do cabeçalho (ex.: depois de salvar a qualificação). */
+  versaoDaQualificacao?: number;
   /** AC-748: a tela ocupa a altura da janela (menos o topo) e o conteúdo rola por dentro; só a partir da largura `lg`. */
   alturaFixa?: boolean;
   children: (card: CardDoMolde) => ReactNode;
 }
 
-export function MoldeDoCard({ cardId, aba, versaoDosContadores = 0, alturaFixa = false, children }: MoldeDoCardProps) {
+export function MoldeDoCard({ cardId, aba, versaoDosContadores = 0, versaoDaQualificacao = 0, alturaFixa = false, children }: MoldeDoCardProps) {
   const [card, setCard] = useState<CardDoMolde | null>(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(false);
   const [naoEncontrado, setNaoEncontrado] = useState(false);
   const contagens = useContadoresDoCard(card ? cardId : null, versaoDosContadores);
+  const qualificacao = useQualificacaoDoCard(card ? cardId : null, versaoDaQualificacao);
   // T-288 (AC-739): mover de etapa, ganho e perdido também nas abas; ao mover, o cabeçalho passa a mostrar a etapa nova.
   const transicao = useTransicaoDoCard(
     card,
@@ -112,6 +116,7 @@ export function MoldeDoCard({ cardId, aba, versaoDosContadores = 0, alturaFixa =
         leadNome={card.leadNome}
         etapaAtualNome={nomeDaEtapa(card.etapaId)}
         responsavelNome={card.responsavelNome}
+        qualificacao={qualificacao}
         etapasDestino={transicao.etapasDestino}
         podeMarcarGanho={transicao.podeMarcarGanho}
         podeMarcarPerdido={transicao.podeMarcarPerdido}

@@ -25,17 +25,23 @@ Como vendedor, quero preencher a qualificação comercial no card do lead e ver 
 - **Quando** a qualificação é salva (PUT) e depois lida (GET)
 - **Então** o servidor aceita só pontuações que existem para cada critério, só estágios e eliminatórios conhecidos (senão 400 `QUALIFICACAO_INVALIDA`), calcula a nota e a faixa (nunca confia nos valores enviados), guarda quem avaliou e quando, devolve 404 para card de outra empresa e 401 sem sessão
 
-#### AC-832 — O bloco "Qualificação" do card mostra o resultado em tempo real e salva
+#### AC-832 — A aba "Qualificação" do card mostra o resultado em tempo real e salva
 
-- **Dado** o detalhe do card
+- **Dado** a aba "Qualificação" do card (ao lado de Resumo, Cadência, WhatsApp e Anexos)
 - **Quando** o usuário escolhe as respostas, marca eliminatórios e clica em Salvar
-- **Então** o bloco mostra a nota, a barra, a faixa e a recomendação a cada mudança, envia as respostas ao salvar e mostra quem avaliou e quando; ao reabrir o card, as respostas voltam preenchidas
+- **Então** a aba mostra a nota, a barra, a faixa e a recomendação a cada mudança, envia as respostas ao salvar e mostra quem avaliou e quando; ao reabrir o card, as respostas voltam preenchidas
+
+#### AC-836 — O cabeçalho do card mostra a nota ao lado da etapa
+
+- **Dado** um card já avaliado (em qualquer aba do card, inclusive o Resumo)
+- **Quando** o card é aberto, ou a qualificação é salva
+- **Então** o cabeçalho mostra, ao lado do selo da etapa, a faixa e a nota (por exemplo "Faixa A · 85"); card não avaliado não mostra nada; ao salvar, a nota do cabeçalho se atualiza sem recarregar a página
 
 #### AC-833 — O estágio "Residente finalista" mostra a jornada do residente à parte
 
 - **Dado** o estágio profissional escolhido no bloco
 - **Quando** o estágio é "Residente finalista, preparando consultório"
-- **Então** a jornada exibida é "ICP R · Residente finalista (relacionamento e preparação)", sem alterar a nota; os demais estágios mostram o nome da jornada correspondente e, sem estágio, "não identificada"
+- **Então** a jornada exibida na aba é "ICP R · Residente finalista (relacionamento e preparação)", sem alterar a nota; os demais estágios mostram o nome da jornada correspondente e, sem estágio, "não identificada"
 
 ### US-199 — Ver a faixa de qualificação no funil e na lista
 

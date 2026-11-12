@@ -1,15 +1,16 @@
 // T-171 (fase4-card-abas, US-111, AC-419/AC-420): a barra de abas do card,
-// num lugar só para as quatro telas (Resumo, Cadência, WhatsApp e Anexos).
+// num lugar só para as telas (Resumo, Cadência, WhatsApp, Qualificação e Anexos).
 // Fonte visual: a barra de abas de `10._pipeline_id_cadencia_cad_ncia_do_card/`.
 import Link from 'next/link';
 
-export type AbaDoCard = 'resumo' | 'cadencia' | 'whatsapp' | 'anexos';
+export type AbaDoCard = 'resumo' | 'cadencia' | 'whatsapp' | 'qualificacao' | 'anexos';
 
 /** `segmento` é o trecho depois de `/pipeline/[id]` (vazio no Resumo). Fonte única das rotas das abas (AC-419). */
 export const ABAS_DO_CARD: ReadonlyArray<{ chave: AbaDoCard; rotulo: string; icone: string; segmento: string }> = [
   { chave: 'resumo', rotulo: 'Resumo', icone: 'dashboard', segmento: '' },
   { chave: 'cadencia', rotulo: 'Cadência', icone: 'checklist', segmento: 'cadencia' },
   { chave: 'whatsapp', rotulo: 'WhatsApp', icone: 'chat', segmento: 'conversa' },
+  { chave: 'qualificacao', rotulo: 'Qualificação', icone: 'fact_check', segmento: 'qualificacao' },
   { chave: 'anexos', rotulo: 'Anexos & Evidências', icone: 'attachment', segmento: 'anexos' },
 ];
 

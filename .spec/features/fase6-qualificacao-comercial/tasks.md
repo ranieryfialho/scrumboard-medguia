@@ -12,8 +12,13 @@
 
 ## T-356 — Bloco Qualificação no card e selo reutilizável [concluida]
 - Refs: AC-832, AC-833
-- Arquivos: src/components/pipeline/detalhe/bloco-qualificacao.tsx, src/components/pipeline/pecas/selo-qualificacao.tsx, src/app/(app)/pipeline/[id]/page.tsx
+- Arquivos: src/components/pipeline/detalhe/bloco-qualificacao.tsx, src/components/pipeline/pecas/selo-qualificacao.tsx, src/app/(app)/pipeline/[id]/qualificacao/page.tsx
 
 ## T-357 — Selo no funil e coluna com filtro na lista [concluida]
 - Refs: AC-834, AC-835
 - Arquivos: src/app/api/oportunidades/route.ts, src/components/pipeline/card-oportunidade.tsx, src/repositories/pipeline-lista.ts, src/components/pipeline/tabela-lista.tsx, src/components/pipeline/filtros-lista.tsx
+
+## T-358 — Aba Qualificação e nota no cabeçalho do card [concluida]
+
+- Refs: AC-836, AC-832
+- Arquivos: src/components/pipeline/card/abas-do-card.tsx, src/components/pipeline/card/molde-do-card.tsx, src/components/pipeline/card/use-qualificacao-do-card.ts, src/components/pipeline/detalhe/cabecalho-card.tsx, src/app/(app)/pipeline/[id]/page.tsx
