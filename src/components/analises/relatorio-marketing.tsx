@@ -10,6 +10,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { dataBr, diaEMes, inteiro, moeda, nomeDoArquivoCsv, periodoAnteriorDe, periodoDe, periodoPronto, porcentagem, type PeriodoEscolhido, type Preset } from './comum';
 import { EsqueletoCarregando, EstadoErro, EstadoVazio } from './estados';
 import { FiltroPeriodo } from './filtro-periodo';
+import { VelocidadeDoContatoBloco, type VelocidadeDoContato } from './velocidade-contato';
 import { Paginacao } from '@/components/pipeline/pecas/paginacao';
 import { GraficoLinhas } from './grafico-linhas';
 
@@ -33,7 +34,7 @@ export interface Dados {
   insights?: {
     diaDeMaisLeads: { dia: string; leads: number; agendadas: number } | null;
     melhorHora: number | null;
-    velocidadeMediaMinutos: number | null;
+    velocidade?: VelocidadeDoContato;
     noShow: { taxa: number | null; noShows: number; agendadas: number };
   };
 }
@@ -385,7 +386,8 @@ export function RelatorioMarketing() {
               ]}
             />
             {dados.insights && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-space-sm">
+              <>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-space-sm">
                 <div className="rounded-xl bg-surface-subtle p-3 flex flex-col">
                   <span className="font-label-sm text-label-sm text-text-muted uppercase">Dia com mais leads</span>
                   <span className="font-label-lg text-label-lg text-text-primary">
@@ -399,13 +401,6 @@ export function RelatorioMarketing() {
                   <span className="font-body-sm text-body-sm text-text-muted">hora com mais leads chegando</span>
                 </div>
                 <div className="rounded-xl bg-surface-subtle p-3 flex flex-col">
-                  <span className="font-label-sm text-label-sm text-text-muted uppercase">Velocidade média do 1º contato</span>
-                  <span className="font-label-lg text-label-lg text-success-text">
-                    {dados.insights.velocidadeMediaMinutos === null ? 'Sem contatos' : `${dados.insights.velocidadeMediaMinutos.toLocaleString('pt-BR')} minutos`}
-                  </span>
-                  <span className="font-body-sm text-body-sm text-text-muted">até a 1ª mensagem enviada (WhatsApp)</span>
-                </div>
-                <div className="rounded-xl bg-surface-subtle p-3 flex flex-col">
                   <span className="font-label-sm text-label-sm text-text-muted uppercase">Taxa de no-show nas demonstrações</span>
                   <span className="font-label-lg text-label-lg text-text-primary">{porcentagem(dados.insights.noShow.taxa)}</span>
                   <span className="font-body-sm text-body-sm text-text-muted">
@@ -413,6 +408,8 @@ export function RelatorioMarketing() {
                   </span>
                 </div>
               </div>
+              {dados.insights.velocidade && <VelocidadeDoContatoBloco velocidade={dados.insights.velocidade} />}
+              </>
             )}
           </section>
 

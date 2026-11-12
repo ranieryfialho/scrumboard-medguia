@@ -92,6 +92,7 @@ export const GRUPOS_MENU: GrupoMenu[] = [
         icone: 'cancel',
       },
       { id: 'metas', rotulo: 'Metas', href: '/configuracoes/metas', icone: 'flag' },
+      { id: 'horario-atendimento', rotulo: 'Horário de Atendimento', href: '/configuracoes/horario-atendimento', icone: 'schedule' },
       { id: 'investimento-midia', rotulo: 'Investimento em Mídia', href: '/configuracoes/investimento', icone: 'paid' },
       { id: 'email-empresa', rotulo: 'E-mail', href: '/configuracoes/email', icone: 'mail' },
       { id: 'google-meet', rotulo: 'Google Meet', href: '/configuracoes/google', icone: 'videocam' },
