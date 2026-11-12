@@ -7,7 +7,7 @@
 import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { diaEMes, inteiro, moeda, periodoAnterior, periodoDoPreset, porcentagem, type Preset } from './comum';
+import { dataBr, diaEMes, inteiro, moeda, nomeDoArquivoCsv, periodoAnteriorDe, periodoDe, periodoPronto, porcentagem, type PeriodoEscolhido, type Preset } from './comum';
 import { EsqueletoCarregando, EstadoErro, EstadoVazio } from './estados';
 import { FiltroPeriodo } from './filtro-periodo';
 import { Paginacao } from '@/components/pipeline/pecas/paginacao';
@@ -107,7 +107,7 @@ function Cartao({ titulo, valor, rodape, icone, destaque }: { titulo: string; va
 }
 
 export function RelatorioMarketing() {
-  const [preset, setPreset] = useState<Preset>('30dias');
+  const [periodo, setPeriodo] = useState<PeriodoEscolhido>(periodoPronto('30dias'));
   const [origem, setOrigem] = useState('');
   const [especialidade, setEspecialidade] = useState('');
   const [agrupar, setAgrupar] = useState<Agrupamento | ''>('');
@@ -120,7 +120,7 @@ export function RelatorioMarketing() {
   const [ordemDaLista, setOrdemDaLista] = useState<{ campo: CampoDaLista; asc: boolean }>({ campo: 'criadoEm', asc: false });
 
   const carregar = useCallback(async () => {
-    const { de, ate } = periodoDoPreset(preset);
+    const { de, ate } = periodoDe(periodo);
     const q = new URLSearchParams({ de, ate });
     if (origem) q.set('origem', origem);
     if (especialidade) q.set('especialidade', especialidade);
@@ -129,7 +129,7 @@ export function RelatorioMarketing() {
     // escolhido para a última chamada ao servidor ser sempre a do período que está na tela.
     void (async () => {
       try {
-        const ant = periodoAnterior(preset);
+        const ant = periodoAnteriorDe(periodo);
         const qAnt = new URLSearchParams({ de: ant.de, ate: ant.ate });
         if (origem) qAnt.set('origem', origem);
         if (especialidade) qAnt.set('especialidade', especialidade);
@@ -148,7 +148,7 @@ export function RelatorioMarketing() {
     } catch {
       setErro(true);
     }
-  }, [preset, origem, especialidade, agrupar]);
+  }, [periodo, origem, especialidade, agrupar]);
 
   useEffect(() => {
     void carregar();
@@ -184,7 +184,8 @@ export function RelatorioMarketing() {
   }
 
   function exportarLeads() {
-    baixarCsv('leads-do-periodo.csv', [
+    baixarCsv(nomeDoArquivoCsv('leads-do-periodo', periodo), [
+      ['Período', `${dataBr(de)} a ${dataBr(ate)}`],
       ['Nome', 'Status', 'Especialidade', 'Origem', 'Anúncio', 'Data de entrada', 'Observações'],
       ...leadsOrdenados.map((l) => [l.nome, l.etapa ?? '', l.especialidade ?? '', l.origem, l.anuncio ?? '', new Date(l.criadoEm).toLocaleString('pt-BR'), l.observacoes ?? '']),
     ]);
@@ -192,7 +193,8 @@ export function RelatorioMarketing() {
 
   function exportar() {
     if (!dados || !totais) return;
-    baixarCsv('relatorio-marketing.csv', [
+    baixarCsv(nomeDoArquivoCsv('relatorio-marketing', periodo), [
+      ['Período', `${dataBr(de)} a ${dataBr(ate)}`],
       ['Canal', 'Investimento (R$)', 'Leads', 'CPL (R$)', 'Reuniões realizadas', 'Fechados', 'Conversão final (%)', 'CAC (R$)', 'ROAS', 'Valor ganho (R$)'],
       ...canais.map((l) => [
         l.origem,
@@ -210,7 +212,7 @@ export function RelatorioMarketing() {
     ]);
   }
 
-  const { de, ate } = periodoDoPreset(preset);
+  const { de, ate } = periodoDe(periodo);
   const maiorVolume = Math.max(1, ...canais.map((c) => c.leads));
   const maiorDia = Math.max(1, ...(dados?.porDiaDaSemana ?? [0]));
   const ticket = dados && dados.resumo.contratos > 0 && totais ? totais.valor / dados.resumo.contratos : null;
@@ -243,7 +245,7 @@ export function RelatorioMarketing() {
       </div>
 
       <section aria-label="Filtros" className="bg-surface-card rounded-2xl p-space-md shadow-sm flex items-center gap-space-sm flex-wrap shrink-0">
-        <FiltroPeriodo valor={preset} presets={PRESETS} onMudar={setPreset} />
+        <FiltroPeriodo valor={periodo} presets={PRESETS} onMudar={setPeriodo} />
         <span className="font-body-sm text-body-sm text-text-muted flex items-center gap-1">
           <span aria-hidden="true" className="material-symbols-outlined text-[16px]">calendar_today</span>
           {de.split('-').reverse().join('/')} a {ate.split('-').reverse().join('/')}

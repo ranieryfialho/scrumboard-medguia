@@ -22,6 +22,7 @@ import { ModalDadoFaltante, type DadoPreenchido } from "./modal-dado-faltante";
 import { ModalFechamentoDoCard } from "./modal-fechamento";
 import type { DadosFechamento } from "@/domain/pipeline/fechamento";
 import { FiltrosFunil, type OpcaoResponsavelFunil, type ValorFiltrosFunil } from "./filtros-funil";
+import { parametrosDoPeriodoPipeline } from "./filtro-periodo-pipeline";
 import { IndicadoresFunil, type IndicadoresFunilView } from "./indicadores-funil";
 import { ModalNovoLead, type DadosNovoLead, type ResultadoSalvarNovoLead } from "./modal-novo-lead";
 import { criarCardNovoLead, criarLeadEIniciarCadencia } from "./novo-lead-api";
@@ -114,7 +115,7 @@ function cardsDaEtapa(itens: CardBoard[], etapaId: number): CardBoard[] {
 }
 
 function filtroFunilAtivo(filtro: ValorFiltrosFunil): boolean {
-  return filtro.busca.trim() !== "" || !!filtro.responsavelId || !!filtro.origem;
+  return filtro.busca.trim() !== "" || !!filtro.responsavelId || !!filtro.origem || !!filtro.periodo;
 }
 
 /**
@@ -126,16 +127,20 @@ function filtroFunilAtivo(filtro: ValorFiltrosFunil): boolean {
  */
 async function buscarIdsPermitidos(filtro: ValorFiltrosFunil): Promise<Set<string>> {
   const busca = filtro.busca.trim() || undefined;
+  // AC-821: o período (e qual data ele filtra) vale nas duas buscas, então o quadro inteiro (inclusive Perdido e Ganho) respeita.
+  const periodo = parametrosDoPeriodoPipeline({ periodo: filtro.periodo, data: filtro.campoData ?? "entrada" });
 
   const [itensLista, itensArquivados] = await Promise.all([
     buscarPaginas("/api/oportunidades/lista", {
       busca,
       responsavelId: filtro.responsavelId,
       origem: filtro.origem,
+      ...periodo,
     }),
     buscarPaginas("/api/oportunidades/arquivados", {
       busca,
       responsavelId: filtro.responsavelId,
+      ...periodo,
     }),
   ]);
 

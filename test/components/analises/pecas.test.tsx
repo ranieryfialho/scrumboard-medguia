@@ -4,7 +4,7 @@ import { afterEach, describe, expect, test, vi } from 'vitest';
 import { cleanup, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { diaEMes, iniciais, moeda, periodoDoPreset, porcentagem } from '../../../src/components/analises/comum';
+import { diaEMes, iniciais, moeda, periodoDoPreset, periodoPronto, porcentagem } from '../../../src/components/analises/comum';
 import { FiltroPeriodo } from '../../../src/components/analises/filtro-periodo';
 import { GraficoLinhas } from '../../../src/components/analises/grafico-linhas';
 
@@ -25,12 +25,12 @@ describe('T-204: peças compartilhadas de análises', () => {
   test('o filtro mostra os botões, marca o escolhido e avisa a troca @spec:AC-556 @spec:AC-564 @spec:AC-568', async () => {
     const aoMudar = vi.fn();
     const u = userEvent.setup();
-    render(<FiltroPeriodo valor="mes" presets={['hoje', '30dias', 'mes']} onMudar={aoMudar} />);
+    render(<FiltroPeriodo valor={periodoPronto('mes')} presets={['hoje', '30dias', 'mes']} onMudar={aoMudar} />);
     expect(screen.getByRole('button', { name: 'Este mês' }).getAttribute('aria-pressed')).toBe('true');
     expect(screen.getByRole('button', { name: 'Hoje' }).getAttribute('aria-pressed')).toBe('false');
     expect(screen.queryByRole('button', { name: 'Trimestre atual' })).toBeFalsy();
     await u.click(screen.getByRole('button', { name: 'Últimos 30 dias' }));
-    expect(aoMudar).toHaveBeenCalledWith('30dias');
+    expect(aoMudar).toHaveBeenCalledWith({ tipo: 'preset', preset: '30dias' });
   });
 
   test('a formatação usa vírgula, real e traço sem dado @spec:AC-558', () => {

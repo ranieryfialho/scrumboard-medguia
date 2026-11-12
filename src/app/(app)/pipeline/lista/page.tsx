@@ -36,6 +36,7 @@ import {
   type OrdenacaoLista,
   type ValorFiltrosLista,
 } from '@/components/pipeline/filtros-lista';
+import { parametrosDoPeriodoPipeline } from '@/components/pipeline/filtro-periodo-pipeline';
 import { TabelaLista, type ItemTabelaLista } from '@/components/pipeline/tabela-lista';
 
 type TamanhoPagina = 10 | 25 | 50;
@@ -72,6 +73,10 @@ function construirQuery(filtro: ValorFiltrosLista, pagina: number, porPagina: nu
   if (filtro.origem) parametros.set('origem', filtro.origem);
   if (filtro.ordenarPor) parametros.set('ordenarPor', filtro.ordenarPor);
   if (filtro.ordem) parametros.set('ordem', filtro.ordem);
+  // AC-822: o período (e qual data ele filtra) vai no pedido da lista e, por `consultaDaExportacao`, na exportação.
+  for (const [chave, valor] of Object.entries(parametrosDoPeriodoPipeline({ periodo: filtro.periodo, data: filtro.campoData ?? 'entrada' }))) {
+    parametros.set(chave, valor);
+  }
   return parametros.toString();
 }
 

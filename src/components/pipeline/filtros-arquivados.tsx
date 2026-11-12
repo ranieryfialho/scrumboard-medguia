@@ -5,13 +5,20 @@
 // (busca, motivo de perda, consultor, data e "Limpar"). A filtragem em si é do
 // servidor (`GET /api/oportunidades/arquivados`, AC-402); aqui só se monta o
 // valor do filtro.
+// fase6-periodo-personalizado (AC-823): o "Fechados desde" (uma data só) virou o período
+// completo (De/Até + qual data), o mesmo controle do funil e da lista.
+import type { PeriodoEscolhido } from '../analises/comum';
+import type { CampoDataPeriodo } from '../../domain/pipeline/periodo';
+import { FiltroPeriodoPipeline } from './filtro-periodo-pipeline';
 
 export interface ValorFiltrosArquivados {
   busca: string;
   motivoPerdaId?: string;
   responsavelId?: string;
-  /** Data (AAAA-MM-DD) a partir da qual considerar fechamentos. */
-  de?: string;
+  /** AC-823: sem período, a tela mostra todos os arquivados. */
+  periodo?: PeriodoEscolhido;
+  /** AC-823: a data que o período filtra; "última movimentação" aqui é a data de fechamento. */
+  campoData?: CampoDataPeriodo;
 }
 
 export interface OpcaoFiltroArquivados {
@@ -43,7 +50,7 @@ function SetaSeletor() {
 }
 
 export function filtroArquivadosAtivo(valor: ValorFiltrosArquivados): boolean {
-  return Boolean(valor.busca || valor.motivoPerdaId || valor.responsavelId || valor.de);
+  return Boolean(valor.busca || valor.motivoPerdaId || valor.responsavelId || valor.periodo);
 }
 
 export function FiltrosArquivados({ valor, motivos, responsaveis, onMudar, onLimpar }: FiltrosArquivadosProps) {
@@ -100,16 +107,10 @@ export function FiltrosArquivados({ valor, motivos, responsaveis, onMudar, onLim
         <SetaSeletor />
       </div>
 
-      <label className="flex items-center gap-2 font-body-sm text-body-sm text-text-secondary">
-        Fechados desde
-        <input
-          type="date"
-          value={valor.de ?? ''}
-          onChange={(evento) => onMudar({ de: evento.target.value || undefined })}
-          aria-label="Fechados desde"
-          className={CLASSE_CAMPO}
-        />
-      </label>
+      <FiltroPeriodoPipeline
+        valor={{ periodo: valor.periodo, data: valor.campoData ?? 'entrada' }}
+        onMudar={(proximo) => onMudar({ periodo: proximo.periodo, campoData: proximo.data })}
+      />
 
       <button
         type="button"

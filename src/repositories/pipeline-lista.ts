@@ -17,6 +17,7 @@ import { and, asc, desc, eq, ilike, inArray, notInArray, or, sql, type SQL } fro
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
 import { leads, motivosPerda, oportunidades, usuarios } from '../db/schema';
+import type { CampoDataPeriodo } from '../domain/pipeline/periodo';
 import type { ContextoTenant } from '../lib/auth/tenant';
 import { comTenant } from './contexto';
 import { prioridadeMeta } from './prioridade-meta';
@@ -52,6 +53,18 @@ export const expressaoDataFechamento = sql<string>`coalesce(
       and "oportunidade_eventos"."tipo" = 'transicao_etapa'
       and "oportunidade_eventos"."etapa_destino_id" = "oportunidades"."etapa_id")
   , "oportunidades"."atualizado_em"
+)`;
+
+/**
+ * fase6-periodo-personalizado (ASM-315): "última movimentação" = `ocorrido_em` do último `transicao_etapa` do card; sem nenhuma
+ * (card migrado que nunca mudou de etapa), a data de entrada. Nunca `atualizado_em`, que nos cards migrados é o dia da migração.
+ */
+export const expressaoUltimaMovimentacao = sql<string>`coalesce(
+  (select max("oportunidade_eventos"."ocorrido_em")
+     from "oportunidade_eventos"
+    where "oportunidade_eventos"."oportunidade_id" = "oportunidades"."id"
+      and "oportunidade_eventos"."tipo" = 'transicao_etapa')
+  , "oportunidades"."criado_em"
 )`;
 
 export interface ItemLead {
@@ -104,6 +117,11 @@ export interface FiltroLista {
   responsavelId?: string;
   origem?: string;
   busca?: string;
+  /** Início do período (`YYYY-MM-DD`, inclusivo), pela data escolhida em `data` (padrão: a entrada do lead). */
+  de?: string;
+  /** Fim do período (`YYYY-MM-DD`, inclusivo). */
+  ate?: string;
+  data?: CampoDataPeriodo;
   ordenarPor?: OrdenacaoLista;
   ordem?: DirecaoOrdenacao;
   /** 1-based (AC-395). Default: 1. */
@@ -128,6 +146,7 @@ export function condicoesDaLista(contexto: ContextoTenant, filtro: FiltroLista):
   if (filtro.origem !== undefined) condicoes.push(eq(leads.origem, filtro.origem));
   const busca = condicaoBusca(filtro.busca);
   if (busca) condicoes.push(busca);
+  condicoes.push(...condicoesDoPeriodo(filtro.data === 'movimentacao' ? expressaoUltimaMovimentacao : sql`${oportunidades.criadoEm}`, filtro.de, filtro.ate));
   return condicoes;
 }
 
@@ -232,6 +251,11 @@ export interface FiltroArquivados {
   de?: string;
   /** Fim do período de fechamento (`YYYY-MM-DD`, inclusivo). */
   ate?: string;
+  /**
+   * fase6-periodo-personalizado: qual data o período filtra — `entrada` (do lead) ou `movimentacao` (última mudança de etapa).
+   * Sem isto, o período continua sendo o de fechamento, como sempre foi (quem já chama a rota não muda).
+   */
+  data?: CampoDataPeriodo;
   /** 1-based (AC-402). Default: 1. */
   pagina?: number;
   porPagina?: number;
@@ -247,6 +271,14 @@ function inicioDoDiaSeguinteEmSaoPaulo(data: string): Date {
   return new Date(inicioDoDiaEmSaoPaulo(data).getTime() + 24 * 60 * 60 * 1000);
 }
 
+/** As condições de `de`/`ate` (dias inclusivos, `America/Sao_Paulo`) sobre uma coluna ou expressão de data. */
+function condicoesDoPeriodo(coluna: SQL, de: string | undefined, ate: string | undefined): SQL[] {
+  const condicoes: SQL[] = [];
+  if (de !== undefined) condicoes.push(sql`${coluna} >= ${inicioDoDiaEmSaoPaulo(de).toISOString()}::timestamptz`);
+  if (ate !== undefined) condicoes.push(sql`${coluna} < ${inicioDoDiaSeguinteEmSaoPaulo(ate).toISOString()}::timestamptz`);
+  return condicoes;
+}
+
 /** T-179: as condições dos arquivados, reaproveitadas pela exportação. */
 export function condicoesDosArquivados(contexto: ContextoTenant, filtro: FiltroArquivados): SQL[] {
   const condicoes: SQL[] = [eq(oportunidades.empresaId, contexto.empresaId)];
@@ -259,14 +291,9 @@ export function condicoesDosArquivados(contexto: ContextoTenant, filtro: FiltroA
   if (filtro.responsavelId !== undefined) condicoes.push(eq(oportunidades.responsavelId, filtro.responsavelId));
   const busca = condicaoBusca(filtro.busca);
   if (busca) condicoes.push(busca);
-  if (filtro.de !== undefined) {
-    condicoes.push(sql`${expressaoDataFechamento} >= ${inicioDoDiaEmSaoPaulo(filtro.de).toISOString()}::timestamptz`);
-  }
-  if (filtro.ate !== undefined) {
-    condicoes.push(
-      sql`${expressaoDataFechamento} < ${inicioDoDiaSeguinteEmSaoPaulo(filtro.ate).toISOString()}::timestamptz`
-    );
-  }
+  const colunaDoPeriodo =
+    filtro.data === 'entrada' ? sql`${oportunidades.criadoEm}` : filtro.data === 'movimentacao' ? expressaoUltimaMovimentacao : expressaoDataFechamento;
+  condicoes.push(...condicoesDoPeriodo(colunaDoPeriodo, filtro.de, filtro.ate));
   return condicoes;
 }
 

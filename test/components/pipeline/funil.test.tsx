@@ -366,19 +366,49 @@ describe('T-160: tela do funil', () => {
     });
   });
 
-  describe('AC-393: itens do funil sem backend aparecem "em breve"', () => {
-    test('"Período" aparece marcado, sem disparar ação @spec:AC-393', async () => {
+  describe('AC-393 / AC-820: o "Período" do funil deixou de ser "em breve" e filtra de verdade', () => {
+    test('não aparece mais marcado "em breve" e abre os períodos prontos, o Personalizado e a escolha da data @spec:AC-393 @spec:AC-820', async () => {
       render(<PipelinePage />);
       await screen.findByText('Clínica Vitae');
 
-      const periodo = screen.getByRole('button', { name: 'Período (em breve)' });
-      expect(periodo.getAttribute('aria-disabled')).toBe('true');
-
-      const chamadasAntes = fetchFalso.mock.calls.length;
+      expect(screen.queryByRole('button', { name: 'Período (em breve)' })).toBeNull();
       const usuario = userEvent.setup();
-      await usuario.click(periodo);
+      await usuario.click(screen.getByRole('button', { name: 'Período' }));
 
-      expect(fetchFalso.mock.calls.length).toBe(chamadasAntes);
+      for (const rotulo of ['Hoje', 'Últimos 7 dias', 'Últimos 30 dias', 'Este mês', 'Trimestre atual', 'Personalizado']) {
+        expect(screen.getByRole('button', { name: rotulo })).toBeTruthy();
+      }
+      const data = screen.getByLabelText('Data do período') as HTMLSelectElement;
+      expect(data.value).toBe('entrada');
+      expect(within(data).getByRole('option', { name: 'Última movimentação' })).toBeTruthy();
+    });
+
+    test('escolher o período manda de/ate/data às duas buscas do quadro e "Limpar" tira o período @spec:AC-820 @spec:AC-821', async () => {
+      render(<PipelinePage />);
+      await screen.findByText('Clínica Vitae');
+
+      const usuario = userEvent.setup();
+      await usuario.click(screen.getByRole('button', { name: 'Período' }));
+      await usuario.click(screen.getByRole('button', { name: 'Personalizado' }));
+      fireEvent.change(screen.getByLabelText('De'), { target: { value: '2026-02-01' } });
+      fireEvent.change(screen.getByLabelText('Até'), { target: { value: '2026-02-28' } });
+      await usuario.click(screen.getByRole('button', { name: 'Aplicar' }));
+      await usuario.selectOptions(screen.getByLabelText('Data do período'), 'movimentacao');
+
+      const chamadas = (caminho: string) =>
+        fetchFalso.mock.calls.map((c) => new URL(String(c[0]), 'http://localhost')).filter((u) => u.pathname === caminho);
+      await waitFor(() => {
+        for (const caminho of ['/api/oportunidades/lista', '/api/oportunidades/arquivados']) {
+          const ultima = chamadas(caminho).filter((u) => u.searchParams.get('data') === 'movimentacao').pop();
+          expect(ultima?.searchParams.get('de')).toBe('2026-02-01');
+          expect(ultima?.searchParams.get('ate')).toBe('2026-02-28');
+        }
+      });
+
+      const antes = fetchFalso.mock.calls.length;
+      await usuario.click(screen.getByRole('button', { name: 'Limpar' }));
+      await waitFor(() => expect(fetchFalso.mock.calls.length).toBeGreaterThanOrEqual(antes));
+      expect(screen.getByRole('button', { name: 'Período' })).toBeTruthy(); // o rótulo voltou ao padrão: sem período
     });
   });
 
