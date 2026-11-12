@@ -19,7 +19,7 @@ permissions:
   contents: read
 
 # Economia de minutos do Actions (repositório privado tem franquia mensal; uma rodada completa gasta ~40 min de máquina):
-#   - PR em rascunho não roda nada (abra como rascunho enquanto ajusta; "Ready for review" dispara o CI);
+#   - PR em rascunho não roda nada, nem o `gates` (abra como rascunho enquanto ajusta; "Ready for review" dispara o CI);
 #   - no push para a `main` (depois do merge) rodam só qualidade e build: as 8 fatias de teste já passaram no PR sobre o mesmo
 #     código, e o deploy do staging não espera o CI (o Release roda no mesmo push). `gates` aceita "pulado", nunca falha/cancelado.
 #
@@ -124,7 +124,8 @@ jobs:
   # Check obrigatório da regra da `main` (contexto "gates"): resume as etapas acima.
   gates:
     name: gates
-    if: always()
+    # Em PR rascunho nada roda, nem este resumo: um check obrigatório "pulado" conta como satisfeito, então o rascunho não gasta minutos.
+    if: always() && (github.event_name != 'pull_request' || !github.event.pull_request.draft)
     needs: [qualidade, build, testes]
     runs-on: ubuntu-latest
     steps:
