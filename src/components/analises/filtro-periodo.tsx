@@ -4,6 +4,8 @@
 // com o período é a tela.
 // fase6-periodo-personalizado (US-190, AC-800/AC-802): o botão "Personalizado" abre os campos De e Até; o intervalo só vale
 // ao clicar em "Aplicar" e é barrado aqui mesmo quando inválido, sem avisar a tela (e, portanto, sem pedir nada ao servidor).
+// `compacto` é o jeito de painel (botões em duas colunas, campos lado a lado) usado dentro do pop-up do pipeline; sem ele, os
+// botões ficam numa linha e os campos aparecem numa linha própria logo abaixo, sem empurrar os outros filtros da barra.
 import { useState } from 'react';
 
 import { periodoDe, periodoPronto, ROTULO_DO_PRESET, validarIntervalo, type PeriodoEscolhido, type Preset } from './comum';
@@ -15,11 +17,12 @@ interface FiltroPeriodoProps {
   onMudar: (periodo: PeriodoEscolhido) => void;
   /** Desliga o "Personalizado" onde o período só pode ser um dos prontos. */
   semPersonalizado?: boolean;
+  compacto?: boolean;
 }
 
-const CLASSE_CAMPO = 'h-8 px-2 rounded-lg bg-surface-card border border-border-subtle font-label-md text-label-md text-text-primary';
+const CLASSE_CAMPO = 'h-9 w-full min-w-0 px-2 rounded-lg bg-surface-card border border-border-subtle font-label-md text-label-md text-text-primary';
 
-export function FiltroPeriodo({ valor, presets, onMudar, semPersonalizado = false }: FiltroPeriodoProps) {
+export function FiltroPeriodo({ valor, presets, onMudar, semPersonalizado = false, compacto = false }: FiltroPeriodoProps) {
   const [aberto, setAberto] = useState(valor?.tipo === 'personalizado');
   const inicial = periodoDe(valor ?? periodoPronto('30dias'));
   const [de, setDe] = useState(inicial.de);
@@ -48,47 +51,38 @@ export function FiltroPeriodo({ valor, presets, onMudar, semPersonalizado = fals
   }
 
   const pronto = valor?.tipo === 'preset' ? valor.preset : null;
+  const classeBotao = (marcado: boolean) =>
+    `h-8 px-3 rounded-lg font-label-md text-label-md whitespace-nowrap ${compacto ? 'justify-center' : ''} ${marcado ? 'bg-surface-card text-primary font-semibold shadow-sm' : 'text-text-secondary'}`;
 
   return (
-    <div className="flex items-center gap-2 flex-wrap">
-      <div role="group" aria-label="Período" className="flex items-center gap-1 rounded-xl bg-surface-subtle p-1 flex-wrap">
+    <div className={`flex flex-col gap-2 ${compacto ? 'w-full' : 'items-start'}`}>
+      <div role="group" aria-label="Período" className={compacto ? 'grid grid-cols-2 gap-1 rounded-xl bg-surface-subtle p-1' : 'flex items-center gap-1 rounded-xl bg-surface-subtle p-1 flex-wrap'}>
         {presets.map((p) => (
-          <button
-            key={p}
-            type="button"
-            aria-pressed={!aberto && pronto === p}
-            onClick={() => escolherPronto(p)}
-            className={`h-8 px-3 rounded-lg font-label-md text-label-md ${!aberto && pronto === p ? 'bg-surface-card text-primary font-semibold shadow-sm' : 'text-text-secondary'}`}
-          >
+          <button key={p} type="button" aria-pressed={!aberto && pronto === p} onClick={() => escolherPronto(p)} className={classeBotao(!aberto && pronto === p)}>
             {ROTULO_DO_PRESET[p]}
           </button>
         ))}
         {!semPersonalizado && (
-          <button
-            type="button"
-            aria-pressed={aberto}
-            onClick={abrirPersonalizado}
-            className={`h-8 px-3 rounded-lg font-label-md text-label-md ${aberto ? 'bg-surface-card text-primary font-semibold shadow-sm' : 'text-text-secondary'}`}
-          >
+          <button type="button" aria-pressed={aberto} onClick={abrirPersonalizado} className={classeBotao(aberto)}>
             Personalizado
           </button>
         )}
       </div>
       {!semPersonalizado && aberto && (
-        <div className="flex items-center gap-2 flex-wrap">
-          <label className="flex items-center gap-1 font-label-md text-label-md text-text-secondary">
+        <div className={compacto ? 'grid grid-cols-2 gap-2' : 'flex items-end gap-2 flex-wrap'}>
+          <label className="flex flex-col gap-1 font-label-sm text-label-sm text-text-muted uppercase tracking-wider">
             De
-            <input type="date" aria-label="De" value={de} onChange={(e) => setDe(e.target.value)} className={CLASSE_CAMPO} />
+            <input type="date" aria-label="De" value={de} onChange={(e) => setDe(e.target.value)} className={compacto ? CLASSE_CAMPO : `${CLASSE_CAMPO} w-40`} />
           </label>
-          <label className="flex items-center gap-1 font-label-md text-label-md text-text-secondary">
+          <label className="flex flex-col gap-1 font-label-sm text-label-sm text-text-muted uppercase tracking-wider">
             Até
-            <input type="date" aria-label="Até" value={ate} onChange={(e) => setAte(e.target.value)} className={CLASSE_CAMPO} />
+            <input type="date" aria-label="Até" value={ate} onChange={(e) => setAte(e.target.value)} className={compacto ? CLASSE_CAMPO : `${CLASSE_CAMPO} w-40`} />
           </label>
-          <button type="button" onClick={aplicar} className="h-8 px-3 rounded-lg bg-primary text-on-primary font-label-md text-label-md font-semibold">
+          <button type="button" onClick={aplicar} className={`h-9 px-4 rounded-lg bg-primary text-on-primary font-label-md text-label-md font-semibold ${compacto ? 'col-span-2' : ''}`}>
             Aplicar
           </button>
           {erro && (
-            <span role="alert" className="font-body-sm text-body-sm text-danger-text">
+            <span role="alert" className={`font-body-sm text-body-sm text-danger-text ${compacto ? 'col-span-2' : ''}`}>
               {erro}
             </span>
           )}
