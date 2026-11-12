@@ -119,6 +119,16 @@ export interface ResumoDeEsperas {
   faixas: { ate1h: FaixaDeEspera; de1a4h: FaixaDeEspera; de4a24h: FaixaDeEspera; mais24h: FaixaDeEspera };
 }
 
+export type ChaveDeFaixa = keyof ResumoDeEsperas['faixas'];
+
+/** Em qual faixa cai uma espera em minutos (as mesmas de `resumirEsperas`). */
+export function faixaDaEspera(minutos: number): ChaveDeFaixa {
+  if (minutos <= 60) return 'ate1h';
+  if (minutos <= 240) return 'de1a4h';
+  if (minutos <= 1440) return 'de4a24h';
+  return 'mais24h';
+}
+
 const arredondar = (valor: number) => Math.round(valor * 10) / 10;
 
 /** AC-784/AC-786: média, mediana e faixas (até 1 h; 1 a 4 h; 4 a 24 h; mais de 24 h) de uma lista de esperas em minutos. */
@@ -128,10 +138,10 @@ export function resumirEsperas(minutos: number[]): ResumoDeEsperas {
   const conta = (teste: (m: number) => boolean) => minutos.filter(teste).length;
 
   const faixas = {
-    ate1h: faixa(conta((m) => m <= 60)),
-    de1a4h: faixa(conta((m) => m > 60 && m <= 240)),
-    de4a24h: faixa(conta((m) => m > 240 && m <= 1440)),
-    mais24h: faixa(conta((m) => m > 1440)),
+    ate1h: faixa(conta((m) => faixaDaEspera(m) === 'ate1h')),
+    de1a4h: faixa(conta((m) => faixaDaEspera(m) === 'de1a4h')),
+    de4a24h: faixa(conta((m) => faixaDaEspera(m) === 'de4a24h')),
+    mais24h: faixa(conta((m) => faixaDaEspera(m) === 'mais24h')),
   };
   if (n === 0) return { n, media: null, mediana: null, faixas };
 

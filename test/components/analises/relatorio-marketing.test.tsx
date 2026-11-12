@@ -168,6 +168,19 @@ describe('T-206: RelatorioMarketing', () => {
     expect(within(linha).getByText('0,0x')).toBeTruthy();
   });
 
+  test('a lista de leads do período mostra o motivo logo abaixo do status Perdido, só para quem foi perdido @spec:AC-829', async () => {
+    const lead = (id: string, nome: string, etapa: string, etapaId: number, motivoDaPerda: string | null) => ({
+      id, oportunidadeId: id, nome, etapa, etapaId, especialidade: null, origem: 'Google Ads', anuncio: null, criadoEm: '2026-11-17T12:00:00.000Z', observacoes: null, motivoDaPerda,
+    });
+    corpo = { ...DADOS, leadsDoPeriodo: [lead('a', 'Lead Perdido', 'Perdido', 14, 'Sem interesse'), lead('b', 'Lead Ativo', 'Qualificando', 5, null)] } as typeof DADOS;
+    render(<RelatorioMarketing />);
+
+    const perdido = (await screen.findByText('Lead Perdido')).closest('tr') as HTMLElement;
+    expect(within(perdido).getByText('Motivo: Sem interesse')).toBeTruthy();
+    const ativo = screen.getByText('Lead Ativo').closest('tr') as HTMLElement;
+    expect(within(ativo).queryByText(/Motivo:/)).toBeNull();
+  });
+
   test('carregando mostra esqueleto e a falha mostra erro com "Tentar de novo" @spec:AC-576', async () => {
     render(<RelatorioMarketing />);
     expect(screen.getByRole('status', { name: 'Carregando' })).toBeTruthy();

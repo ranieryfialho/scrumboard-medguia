@@ -122,6 +122,21 @@ describe('fase6-atendimento-lead: velocidade do 1º contato no relatório de mar
     expect(ate1h.quantidade + de1a4h.quantidade + de4a24h.quantidade + mais24h.quantidade).toBe(corrido.n);
   });
 
+  test('devolve os leads da conta, do que esperou mais ao que esperou menos, com card e esperas; mesma quantidade do resumo @spec:AC-828', async () => {
+    const empresa = criarEmpresa();
+    const rapido = criarLead(empresa, 'Rápido', '2026-02-10T10:00:00-03:00');
+    mensagem(empresa, rapido, 'enviada', '2026-02-10T10:20:00-03:00'); // 20 min
+    const demorado = criarLead(empresa, 'Demorado', '2026-02-10T09:00:00-03:00');
+    mensagem(empresa, demorado, 'enviada', '2026-02-12T09:00:00-03:00'); // 48 h
+    criarLead(empresa, 'Sem mensagem', '2026-02-10T11:00:00-03:00');
+
+    const { leads, corrido } = await velocidadeDe(empresa);
+    expect(leads.map((l) => l.lead)).toEqual(['Demorado', 'Rápido']);
+    expect(leads).toHaveLength(corrido.n);
+    expect(leads[0]).toMatchObject({ esperaCorrida: 2880, esperaComercial: 1080, oportunidadeId: null, responsavel: null });
+    expect(leads[1].esperaCorrida).toBe(20);
+  });
+
   test('o novo horário passa a valer no cálculo: seg a sáb, 8h às 20h @spec:AC-812', async () => {
     const empresa = criarEmpresa();
     const lead = criarLead(empresa, 'Sábado', '2026-02-07T10:00:00-03:00'); // sábado
