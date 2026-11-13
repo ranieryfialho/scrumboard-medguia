@@ -8,6 +8,8 @@ import { AlarmClock, ExternalLink } from "lucide-react";
 import { AvatarContato } from "@/components/whatsapp/avatar-contato";
 import { urgenciaDoLead, type UrgenciaDoLead } from "@/domain/pipeline/lead-novo";
 import { BotaoIniciarCadencia } from "./botao-iniciar-cadencia";
+import { quandoDaProximaAcao } from "./pecas/proxima-acao-texto";
+import type { ProximaAcao } from "@/domain/pipeline/proxima-acao";
 import { SeloQualificacao } from "./pecas/selo-qualificacao";
 import type { FaixaDeQualificacao } from "../../domain/qualificacao/qualificacao";
 
@@ -34,6 +36,8 @@ export interface CardBoard {
   criadoEm?: string;
   /** fase6-qualificacao-comercial (AC-834): faixa e nota; ausente/`null` = sem selo. */
   qualificacao?: { faixa: FaixaDeQualificacao; score: number } | null;
+  /** A próxima ação conforme a etapa (reunião, toque da cadência...); sem ela, cai na hora da fila. */
+  proximaAcao?: ProximaAcao | null;
 }
 
 interface CardOportunidadeProps {
@@ -180,7 +184,18 @@ export function CardOportunidade({ oportunidade, isOverlay, atrasado }: CardOpor
       <div className="bg-surface-subtle p-2 rounded-lg flex items-center justify-between gap-2">
         <div className="flex flex-col min-w-0">
           <span className="font-label-sm text-[10px] uppercase font-bold text-text-secondary">Próxima ação</span>
-          <span className="font-body-sm text-[11px] text-text-secondary">{formatarProximaAcao(oportunidade.proximaAcaoEm)}</span>
+          {oportunidade.proximaAcao ? (
+            <>
+              <span className="font-body-sm text-[11px] font-medium text-text-primary">{oportunidade.proximaAcao.titulo}</span>
+              {quandoDaProximaAcao(oportunidade.proximaAcao) && (
+                <span className={`font-body-sm text-[11px] ${oportunidade.proximaAcao.vencida ? "text-danger-text" : "text-text-secondary"}`}>
+                  {quandoDaProximaAcao(oportunidade.proximaAcao)}
+                </span>
+              )}
+            </>
+          ) : (
+            <span className="font-body-sm text-[11px] text-text-secondary">{formatarProximaAcao(oportunidade.proximaAcaoEm)}</span>
+          )}
         </div>
         {atrasado && (
           <span className="font-label-sm text-[10px] text-danger-text bg-danger-surface px-1.5 py-0.5 rounded font-bold inline-flex items-center gap-1 shrink-0">

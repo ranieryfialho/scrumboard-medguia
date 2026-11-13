@@ -7,7 +7,10 @@
 // `oportunidades`/`lead_telefones`.
 import { useState } from 'react';
 
+import type { ProximaAcao } from '@/domain/pipeline/proxima-acao';
+
 import { BotaoCopiar } from './botao-copiar';
+import { quandoDaProximaAcao } from '../pecas/proxima-acao-texto';
 
 export interface TelefoneInformacao {
   numero: string;
@@ -21,6 +24,8 @@ interface InformacoesProps {
   criadoEm: string;
   responsavelNome: string | null;
   proximaAcaoEm: string | null;
+  /** A próxima ação calculada pela etapa (reunião, toque da cadência...); sem ela, cai na data combinada. */
+  proximaAcao?: ProximaAcao | null;
   telefones: TelefoneInformacao[];
   email: string | null;
   /** Dados do formulário/anúncio que vieram com o lead (`leads.dados`); o que não existe não aparece. */
@@ -58,7 +63,7 @@ function haNDias(iso: string, agora: number): string {
 }
 
 /** AC-407: mostra valor estimado, origem, data de entrada, responsável, próxima ação, telefones e e-mail — nada além disso. */
-export function Informacoes({ valor, origem, criadoEm, responsavelNome, proximaAcaoEm, telefones, email, especialidade, anuncio, campanha, formulario, plataforma, responsavelId, responsaveis, onReatribuir, onEditar }: InformacoesProps) {
+export function Informacoes({ valor, origem, criadoEm, responsavelNome, proximaAcaoEm, proximaAcao, telefones, email, especialidade, anuncio, campanha, formulario, plataforma, responsavelId, responsaveis, onReatribuir, onEditar }: InformacoesProps) {
   const [trocando, setTrocando] = useState(false);
   const [erroTroca, setErroTroca] = useState<string | null>(null);
   async function trocarResponsavel(novoId: string) {
@@ -71,7 +76,7 @@ export function Informacoes({ valor, origem, criadoEm, responsavelNome, proximaA
   const valorFormatado = formatarMoeda(valor);
   // "agora" fixado na montagem: ler `Date.now()` direto no render é impuro (react-hooks/purity).
   const [agora] = useState(() => Date.now());
-  const proximaAcaoVencida = proximaAcaoEm ? new Date(proximaAcaoEm).getTime() < agora : false;
+  const proximaAcaoVencida = proximaAcao ? proximaAcao.vencida : proximaAcaoEm ? new Date(proximaAcaoEm).getTime() < agora : false;
 
   return (
     <div className="bg-surface-card rounded-xl p-space-lg shadow-sm flex flex-col gap-space-md">
@@ -208,15 +213,24 @@ export function Informacoes({ valor, origem, criadoEm, responsavelNome, proximaA
           >
             Próxima Ação
           </span>
-          {proximaAcaoEm && proximaAcaoVencida && (
+          {(proximaAcao ? proximaAcao.quando : proximaAcaoEm) && proximaAcaoVencida && (
             <span className="font-label-sm px-1.5 py-0.2 rounded bg-danger-surface font-bold text-danger-text text-[10px]">
               Vencida
             </span>
           )}
         </div>
-        <p className="font-body-sm text-text-primary font-medium">
-          {proximaAcaoEm ? formatarDataHora(proximaAcaoEm) : 'Nenhuma próxima ação agendada'}
-        </p>
+        {proximaAcao ? (
+          <>
+            <p className="font-body-sm text-text-primary font-medium">{proximaAcao.titulo}</p>
+            {quandoDaProximaAcao(proximaAcao) && <p className="font-body-sm text-text-primary">{quandoDaProximaAcao(proximaAcao)}</p>}
+            {proximaAcao.referenciaEm && <p className="font-body-sm text-text-secondary">Reunião de {new Date(proximaAcao.referenciaEm).toLocaleDateString('pt-BR')}</p>}
+            {proximaAcao.detalhe && <p className="font-body-sm text-text-secondary">{proximaAcao.detalhe}</p>}
+          </>
+        ) : (
+          <p className="font-body-sm text-text-primary font-medium">
+            {proximaAcaoEm ? formatarDataHora(proximaAcaoEm) : 'Nenhuma próxima ação agendada'}
+          </p>
+        )}
       </div>
 
       {telefones.length > 0 && (

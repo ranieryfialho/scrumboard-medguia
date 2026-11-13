@@ -19,6 +19,7 @@ import {
 } from '../../../../repositories/edicao-card';
 import { buscarOportunidadePorId } from '../../../../repositories/oportunidades';
 import { lerPerdaDoCard } from '../../../../repositories/perda-do-card';
+import { obterProximaAcaoDoCard } from '../../../../repositories/proxima-acao-card';
 
 export const dynamic = 'force-dynamic';
 
@@ -79,6 +80,9 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     return [lead ?? null, responsavel?.nome ?? null, motivo?.nome ?? null, perda] as const;
   });
 
+  // A próxima ação que o card mostra: reunião marcada, toque da cadência ou a data combinada, conforme a etapa.
+  const proximaAcao = await obterProximaAcaoDoCard(db, contexto, oportunidade, new Date());
+
   return NextResponse.json({
     id: oportunidade.id,
     etapaId: oportunidade.etapaId,
@@ -107,6 +111,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     // fase6-perdas-por-lead: motivo, etapa em que estava, quando e se foi automática; `null` fora de "Perdido".
     perda,
     proximaAcaoEm: oportunidade.proximaAcaoEm,
+    proximaAcao,
     version: oportunidade.version,
   });
 }
