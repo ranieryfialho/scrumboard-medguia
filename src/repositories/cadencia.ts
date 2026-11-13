@@ -470,6 +470,78 @@ export class ErroToqueNaoAceitaAguardar extends Error {
   }
 }
 
+export interface DadosRegistrarRespostaDoLead {
+  /** `version` que o chamador acredita ser a atual do card (lock otimista). */
+  version: number;
+  atorId: string;
+  /** Relógio injetado (ASM-062). */
+  agora: Date;
+}
+
+/**
+ * "O lead respondeu" no nível do CARD, sem depender de um toque pendente. Entre o fim de um turno e a liberação do próximo bloco não
+ * existe toque pendente (o banco só gera o bloco seguinte quando chega a hora), e o `conectou` de `concluirAtividade` precisa de um toque.
+ * Aqui o efeito é o mesmo do `conectou` (e da conexão automática do WhatsApp): cancela os toques pendentes, encerra a cadência e leva o
+ * card a Qualificando, tudo na mesma transação. Recusas: `ErroConflitoDeVersao` e `ErroCadenciaEncerrada` (já encerrada, ou card que
+ * não está mais na régua, etapas 2 a 4).
+ */
+export async function registrarRespostaDoLead(
+  db: NodePgDatabase,
+  contexto: ContextoTenant,
+  oportunidadeId: string,
+  dados: DadosRegistrarRespostaDoLead
+): Promise<Oportunidade> {
+  return comTenant(db, contexto, async (tx) => {
+    const [oportunidade] = await tx
+      .select()
+      .from(oportunidades)
+      .where(and(eq(oportunidades.id, oportunidadeId), eq(oportunidades.empresaId, contexto.empresaId)))
+      .for('update')
+      .limit(1);
+    if (!oportunidade) throw new ErroCadenciaEncerrada();
+
+    if (oportunidade.version !== dados.version) throw new ErroConflitoDeVersao();
+    if (oportunidade.cadenciaEncerradaEm !== null || ![2, 3, 4].includes(oportunidade.etapaId)) throw new ErroCadenciaEncerrada();
+
+    await tx
+      .update(cadenciaAtividades)
+      .set({ resultado: 'cancelada' })
+      .where(and(eq(cadenciaAtividades.oportunidadeId, oportunidadeId), eq(cadenciaAtividades.resultado, 'pendente')));
+
+    await tx.insert(oportunidadeEventos).values({
+      empresaId: contexto.empresaId,
+      oportunidadeId,
+      tipo: 'lead_respondeu',
+      atorId: dados.atorId,
+      atorTipo: 'usuario',
+      payload: { etapaOrigemId: oportunidade.etapaId },
+    });
+
+    // `mover_oportunidade` confere a version e a incrementa; a coluna de encerramento é gravada antes, como em `concluir_atividade_cadencia`.
+    await tx
+      .update(oportunidades)
+      .set({ cadenciaEncerradaEm: dados.agora })
+      .where(eq(oportunidades.id, oportunidadeId));
+    try {
+      await tx.execute(sql`
+        select mover_oportunidade(
+          ${oportunidadeId}::uuid,
+          ${dados.version}::integer,
+          5,
+          ${dados.atorId}::uuid,
+          'usuario'::ator_tipo,
+          ${JSON.stringify({ origem: 'lead_respondeu' })}::jsonb
+        )
+      `);
+    } catch (erro) {
+      lancarErroDeCadencia(erro);
+    }
+
+    const [atual] = await tx.select().from(oportunidades).where(eq(oportunidades.id, oportunidadeId)).limit(1);
+    return atual;
+  });
+}
+
 export interface DadosMarcarAguardando {
   /** `version` que o chamador acredita ser a atual do card (lock otimista). */
   version: number;

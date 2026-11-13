@@ -15,6 +15,7 @@ import { nomeDaEtapa } from '@/components/pipeline/detalhe/jornada';
 import { HistoricoToques } from '@/components/pipeline/cadencia/historico-toques';
 import { MatrizToques } from '@/components/pipeline/cadencia/matriz-toques';
 import { ResumoCadencia } from '@/components/pipeline/cadencia/resumo-cadencia';
+import { LeadRespondeu } from '@/components/pipeline/cadencia/lead-respondeu';
 import { ToqueDaVez } from '@/components/pipeline/cadencia/toque-da-vez';
 import type { CadenciaDoCardView } from '@/components/pipeline/cadencia/tipos';
 import { EsqueletoCarregando, EstadoErro, EstadoVazio } from '@/components/pipeline/pecas/estados';
@@ -84,6 +85,32 @@ function ConteudoCadencia({ cardId, onMudou }: { cardId: string; onMudou: () => 
     }
   }
 
+  /** "O lead respondeu" sem toque pendente (entre turnos): encerra a régua pelo card. */
+  async function leadRespondeu() {
+    if (!cadencia) return;
+    setConcluindo(true);
+    setErroDeConclusao(null);
+    try {
+      const resposta = await fetch(`/api/oportunidades/${cardId}/cadencia/respondeu`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ version: cadencia.oportunidade.version }),
+      });
+      if (resposta.ok) {
+        await carregar();
+        onMudou();
+        return;
+      }
+      const corpo = (await resposta.json().catch(() => null)) as { codigo?: string } | null;
+      setErroDeConclusao(MENSAGENS_DE_ERRO[corpo?.codigo ?? ''] ?? 'Não foi possível registrar a resposta. Tente de novo.');
+      if (corpo?.codigo === 'CONFLITO_DE_VERSAO') await carregar();
+    } catch {
+      setErroDeConclusao('Não foi possível registrar a resposta. Tente de novo.');
+    } finally {
+      setConcluindo(false);
+    }
+  }
+
   return (
     <div className="p-gutter flex flex-col gap-space-md w-full lg:flex-1 lg:min-h-0">
       <div className="flex flex-wrap items-center justify-between gap-space-sm">
@@ -146,6 +173,9 @@ function ConteudoCadencia({ cardId, onMudou }: { cardId: string; onMudou: () => 
                 mensagemDeErro={erroDeConclusao}
                 onConcluir={concluir}
               />
+            )}
+            {!cadencia.toqueDaVez && !cadencia.encerrada && (
+              <LeadRespondeu concluindo={concluindo} mensagemDeErro={erroDeConclusao} onConfirmar={leadRespondeu} />
             )}
             <MatrizToques toques={cadencia.toques} />
             <HistoricoToques cardId={cardId} toques={cadencia.toques} />
