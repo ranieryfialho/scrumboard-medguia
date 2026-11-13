@@ -19,6 +19,8 @@ import { ErroSessaoInvalida, resolverContextoTenant, type ContextoTenant } from 
 import { papelPodeTransicionar } from '../../../domain/pipeline/papel';
 import type { FaixaDeQualificacao } from '../../../domain/qualificacao/qualificacao';
 import { comTenant } from '../../../repositories/contexto';
+import { obterProximasAcoesDosCards } from '../../../repositories/proxima-acao-card';
+import type { ProximaAcao } from '../../../domain/pipeline/proxima-acao';
 import { lerResumosDeQualificacao } from '../../../repositories/qualificacao';
 import { criarOportunidade, ErroLeadNaoEncontrado, listarOportunidades } from '../../../repositories/oportunidades';
 import {
@@ -90,6 +92,8 @@ export interface CardBoard {
   criadoEm: string;
   /** fase6-qualificacao-comercial (AC-834): faixa e nota da qualificação; `null` quando o card não foi avaliado. */
   qualificacao: { faixa: FaixaDeQualificacao; score: number } | null;
+  /** A próxima ação conforme a etapa (reunião, toque da cadência, data combinada). */
+  proximaAcao: ProximaAcao;
 }
 
 /** AC-075: enriquece a página de `listarOportunidades` com nome do lead e do responsável. */
@@ -103,6 +107,7 @@ async function enriquecerCards(
   const responsavelIds = [...new Set(itens.map((o) => o.responsavelId).filter((id): id is string => id !== null))];
 
   const qualificacoes = await lerResumosDeQualificacao(getDb(), contexto, itens.map((o) => o.id));
+  const proximasAcoes = await obterProximasAcoesDosCards(getDb(), contexto, itens, new Date());
   const [leadsEncontrados, responsaveisEncontrados] = await comTenant(getDb(), contexto, async (tx) => {
     const leadsEncontrados = await tx
       .select({ id: leads.id, nome: leads.nome })
@@ -131,6 +136,7 @@ async function enriquecerCards(
     version: o.version,
     criadoEm: o.criadoEm.toISOString(),
     qualificacao: qualificacoes.get(o.id) ?? null,
+    proximaAcao: proximasAcoes.get(o.id) as ProximaAcao,
   }));
 }
 

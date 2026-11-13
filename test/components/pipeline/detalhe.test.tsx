@@ -248,6 +248,26 @@ describe('T-163: tela de detalhe do card', () => {
       expect(botaoTodos.getAttribute('aria-pressed')).toBe('true');
     });
 
+    test('com muitos eventos mostra 10 numa área de altura limitada e o "Ver mais" revela mais 10 @spec:AC-408', async () => {
+      const usuario = userEvent.setup();
+      linhaDoTempoItens = Array.from({ length: 18 }, (_, i) =>
+        itemLinha({ id: `muitos-${i}`, tipo: 'anotacao', texto: `Evento ${i + 1}`, autorNome: 'Fulano', ocorridoEm: `2026-10-${String(28 - i).padStart(2, '0')}T10:00:00.000Z` })
+      );
+      totalInteracoesAtual = 18;
+
+      await renderDetalhe();
+      const cabecalhoLinha = await screen.findByText('Linha do Tempo de Atividades');
+      const raiz = cabecalhoLinha.closest('[class*="rounded-xl"]') as HTMLElement;
+
+      await waitFor(() => expect(within(raiz).getByText('Evento 1')).toBeTruthy());
+      expect(raiz.querySelectorAll('.font-label-lg.font-semibold')).toHaveLength(10);
+      expect(raiz.querySelector('.overflow-y-auto')).toBeTruthy();
+
+      await usuario.click(within(raiz).getByRole('button', { name: 'Ver mais (8)' }));
+      await waitFor(() => expect(raiz.querySelectorAll('.font-label-lg.font-semibold')).toHaveLength(18));
+      expect(within(raiz).queryByRole('button', { name: /Ver mais/ })).toBeNull();
+    });
+
     test('sem eventos, mostra o estado vazio @spec:AC-408', async () => {
       linhaDoTempoItens = [];
       totalInteracoesAtual = 0;

@@ -17,6 +17,7 @@
 // `test/components/pipeline/iniciar-cadencia.test.tsx` prova esse
 // comportamento contra esta mesma página, e apagar a função teria apagado a
 // prova de um critério de outra feature, o que a constituição proíbe.
+import type { ProximaAcao } from '@/domain/pipeline/proxima-acao';
 import { use, useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 
@@ -68,6 +69,7 @@ interface DetalheOportunidade {
   perda?: PerdaDoCardView | null;
   valor: string | null;
   proximaAcaoEm: string | null;
+  proximaAcao?: ProximaAcao | null;
   version: number;
 }
 
@@ -377,7 +379,7 @@ function PipelineDetalheConteudo({ id }: { id: string }) {
       </div>
 
       <div className="p-gutter w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start lg:items-stretch">
           <div className="lg:col-span-4 flex flex-col gap-space-lg">
             <Informacoes
               valor={dados.valor}
@@ -385,6 +387,7 @@ function PipelineDetalheConteudo({ id }: { id: string }) {
               criadoEm={dados.criadoEm}
               responsavelNome={dados.responsavelNome}
               proximaAcaoEm={dados.proximaAcaoEm}
+              proximaAcao={dados.proximaAcao}
               telefones={telefones}
               email={dados.email}
               especialidade={dados.especialidade}
